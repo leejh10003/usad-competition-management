@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "wrangler deploy --dry-run --outdir=dist"
+    "build": "esbuild src/index.ts --bundle --outfile=dist/index.js --format=esm",
+    "tail": "wrangler tail"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +14,7 @@
   "packageManager": "pnpm@10.10.0",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250927.0",
+    "esbuild": "^0.25.10",
     "typescript": "^5.9.2",
     "wrangler": "^4.40.2"
   }
