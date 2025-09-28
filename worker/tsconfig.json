@@ -19,7 +19,9 @@
     "noUnusedParameters": true,
     "resolveJsonModule": true,
     "types": [
-      "@cloudflare/workers-types"
+      "@cloudflare/workers-types",
+      "./worker-configuration.d.ts",
+      "node"
     ],
     "strict": true,
     "strictNullChecks": true,
