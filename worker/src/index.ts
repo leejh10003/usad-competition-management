@@ -5,7 +5,7 @@ interface ScannedInput {
 }
 
 export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  async fetch(request: Request, _: Env, __: ExecutionContext): Promise<Response> {
     // 1. POST 요청만 허용
     if (request.method !== 'POST') {
       return new Response('Invalid method. Only POST is accepted.', { status: 405 });
