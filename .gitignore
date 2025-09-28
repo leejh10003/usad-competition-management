@@ -260,3 +260,4 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,windows,macos,terraform,prisma,node
 
 .wrangler/
+.env
