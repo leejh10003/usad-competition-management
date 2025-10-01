@@ -10,6 +10,8 @@ import * as dotenv from 'dotenv';
 import { CloudflareProvider } from "@cdktf/provider-cloudflare/lib/provider";
 import { WorkersScript } from "@cdktf/provider-cloudflare/lib/workers-script";
 import { WorkersScriptSubdomain } from "@cdktf/provider-cloudflare/lib/workers-script-subdomain";
+import { VercelProvider } from './.gen/providers/vercel/provider';
+import { Project as VercelProject } from './.gen/providers/vercel/project';
 
 dotenv.config();
 
