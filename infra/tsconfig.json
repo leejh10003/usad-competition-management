@@ -26,7 +26,8 @@
     "skipLibCheck": true
   },
   "include": [
-    "**/*.ts"
+    "**/*.ts",
+    ".gen"
   ],
   "exclude": [
     "node_modules",
