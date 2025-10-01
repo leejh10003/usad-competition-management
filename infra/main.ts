@@ -12,6 +12,7 @@ import { WorkersScript } from "@cdktf/provider-cloudflare/lib/workers-script";
 import { WorkersScriptSubdomain } from "@cdktf/provider-cloudflare/lib/workers-script-subdomain";
 import { VercelProvider } from './.gen/providers/vercel/provider';
 import { Project as VercelProject } from './.gen/providers/vercel/project';
+import { D1Database } from '@cdktf/provider-cloudflare/lib/d1-database';
 
 dotenv.config();
 
@@ -31,6 +32,11 @@ class MyUsadPocStack extends TerraformStack {
     });
     new VercelProvider(this, "vercel", {
       apiToken: VERCEL_API_TOKEN,
+    });
+
+    new D1Database(this, "usad-main-db-resource", {
+      accountId: CLOUDFLARE_ACCOUNT_ID,
+      name: "usad-main-db",
     });
 
     // 3. 빌드된 워커 스크립트 파일의 경로를 계산
