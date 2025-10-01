@@ -68,5 +68,5 @@ class MyUsadPocStack extends TerraformStack {
 }
 
 const app = new App();
-new MyUsadPocStack(app, "usad-competition-management-backend");
+new MyUsadPocStack(app, "usad-competition-management-infra");
 app.synth();
