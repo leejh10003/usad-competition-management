@@ -28,7 +28,7 @@ class MyUsadPocStack extends TerraformStack {
     });
 
     // 3. 빌드된 워커 스크립트 파일의 경로를 계산
-    const workerScriptPath = path.join(__dirname, '..', 'worker', 'dist', 'index.js');
+    const workerScriptPath = path.join(__dirname, '..', 'apps', 'worker', 'dist', 'index.js');
     
     // 4. 파일 내용을 읽어옴
     const workerScriptContent = fs.readFileSync(workerScriptPath, "utf-8");
