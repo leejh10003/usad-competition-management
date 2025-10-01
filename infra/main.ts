@@ -19,6 +19,7 @@ dotenv.config();
 // 여기서는 간단하게 하드코딩하지만, 실제로는 TerraformVariable을 사용해야 해.
 const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID as string;
 const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN as string;
+const VERCEL_API_TOKEN = process.env.VERCEL_API_TOKEN as string;
 
 class MyUsadPocStack extends TerraformStack {
   constructor(scope: Construct, id: string) {
@@ -27,6 +28,9 @@ class MyUsadPocStack extends TerraformStack {
     // 2. Cloudflare Provider를 스택에 등록
     new CloudflareProvider(this, "cloudflare", {
       apiToken: CLOUDFLARE_API_TOKEN,
+    });
+    new VercelProvider(this, "vercel", {
+      apiToken: VERCEL_API_TOKEN,
     });
 
     // 3. 빌드된 워커 스크립트 파일의 경로를 계산
@@ -47,6 +51,18 @@ class MyUsadPocStack extends TerraformStack {
       scriptName: "usad-competition-management-backend", // wrangler.toml의 name과 일치
       content: workerScriptContent,
       mainModule: "worker.js",
+    });
+    new VercelProject(this, "qr-scanner", {
+      name: "qr-scanner",
+      framework: "vite",
+      rootDirectory: "apps/qr-scanner",
+      gitRepository: {
+        type: "git",
+        repo: "leejh10003/usad-competition-management-backend",
+      },
+      buildCommand: "pnpm build",
+      installCommand: "pnpm install",
+      outputDirectory: "dist",
     });
   }
 }
