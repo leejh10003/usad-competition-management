@@ -57,8 +57,8 @@ class MyUsadPocStack extends TerraformStack {
       framework: "vite",
       rootDirectory: "apps/qr-scanner",
       gitRepository: {
-        type: "git",
-        repo: "leejh10003/usad-competition-management-backend",
+        type: "github",
+        repo: "leejh10003/usad-competition-management",
       },
       buildCommand: "pnpm build",
       installCommand: "pnpm install",
