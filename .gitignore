@@ -261,3 +261,4 @@ $RECYCLE.BIN/
 
 .wrangler/
 .env
+wrangler.toml

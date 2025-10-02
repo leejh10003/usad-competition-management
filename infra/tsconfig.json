@@ -25,6 +25,9 @@
     "incremental": true,
     "skipLibCheck": true
   },
+  "types": [
+    "jest"
+  ],
   "include": [
     "**/*.ts",
     ".gen"
