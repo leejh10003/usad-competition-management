@@ -1,5 +1,5 @@
 import { Construct } from "constructs";
-import { App, TerraformStack } from "cdktf";
+import { App, TerraformStack, Fn } from "cdktf";
 import * as path from "path";
 import * as fs from "fs";
 import * as dotenv from 'dotenv';
@@ -13,6 +13,8 @@ import { WorkersScriptSubdomain } from "@cdktf/provider-cloudflare/lib/workers-s
 import { VercelProvider } from './.gen/providers/vercel/provider';
 import { Project as VercelProject } from './.gen/providers/vercel/project';
 import { D1Database } from '@cdktf/provider-cloudflare/lib/d1-database';
+import { LocalProvider } from '@cdktf/provider-local/lib/provider';
+import { File } from '@cdktf/provider-local/lib/file';
 
 dotenv.config();
 
@@ -33,8 +35,9 @@ class MyUsadPocStack extends TerraformStack {
     new VercelProvider(this, "vercel", {
       apiToken: VERCEL_API_TOKEN,
     });
+    new LocalProvider(this, "local", {});
 
-    new D1Database(this, "usad-main-db-resource", {
+    const d1Db = new D1Database(this, "usad-main-db-resource", {
       accountId: CLOUDFLARE_ACCOUNT_ID,
       name: "usad-main-db",
     });
@@ -69,6 +72,15 @@ class MyUsadPocStack extends TerraformStack {
       buildCommand: "pnpm build",
       installCommand: "pnpm install",
       outputDirectory: "dist",
+    });
+    new File(this, "wrangler-config-file", {
+      content: Fn.templatefile(
+        path.join(__dirname, '..', 'apps', 'worker', 'wrangler.toml.tftpl'),
+        {
+          database_id: d1Db.id
+        }
+      ),
+      filename: path.join(__dirname, '..', 'apps', 'worker', 'wrangler.toml'),
     });
   }
 }
