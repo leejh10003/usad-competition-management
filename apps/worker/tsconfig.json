@@ -1,35 +1,16 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "alwaysStrict": true,
-    "declaration": true,
-    "experimentalDecorators": true,
-    "inlineSourceMap": true,
-    "inlineSources": true,
     "lib": [
       "ESNext"
     ],
     "moduleResolution": "node16",
     "module": "node16",
-    "noEmitOnError": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "resolveJsonModule": true,
     "types": [
       "@cloudflare/workers-types",
       "./worker-configuration.d.ts",
       "node"
     ],
-    "strict": true,
-    "strictNullChecks": true,
-    "strictPropertyInitialization": true,
-    "stripInternal": true,
-    "target": "ES2018",
-    "incremental": true,
-    "skipLibCheck": true
   },
   "include": [
     "src",
