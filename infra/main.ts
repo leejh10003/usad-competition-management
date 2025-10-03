@@ -1,7 +1,7 @@
 import { Construct } from "constructs";
 import { App, TerraformStack, Fn } from "cdktf";
 import * as path from "path";
-import * as fs from "fs";
+//import * as fs from "fs";
 import * as dotenv from 'dotenv';
 
 // 1. Cloudflare Provider와 WorkerScript 클래스를 가져옴
@@ -40,13 +40,16 @@ class MyUsadPocStack extends TerraformStack {
     const d1Db = new D1Database(this, "usad-main-db-resource", {
       accountId: CLOUDFLARE_ACCOUNT_ID,
       name: "usad-main-db",
+      readReplication: {
+        mode: "disabled"
+      }
     });
 
     // 3. 빌드된 워커 스크립트 파일의 경로를 계산
     const workerScriptPath = path.join(__dirname, '..', 'apps', 'worker', 'dist', 'index.js');
     
     // 4. 파일 내용을 읽어옴
-    const workerScriptContent = fs.readFileSync(workerScriptPath, "utf-8");
+    //const workerScriptContent = fs.readFileSync(workerScriptPath, "utf-8");
 
     new WorkersScriptSubdomain(this, "logger-worker-subdomain", {
       accountId: CLOUDFLARE_ACCOUNT_ID,
@@ -58,8 +61,9 @@ class MyUsadPocStack extends TerraformStack {
     new WorkersScript(this, "logger-worker-script", {
       accountId: CLOUDFLARE_ACCOUNT_ID,
       scriptName: "usad-competition-management-backend", // wrangler.toml의 name과 일치
-      content: workerScriptContent,
-      mainModule: "worker.js",
+      contentFile: workerScriptPath,
+      contentSha256: Fn.filesha256(workerScriptPath),
+      mainModule: "index.js",
     });
     new VercelProject(this, "qr-scanner", {
       name: "qr-scanner",
