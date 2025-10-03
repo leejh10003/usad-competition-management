@@ -1,8 +1,9 @@
 import { Hono } from 'hono';
 import { PrismaClient } from 'database';
 import { PrismaD1 } from '@prisma/adapter-d1';
+import { Env } from './env';
 
-const app = new Hono<{}>();
+const app = new Hono<Env>();
 
 // --- API 그룹 정의 ---
 const api = app.basePath('/api');
@@ -10,8 +11,18 @@ const api = app.basePath('/api');
 // --- 🧑‍🎓 학생 (Students) 관련 엔드포인트 ---
 const students = api.basePath('/students');
 // [목록] 모든 학생 리스트 조회 (페이지네이션, 필터링 추가 가능)
-students.get('/', (c) => {
-  return c.json({ message: 'List of all students' });
+students.get('/', async (c) => {
+  try {
+    const adapter = new PrismaD1(c.env.DB);
+    const prisma = new PrismaClient({
+      adapter
+    });
+    const allStudents = await prisma.student.findMany();
+    return c.json({ success: true, data: allStudents });
+  } catch (e) {
+    console.error(e);
+    return c.json({ success: false, message: 'Failed to fetch students' }, 500);
+  } 
 });
 // [생성] 새로운 학생 한 명 생성
 students.post('/', (c) => {
