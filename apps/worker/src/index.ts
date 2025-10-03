@@ -1,64 +1,82 @@
-import { ExecutionContext } from '@cloudflare/workers-types';
 import { Hono } from 'hono';
-// 클라이언트로부터 받을 데이터의 타입을 정의
-interface ScannedInput {
-  scanned?: string; // scanned 속성은 string 타입이며, 없을 수도 있음
-}
 
-const app = new Hono();
+const app = new Hono<{}>();
 
-app.post('/test', async (context) => {
-  return context.json({ message: 'Hello, World!' });
-})
+// --- API 그룹 정의 ---
+const api = app.basePath('/api');
 
+// --- 🧑‍🎓 학생 (Students) 관련 엔드포인트 ---
+const students = api.basePath('/students');
+// [목록] 모든 학생 리스트 조회 (페이지네이션, 필터링 추가 가능)
+students.get('/', (c) => {
+  return c.json({ message: 'List of all students' });
+});
+// [생성] 새로운 학생 한 명 생성
+students.post('/', (c) => {
+  return c.json({ message: 'Create a new student' }, 201);
+});
+// [상세] 특정 학생 한 명의 상세 정보 조회
+students.get('/:id', (c) => {
+  const id = c.req.param('id');
+  return c.json({ message: `Details for student ${id}` });
+});
+// [수정] 특정 학생 정보 업데이트
+students.patch('/:id', (c) => {
+  const id = c.req.param('id');
+  return c.json({ message: `Update student ${id}` });
+});
+// [삭제] 특정 학생 정보 삭제
+students.delete('/:id', (c) => {
+  const id = c.req.param('id');
+  return c.json({ message: `Delete student ${id}` });
+});
+
+
+// --- 🧑‍🏫 코치 (Coaches) 관련 엔드포인트 ---
+const coaches = api.basePath('/coaches');
+// [목록] 모든 코치 리스트 조회
+coaches.get('/', (c) => {
+  return c.json({ message: 'List of all coaches' });
+});
+// [생성] 새로운 코치 한 명 생성
+coaches.post('/', (c) => {
+  return c.json({ message: 'Create a new coach' }, 201);
+});
+// [상세] 특정 코치 한 명의 상세 정보 조회
+coaches.get('/:id', (c) => {
+  const id = c.req.param('id');
+  return c.json({ message: `Details for coach ${id}` });
+});
+// [수정] 특정 코치 정보 업데이트
+coaches.patch('/:id', (c) => {
+  const id = c.req.param('id');
+  return c.json({ message: `Update coach ${id}` });
+});
+// [삭제] 특정 코치 정보 삭제
+coaches.delete('/:id', (c) => {
+  const id = c.req.param('id');
+  return c.json({ message: `Delete coach ${id}` });
+});
+
+
+// --- ✅ 체크인 (Check-in) 관련 엔드포인트 ---
+// [생성] QR 코드 스캔 후, 체크인 기록 생성
+api.post('/check-ins', (c) => {
+  // body에는 { "qrData": "...", "eventType": "speech" } 같은 정보가 담길 것
+  return c.json({ message: 'Student checked in' });
+});
+
+
+// --- 📁 대량 작업 (Bulk Operations) 관련 엔드포인트 ---
+const bulk = api.basePath('/import');
+// [생성/수정] 학생 정보 CSV 파일로 대량 업로드
+bulk.post('/students', (c) => {
+  return c.json({ message: 'Bulk import for students received' });
+});
+// [생성/수정] 코치 정보 CSV 파일로 대량 업로드
+bulk.post('/coaches', (c) => {
+  return c.json({ message: 'Bulk import for coaches received' });
+});
+
+// 기본 export
 export default app;
-
-/*export default {
-  async fetch(request: Request, _: Env, __: ExecutionContext): Promise<Response> {
-    // 1. POST 요청만 허용
-    if (request.method !== 'POST') {
-      return new Response('Invalid method. Only POST is accepted.', { status: 405 });
-    }
-
-    // 2. Content-Type이 application/json인지 확인
-    if (request.headers.get('Content-Type') !== 'application/json') {
-      return new Response('Invalid Content-Type. Only application/json is accepted.', { status: 415 });
-    }
-
-    try {
-      // 3. 요청 본문을 JSON으로 파싱
-      const body: ScannedInput = await request.json();
-
-      // 4. body에 'scanned' 필드가 있고, string 타입인지 검증
-      if (!body.scanned || typeof body.scanned !== 'string') {
-        return new Response('Invalid body. "scanned" field is required and must be a string.', { status: 400 });
-      }
-
-      // 5. [핵심] 구조화된 로그를 console.log로 출력
-      console.log(JSON.stringify({
-        level: 'INFO',
-        message: 'Scan data received successfully.',
-        scannedData: body.scanned,
-        requestInfo: {
-          ip: request.headers.get('CF-Connecting-IP'),
-          country: request.cf?.country,
-          colo: request.cf?.colo,
-        }
-      }));
-
-      // 6. 성공 응답 반환
-      return new Response(JSON.stringify({ success: true, message: 'Log received.' }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-    } catch (error) {
-      console.error(JSON.stringify({
-        level: 'ERROR',
-        message: 'Failed to process request.',
-        error: error instanceof Error ? error.message : String(error),
-      }));
-      return new Response('An internal error occurred.', { status: 500 });
-    }
-  },
-};*/
