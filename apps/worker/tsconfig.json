@@ -20,5 +20,10 @@
     "node_modules",
     "dist",
     "cdktf.out"
+  ],
+  "references": [
+    {
+      "path": "../../packages/database"
+    }
   ]
 }
