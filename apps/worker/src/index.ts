@@ -1,4 +1,6 @@
 import { Hono } from 'hono';
+import { PrismaClient } from 'database';
+import { PrismaD1 } from '@prisma/adapter-d1';
 
 const app = new Hono<{}>();
 
