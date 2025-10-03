@@ -19,7 +19,7 @@
         "stripInternal": true,
         "target": "es2018",
         "incremental": true,
-        "skipLibCheck": true,
-        "exclude": ["node_modules", "dist", "cdktf.out"]
-    }
+        "skipLibCheck": true
+    },
+    "exclude": ["node_modules", "dist", "cdktf.out"]
 }
