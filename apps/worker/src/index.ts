@@ -1,10 +1,19 @@
 import { ExecutionContext } from '@cloudflare/workers-types';
+import { Hono } from 'hono';
 // 클라이언트로부터 받을 데이터의 타입을 정의
 interface ScannedInput {
   scanned?: string; // scanned 속성은 string 타입이며, 없을 수도 있음
 }
 
-export default {
+const app = new Hono();
+
+app.post('/test', async (context) => {
+  return context.json({ message: 'Hello, World!' });
+})
+
+export default app;
+
+/*export default {
   async fetch(request: Request, _: Env, __: ExecutionContext): Promise<Response> {
     // 1. POST 요청만 허용
     if (request.method !== 'POST') {
@@ -52,4 +61,4 @@ export default {
       return new Response('An internal error occurred.', { status: 500 });
     }
   },
-};
+};*/
