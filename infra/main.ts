@@ -51,11 +51,6 @@ class MyUsadPocStack extends TerraformStack {
     // 4. 파일 내용을 읽어옴
     //const workerScriptContent = fs.readFileSync(workerScriptPath, "utf-8");
 
-    new WorkersScriptSubdomain(this, "logger-worker-subdomain", {
-      accountId: CLOUDFLARE_ACCOUNT_ID,
-      scriptName: "usad-competition-management-backend", // wrangler.toml의 name과 일치
-      enabled: true,
-    });
 
     // 5. WorkerScript 리소스를 TypeScript 코드로 정의
     new WorkersScript(this, "logger-worker-script", {
@@ -63,8 +58,23 @@ class MyUsadPocStack extends TerraformStack {
       scriptName: "usad-competition-management-backend", // wrangler.toml의 name과 일치
       contentFile: workerScriptPath,
       contentSha256: Fn.filesha256(workerScriptPath),
+      compatibilityDate: "2025-09-28",
       mainModule: "index.js",
+      bindings: [
+        {
+          name: "DB",
+          type: "d1",
+          id: d1Db.id
+        },
+      ]
     });
+
+    new WorkersScriptSubdomain(this, "logger-worker-subdomain", {
+      accountId: CLOUDFLARE_ACCOUNT_ID,
+      scriptName: "usad-competition-management-backend", // wrangler.toml의 name과 일치
+      enabled: true,
+    });
+
     new VercelProject(this, "qr-scanner", {
       name: "qr-scanner",
       framework: "vite",

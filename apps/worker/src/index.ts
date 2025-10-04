@@ -1,6 +1,4 @@
 import { Hono } from 'hono';
-import { PrismaClient } from 'database';
-import { PrismaD1 } from '@prisma/adapter-d1';
 import { Env } from './env';
 
 const app = new Hono<Env>();
@@ -13,14 +11,18 @@ const students = api.basePath('/students');
 // [목록] 모든 학생 리스트 조회 (페이지네이션, 필터링 추가 가능)
 students.get('/', async (c) => {
   try {
-    const adapter = new PrismaD1(c.env.DB);
-    const prisma = new PrismaClient({
+    /*const adapter = new PrismaD1(c.env.DB);
+    const client = new PrismaClient({
       adapter
     });
-    const allStudents = await prisma.student.findMany();
-    return c.json({ success: true, data: allStudents });
+    const result = await client.student.findMany();*/
+    return c.json({ success: true, data: "hello" });
   } catch (e) {
-    console.error(e);
+    if (e instanceof Error) {
+      console.error(e.stack, '\n', e.message);
+    } else {
+      console.error('no stack trace \n', e);
+    }
     return c.json({ success: false, message: 'Failed to fetch students' }, 500);
   } 
 });
