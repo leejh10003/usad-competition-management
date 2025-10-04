@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { Env } from './env';
 import { drizzle } from 'drizzle-orm/d1';
-import { users } from 'database/src/schema';
+import { users } from 'database/src/drizzle/schema';
 
 const app = new Hono<Env>();
 
