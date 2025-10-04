@@ -5,12 +5,16 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:generate": "prisma generate",
-    "db:diff": "prisma migrate diff",
-    "db:studio": "prisma studio"
+    "db:generate": "drizzle-kit generate"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.10.0"
+  "packageManager": "pnpm@10.10.0",
+  "dependencies": {
+    "drizzle-orm": "^0.44.6"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.5"
+  }
 }
