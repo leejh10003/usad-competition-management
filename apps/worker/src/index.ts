@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { Env } from './env';
 import { drizzle } from 'drizzle-orm/d1';
-import { users } from 'database/src/drizzle/schema';
+import { students as Students } from 'database/src/drizzle/schema';
 
 const app = new Hono<Env>();
 
@@ -14,7 +14,7 @@ const students = api.basePath('/students');
 students.get('/', async (c) => {
   try {
     const db = drizzle(c.env.DB);
-    const result = await db.select().from(users).limit(1).offset(0);
+    const result = await db.select().from(Students).limit(1).offset(0);
     return c.json({ success: true, data: result });
   } catch (e) {
     if (e instanceof Error) {
