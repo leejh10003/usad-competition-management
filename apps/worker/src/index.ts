@@ -1,5 +1,7 @@
 import { Hono } from 'hono';
 import { Env } from './env';
+import { drizzle } from 'drizzle-orm/d1';
+import { users } from 'database/src/schema';
 
 const app = new Hono<Env>();
 
@@ -11,12 +13,9 @@ const students = api.basePath('/students');
 // [목록] 모든 학생 리스트 조회 (페이지네이션, 필터링 추가 가능)
 students.get('/', async (c) => {
   try {
-    /*const adapter = new PrismaD1(c.env.DB);
-    const client = new PrismaClient({
-      adapter
-    });
-    const result = await client.student.findMany();*/
-    return c.json({ success: true, data: "hello" });
+    const db = drizzle(c.env.DB);
+    const result = await db.select().from(users).limit(1).offset(0);
+    return c.json({ success: true, data: result });
   } catch (e) {
     if (e instanceof Error) {
       console.error(e.stack, '\n', e.message);
