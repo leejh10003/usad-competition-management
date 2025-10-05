@@ -8,8 +8,11 @@ import * as dotenv from 'dotenv';
 //import { CloudflareProvider } from "./.gen/providers/cloudflare/provider";
 //import { WorkerScript } from "./.gen/providers/cloudflare/worker-script";
 import { CloudflareProvider } from "@cdktf/provider-cloudflare/lib/provider";
-import { WorkersScript } from "@cdktf/provider-cloudflare/lib/workers-script";
-import { WorkersScriptSubdomain } from "@cdktf/provider-cloudflare/lib/workers-script-subdomain";
+//import { WorkersScript } from "@cdktf/provider-cloudflare/lib/workers-script";
+import { Worker } from "@cdktf/provider-cloudflare/lib/worker";
+//import { WorkersDeploymentVersions } from "@cdktf/provider-cloudflare/lib/workers-deployment"; 
+//import { WorkersDeployment } from "@cdktf/provider-cloudflare/lib/workers-deployment";
+//import { WorkersScriptSubdomain } from "@cdktf/provider-cloudflare/lib/workers-script-subdomain";
 import { VercelProvider } from './.gen/providers/vercel/provider';
 import { Project as VercelProject } from './.gen/providers/vercel/project';
 import { D1Database } from '@cdktf/provider-cloudflare/lib/d1-database';
@@ -46,19 +49,40 @@ class MyUsadPocStack extends TerraformStack {
     });
 
     // 3. 빌드된 워커 스크립트 파일의 경로를 계산
-    const workerScriptPath = path.join(__dirname, '..', 'apps', 'worker', 'dist', 'index.js');
+    //const workerScriptPath = path.join(__dirname, '..', 'apps', 'worker', 'dist', 'index.js');
+    /*const workerBuiltPath = path.join(__dirname, '..', 'apps', 'worker', 'dist');
+    const allFiles = fs.readdirSync(workerBuiltPath);
+    const files = allFiles
+      .filter(file => file.endsWith('.js') || file.endsWith('.wasm'))
+      .map((file) => {
+        const extension = file.split('.').pop();
+        const filePath = path.join(workerBuiltPath, file);
+        return {
+          name: file,
+          contentFile: filePath,
+          contentType: extension === 'wasm' ? 'application/wasm' : 'application/javascript+module'
+        };
+      });*/
+    new Worker(this, "usad-worker", {
+      accountId: CLOUDFLARE_ACCOUNT_ID,
+      name: "usad-competition-management-backend",
+      subdomain: {
+        enabled: true,
+      }
+    });
     
     // 4. 파일 내용을 읽어옴
     //const workerScriptContent = fs.readFileSync(workerScriptPath, "utf-8");
 
 
     // 5. WorkerScript 리소스를 TypeScript 코드로 정의
-    new WorkersScript(this, "logger-worker-script", {
+    /*new WorkersScript(this, "logger-worker-script", {
       accountId: CLOUDFLARE_ACCOUNT_ID,
       scriptName: "usad-competition-management-backend", // wrangler.toml의 name과 일치
       contentFile: workerScriptPath,
       contentSha256: Fn.filesha256(workerScriptPath),
       compatibilityDate: "2025-09-28",
+      compatibilityFlags: ["nodejs_compat"],
       mainModule: "index.js",
       bindings: [
         {
@@ -73,7 +97,7 @@ class MyUsadPocStack extends TerraformStack {
       accountId: CLOUDFLARE_ACCOUNT_ID,
       scriptName: "usad-competition-management-backend", // wrangler.toml의 name과 일치
       enabled: true,
-    });
+    });*/
 
     new VercelProject(this, "qr-scanner", {
       name: "qr-scanner",
