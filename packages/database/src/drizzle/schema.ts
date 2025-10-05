@@ -1,4 +1,4 @@
-import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { pgTable, text } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // --- Enums ---
@@ -9,7 +9,7 @@ export const divisions = ['H', 'S', 'V'] as const;
 // --- 테이블 정의 ---
 
 // 모든 '사람'의 공통 정보
-export const users = sqliteTable('User', {
+export const users = pgTable('User', {
   id: text('id').primaryKey(), // Prisma의 cuid() 대신, 애플리케이션에서 생성해서 넣어야 함
   firstName: text('firstName').notNull(),
   lastName: text('lastName').notNull(),
@@ -17,7 +17,7 @@ export const users = sqliteTable('User', {
 });
 
 // 학교 정보
-export const schools = sqliteTable('School', {
+export const schools = pgTable('School', {
   id: text('id').primaryKey(),
   name: text('name').notNull().unique(),
   city: text('city'),
@@ -25,7 +25,7 @@ export const schools = sqliteTable('School', {
 });
 
 // 코치 정보
-export const coaches = sqliteTable('Coach', {
+export const coaches = pgTable('Coach', {
   id: text('id').primaryKey(), // 내부 ID
   userId: text('userId').notNull().unique().references(() => users.id),
   externalId: text('externalId').unique(), // USAD가 제공하는 코치 ID #
@@ -33,14 +33,14 @@ export const coaches = sqliteTable('Coach', {
 });
 
 // 팀 정보 (코치와 도메인의 조합)
-export const teams = sqliteTable('Team', {
+export const teams = pgTable('Team', {
   id: text('id').primaryKey(),
   domain: text('domain').notNull().unique(),
   coachId: text('coachId').notNull().references(() => coaches.id),
 });
 
 // 학생 정보
-export const students = sqliteTable('Student', {
+export const students = pgTable('Student', {
   id: text('id').primaryKey(),
   userId: text('userId').notNull().unique().references(() => users.id),
   externalId: text('externalId').notNull().unique(), // USAD가 제공하는 학생 ID #

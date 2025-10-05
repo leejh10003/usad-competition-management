@@ -1,0 +1,58 @@
+generator client {
+  provider        = "prisma-client-js"
+  engineType = "client"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:/Users/leejunhyuk/Projects/usad-competition-management/apps/worker/.wrangler/state/v3/d1/miniflare-D1DatabaseObject/9901fb6bf0140191dfe3fae43002dbf32ffb700629613a83ed7c98e23a6cda88.sqlite"
+}
+
+model Coach {
+  id         String  @id
+  userId     String  @unique(map: "Coach_userId_unique")
+  externalId String? @unique(map: "Coach_externalId_unique")
+  schoolId   String
+  School     School  @relation(fields: [schoolId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User       User    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Team       Team[]
+}
+
+model School {
+  id    String  @id
+  name  String  @unique(map: "School_name_unique")
+  city  String?
+  state String?
+  Coach Coach[]
+}
+
+model Student {
+  id         String  @id
+  userId     String  @unique(map: "Student_userId_unique")
+  externalId String  @unique(map: "Student_externalId_unique")
+  username   String  @unique(map: "Student_username_unique")
+  division   String
+  loginId    String? @unique(map: "Student_loginId_unique")
+  pin        String?
+  teamId     String
+  Team       Team    @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  User       User    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Team {
+  id      String    @id
+  domain  String    @unique(map: "Team_domain_unique")
+  coachId String
+  Student Student[]
+  Coach   Coach     @relation(fields: [coachId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model User {
+  id        String   @id
+  firstName String
+  lastName  String
+  role      String
+  Coach     Coach?
+  Student   Student?
+}

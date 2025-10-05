@@ -5,14 +5,18 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:generate": "drizzle-kit generate"
+    "db:drizzle:generate": "drizzle-kit generate",
+    "db:prisma:generate": "prisma generate"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.10.0",
   "dependencies": {
-    "drizzle-orm": "^0.44.6"
+    "@prisma/adapter-d1": "^6.16.3",
+    "@prisma/client": "^6.16.3",
+    "drizzle-orm": "^0.44.6",
+    "prisma": "^6.16.3"
   },
   "devDependencies": {
     "drizzle-kit": "^0.31.5"
