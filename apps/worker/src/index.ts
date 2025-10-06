@@ -11,10 +11,7 @@ declare module 'hono' {
   }
 }
 
-// --- API 그룹 정의 ---
-const api = app.basePath('/api');
-
-app.use(async (c, next) => {
+app.use('*', async (c, next) => {
   const requestId = c.req.header('cf-request-id');
   const logBuffer: string[] = [];
 
@@ -40,6 +37,9 @@ app.use(async (c, next) => {
     return c.json({ success: false, error: "Internal Server Error", requestId });
   }
 })
+
+// --- API 그룹 정의 ---
+const api = app.basePath('/api');
 
 // --- 🧑‍🎓 학생 (Students) 관련 엔드포인트 ---
 const students = api.basePath('/students');
