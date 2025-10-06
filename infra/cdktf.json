@@ -4,7 +4,8 @@
   "projectId": "9e99911d-e735-481b-9a89-7089aabf0ef2",
   "sendCrashReports": "false",
   "terraformProviders": [
-    "vercel/vercel@~> 3.15"
+    "vercel/vercel@~> 3.15",
+    "cockroachdb/cockroach@~> 1.15"
   ],
   "terraformModules": [],
   "context": {}
