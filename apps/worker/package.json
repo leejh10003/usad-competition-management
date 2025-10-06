@@ -21,11 +21,14 @@
   },
   "dependencies": {
     "@prisma/adapter-d1": "^6.16.3",
+    "@prisma/adapter-pg": "^6.16.3",
     "@prisma/client": "^6.16.3",
+    "@types/pg": "^8.15.5",
     "database": "workspace:*",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.6",
     "hono": "^4.9.9",
+    "pg": "^8.16.3",
     "postgres": "^3.4.7"
   }
 }
