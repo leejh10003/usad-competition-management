@@ -3,9 +3,9 @@ import { Env } from './env';
 //import { drizzle } from 'drizzle-orm/postgres-js';
 //import postgres from 'postgres';
 //import { users } from 'database/src/drizzle/schema';
-/*import { PrismaClient } from 'database';
-import { PrismaPg } from '@prisma/adapter-pg';*/
-import { Client } from 'pg';
+import { PrismaClient } from 'database';
+import { PrismaPg } from '@prisma/adapter-pg';
+//import { Client } from 'pg';
 
 const app = new Hono<Env>();
 
@@ -20,15 +20,12 @@ students.get('/', async (c) => {
     //const sql = postgres("");
     //const db = drizzle(sql);
     //const result = await db.select().from(users).limit(1).offset(0);
-    /*const adapter = new PrismaPg({connectionString: c.env.HYPERDRIVE.connectionString});
+    const adapter = new PrismaPg({connectionString: c.env.HYPERDRIVE.connectionString});
     const prisma = new PrismaClient({
       adapter
     });
-    await prisma.$connect();*/
-    const client = new Client({connectionString: c.env.HYPERDRIVE.connectionString});
-    await client.connect();
-    const result = await client.query("SELECT * FROM pg_namespace;");
-    console.log(result.rows);
+    await prisma.$connect();
+    await prisma.$disconnect();
     return c.json({ success: true, data: "result" });
   } catch (e) {
     if (e instanceof Error) {
