@@ -24,7 +24,7 @@ app.use(async (c, next) => {
   })
   
   try {
-    await next();
+    return await next();
   } catch (e) {
     console.error(JSON.stringify({
       level: "FATAL",
