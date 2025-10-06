@@ -1,11 +1,7 @@
 import { Hono } from 'hono';
 import { Env } from './env';
-//import { drizzle } from 'drizzle-orm/postgres-js';
-//import postgres from 'postgres';
-//import { users } from 'database/src/drizzle/schema';
 import { PrismaClient } from 'database';
 import { PrismaPg } from '@prisma/adapter-pg';
-//import { Client } from 'pg';
 
 const app = new Hono<Env>();
 
@@ -17,9 +13,6 @@ const students = api.basePath('/students');
 // [목록] 모든 학생 리스트 조회 (페이지네이션, 필터링 추가 가능)
 students.get('/', async (c) => {
   try {
-    //const sql = postgres("");
-    //const db = drizzle(sql);
-    //const result = await db.select().from(users).limit(1).offset(0);
     const adapter = new PrismaPg({connectionString: c.env.HYPERDRIVE.connectionString});
     const prisma = new PrismaClient({
       adapter
