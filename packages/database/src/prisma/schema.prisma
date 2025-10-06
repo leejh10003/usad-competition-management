@@ -5,8 +5,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:/Users/leejunhyuk/Projects/usad-competition-management/apps/worker/.wrangler/state/v3/d1/miniflare-D1DatabaseObject/9901fb6bf0140191dfe3fae43002dbf32ffb700629613a83ed7c98e23a6cda88.sqlite"
+  provider = "postgres"
+  url      = env("DATABASE_URL")
 }
 
 model Coach {
