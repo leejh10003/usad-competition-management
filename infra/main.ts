@@ -6,7 +6,6 @@ import { CloudflareProvider } from "@cdktf/provider-cloudflare/lib/provider";
 import { Worker } from "@cdktf/provider-cloudflare/lib/worker";
 import { VercelProvider } from './.gen/providers/vercel/provider';
 import { Project as VercelProject } from './.gen/providers/vercel/project';
-import { D1Database } from '@cdktf/provider-cloudflare/lib/d1-database';
 import { LocalProvider } from '@cdktf/provider-local/lib/provider';
 import { File } from '@cdktf/provider-local/lib/file';
 import { HyperdriveConfig } from '@cdktf/provider-cloudflare/lib/hyperdrive-config';
@@ -38,14 +37,6 @@ class MyUsadPocStack extends TerraformStack {
       apiToken: VERCEL_API_TOKEN,
     });
     new LocalProvider(this, "local", {});
-
-    const d1Db = new D1Database(this, "usad-main-db-resource", {
-      accountId: CLOUDFLARE_ACCOUNT_ID,
-      name: "usad-main-db",
-      readReplication: {
-        mode: "disabled"
-      }
-    });
     const cockroachProvider = new CockroachProvider(this, "cockroachdb", {
       apikey: COCKROACH_API_KEY,
     });
@@ -109,7 +100,6 @@ class MyUsadPocStack extends TerraformStack {
       content: Fn.templatefile(
         path.join(__dirname, '..', 'apps', 'worker', 'wrangler.toml.tftpl'),
         {
-          database_id: d1Db.id,
           hyperdrive_id: hyperdrive.id,
         }
       ),
