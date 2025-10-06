@@ -1,7 +1,11 @@
 import { Hono } from 'hono';
 import { Env } from './env';
-import { drizzle } from 'drizzle-orm/d1';
-import { students as Students } from 'database/src/drizzle/schema';
+//import { drizzle } from 'drizzle-orm/postgres-js';
+//import postgres from 'postgres';
+//import { users } from 'database/src/drizzle/schema';
+/*import { PrismaClient } from 'database';
+import { PrismaPg } from '@prisma/adapter-pg';*/
+import { Client } from 'pg';
 
 const app = new Hono<Env>();
 
@@ -13,9 +17,19 @@ const students = api.basePath('/students');
 // [목록] 모든 학생 리스트 조회 (페이지네이션, 필터링 추가 가능)
 students.get('/', async (c) => {
   try {
-    const db = drizzle(c.env.DB);
-    const result = await db.select().from(Students).limit(1).offset(0);
-    return c.json({ success: true, data: result });
+    //const sql = postgres("");
+    //const db = drizzle(sql);
+    //const result = await db.select().from(users).limit(1).offset(0);
+    /*const adapter = new PrismaPg({connectionString: c.env.HYPERDRIVE.connectionString});
+    const prisma = new PrismaClient({
+      adapter
+    });
+    await prisma.$connect();*/
+    const client = new Client({connectionString: c.env.HYPERDRIVE.connectionString});
+    await client.connect();
+    const result = await client.query("SELECT * FROM pg_namespace;");
+    console.log(result.rows);
+    return c.json({ success: true, data: "result" });
   } catch (e) {
     if (e instanceof Error) {
       console.error(e.stack, '\n', e.message);
