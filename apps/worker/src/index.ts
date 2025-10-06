@@ -5,8 +5,41 @@ import { PrismaPg } from '@prisma/adapter-pg';
 
 const app = new Hono<Env>();
 
+declare module 'hono' {
+  interface ContextVariableMap {
+    logger: (level: 'INFO' | 'ERROR' | 'WARN', message: string, context?: string, data?: object) => void;
+  }
+}
+
 // --- API 그룹 정의 ---
 const api = app.basePath('/api');
+
+app.use(async (c, next) => {
+  const requestId = c.req.header('cf-request-id');
+  const logBuffer: string[] = [];
+
+  // logger 함수가 세 번째 인자로 'context'를 받도록 수정
+  c.set('logger', (level, message, context, data) => {
+    logBuffer.push(`${new Date().toISOString()} ${level} ${context} ${message} ${data}`);
+  })
+  
+  try {
+    await next();
+  } catch (e) {
+    console.error(JSON.stringify({
+      level: "FATAL",
+      message: "Request failed, flushing log buffer.",
+      requestId,
+      bufferedLogs: logBuffer,
+      error: {
+        message: e instanceof Error ? e.message : String(e),
+        stack: e instanceof Error ? e.stack : undefined,
+      }
+    }, null, 2));
+    c.status(500);
+    return c.json({ success: false, error: "Internal Server Error", requestId });
+  }
+})
 
 // --- 🧑‍🎓 학생 (Students) 관련 엔드포인트 ---
 const students = api.basePath('/students');
