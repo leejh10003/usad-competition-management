@@ -57,7 +57,7 @@ model School {
   principalEmail String? @map("principal_email")
 
   // The school's primary coach. Enforces the "one primary coach per school" rule.
-  primaryCoachId String? @unique @map("primary_coach_id")
+  primaryCoachId String? @unique @map("primary_coach_id") @db.Uuid
   primaryCoach   Coach?  @relation("PrimaryCoachOfSchool", fields: [primaryCoachId], references: [id])
 
   // The email domain is a property of the School, derived from the primary coach.
@@ -78,7 +78,7 @@ model Team {
   externalTeamId String @map("external_team_id")
 
   // Foreign key to the School.
-  schoolId String @map("school_id")
+  schoolId String @map("school_id") @db.Uuid
   school   School @relation(fields: [schoolId], references: [id])
 
   // M-N relationship: A team can have multiple coaches, and a coach can be on multiple teams.
@@ -104,7 +104,7 @@ model Coach {
   phone     String?
 
   // Every coach must belong to exactly one school.
-  schoolId String @map("school_id")
+  schoolId String @map("school_id") @db.Uuid
   school   School @relation("CoachesOfSchool", fields: [schoolId], references: [id])
 
   // The school where this coach is designated as the primary. (Will be null for assistants).
@@ -132,11 +132,11 @@ model Student {
   usadPin   String? @map("usad_pin")
 
   // Every student must belong to a team (even if it's a virtual "Individuals" team).
-  teamId String @map("team_id")
+  teamId String @map("team_id") @db.Uuid
   team   Team   @relation(fields: [teamId], references: [id])
 
   // Every student belongs to a school.
-  schoolId String @map("school_id")
+  schoolId String @map("school_id") @db.Uuid
   school   School @relation(fields: [schoolId], references: [id])
 
   // 1-N relationship with Scan.
@@ -151,9 +151,9 @@ model Scan {
   timestamp DateTime @default(now())
 
   // A scan is associated with EITHER a Coach OR a Student.
-  coachId   String? @map("coach_id")
+  coachId   String? @map("coach_id") @db.Uuid
   coach     Coach?  @relation(fields: [coachId], references: [id])
-  studentId String? @map("student_id")
+  studentId String? @map("student_id") @db.Uuid
   student   Student? @relation(fields: [studentId], references: [id])
 
   @@map("scans")
