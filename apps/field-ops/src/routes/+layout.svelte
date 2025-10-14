@@ -4,11 +4,11 @@
 	import { App } from 'konsta/svelte';
 	import { Tabbar, TabbarLink, ToolbarPane } from 'konsta/svelte';
 	let { children } = $props();
-    const Tabs = {
-        Registration: "registration",
-        TeamCheckIn: "team-check-in",
-        EventCheckIn: "event-check-in"
-    }
+	const Tabs = {
+		Registration: 'registration',
+		TeamCheckIn: 'team-check-in',
+		EventCheckIn: 'event-check-in'
+	};
 	let activeTab = $state(Tabs.Registration);
 	let goTab = (input: string) => {
 		activeTab = input;
@@ -21,40 +21,23 @@
 <App theme="ios">
 	{@render children?.()}
 	<Tabbar labels={isTabbarLabels} icons={isTabbarIcons} class="fixed bottom-0 left-0">
+		{/* @ts-ignore */ null}
 		<ToolbarPane>
-			{#if isTabbarIcons}
-				<TabbarLink
-					active={activeTab === Tabs.Registration}
-					onclick={() => (goTab(Tabs.Registration))}
-					label={isTabbarLabels ? 'Registration' : undefined}
-				></TabbarLink>
-				<TabbarLink
-					active={activeTab === Tabs.TeamCheckIn}
-					onclick={() => goTab(Tabs.TeamCheckIn)}
-					label={isTabbarLabels ? 'Checkin Team' : undefined}
-				></TabbarLink>
-				<TabbarLink
-					active={activeTab === Tabs.EventCheckIn}
-					onclick={() => goTab(Tabs.EventCheckIn)}
-					label={isTabbarLabels ? 'Event Checkin' : undefined}
-				></TabbarLink>
-			{:else}
-				<TabbarLink
-					active={activeTab === Tabs.Registration}
-					onclick={() => (goTab(Tabs.Registration))}
-					label={isTabbarLabels ? 'Registration' : undefined}
-				></TabbarLink>
-				<TabbarLink
-					active={activeTab === Tabs.TeamCheckIn}
-					onclick={() => goTab(Tabs.TeamCheckIn)}
-					label={isTabbarLabels ? 'Checkin Team' : undefined}
-				></TabbarLink>
-				<TabbarLink
-					active={activeTab === Tabs.EventCheckIn}
-					onclick={() => goTab(Tabs.EventCheckIn)}
-					label={isTabbarLabels ? 'Event Checkin' : undefined}
-				></TabbarLink>
-			{/if}
+			<TabbarLink active={activeTab === Tabs.Registration} onclick={() => goTab(Tabs.Registration)}>
+				{#snippet label()}
+					{isTabbarLabels ? 'Registration' : undefined}
+				{/snippet}
+			</TabbarLink>
+			<TabbarLink active={activeTab === Tabs.TeamCheckIn} onclick={() => goTab(Tabs.TeamCheckIn)}>
+				{#snippet label()}
+					{isTabbarLabels ? 'Checkin Team' : undefined}
+				{/snippet}
+			</TabbarLink>
+			<TabbarLink active={activeTab === Tabs.EventCheckIn} onclick={() => goTab(Tabs.EventCheckIn)}>
+				{#snippet label()}
+					{isTabbarLabels ? 'Event Checkin' : undefined}
+				{/snippet}
+			</TabbarLink>
 		</ToolbarPane>
 	</Tabbar>
 </App>
