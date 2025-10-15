@@ -11,6 +11,9 @@ importers:
       '@iconify/json':
         specifier: ^2.2.395
         version: 2.2.395
+      html5-qrcode:
+        specifier: ^2.3.8
+        version: 2.3.8
       konsta:
         specifier: ^5.0.2
         version: 5.0.2
