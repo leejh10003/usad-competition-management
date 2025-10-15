@@ -264,3 +264,4 @@ $RECYCLE.BIN/
 .env
 wrangler.toml
 *.d.ts
+.vscode/*
