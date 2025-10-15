@@ -5,11 +5,10 @@
 generator client {
   provider        = "prisma-client-js"
   // This feature flag is crucial for generating a Prisma Client compatible with edge runtimes like Cloudflare Workers.
-  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "cockroachdb" // Provider for PostgreSQL-compatible databases.
+  provider = "postgresql" // Provider for PostgreSQL-compatible databases.
   url      = env("DATABASE_URL")
 }
 
