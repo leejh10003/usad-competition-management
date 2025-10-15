@@ -1,0 +1,10 @@
+generator client {
+  provider        = "prisma-client-js"
+  runtime = "workerd"
+  // This feature flag is crucial for generating a Prisma Client compatible with edge runtimes like Cloudflare Workers.
+}
+
+datasource db {
+  provider = "postgresql" // Provider for PostgreSQL-compatible databases.
+  url      = env("DATABASE_URL")
+}

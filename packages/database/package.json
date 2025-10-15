@@ -5,19 +5,19 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:prisma:generate": "prisma generate",
-    "db:migrate:local": "dotenv -e .env.local -- prisma migrate dev",
-    "db:reset:local": "dotenv -e .env.local -- prisma migrate reset",
-    "db:studio:local": "dotenv -e .env.local -- prisma studio",
+    "db:generate": "cat src/prisma/partials/_datasource_postgresql.prisma.part src/prisma/partials/_models.prisma.part > src/prisma/schema.prisma && prisma generate && rm src/prisma/schema.prisma",
+    "db:migrate:local": "cat src/prisma/partials/_datasource_cockroachdb.prisma.part src/prisma/partials/_models.prisma.part > src/prisma/schema.prisma && dotenv -e .env.local -- prisma migrate dev && rm src/prisma/schema.prisma",
+    "db:reset:local": "cat src/prisma/partials/_datasource_cockroachdb.prisma.part src/prisma/partials/_models.prisma.part > src/prisma/schema.prisma && dotenv -e .env.local -- prisma migrate reset && rm src/prisma/schema.prisma",
+    "db:studio:local": "cat src/prisma/partials/_datasource_cockroachdb.prisma.part src/prisma/partials/_models.prisma.part > src/prisma/schema.prisma && dotenv -e .env.local -- prisma studio && rm src/prisma/schema.prisma",
     "db:container:local": "docker compose up -d",
-    "db:migrate:remote": "dotenv -e .env.remote -- prisma migrate deploy"
+    "db:migrate:remote": "cat src/prisma/partials/_datasource_cockroachdb.prisma.part src/prisma/partials/_models.prisma.part > src/prisma/schema.prisma && dotenv -e .env.remote -- prisma migrate deploy && rm src/prisma/schema.prisma"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.10.0",
   "dependencies": {
-    "@prisma/client": "^6.16.3",
+    "@src/prisma/client": "^6.16.3",
     "prisma": "^6.16.3"
   },
   "devDependencies": {
