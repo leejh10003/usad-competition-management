@@ -9,7 +9,7 @@
 		TeamCheckIn: 'team-check-in',
 		EventCheckIn: 'event-check-in'
 	};
-	let activeTab = $state(Tabs.Registration);
+	let activeTab = $state(Tabs.TeamCheckIn);
 	let goTab = (input: string) => {
 		activeTab = input;
 		goto(`/${input}`);
@@ -23,11 +23,6 @@
 	<Tabbar labels={isTabbarLabels} icons={isTabbarIcons} class="fixed bottom-0 left-0">
 		{/* @ts-ignore */ null}
 		<ToolbarPane>
-			<TabbarLink active={activeTab === Tabs.Registration} onclick={() => goTab(Tabs.Registration)}>
-				{#snippet label()}
-					{isTabbarLabels ? 'Registration' : undefined}
-				{/snippet}
-			</TabbarLink>
 			<TabbarLink active={activeTab === Tabs.TeamCheckIn} onclick={() => goTab(Tabs.TeamCheckIn)}>
 				{#snippet label()}
 					{isTabbarLabels ? 'Checkin Team' : undefined}
