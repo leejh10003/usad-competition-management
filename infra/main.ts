@@ -106,7 +106,7 @@ class MyUsadPocStack extends TerraformStack {
       },
       buildCommand: "pnpm build",
       installCommand: "pnpm install",
-      outputDirectory: "dist",
+      outputDirectory: "build",
     });
     new File(this, "wrangler-config-file", {
       content: Fn.templatefile(
