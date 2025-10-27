@@ -6,6 +6,7 @@
     Html5QrcodeScanType,
     Html5QrcodeSupportedFormats,
     Html5QrcodeScannerState,
+	Html5Qrcode,
   } from 'html5-qrcode';
 
   interface QrCodeScannerProps {
@@ -28,7 +29,7 @@
   }
 
   let scanner: Html5QrcodeScanner;
-  onMount(() => {
+  onMount(async () => {
     scanner = new Html5QrcodeScanner(
       'qr-scanner',
       {
