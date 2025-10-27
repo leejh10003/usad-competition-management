@@ -12,7 +12,7 @@
 	let activeTab = $state(Tabs.Registration);
 	let goTab = (input: string) => {
 		activeTab = input;
-		goto(input);
+		goto(`/${input}`);
 	};
 	let isTabbarLabels = $state(true);
 	let isTabbarIcons = $state(true);
