@@ -1,38 +1,52 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import '../app.css';
-	import { App } from 'konsta/svelte';
-	import { Tabbar, TabbarLink, ToolbarPane } from 'konsta/svelte';
+	import { Tabbar, TabbarLink, ToolbarPane, App, Navbar } from 'konsta/svelte';
 	let { children } = $props();
 	const Tabs = {
 		Registration: 'registration',
-		TeamCheckIn: 'team-check-in',
+		CheckinTeam: 'check-in-team',
 		EventCheckIn: 'event-check-in'
 	};
-	let activeTab = $state(Tabs.TeamCheckIn);
+	let activeTab = $state(Tabs.CheckinTeam);
+	let convertTitle = (input: string) => {
+		var format = input.replaceAll('-', ' ')
+		return `${format.charAt(0).toUpperCase()}${format.slice(1)}`;
+	}
+	var subtitle = '';
+	let title = $derived(convertTitle(activeTab));
+	var size: 'medium' | 'large' | 'default' = $state('medium');
 	let goTab = (input: string) => {
 		activeTab = input;
 		goto(`/${input}`);
 	};
+	var isTransparent = true;
 	let isTabbarLabels = $state(true);
 	let isTabbarIcons = $state(true);
 </script>
 
-<App theme="ios">
-	{@render children?.()}
+<App safeAreas theme="ios" class="flex flex-col">
+	<Navbar
+		title={title}
+		subtitle={subtitle}
+		class="top-0 sticky"
+		medium={ size === 'medium' }
+		large={ size === 'large' }
+		transparent={isTransparent}
+	></Navbar>
+	<div class="flex h-full grow">
+		{@render children?.()}
+	</div>
 	<Tabbar labels={isTabbarLabels} icons={isTabbarIcons} class="fixed bottom-0 left-0">
 		{/* @ts-ignore */ null}
 		<ToolbarPane>
-			<TabbarLink active={activeTab === Tabs.TeamCheckIn} onclick={() => goTab(Tabs.TeamCheckIn)}>
-				{#snippet label()}
-					{isTabbarLabels ? 'Checkin Team' : undefined}
-				{/snippet}
-			</TabbarLink>
-			<TabbarLink active={activeTab === Tabs.EventCheckIn} onclick={() => goTab(Tabs.EventCheckIn)}>
-				{#snippet label()}
-					{isTabbarLabels ? 'Event Checkin' : undefined}
-				{/snippet}
-			</TabbarLink>
+			{#each [Tabs.CheckinTeam, Tabs.EventCheckIn] as e}
+				<TabbarLink active={activeTab === e} onclick={() => goTab(e)}>
+					{#snippet label()}
+						{isTabbarLabels ? convertTitle(e) : undefined}
+					{/snippet}
+				</TabbarLink>
+			{/each}
 		</ToolbarPane>
 	</Tabbar>
 </App>
