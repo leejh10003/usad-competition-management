@@ -5,9 +5,11 @@
 </script>
 
 <div class="flex grow flex-col">
-    <Button onclick={() => goto('scanned/test')}>Success</Button>
 	<QrCodeScanner
-		detect={(e) => console.log({ type: 'DETECT', ...e })}
+		detect={(e, scanner) => {
+            scanner.pause();
+            goto(`scanned/${e.decodedText}`)
+        }}
 		error={(e) => console.log({ type: 'ERROR', message: e })}
 		paused={false}
 		width={320}
