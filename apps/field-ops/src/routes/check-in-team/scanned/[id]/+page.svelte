@@ -23,7 +23,7 @@
 	</Block>
     <BlockTitle>Signatures</BlockTitle>
 	<Block>
-		<div class="flex flex-row">
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
 			{#each pads as _, i}
 				<div>
 					<SignaturePad signatureId={id} bind:this={pads[i]} />
