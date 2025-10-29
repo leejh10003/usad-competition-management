@@ -13,6 +13,7 @@
 	}
 	export function clear() {
 		signaturePad?.clear();
+		editted = false;
 	}
 	var editted: boolean = false;
 	export function getEditted() {

@@ -19,10 +19,18 @@
 	});
 	var showClearAllDialog = $state(false);
 	var showSubmitDialog = $state(false);
+	var showUnsubmittableReasonDialog = $state(false);
+	let closeUnsubmittableReasonDialog = () => {
+		showUnsubmittableReasonDialog = false;
+	}
+	let openUnsubmittableReasonDialog = () => {
+		showUnsubmittableReasonDialog = true;
+	}
 	let closeSubmitDialog = () => {
 		showSubmitDialog = false;
 	}
 	let openSubmitDialog = () => {
+		console.log(submittable());
 		showSubmitDialog = true;
 	}
 	let submit = () => {
@@ -45,15 +53,19 @@
 	let openClearAllDialog = () => {
 		showClearAllDialog = true;
 	}
-	let submittable = $derived.by(() => {
+	let submittable = () => {
 		return coach?.getEditted() && students.honors.every((sig) => sig?.getEditted()) &&
 			students.scholastic.every((sig) => sig?.getEditted()) &&
 			students.varsity.every((sig) => sig?.getEditted());
-	})
+	};
 	eventCheckInSubmitButtonPressed.subscribe((value) => {
 		if (value) {
 			eventCheckInSubmitButtonPressed.set(false);
-			openSubmitDialog();
+			if (submittable()) {
+				openSubmitDialog();
+			} else {
+				openUnsubmittableReasonDialog();
+			}
 		}
 	});
     eventCheckInClearButtonPressed.subscribe((value) => {
@@ -94,22 +106,27 @@
 		{/snippet}
 	</Dialog>
 	{/* @ts-ignore */ null}
-	<Dialog opened={showSubmitDialog} onBackdropClick={closeSubmitDialog}>
+	<Dialog opened={showUnsubmittableReasonDialog} onBackdropClick={closeUnsubmittableReasonDialog}>
 		{#snippet title()}
-			{submittable ? "Sbumit signatures" : "Incomplete signatures"}
+			Incomplete signatures
 		{/snippet}
-		{submittable ? "Are you sure to submit? This action is not reversable." : "Please ensure all signatures are provided before submitting."}
+		Please ensure all signatures are provided before submitting.
 		{#snippet buttons()}
 			{/* @ts-ignore */ null}
-			{#if submittable}
+			<DialogButton strong onClick={closeUnsubmittableReasonDialog}>Ok</DialogButton>
+		{/snippet}
+	</Dialog>
+	{/* @ts-ignore */ null}
+	<Dialog opened={showSubmitDialog} onBackdropClick={closeSubmitDialog}>
+		{#snippet title()}
+			Sbumit signatures
+		{/snippet}
+		Are you sure to submit? This action is not reversable.
+		{#snippet buttons()}
 			{/* @ts-ignore */ null}
 			<DialogButton onClick={closeSubmitDialog}>No</DialogButton>
 			{/* @ts-ignore */ null}
 			<DialogButton strong onClick={submit}>Yes</DialogButton>
-			{:else}
-			{/* @ts-ignore */ null}
-			<DialogButton strong onClick={closeSubmitDialog}>Ok</DialogButton>
-			{/if}
 		{/snippet}
 	</Dialog>
 	<BlockTitle large>Signatures</BlockTitle>
