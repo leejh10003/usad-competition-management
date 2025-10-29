@@ -4,6 +4,7 @@
 	import SignaturePad from '../../../../components/signature.svelte';
 	import { Block, BlockTitle, Button } from 'konsta/svelte';
 	import _ from 'lodash';
+    import BottomPadding from '../../../../components/bottom-padding.svelte';
 	let path = $derived(page.url.pathname);
 	let pathElements = $derived(path.split('/').filter((e) => e.trim().length > 0));
 	let id = $derived(pathElements[pathElements.length - 1]);
@@ -32,4 +33,5 @@
 			{/each}
 		</div>
 	</Block>
+    <BottomPadding />
 </div>
