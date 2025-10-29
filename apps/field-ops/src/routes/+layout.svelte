@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import '../app.css';
 	import { Tabbar, TabbarLink, ToolbarPane, App, Navbar } from 'konsta/svelte';
+	import NavbarRightButton from './NavbarRightButton.svelte'
 	let { children } = $props();
 	const Tabs = {
 		Registration: 'registration',
@@ -33,7 +34,11 @@
 		medium={ size === 'medium' }
 		large={ size === 'large' }
 		transparent={isTransparent}
-	></Navbar>
+	>
+	{#snippet right()}
+		<NavbarRightButton />
+	{/snippet}
+	</Navbar>
 	<div class="flex h-full grow">
 		{@render children?.()}
 	</div>
