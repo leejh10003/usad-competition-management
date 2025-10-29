@@ -19,7 +19,7 @@ const config = {
 			strict: true,
 		}),
 		prerender: {
-			entries: ['*']
+			entries: ['*', '/check-in-team/scanned/test-id']
 		}
 	}
 };
