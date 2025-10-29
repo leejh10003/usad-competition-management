@@ -5,10 +5,11 @@
 	import { Block, BlockTitle, Button, Dialog, DialogButton } from 'konsta/svelte';
 	import _ from 'lodash';
 	import BottomPadding from '../../../components/bottom-padding.svelte';
-    import { eventCheckInClearButtonPressed, eventCheckInSubmitButtonPressed } from '../../store';
+	import { eventCheckInClearButtonPressed, eventCheckInSubmitButtonPressed } from '../../store';
 	import Icon from '@iconify/svelte';
+	import { goto } from '$app/navigation';
 	let id: string | undefined = $state(undefined);
-    var coach: SignaturePad | undefined = $state(undefined);
+	var coach: SignaturePad | undefined = $state(undefined);
 	var students: {
 		honors: (SignaturePad | undefined)[];
 		scholastic: (SignaturePad | undefined)[];
@@ -18,47 +19,49 @@
 		scholastic: [],
 		varsity: []
 	});
-	var submitted = $state(false);
 	var showClearAllDialog = $state(false);
 	var showSubmitDialog = $state(false);
 	var showUnsubmittableReasonDialog = $state(false);
 	let closeUnsubmittableReasonDialog = () => {
 		showUnsubmittableReasonDialog = false;
-	}
+	};
 	let openUnsubmittableReasonDialog = () => {
 		showUnsubmittableReasonDialog = true;
-	}
+	};
 	let closeSubmitDialog = () => {
 		showSubmitDialog = false;
-	}
+	};
 	let openSubmitDialog = () => {
 		console.log(submittable());
 		showSubmitDialog = true;
-	}
+	};
 	let submit = () => {
 		// TODO: Submit logic here
 		closeSubmitDialog();
-	}
+	};
 	let clearAllSignatures = () => {
 		coach?.clear();
 		students.honors.forEach((sig) => sig?.clear());
 		students.scholastic.forEach((sig) => sig?.clear());
 		students.varsity.forEach((sig) => sig?.clear());
-	}
+	};
 	let closeClearAllDialog = () => {
 		showClearAllDialog = false;
-	}
+	};
 	let clearAndCloseDialog = () => {
 		clearAllSignatures();
 		closeClearAllDialog();
-	}
+	};
 	let openClearAllDialog = () => {
 		showClearAllDialog = true;
-	}
+	};
 	let submittable = () => {
-		return coach?.getEditted() && students.honors.every((sig) => sig?.getEditted()) &&
+		return (
+			coach?.getEditted() &&
+			students.honors.every((sig) => sig?.getEditted()) &&
 			students.scholastic.every((sig) => sig?.getEditted()) &&
-			students.varsity.every((sig) => sig?.getEditted());
+			students.varsity.every((sig) => sig?.getEditted())
+		);
 	};
 	eventCheckInSubmitButtonPressed.subscribe((value) => {
 		if (value) {
@@ -70,12 +73,12 @@
 			}
 		}
 	});
-    eventCheckInClearButtonPressed.subscribe((value) => {
-        if (value) {
-            eventCheckInClearButtonPressed.set(false);
-            openClearAllDialog();
-        }
-    });
+	eventCheckInClearButtonPressed.subscribe((value) => {
+		if (value) {
+			eventCheckInClearButtonPressed.set(false);
+			openClearAllDialog();
+		}
+	});
 	onMount(async () => {
 		id = page.url.searchParams.get('id') ?? '';
 		students = {
@@ -83,17 +86,10 @@
 			scholastic: _.range(3).map(() => undefined),
 			varsity: _.range(3).map(() => undefined)
 		};
-		submitted = true;
 	});
 </script>
 
-<div class="flex flex-col w-full">
-	{#if submitted}
-	<div class="max-w-sm m-auto text-2xl font-bold flex flex-col justify-center items-center">
-		<Icon icon="lets-icons:check-fill" color="oklch(58.8% 0.158 241.966)" font-size="8em"/>
-		This team has already checked in!
-	</div>
-	{:else}
+<div class="flex w-full flex-col">
 	<BlockTitle large>Code of conduct</BlockTitle>
 	<Block>
 		<p>
@@ -111,7 +107,8 @@
 			{/* @ts-ignore */ null}
 			<DialogButton onClick={closeClearAllDialog}>No</DialogButton>
 			{/* @ts-ignore */ null}
-			<DialogButton class="k-color-brand-red" strong onClick={clearAndCloseDialog}>Yes</DialogButton>
+			<DialogButton class="k-color-brand-red" strong onClick={clearAndCloseDialog}>Yes</DialogButton
+			>
 		{/snippet}
 	</Dialog>
 	{/* @ts-ignore */ null}
@@ -149,9 +146,7 @@
 	</Block>
 	<BlockTitle medium>Honors</BlockTitle>
 	<Block>
-		<div
-			class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-		>
+		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 			{#each students.honors as _, i}
 				<div class="signature-group">
 					<h1 class="text-center font-medium">Signature {i + 1}</h1>
@@ -168,9 +163,7 @@
 	</Block>
 	<BlockTitle medium>Scholastic</BlockTitle>
 	<Block>
-		<div
-			class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-		>
+		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 			{#each students.scholastic as _, i}
 				<div class="signature-group">
 					<h1 class="text-center font-medium">Signature {i + 1}</h1>
@@ -189,9 +182,7 @@
 	</Block>
 	<BlockTitle medium>Varsity</BlockTitle>
 	<Block>
-		<div
-			class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-		>
+		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 			{#each students.varsity as _, i}
 				<div class="signature-group">
 					<h1 class="text-center font-medium">Signature {i + 1}</h1>
@@ -201,13 +192,11 @@
 						signatureId={id ?? ''}
 						bind:this={students.varsity[i]}
 					/>
-					<Button class="w-min" rounded onclick={() => students.varsity[i]?.clear()}>Clear</Button
-					>
+					<Button class="w-min" rounded onclick={() => students.varsity[i]?.clear()}>Clear</Button>
 				</div>
 			{/each}
 		</div>
 	</Block>
-	{/if}
 	<BottomPadding />
 </div>
 
