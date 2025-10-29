@@ -6,8 +6,9 @@
 	import _ from 'lodash';
 	import BottomPadding from '../../../components/bottom-padding.svelte';
     import { eventCheckInClearButtonPressed, eventCheckInSubmitButtonPressed } from '../../store';
+	import Icon from '@iconify/svelte';
 	let id: string | undefined = $state(undefined);
-    var coach: SignaturePad;
+    var coach: SignaturePad | undefined = $state(undefined);
 	var students: {
 		honors: (SignaturePad | undefined)[];
 		scholastic: (SignaturePad | undefined)[];
@@ -17,6 +18,7 @@
 		scholastic: [],
 		varsity: []
 	});
+	var submitted = $state(false);
 	var showClearAllDialog = $state(false);
 	var showSubmitDialog = $state(false);
 	var showUnsubmittableReasonDialog = $state(false);
@@ -81,10 +83,17 @@
 			scholastic: _.range(3).map(() => undefined),
 			varsity: _.range(3).map(() => undefined)
 		};
+		submitted = true;
 	});
 </script>
 
-<div class="flex flex-col">
+<div class="flex flex-col w-full">
+	{#if submitted}
+	<div class="max-w-sm m-auto text-2xl font-bold flex flex-col justify-center items-center">
+		<Icon icon="lets-icons:check-fill" color="oklch(58.8% 0.158 241.966)" font-size="8em"/>
+		This team has already checked in!
+	</div>
+	{:else}
 	<BlockTitle large>Code of conduct</BlockTitle>
 	<Block>
 		<p>
@@ -198,6 +207,7 @@
 			{/each}
 		</div>
 	</Block>
+	{/if}
 	<BottomPadding />
 </div>
 
