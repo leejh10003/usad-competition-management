@@ -5,23 +5,31 @@
 	import { Block, BlockTitle, Button } from 'konsta/svelte';
 	import _ from 'lodash';
 	import BottomPadding from '../../../../components/bottom-padding.svelte';
+    import { eventCheckInButtonPressed } from '../../../store';
 	let path = $derived(page.url.pathname);
 	let pathElements = $derived(path.split('/').filter((e) => e.trim().length > 0));
 	let id = $derived(pathElements[pathElements.length - 1]);
+    var coach: SignaturePad;
 	var signatures: {
-		coach?: SignaturePad;
 		honors: (SignaturePad | undefined)[];
 		scholastic: (SignaturePad | undefined)[];
 		varsity: (SignaturePad | undefined)[];
 	} = $state({
-		coach: undefined,
 		honors: [],
 		scholastic: [],
 		varsity: []
 	});
+    eventCheckInButtonPressed.subscribe((value) => {
+        if (value) {
+            coach?.clear();
+            signatures.honors.forEach((sig) => sig?.clear());
+            signatures.scholastic.forEach((sig) => sig?.clear());
+            signatures.varsity.forEach((sig) => sig?.clear());
+            eventCheckInButtonPressed.set(false);
+        }
+    });
 	onMount(async () => {
 		signatures = {
-			coach: undefined,
 			honors: _.range(3).map(() => undefined),
 			scholastic: _.range(3).map(() => undefined),
 			varsity: _.range(3).map(() => undefined)
@@ -42,8 +50,8 @@
 	<Block>
 		<div class="signature-group flex flex-col">
 			<h1 class="text-center font-medium">Coach</h1>
-			<SignaturePad width={300} height={150} signatureId={id} bind:this={signatures.coach} />
-			<Button class="w-min" rounded onclick={() => signatures.coach?.clear()}>Clear</Button>
+			<SignaturePad width={300} height={150} signatureId={id} bind:this={coach} />
+			<Button class="w-min" rounded onclick={() => coach?.clear()}>Clear</Button>
 		</div>
 	</Block>
 	<BlockTitle medium>Honors</BlockTitle>
