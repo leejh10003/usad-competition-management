@@ -2,14 +2,17 @@
 	import { Block } from 'konsta/svelte';
 	import QrCodeScanner from '../../components/qrcode-scanner.svelte';
 </script>
-
-<Block>
+<div class="flex grow flex-col">
 	<QrCodeScanner
-		detect={(e) => console.log({ type: 'DETECT', ...e })}
+		detect={(e, scanner) => {
+            scanner.pause();
+			//TODO1: call server API
+			//TODO2: Show modal
+        }}
 		error={(e) => console.log({ type: 'ERROR', message: e })}
 		paused={false}
 		width={320}
 		height={320}
-		class="w-full max-w-sm"
+		class="max-w-sm m-auto"
 	/>
-</Block>
+</div>
