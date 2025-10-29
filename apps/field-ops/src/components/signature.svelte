@@ -14,8 +14,15 @@
 	export function clear() {
 		signaturePad?.clear();
 	}
+	var editted: boolean = false;
+	export function getEditted() {
+		return editted;
+	}
 	function initialized(node: HTMLCanvasElement) {
 		signaturePad = new SignaturePad(node);
+		signaturePad.addEventListener('beginStroke', () => {
+			editted = true;
+		});
 	}
 </script>
 

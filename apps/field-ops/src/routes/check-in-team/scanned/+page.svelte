@@ -5,7 +5,7 @@
 	import { Block, BlockTitle, Button, Dialog, DialogButton } from 'konsta/svelte';
 	import _ from 'lodash';
 	import BottomPadding from '../../../components/bottom-padding.svelte';
-    import { eventCheckInButtonPressed } from '../../store';
+    import { eventCheckInClearButtonPressed, eventCheckInSubmitButtonPressed } from '../../store';
 	let id: string | undefined = $state(undefined);
     var coach: SignaturePad;
 	var students: {
@@ -18,6 +18,17 @@
 		varsity: []
 	});
 	var showClearAllDialog = $state(false);
+	var showSubmitDialog = $state(false);
+	let closeSubmitDialog = () => {
+		showSubmitDialog = false;
+	}
+	let openSubmitDialog = () => {
+		showSubmitDialog = true;
+	}
+	let submit = () => {
+		// TODO: Submit logic here
+		closeSubmitDialog();
+	}
 	let clearAllSignatures = () => {
 		coach?.clear();
 		students.honors.forEach((sig) => sig?.clear());
@@ -34,10 +45,21 @@
 	let openClearAllDialog = () => {
 		showClearAllDialog = true;
 	}
-    eventCheckInButtonPressed.subscribe((value) => {
+	let submittable = $derived.by(() => {
+		return coach?.getEditted() && students.honors.every((sig) => sig?.getEditted()) &&
+			students.scholastic.every((sig) => sig?.getEditted()) &&
+			students.varsity.every((sig) => sig?.getEditted());
+	})
+	eventCheckInSubmitButtonPressed.subscribe((value) => {
+		if (value) {
+			eventCheckInSubmitButtonPressed.set(false);
+			openSubmitDialog();
+		}
+	});
+    eventCheckInClearButtonPressed.subscribe((value) => {
         if (value) {
+            eventCheckInClearButtonPressed.set(false);
             openClearAllDialog();
-            eventCheckInButtonPressed.set(false);
         }
     });
 	onMount(async () => {
@@ -69,6 +91,25 @@
 			<DialogButton onClick={closeClearAllDialog}>No</DialogButton>
 			{/* @ts-ignore */ null}
 			<DialogButton class="k-color-brand-red" strong onClick={clearAndCloseDialog}>Yes</DialogButton>
+		{/snippet}
+	</Dialog>
+	{/* @ts-ignore */ null}
+	<Dialog opened={showSubmitDialog} onBackdropClick={closeSubmitDialog}>
+		{#snippet title()}
+			{submittable ? "Sbumit signatures" : "Incomplete signatures"}
+		{/snippet}
+		{submittable ? "Are you sure to submit? This action is not reversable." : "Please ensure all signatures are provided before submitting."}
+		{#snippet buttons()}
+			{/* @ts-ignore */ null}
+			{#if submittable}
+			{/* @ts-ignore */ null}
+			<DialogButton onClick={closeSubmitDialog}>No</DialogButton>
+			{/* @ts-ignore */ null}
+			<DialogButton strong onClick={submit}>Yes</DialogButton>
+			{:else}
+			{/* @ts-ignore */ null}
+			<DialogButton strong onClick={closeSubmitDialog}>Ok</DialogButton>
+			{/if}
 		{/snippet}
 	</Dialog>
 	<BlockTitle large>Signatures</BlockTitle>
