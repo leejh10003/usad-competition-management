@@ -4,8 +4,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { studentQuerySchema, testError, testResponse } from './schema';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { appendTrailingSlash } from 'hono/trailing-slash';
-
-
+//import { PrismaClientUnknownRequestError, PrismaClientValidationError, PrismaClientKnownRequestError, PrismaClientInitializationError } from '@prisma/client/runtime/library';
 
 const app = new OpenAPIHono<Env>({});
 
