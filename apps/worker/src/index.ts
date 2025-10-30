@@ -2,6 +2,8 @@ import { Hono } from 'hono';
 import { Env } from './env';
 import { PrismaClient } from 'database';
 import { PrismaPg } from '@prisma/adapter-pg';
+import { zValidator } from '@hono/zod-validator';
+import { studentQuerySchema } from './schema';
 
 const app = new Hono<Env>();
 
@@ -44,8 +46,10 @@ const api = app.basePath('/api');
 // --- 🧑‍🎓 학생 (Students) 관련 엔드포인트 ---
 const students = api.basePath('/students');
 // [목록] 모든 학생 리스트 조회 (페이지네이션, 필터링 추가 가능)
-students.get('/', async (c) => {
+students.get('/', zValidator('query', studentQuerySchema), async (c) => {
   try {
+    const { offset, limit } = c.req.valid('query');
+    console.log(`Fetching students with offset ${offset} and limit ${limit}`);
     const adapter = new PrismaPg({connectionString: c.env.HYPERDRIVE.connectionString});
     const prisma = new PrismaClient({
       adapter
