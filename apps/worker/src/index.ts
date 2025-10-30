@@ -4,10 +4,9 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { studentQuerySchema, testError, testResponse } from './schema';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { appendTrailingSlash } from 'hono/trailing-slash';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 
-//const app = new Hono<Env>();
+
 const app = new OpenAPIHono<Env>({});
 
 declare module 'hono' {
@@ -50,7 +49,6 @@ const api = app.basePath('/api');
 
 // --- 🧑‍🎓 학생 (Students) 관련 엔드포인트 ---
 const students = api.basePath('/students');
-
 students.openapi({
   method: 'get',
   path: '',
@@ -113,14 +111,15 @@ students.openapi({
     });
     return c.json({ success: true, data: result }, 200);
   } catch (e) {
-    if (e instanceof PrismaClientKnownRequestError) {
+    if (e instanceof Error) {
       console.error(e.stack, '\n', e.message);
     } else {
       console.error('no stack trace \n', e);
     }
     return c.json({ success: false, message: JSON.stringify(e) }, 500);
-  } 
+  }
 });
+
 // [생성] 새로운 학생 한 명 생성
 students.post('/', (c) => {
   return c.json({ message: 'Create a new student' }, 201);
@@ -177,6 +176,7 @@ api.post('/check-ins', (c) => {
 });
 
 
+
 // --- 📁 대량 작업 (Bulk Operations) 관련 엔드포인트 ---
 const bulk = api.basePath('/import');
 // [생성/수정] 학생 정보 CSV 파일로 대량 업로드
@@ -187,6 +187,5 @@ bulk.post('/students', (c) => {
 bulk.post('/coaches', (c) => {
   return c.json({ message: 'Bulk import for coaches received' });
 });
-
 // 기본 export
 export default app;
