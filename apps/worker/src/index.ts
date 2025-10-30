@@ -84,16 +84,34 @@ students.openapi({
     const prisma = new PrismaClient({
       adapter
     });
-    await prisma.$connect();
-    await prisma.$disconnect();
-    return c.json({ success: true, data: "result" }, 200);
+    const result = await prisma.student.findMany({
+      take: limit,
+      skip: offset,
+      where: {
+        firstName: {
+          contains: ''
+        }
+      },
+      select: {
+        id: true,
+        externalStudentId: true,
+        division: true,
+        gpa: true,
+        firstName: true,
+        lastName: true,
+        usadPin: false,
+        teamId: false,
+        schoolId: false,
+      }
+    });
+    return c.json({ success: true, data: result }, 200);
   } catch (e) {
     if (e instanceof Error) {
       console.error(e.stack, '\n', e.message);
     } else {
       console.error('no stack trace \n', e);
     }
-    return c.json({ success: false, message: 'Failed to fetch students' }, 500);
+    return c.json({ success: false, message: JSON.stringify(e) }, 500);
   } 
 });
 // [생성] 새로운 학생 한 명 생성
