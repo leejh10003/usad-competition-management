@@ -1,17 +1,21 @@
-import { Hono } from 'hono';
 import { Env } from './env';
 import { PrismaClient } from 'database';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { zValidator } from '@hono/zod-validator';
-import { studentQuerySchema } from './schema';
+import { studentQuerySchema, testError, testResponse } from './schema';
+import { OpenAPIHono } from '@hono/zod-openapi';
+import { appendTrailingSlash } from 'hono/trailing-slash';
 
-const app = new Hono<Env>();
+
+//const app = new Hono<Env>();
+const app = new OpenAPIHono<Env>({});
 
 declare module 'hono' {
   interface ContextVariableMap {
     logger: (level: 'INFO' | 'ERROR' | 'WARN', message: string, context?: string, data?: object) => void;
   }
 }
+
+app.use('*', appendTrailingSlash());
 
 app.use('*', async (c, next) => {
   const requestId = c.req.header('cf-request-id');
@@ -45,8 +49,34 @@ const api = app.basePath('/api');
 
 // --- 🧑‍🎓 학생 (Students) 관련 엔드포인트 ---
 const students = api.basePath('/students');
-// [목록] 모든 학생 리스트 조회 (페이지네이션, 필터링 추가 가능)
-students.get('/', zValidator('query', studentQuerySchema), async (c) => {
+
+students.openapi({
+  method: 'get',
+  path: '',
+  summary: 'Retrieve a list of students with pagination',
+  description: 'Fetches a paginated list of students from the database.',
+  request: {
+    query: studentQuerySchema
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: testResponse,
+        },
+      },
+      description: 'Retrieve the user',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: testError,
+        },
+      },
+      description: 'Describe the reason',
+    }
+  }
+}, async (c) => {
   try {
     const { offset, limit } = c.req.valid('query');
     console.log(`Fetching students with offset ${offset} and limit ${limit}`);
@@ -56,7 +86,7 @@ students.get('/', zValidator('query', studentQuerySchema), async (c) => {
     });
     await prisma.$connect();
     await prisma.$disconnect();
-    return c.json({ success: true, data: "result" });
+    return c.json({ success: true, data: "result" }, 200);
   } catch (e) {
     if (e instanceof Error) {
       console.error(e.stack, '\n', e.message);
