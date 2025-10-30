@@ -4,6 +4,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { studentQuerySchema, testError, testResponse } from './schema';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { appendTrailingSlash } from 'hono/trailing-slash';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 
 //const app = new Hono<Env>();
@@ -106,7 +107,7 @@ students.openapi({
     });
     return c.json({ success: true, data: result }, 200);
   } catch (e) {
-    if (e instanceof Error) {
+    if (e instanceof PrismaClientKnownRequestError) {
       console.error(e.stack, '\n', e.message);
     } else {
       console.error('no stack trace \n', e);
