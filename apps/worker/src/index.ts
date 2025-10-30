@@ -79,7 +79,7 @@ students.openapi({
   }
 }, async (c) => {
   try {
-    const { offset, limit } = c.req.valid('query');
+    const { offset, limit, firstName, lastName, division } = c.req.valid('query');
     console.log(`Fetching students with offset ${offset} and limit ${limit}`);
     const adapter = new PrismaPg({connectionString: c.env.HYPERDRIVE.connectionString});
     const prisma = new PrismaClient({
@@ -90,7 +90,13 @@ students.openapi({
       skip: offset,
       where: {
         firstName: {
-          contains: ''
+          contains: firstName
+        },
+        lastName: {
+          contains: lastName
+        },
+        division: {
+          in: division.length > 0 ? division : undefined
         }
       },
       select: {
