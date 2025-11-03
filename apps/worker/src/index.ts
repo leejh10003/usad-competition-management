@@ -1,7 +1,7 @@
 import { Env } from './env';
 import { PrismaClient } from 'database';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { studentQuerySchema, testError, testResponse } from './schema';
+import { coachQuerySchema, coachResponseSchema, coachSelectFieldsSchema, studentQuerySchema, testError, testResponse } from './schema';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { appendTrailingSlash } from 'hono/trailing-slash';
 //import { PrismaClientUnknownRequestError, PrismaClientValidationError, PrismaClientKnownRequestError, PrismaClientInitializationError } from '@prisma/client/runtime/library';
@@ -11,10 +11,19 @@ const app = new OpenAPIHono<Env>({});
 declare module 'hono' {
   interface ContextVariableMap {
     logger: (level: 'INFO' | 'ERROR' | 'WARN', message: string, context?: string, data?: object) => void;
+    prisma: PrismaClient;
   }
 }
 
 app.use('*', appendTrailingSlash());
+app.use('*', async (c, next) => {
+  const adapter = new PrismaPg({connectionString: c.env.HYPERDRIVE.connectionString});
+  const prisma = new PrismaClient({
+    adapter
+  });
+  c.set('prisma', prisma);
+  await next();
+});
 
 app.use('*', async (c, next) => {
   const requestId = c.req.header('cf-request-id');
@@ -78,10 +87,7 @@ students.openapi({
   try {
     const { offset, limit, firstName, lastName, division } = c.req.valid('query');
     console.log(`Fetching students with offset ${offset} and limit ${limit}`);
-    const adapter = new PrismaPg({connectionString: c.env.HYPERDRIVE.connectionString});
-    const prisma = new PrismaClient({
-      adapter
-    });
+    const prisma = c.get('prisma');
     const result = await prisma.student.findMany({
       take: limit,
       skip: offset,
@@ -143,10 +149,48 @@ students.delete('/:id', (c) => {
 // --- 🧑‍🏫 코치 (Coaches) 관련 엔드포인트 ---
 const coaches = api.basePath('/coaches');
 // [목록] 모든 코치 리스트 조회
-coaches.get('/', (c) => {
-  return c.json({ message: 'List of all coaches' });
+coaches.openapi({
+  path: '',
+  method: 'get',
+  summary: 'Retrieve a list of all coaches',
+  description: 'Fetches a list of all coaches from the database.',
+  request: {
+    query: coachQuerySchema
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: coachResponseSchema,
+        },
+      },
+      description: 'List of all coaches',
+    }
+  }
+}, async (c) => {
+  const prisma = c.get('prisma');
+  const { externalCoachId, lastName, firstName, schoolId, limit, offset } = c.req.valid('query');
+  const result = await prisma.coach.findMany({
+    select: coachSelectFieldsSchema,
+    where: {
+      externalCoachId: externalCoachId ? {
+        contains: externalCoachId
+      }: undefined,
+      lastName: lastName ? {
+        contains: lastName
+      }: undefined,
+      firstName: firstName ? {
+        contains: firstName
+      }: undefined,
+      schoolId: schoolId ? {
+        equals: schoolId
+      }: undefined
+    },
+    take: limit,
+    skip: offset,
+  });
+  return c.json({ success: true, data: result }, 200);
 });
-// [생성] 새로운 코치 한 명 생성
 coaches.post('/', (c) => {
   return c.json({ message: 'Create a new coach' }, 201);
 });
