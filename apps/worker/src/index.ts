@@ -1,7 +1,7 @@
 import { Env } from './env';
 import { PrismaClient } from 'database';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { coachQuerySchema, coachResponseSchema, coachSelectFieldsSchema, studentQuerySchema, testError, testResponse } from './schema';
+import { coachQuerySchema, coachListResponseSchema, coachSelectFieldsSchema, studentQuerySchema, testError, testResponse, coachResponseSchema } from './schema';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { appendTrailingSlash } from 'hono/trailing-slash';
 //import { PrismaClientUnknownRequestError, PrismaClientValidationError, PrismaClientKnownRequestError, PrismaClientInitializationError } from '@prisma/client/runtime/library';
@@ -161,7 +161,7 @@ coaches.openapi({
     200: {
       content: {
         'application/json': {
-          schema: coachResponseSchema,
+          schema: coachListResponseSchema,
         },
       },
       description: 'List of all coaches',
@@ -195,9 +195,34 @@ coaches.post('/', (c) => {
   return c.json({ message: 'Create a new coach' }, 201);
 });
 // [상세] 특정 코치 한 명의 상세 정보 조회
-coaches.get('/:id', (c) => {
-  const id = c.req.param('id');
-  return c.json({ message: `Details for coach ${id}` });
+coaches.openapi({
+  path: '/:id',
+  method: 'get',
+  summary: 'Retrieve details of a specific coach',
+  description: 'Fetches detailed information for a specific coach by ID.',
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: coachResponseSchema,
+        },
+      },
+      description: 'Details of the specified coach',
+    }
+  }
+  }, async (c) => {
+    const id = c.req.param('id');
+    const prisma = c.get('prisma');
+    const result = await prisma.coach.findUnique({
+      where: {
+        id: id
+      },
+      select: coachSelectFieldsSchema
+    });
+    if (!result) {
+      throw new Error('Coach not found'); //TODO: 에러 핸들링 개선
+    }
+    return c.json({ success: true, data: result }, 200);
 });
 // [수정] 특정 코치 정보 업데이트
 coaches.patch('/:id', (c) => {

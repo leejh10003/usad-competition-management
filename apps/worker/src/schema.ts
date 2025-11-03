@@ -89,9 +89,13 @@ export const coachSelectSchema = z.object({
   teams: z.array(teamSelectSchema),
   school: schoolSelectSchema,
 });
-export const coachResponseSchema = z.object({
+export const coachListResponseSchema = z.object({
   success: z.literal(true),
   data: z.array(coachSelectSchema),
+});
+export const coachResponseSchema = z.object({
+  success: z.literal(true),
+  data: coachSelectSchema,
 });
 export const schoolSelectFieldsSchema = {
   id: true,
