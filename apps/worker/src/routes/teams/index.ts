@@ -1,9 +1,54 @@
-// --- ✅ 체크인 (Check-in) 관련 엔드포인트 ---
-
-import { api } from "../..";
-
-// [생성] QR 코드 스캔 후, 체크인 기록 생성
-api.post('/check-ins', (c) => {
+import { OpenAPIHono } from "@hono/zod-openapi";
+import {
+  teamSelectFieldsSchema,
+  teamsListRequestQuerySchema,
+  teamsListResponseSchema,
+} from "../../schema";
+const teams = new OpenAPIHono();
+teams.openapi(
+  {
+    path: "",
+    method: "get",
+    description: "Get Teams Information list",
+    summary: "Get Teams",
+    request: {
+      query: teamsListRequestQuerySchema,
+    },
+    responses: {
+      200: {
+        description: "Successful Response",
+        content: {
+          "application/json": {
+            schema: teamsListResponseSchema,
+          },
+        },
+      },
+    },
+  },
+  async (c) => {
+    const prisma = c.get("prisma");
+    const { offset, limit, id, externalTeamId } = c.req.valid("query");
+    const result = await prisma.team.findMany({
+      select: teamSelectFieldsSchema,
+      where: {
+        id: id
+          ? {
+              equals: id,
+            }
+          : undefined,
+        externalTeamId: externalTeamId
+          ? {
+              contains: externalTeamId,
+            }
+          : undefined,
+      },
+      skip: offset,
+      take: limit,
+    });
+    return c.json({ success: true, data: result });
+  }
+);
+/*api.post('/check-ins', (c) => {
   // body에는 { "qrData": "...", "eventType": "speech" } 같은 정보가 담길 것
   return c.json({ message: 'Student checked in' });
 });
@@ -19,4 +64,5 @@ bulk.post('/students', (c) => {
 // [생성/수정] 코치 정보 CSV 파일로 대량 업로드
 bulk.post('/coaches', (c) => {
   return c.json({ message: 'Bulk import for coaches received' });
-});
+});*/
+export { teams };

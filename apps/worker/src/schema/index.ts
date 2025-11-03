@@ -89,6 +89,16 @@ export const coachSelectSchema = z.object({
   teams: z.array(teamSelectSchema),
   school: schoolSelectSchema,
 });
+export const teamsListResponseSchema = z.object({
+  success: z.literal(true),
+  data: z.array(teamSelectSchema),
+});
+export const teamsListRequestQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).optional().default(10),
+  offset: z.coerce.number().int().min(0).optional().default(0),
+  externalTeamId: z.string().optional(),
+  id: z.string().optional(),
+});
 export const coachListResponseSchema = z.object({
   success: z.literal(true),
   data: z.array(coachSelectSchema),
