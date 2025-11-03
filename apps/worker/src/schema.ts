@@ -44,3 +44,95 @@ export const testError = z.object({
   success: z.literal(false),
   message: z.string(),
 });
+export const coachQuerySchema = z.object({
+  externalCoachId: z.string().optional(),
+  lastName: z.string().optional(),
+  firstName: z.string().optional(),
+  schoolId: z.string().optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional().default(10),
+  offset: z.coerce.number().int().min(0).optional().default(0),
+});
+export const schoolSelectSchema = z.object({
+  id: z.string(),
+  externalSchoolId: z.string(),
+  name: z.string(),
+  isVirtual: z.boolean(),
+  streetAddress: z.string().nullable(),
+  city: z.string().nullable(),
+  state: z.string().nullable(),
+  zipCode: z.string().nullable(),
+  phone: z.string().nullable(),
+  principalName: z.string().nullable(),
+  principalEmail: z.string().nullable(),
+  primaryCoachId: z.string().nullable(),
+  emailDomain: z.string().nullable(),
+});
+export const studentSchema = z.object({
+  id: z.string(),
+  lastName: z.string(),
+  firstName: z.string(),
+  externalStudentId: z.string(),
+  division,
+});
+export const teamSelectSchema = z.object({
+  id: z.string(),
+  externalTeamId: z.string(),
+  students: z.array(studentSchema),
+});
+export const coachSelectSchema = z.object({
+  id: z.string(),
+  externalCoachId: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string(),
+  phone: z.string().nullable(),
+  teams: z.array(teamSelectSchema),
+  school: schoolSelectSchema,
+});
+export const coachResponseSchema = z.object({
+  success: z.literal(true),
+  data: z.array(coachSelectSchema),
+});
+export const schoolSelectFieldsSchema = {
+  id: true,
+  externalSchoolId: true,
+  name: true,
+  isVirtual: true,
+  streetAddress: true,
+  city: true,
+  state: true,
+  zipCode: true,
+  phone: true,
+  principalName: true,
+  principalEmail: true,
+  primaryCoachId: true,
+  emailDomain: true,
+};
+export const studentsSelectFieldsSchema = {
+  id: true,
+  lastName: true,
+  firstName: true,
+  externalStudentId: true,
+  division: true,
+};
+export const teamSelectFieldsSchema = {
+  id: true,
+  externalTeamId: true,
+  students: {
+    select: studentsSelectFieldsSchema
+  }
+};
+export const coachSelectFieldsSchema = {
+  id: true,
+  school: {
+    select: schoolSelectFieldsSchema
+  },
+  teams: {
+    select: teamSelectFieldsSchema
+  },
+  externalCoachId: true,
+  firstName: true,
+  lastName: true,
+  email: true,
+  phone: true
+}
