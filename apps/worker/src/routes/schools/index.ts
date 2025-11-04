@@ -15,7 +15,7 @@ schools.openapi(
     description: "Retrieve a list of schools.",
     tags: ["Schools"],
     request: {
-      params: schoolQuerySchema,
+      query: schoolQuerySchema,
     },
     responses: {
       200: {
@@ -31,7 +31,7 @@ schools.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { externalSchoolId, name, isVirtual, limit, offset } =
-      c.req.valid("param");
+      c.req.valid("query");
     const schools = await prisma.school.findMany({
       select: schoolSelectFieldsSchema,
       skip: offset,
