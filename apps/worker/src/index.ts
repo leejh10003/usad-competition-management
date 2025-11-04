@@ -5,6 +5,7 @@ import { OpenAPIHono } from '@hono/zod-openapi';
 import { appendTrailingSlash } from 'hono/trailing-slash';
 import { students } from './routes/students';
 import { coaches } from './routes/coaches';
+import { schools } from './routes/schools';
 //import { PrismaClientUnknownRequestError, PrismaClientValidationError, PrismaClientKnownRequestError, PrismaClientInitializationError } from '@prisma/client/runtime/library';
 
 const app = new OpenAPIHono<Env>({});
@@ -58,6 +59,7 @@ const api = app.basePath('/api');
 
 api.route('/students', students);
 api.route('/coaches', coaches);
+api.route('/schools', schools);
 
 //api.route('/', students);
 
