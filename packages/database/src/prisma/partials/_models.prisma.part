@@ -29,7 +29,7 @@ model School {
   id String @id @default(uuid()) @db.Uuid
 
   // Business-facing ID provided by USAD.
-  externalSchoolId String @unique @map("external_school_id")
+  externalSchoolId String? @unique @map("external_school_id")
 
   name      String
   isVirtual Boolean @default(false) @map("is_virtual")
@@ -61,7 +61,7 @@ model Team {
   id String @id @default(uuid()) @db.Uuid
 
   // Team ID #, unique only within a specific school.
-  externalTeamId String @map("external_team_id")
+  externalTeamId String? @map("external_team_id")
 
   // Foreign key to the School.
   schoolId String @map("school_id") @db.Uuid
@@ -73,8 +73,6 @@ model Team {
   // 1-N relationship: A team has multiple students.
   students Student[]
 
-  // Enforces that the combination of externalTeamId and schoolId is unique.
-  @@unique([externalTeamId, schoolId])
   @@map("teams")
 }
 
@@ -82,7 +80,7 @@ model Coach {
   id String @id @default(uuid()) @db.Uuid
 
   // Business-facing ID provided by USAD.
-  externalCoachId String @unique @map("external_coach_id")
+  externalCoachId String? @unique @map("external_coach_id")
 
   firstName String @map("first_name")
   lastName  String @map("last_name")
@@ -109,7 +107,7 @@ model Student {
   id String @id @default(uuid()) @db.Uuid
 
   // The globally unique, concatenated ID provided by USAD.
-  externalStudentId String @unique @map("external_student_id")
+  externalStudentId String? @unique @map("external_student_id")
 
   division  Division
   gpa       Float?
