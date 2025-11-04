@@ -166,3 +166,29 @@ export const coachSelectFieldsSchema = {
   email: true,
   phone: true
 }
+export const studentInsertSchema = z.object({
+  lastName: z.string(),
+  firstName: z.string(),
+  externalStudentId: z.string(),
+  division: division,
+  teamId: z.string(),
+  schoolId: z.string(),
+});
+export const studentInsertResponseSchema = z.object({
+  id: z.string(),
+});
+export const studentListInsertResponseSchema = z.object({
+  success: z.literal(true),
+  students: z.array(studentInsertResponseSchema),
+});
+export const studentUpdateSchema = studentInsertSchema.extend({
+  id: z.string(),
+});
+export const studentListInsertSchema = z.object({
+  success: z.literal(true),
+  students: z.array(studentInsertSchema),
+});
+export const studentListUpdateSchema = z.object({
+  success: z.literal(true),
+  students: z.array(studentUpdateSchema),
+});

@@ -1,4 +1,4 @@
-import { studentQuerySchema, testError, testResponse } from '../../schema';
+import { studentListInsertResponseSchema, studentListInsertSchema, studentQuerySchema, testError, testResponse } from '../../schema';
 // --- 🧑‍🎓 학생 (Students) 관련 엔드포인트 ---
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { id } from './:id';
@@ -71,9 +71,38 @@ students.openapi({
   }
 });
 
-// [생성] 새로운 학생 한 명 생성
-students.post('/', (c) => {
-  return c.json({ message: 'Create a new student' }, 201);
+// [생성] 새로운 학생 생성
+students.openapi({
+  method: 'post',
+  path: '',
+  summary: 'Create a new student',
+  description: 'Creates a new student record in the database.',
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: studentListInsertSchema,
+        }
+      }
+    }
+  },
+  responses: {
+    200: {
+      'application/json': {
+        schema: studentListInsertResponseSchema,
+      },
+      description: 'Student created successfully',
+    }
+  }
+}, async (c) => {
+  const prisma = c.get('prisma');
+  const { students } = c.req.valid('json');
+  const result = await prisma.student.createManyAndReturn({
+    data: students,
+    skipDuplicates: true,
+    select: { id: true  }
+  });
+  return c.json({ success: true, students: result }, 200);
 });
 
 students.route('/:id', id);
