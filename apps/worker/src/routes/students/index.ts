@@ -100,7 +100,7 @@ students.openapi({
   const result = await prisma.student.createManyAndReturn({
     data: students,
     skipDuplicates: true,
-    select: { id: true  }
+    select: { id: true }
   });
   return c.json({ success: true, students: result }, 200);
 });
