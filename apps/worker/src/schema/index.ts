@@ -82,6 +82,29 @@ export const schoolSelectSchema = z.object({
   primaryCoachId: z.string().nullable(),
   emailDomain: z.string().nullable(),
 });
+export const schoolInsertSchema = z.object({
+  externalSchoolId: z.string().nullable(),
+  name: z.string(),
+  isVirtual: z.boolean(),
+  streetAddress: z.string().nullable(),
+  city: z.string().nullable(),
+  state: z.string().nullable(),
+  zipCode: z.string().nullable(),
+  phone: z.string().nullable(),
+  principalName: z.string().nullable(),
+  principalEmail: z.string().nullable(),
+  primaryCoachId: z.string().nullable(),
+  emailDomain: z.string().nullable(),
+});
+export const schoolUpdateSchema = schoolInsertSchema.extend({
+  id: z.string()
+});
+export const schoolListInsertSchema = z.object({
+  schools: z.array(schoolInsertSchema)
+});
+export const schoolListUpdateSchema = z.object({
+  schools: z.array(schoolUpdateSchema)
+});
 export const studentSchema = z.object({
   id: z.string(),
   lastName: z.string(),
