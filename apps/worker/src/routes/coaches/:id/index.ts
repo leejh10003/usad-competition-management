@@ -1,5 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { coachResponseSchema, coachSelectFieldsSchema } from "../../../schema";
+import { coachResponseSchema, coachSelectFieldsSchema, coachUpdateByIdSchema } from "../../../schema";
+import { updateCoach } from "..";
 
 const id = new OpenAPIHono();
 
@@ -33,14 +34,38 @@ id.openapi({
     }
     return c.json({ success: true, data: result }, 200);
 });
-// [수정] 특정 코치 정보 업데이트
-id.patch('', (c) => {
-  const id = c.req.param('id');
-  return c.json({ message: `Update coach ${id}` });
-});
-// [삭제] 특정 코치 정보 삭제
-id.delete('', (c) => {
-  const id = c.req.param('id');
-  return c.json({ message: `Delete coach ${id}` });
+id.openapi({
+  method: 'patch',
+  path: '',
+  responses: {
+    200: {
+      description: "Update single coach",
+      content: {
+        "application/json": {
+          schema: coachResponseSchema
+        }
+      }
+    }
+  },
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: coachUpdateByIdSchema
+        }
+      }
+    }
+  }
+}, async (c) => {
+  const { coach } = c.req.valid('json');
+  const prisma = c.get('prisma');
+  const result = await prisma.coach.update({
+    data: updateCoach(coach),
+    where: {
+      id: coach.id
+    },
+    select: coachSelectFieldsSchema
+  });
+  return c.json({success: true, data: result}, 200);
 });
 export { id };

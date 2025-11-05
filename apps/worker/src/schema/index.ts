@@ -122,14 +122,38 @@ export const teamSelectSchema = z.object({
 });
 export const coachSelectSchema = z.object({
   id: z.string(),
-  externalCoachId: z.string(),
+  externalCoachId: z.string().nullable(),
   firstName: z.string(),
   lastName: z.string(),
   email: z.string(),
   phone: z.string().nullable(),
-  teams: z.array(teamSelectSchema),
-  school: schoolSelectSchema,
 });
+export const coachWriteSchema = z.object({
+  externalCoachId: z.string().nullable().nullable(),
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string(),
+  phone: z.string().nullable(),
+  schoolId: z.string()
+});
+export const coachUpdateSchema = z.object({
+  id: z.string(),
+  externalCoachId: z.string().nullable().optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  email: z.string().optional(),
+  phone: z.string().nullable().optional(),
+  schoolId: z.string().optional()
+});
+export const coachListInsertSchema = z.object({
+  coaches: z.array(coachWriteSchema)
+});
+export const coachListUpdateSchema = z.object({
+  coaches: z.array(coachUpdateSchema)
+});
+export const coachUpdateByIdSchema = z.object({
+  coach: coachUpdateSchema
+})
 export const teamsListResponseSchema = z.object({
   success: z.literal(true),
   data: z.array(teamSelectSchema),
@@ -200,12 +224,7 @@ export const teamSelectFieldsSchema = {
 };
 export const coachSelectFieldsSchema = {
   id: true,
-  school: {
-    select: schoolSelectFieldsSchema,
-  },
-  teams: {
-    select: teamSelectFieldsSchema,
-  },
+  schoolId: true,
   externalCoachId: true,
   firstName: true,
   lastName: true,

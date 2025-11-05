@@ -1,9 +1,19 @@
-import { OpenAPIHono } from '@hono/zod-openapi';
-import { coachListResponseSchema, coachQuerySchema, coachSelectFieldsSchema } from '../../schema';
+import { OpenAPIHono, z } from '@hono/zod-openapi';
+import { coachListInsertSchema, coachListResponseSchema, coachListUpdateSchema, coachQuerySchema, coachSelectFieldsSchema, coachUpdateSchema } from '../../schema';
 import { id } from './:id';
 
 // --- 🧑‍🏫 코치 (Coaches) 관련 엔드포인트 ---
 const coaches = new OpenAPIHono();
+export function updateCoach(coach: z.infer<typeof coachUpdateSchema>){
+  return {
+    externalCoachId: coach.externalCoachId !== undefined ? coach.externalCoachId : undefined,
+    firstName: coach.firstName !== undefined ? coach.firstName : undefined,
+    lastName: coach.lastName !== undefined ? coach.lastName : undefined,
+    email: coach.email !== undefined ? coach.email : undefined,
+    phone: coach.phone !== undefined ? coach.phone : undefined,
+    schoolId: coach.schoolId !== undefined ? coach.schoolId : undefined,
+  }
+}
 // [목록] 모든 코치 리스트 조회
 coaches.openapi({
   path: '',
@@ -47,8 +57,70 @@ coaches.openapi({
   });
   return c.json({ success: true, data: result }, 200);
 });
-coaches.post('/', (c) => {
-  return c.json({ message: 'Create a new coach' }, 201);
+coaches.openapi({
+  method: 'put',
+  path: '',
+  responses: {
+    200: {
+      description: "Update multiple coaches",
+      content: {
+        "application/json": {
+          schema: coachListResponseSchema
+        }
+      }
+    }
+  },
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: coachListUpdateSchema
+        }
+      }
+    }
+  }
+}, async (c) => {
+  const { coaches } = c.req.valid('json');
+  const prisma = c.get('prisma');
+  const result = await prisma.$transaction((tx) => Promise.all(coaches.map(async (coach) => await tx.coach.update({
+    data: updateCoach(coach),
+    where: {
+      id: coach.id
+    },
+    select: coachSelectFieldsSchema
+  }))));
+  return c.json({success: true, data: result}, 200);
+});
+coaches.openapi({
+  method: 'post',
+  path: '',
+  responses: {
+    200: {
+      description: "Insert multiple coaches",
+      content: {
+        "application/json": {
+          schema: coachListResponseSchema
+        }
+      }
+    }
+  },
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: coachListInsertSchema
+        }
+      }
+    }
+  }
+}, async (c) => {
+  const { coaches } = c.req.valid('json');
+  const prisma = c.get('prisma');
+  const result = await prisma.coach.createManyAndReturn({
+    data: coaches,
+    select: coachSelectFieldsSchema
+  });
+  return c.json({success: true, data: result}, 200);
 });
 coaches.route('/:id', id);
 
