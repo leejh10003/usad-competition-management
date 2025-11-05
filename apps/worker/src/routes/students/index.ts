@@ -1,7 +1,8 @@
-import { studentListInsertResponseSchema, studentListInsertSchema, studentQuerySchema, testError, testResponse } from '../../schema';
+import { studentListWriteResponseSchema, studentListInsertSchema, studentListUpdateSchema, studentQuerySchema, testError, studentWriteSelectSchema } from '../../schema';
 // --- 🧑‍🎓 학생 (Students) 관련 엔드포인트 ---
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { id } from './:id';
+import _ from 'lodash';
 const students = new OpenAPIHono();
 students.openapi({
   method: 'get',
@@ -15,7 +16,7 @@ students.openapi({
     200: {
       content: {
         'application/json': {
-          schema: testResponse,
+          schema: studentListWriteResponseSchema,
         },
       },
       description: 'Retrieve the user',
@@ -48,19 +49,9 @@ students.openapi({
           in: division.length > 0 ? division : undefined
         }
       },
-      select: {
-        id: true,
-        externalStudentId: true,
-        division: true,
-        gpa: true,
-        firstName: true,
-        lastName: true,
-        usadPin: false,
-        teamId: false,
-        schoolId: false,
-      }
+      select: studentWriteSelectSchema
     });
-    return c.json({ success: true, data: result }, 200);
+    return c.json({ success: true, students: result }, 200);
   } catch (e) {
     if (e instanceof Error) {
       console.error(e.stack, '\n', e.message);
@@ -89,7 +80,7 @@ students.openapi({
   responses: {
     200: {
       'application/json': {
-        schema: studentListInsertResponseSchema,
+        schema: studentListWriteResponseSchema,
       },
       description: 'Student created successfully',
     }
@@ -103,6 +94,61 @@ students.openapi({
     select: { id: true }
   });
   return c.json({ success: true, students: result }, 200);
+});
+
+students.openapi({
+  method: 'put',
+  description: 'Update multiple students',
+  summary: 'Update multiple students',
+  path: '',
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: studentListUpdateSchema
+        }
+      },
+    }
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: studentListWriteResponseSchema //TODO: students update response schema
+        }
+      },
+      description: 'Update multiple students success'
+    }
+  }
+}, async (c) => {
+  const { students } = c.req.valid('json');
+  const prisma = c.get('prisma');
+  const result = await prisma.$transaction(async (tx) => await Promise.all(students.map(async (student) => await tx.student.update({
+    where: {
+      id: student.id
+    },
+    select: {
+      id: true,
+      externalStudentId: true,
+      division: true,
+      gpa: true,
+      firstName: true,
+      lastName: true,
+      teamId: true,
+      schoolId: true,
+    },
+    data: {
+      externalStudentId: !_.isUndefined(student.externalStudentId) ? student.externalStudentId : undefined,
+      division: !_.isUndefined(student.division) ? student.division : undefined,
+      gpa: !_.isUndefined(student.gpa) ? student.gpa : undefined,
+      firstName: !_.isUndefined(student.firstName) ? student.firstName : undefined,
+      lastName: !_.isUndefined(student.lastName) ? student.lastName : undefined,
+      teamId: !_.isUndefined(student.teamId) ? student.teamId : undefined,
+      schoolId: !_.isUndefined(student.schoolId) ? student.schoolId : undefined,
+      usadPin: !_.isUndefined(student.usadPin) ? student.usadPin : undefined,
+    }
+  }))));
+  return c.json({success: true, students: result}, 200)
 });
 
 students.route('/:id', id);
