@@ -12,20 +12,35 @@ export const studentQuerySchema = z.object({
     .default(10)
     .openapi({ description: "Number of students to retrieve", example: 10 }),
   offset: z.coerce.number().int().min(0).optional().default(0),
-  firstName: z.coerce.string().optional().default("").openapi({ description: "Filter by first name", example: "John" }),
-  lastName: z.coerce.string().optional().default("").openapi({ description: "Filter by last name", example: "Doe" }),
-  division: z.coerce.string().optional().transform((e) => {
-    try {
-      const parsed = JSON.parse(e ?? '');
-      if (Array.isArray(parsed) && parsed.every((item) => divisionEnums.includes(item))) {
-        return parsed as $Enums.Division[];
-      } else {
-        throw new Error('Invalid division array');
+  firstName: z.coerce
+    .string()
+    .optional()
+    .default("")
+    .openapi({ description: "Filter by first name", example: "John" }),
+  lastName: z.coerce
+    .string()
+    .optional()
+    .default("")
+    .openapi({ description: "Filter by last name", example: "Doe" }),
+  division: z.coerce
+    .string()
+    .optional()
+    .transform((e) => {
+      try {
+        const parsed = JSON.parse(e ?? "");
+        if (
+          Array.isArray(parsed) &&
+          parsed.every((item) => divisionEnums.includes(item))
+        ) {
+          return parsed as $Enums.Division[];
+        } else {
+          throw new Error("Invalid division array");
+        }
+      } catch (e) {
+        return [];
       }
-    } catch (e) {
-      return [];
-    };
-  }).openapi({ description: "Filter by division", example: "H" }),
+    })
+    .openapi({ description: "Filter by division", example: "H" }),
 });
 export const testResponse = z.object({
   success: z.literal(true),
@@ -125,7 +140,12 @@ export const schoolSelectFieldsSchema = {
 export const schoolQuerySchema = z.object({
   externalSchoolId: z.coerce.string().optional(),
   name: z.coerce.string().optional(),
-  isVirtual: z.coerce.string().transform((v) => {v === 'true' ? true : v === 'false' ? false : undefined}).optional(),
+  isVirtual: z.coerce
+    .string()
+    .transform((v) => {
+      v === "true" ? true : v === "false" ? false : undefined;
+    })
+    .optional(),
   limit: z.coerce.number().int().min(1).max(100).optional().default(10),
   offset: z.coerce.number().int().min(0).optional().default(0),
 });
@@ -149,23 +169,23 @@ export const teamSelectFieldsSchema = {
   id: true,
   externalTeamId: true,
   students: {
-    select: studentsSelectFieldsSchema
-  }
+    select: studentsSelectFieldsSchema,
+  },
 };
 export const coachSelectFieldsSchema = {
   id: true,
   school: {
-    select: schoolSelectFieldsSchema
+    select: schoolSelectFieldsSchema,
   },
   teams: {
-    select: teamSelectFieldsSchema
+    select: teamSelectFieldsSchema,
   },
   externalCoachId: true,
   firstName: true,
   lastName: true,
   email: true,
-  phone: true
-}
+  phone: true,
+};
 export const studentInsertSchema = z.object({
   lastName: z.string(),
   firstName: z.string(),
@@ -173,11 +193,20 @@ export const studentInsertSchema = z.object({
   division: division,
   teamId: z.string(),
   schoolId: z.string(),
+  gpa: z.float32(),
+  usadPin: z.string().optional(),
 });
 export const studentInsertResponseSchema = z.object({
   id: z.string(),
+  externalStudentId: z.string().nullable().optional(),
+  division,
+  gpa: z.float32().nullable().optional(),
+  firstName: z.string(),
+  lastName: z.string(),
+  teamId: z.string(),
+  schoolId: z.string(),
 });
-export const studentListInsertResponseSchema = z.object({
+export const studentListWriteResponseSchema = z.object({
   success: z.literal(true),
   students: z.array(studentInsertResponseSchema),
 });
@@ -189,6 +218,15 @@ export const studentListInsertSchema = z.object({
   students: z.array(studentInsertSchema),
 });
 export const studentListUpdateSchema = z.object({
-  success: z.literal(true),
   students: z.array(studentUpdateSchema),
 });
+export const studentWriteSelectSchema = {
+  id: true,
+  externalStudentId: true,
+  division: true,
+  gpa: true,
+  firstName: true,
+  lastName: true,
+  teamId: true,
+  schoolId: true,
+};
