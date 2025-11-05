@@ -1,10 +1,20 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
+import { OpenAPIHono, z } from "@hono/zod-openapi";
 import {
+  teamInsertListClientInputSchema,
   teamSelectFieldsSchema,
   teamsListRequestQuerySchema,
   teamsListResponseSchema,
+  teamUpdateListClientInputSchema,
+  teamUpdateSchema,
 } from "../../schema";
+import { id } from "./:id";
 const teams = new OpenAPIHono();
+export function updateTeam(team: z.infer<typeof teamUpdateSchema>) {
+  return {
+    externalTeamId: team.externalTeamId !== undefined ? team.externalTeamId : undefined,
+    schoolId: team.schoolId !== undefined ? team.schoolId : undefined,
+  }
+}
 teams.openapi(
   {
     path: "",
@@ -48,21 +58,78 @@ teams.openapi(
     return c.json({ success: true, data: result });
   }
 );
-/*api.post('/check-ins', (c) => {
-  // body에는 { "qrData": "...", "eventType": "speech" } 같은 정보가 담길 것
-  return c.json({ message: 'Student checked in' });
-});
+teams.openapi(
+  {
+    method: "post",
+    path: "",
+    request: {
+      body: {
+        content: {
+          "application/json": {
+            schema: teamInsertListClientInputSchema
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: "Successful Response",
+        content: {
+          "application/json": {
+            schema: teamsListResponseSchema,
+          },
+        },
+      },
+    },
+  },
+  async (c) => {
+    const { teams } = c.req.valid('json');
+    const prisma = c.get('prisma');
+    const result = await prisma.team.createManyAndReturn({
+      data: teams,
+      select: teamSelectFieldsSchema
+    });
+    return c.json({success: true, data: result }, 200);
+  }
+);
+teams.openapi(
+  {
+    method: "put",
+    path: "",
+    request: {
+      body: {
+        content: {
+          "application/json": {
+            schema: teamUpdateListClientInputSchema
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: "Successful Response",
+        content: {
+          "application/json": {
+            schema: teamsListResponseSchema,
+          },
+        },
+      },
+    },
+  },
+  async (c) => {
+    const { teams } = c.req.valid('json');
+    const prisma = c.get('prisma');
+    const result = await prisma.$transaction(tx => Promise.all(teams.map(async (team) => await tx.team.update({
+      where: {
+        id: team.id
+      },
+      data: updateTeam(team),
+      select: teamSelectFieldsSchema
+    }))));
+    return c.json({success: true, data: result }, 200);
+  }
+);
 
+teams.route('/:id', id);
 
-
-// --- 📁 대량 작업 (Bulk Operations) 관련 엔드포인트 ---
-const bulk = api.basePath('/import');
-// [생성/수정] 학생 정보 CSV 파일로 대량 업로드
-bulk.post('/students', (c) => {
-  return c.json({ message: 'Bulk import for students received' });
-});
-// [생성/수정] 코치 정보 CSV 파일로 대량 업로드
-bulk.post('/coaches', (c) => {
-  return c.json({ message: 'Bulk import for coaches received' });
-});*/
 export { teams };

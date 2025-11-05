@@ -117,9 +117,29 @@ export const studentSchema = z.object({
 });
 export const teamSelectSchema = z.object({
   id: z.string(),
-  externalTeamId: z.string(),
-  students: z.array(studentSchema),
+  externalTeamId: z.string().nullable(),
+  schoolId: z.string(),
 });
+export const teamWriteSchema = z.object({
+  externalTeamId: z.string().nullable(),
+  schoolId: z.string(),
+});
+export const teamUpdateSchema = z.object({
+  externalTeamId: z.string().nullable().optional(),
+  schoolId: z.string().optional(),
+});
+export const teamUpdateWithIdSchema = teamUpdateSchema.extend({
+  id: z.string(),
+})
+export const teamInsertListClientInputSchema = z.object({
+  teams: z.array(teamWriteSchema)
+});
+export const teamUpdateListClientInputSchema = z.object({
+  teams: z.array(teamUpdateWithIdSchema)
+});
+export const teamUpdateOneByIdSchema = z.object({
+  team: teamUpdateSchema
+})
 export const coachSelectSchema = z.object({
   id: z.string(),
   externalCoachId: z.string().nullable(),
@@ -157,6 +177,10 @@ export const coachUpdateByIdSchema = z.object({
 export const teamsListResponseSchema = z.object({
   success: z.literal(true),
   data: z.array(teamSelectSchema),
+});
+export const teamResponseSchema = z.object({
+  success: z.literal(true),
+  team: teamSelectSchema
 });
 export const teamsListRequestQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).optional().default(10),
@@ -218,9 +242,7 @@ export const studentsSelectFieldsSchema = {
 export const teamSelectFieldsSchema = {
   id: true,
   externalTeamId: true,
-  students: {
-    select: studentsSelectFieldsSchema,
-  },
+  schoolId: true,
 };
 export const coachSelectFieldsSchema = {
   id: true,
