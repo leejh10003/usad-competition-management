@@ -1,10 +1,10 @@
 import {
-  studentListWriteResponseSchema,
+  studentsResponseSchema,
   studentListInsertSchema,
   studentListUpdateSchema,
   studentQuerySchema,
   testError,
-  studentWriteSelectSchema,
+  studentSelectSchema,
 } from "../../schema";
 // --- 🧑‍🎓 학생 (Students) 관련 엔드포인트 ---
 import { OpenAPIHono } from "@hono/zod-openapi";
@@ -24,7 +24,7 @@ students.openapi(
       200: {
         content: {
           "application/json": {
-            schema: studentListWriteResponseSchema,
+            schema: studentsResponseSchema,
           },
         },
         description: "Retrieve the user",
@@ -59,7 +59,7 @@ students.openapi(
             in: division.length > 0 ? division : undefined,
           },
         },
-        select: studentWriteSelectSchema,
+        select: studentSelectSchema,
       });
       return c.json({ success: true, students: result }, 200);
     } catch (e) {
@@ -92,7 +92,7 @@ students.openapi(
     responses: {
       200: {
         "application/json": {
-          schema: studentListWriteResponseSchema,
+          schema: studentsResponseSchema,
         },
         description: "Student created successfully",
       },
@@ -129,7 +129,7 @@ students.openapi(
       200: {
         content: {
           "application/json": {
-            schema: studentListWriteResponseSchema, //TODO: students update response schema
+            schema: studentsResponseSchema
           },
         },
         description: "Update multiple students success",
