@@ -225,6 +225,9 @@ export const studentListInsertSchema = z.object({
   success: z.literal(true),
   students: z.array(studentInputFromClientSchema),
 });
+export const studentWriteSchema = z.object({
+  student: studentInputFromClientSchema
+})
 export const studentListUpdateSchema = z.object({
   students: z.array(studentUpdateSchema),
 });
