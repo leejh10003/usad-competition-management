@@ -82,25 +82,28 @@ export const schoolSelectSchema = z.object({
   primaryCoachId: z.string().nullable(),
   emailDomain: z.string().nullable(),
 });
-export const schoolInsertSchema = z.object({
-  externalSchoolId: z.string().nullable(),
+export const schoolWriteSchema = z.object({
+  externalSchoolId: z.string().nullable().optional(),
   name: z.string(),
   isVirtual: z.boolean(),
-  streetAddress: z.string().nullable(),
-  city: z.string().nullable(),
-  state: z.string().nullable(),
-  zipCode: z.string().nullable(),
-  phone: z.string().nullable(),
-  principalName: z.string().nullable(),
-  principalEmail: z.string().nullable(),
-  primaryCoachId: z.string().nullable(),
-  emailDomain: z.string().nullable(),
+  streetAddress: z.string().nullable().optional(),
+  city: z.string().nullable().optional(),
+  state: z.string().nullable().optional(),
+  zipCode: z.string().nullable().optional(),
+  phone: z.string().nullable().optional(),
+  principalName: z.string().nullable().optional(),
+  principalEmail: z.string().nullable().optional(),
+  primaryCoachId: z.string().nullable().optional(),
+  emailDomain: z.string().nullable().optional(),
 });
-export const schoolUpdateSchema = schoolInsertSchema.extend({
+export const schoolUpdateSchema = schoolWriteSchema.extend({
   id: z.string()
 });
+export const schoolUpdateRequestSchema = z.object({
+  school: schoolUpdateSchema
+});
 export const schoolListInsertSchema = z.object({
-  schools: z.array(schoolInsertSchema)
+  schools: z.array(schoolWriteSchema)
 });
 export const schoolListUpdateSchema = z.object({
   schools: z.array(schoolUpdateSchema)

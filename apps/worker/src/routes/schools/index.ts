@@ -1,13 +1,31 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
+import { OpenAPIHono, z } from "@hono/zod-openapi";
 import {
   schoolListInsertSchema,
   schoolListResponseSchema,
   schoolListUpdateSchema,
   schoolQuerySchema,
   schoolSelectFieldsSchema,
+  schoolWriteSchema,
 } from "../../schema";
 
 const schools = new OpenAPIHono();
+
+export function updateSchoolField(school: z.infer<typeof schoolWriteSchema>){
+  return {
+    externalSchoolId: school.externalSchoolId !== undefined ? school.externalSchoolId : undefined,
+    name: school.name,
+    isVirtual: school.isVirtual !== undefined ? school.isVirtual : undefined,
+    streetAddress: school.streetAddress !== undefined ? school.streetAddress : undefined,
+    city: school.city !== undefined ? school.city : undefined,
+    state: school.state !== undefined ? school.state : undefined,
+    zipCode: school.zipCode !== undefined ? school.zipCode : undefined,
+    phone: school.phone !== undefined ? school.phone : undefined,
+    principalName: school.principalName !== undefined ? school.principalName : undefined,
+    principalEmail: school.principalEmail !== undefined ? school.principalEmail : undefined,
+    primaryCoachId: school.primaryCoachId !== undefined ? school.primaryCoachId : undefined,
+    emailDomain: school.emailDomain !== undefined ? school.emailDomain : undefined,
+  }
+}
 
 schools.openapi(
   {
@@ -126,7 +144,7 @@ schools.openapi(
         schools.map(
           async (school) =>
             await tx.school.create({
-              data: school,
+              data: updateSchoolField(school),
               select: schoolSelectFieldsSchema,
             })
         )
