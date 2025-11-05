@@ -186,7 +186,7 @@ export const coachSelectFieldsSchema = {
   email: true,
   phone: true,
 };
-export const studentInsertSchema = z.object({
+export const studentInputFromClientSchema = z.object({
   lastName: z.string(),
   firstName: z.string(),
   externalStudentId: z.string(),
@@ -196,7 +196,7 @@ export const studentInsertSchema = z.object({
   gpa: z.float32(),
   usadPin: z.string().optional(),
 });
-export const studentInsertResponseSchema = z.object({
+export const studentResponseSchema = z.object({
   id: z.string(),
   externalStudentId: z.string().nullable().optional(),
   division,
@@ -206,21 +206,25 @@ export const studentInsertResponseSchema = z.object({
   teamId: z.string(),
   schoolId: z.string(),
 });
-export const studentListWriteResponseSchema = z.object({
+export const studentsResponseSchema = z.object({
   success: z.literal(true),
-  students: z.array(studentInsertResponseSchema),
+  students: z.array(studentResponseSchema),
 });
-export const studentUpdateSchema = studentInsertSchema.extend({
+export const studentWriteResponzeSchema = z.object({
+  success: z.literal(true),
+  student: studentResponseSchema
+})
+export const studentUpdateSchema = studentInputFromClientSchema.extend({
   id: z.string(),
 });
 export const studentListInsertSchema = z.object({
   success: z.literal(true),
-  students: z.array(studentInsertSchema),
+  students: z.array(studentInputFromClientSchema),
 });
 export const studentListUpdateSchema = z.object({
   students: z.array(studentUpdateSchema),
 });
-export const studentWriteSelectSchema = {
+export const studentSelectSchema = {
   id: true,
   externalStudentId: true,
   division: true,
