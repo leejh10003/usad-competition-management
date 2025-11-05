@@ -48,7 +48,12 @@ class MyUsadPocStack extends TerraformStack {
       regions: [{
         name: "us-central1",
       }],
-      serverless: {},
+      serverless: {
+        usageLimits: {
+          requestUnitLimit: 50000000,
+          storageMibLimit: 9536,
+        }
+      },
     });
     const cockroachUser = new SqlUser(this, "cockroach-sql-user", {
       password: COCKROACH_SQL_USER_PASSWORD,
