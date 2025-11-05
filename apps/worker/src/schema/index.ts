@@ -196,7 +196,7 @@ export const studentInputFromClientSchema = z.object({
   gpa: z.float32(),
   usadPin: z.string().optional(),
 });
-export const studentResponseSchema = z.object({
+export const studentResponseItemSchema = z.object({
   id: z.string(),
   externalStudentId: z.string().nullable().optional(),
   division,
@@ -208,7 +208,11 @@ export const studentResponseSchema = z.object({
 });
 export const studentsResponseSchema = z.object({
   success: z.literal(true),
-  students: z.array(studentResponseSchema),
+  students: z.array(studentResponseItemSchema),
+});
+export const studentResponseSchema = z.object({
+  success: z.literal(true),
+  student: studentResponseItemSchema,
 });
 export const studentWriteResponzeSchema = z.object({
   success: z.literal(true),
