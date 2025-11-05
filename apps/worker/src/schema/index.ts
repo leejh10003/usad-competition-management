@@ -69,7 +69,7 @@ export const coachQuerySchema = z.object({
 });
 export const schoolSelectSchema = z.object({
   id: z.string(),
-  externalSchoolId: z.string(),
+  externalSchoolId: z.string().nullable(),
   name: z.string(),
   isVirtual: z.boolean(),
   streetAddress: z.string().nullable(),
