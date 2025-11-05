@@ -5,12 +5,31 @@ import {
   studentQuerySchema,
   testError,
   studentSelectSchema,
+  studentInputFromClientSchema,
 } from "../../schema";
 // --- 🧑‍🎓 학생 (Students) 관련 엔드포인트 ---
-import { OpenAPIHono } from "@hono/zod-openapi";
+import { OpenAPIHono, z } from "@hono/zod-openapi";
 import { id } from "./:id";
 import _ from "lodash";
 const students = new OpenAPIHono();
+export function updateStudentField(
+  student: z.infer<typeof studentInputFromClientSchema>
+) {
+  return {
+    externalStudentId: !_.isUndefined(student.externalStudentId)
+      ? student.externalStudentId
+      : undefined,
+    division: !_.isUndefined(student.division) ? student.division : undefined,
+    gpa: !_.isUndefined(student.gpa) ? student.gpa : undefined,
+    firstName: !_.isUndefined(student.firstName)
+      ? student.firstName
+      : undefined,
+    lastName: !_.isUndefined(student.lastName) ? student.lastName : undefined,
+    teamId: !_.isUndefined(student.teamId) ? student.teamId : undefined,
+    schoolId: !_.isUndefined(student.schoolId) ? student.schoolId : undefined,
+    usadPin: !_.isUndefined(student.usadPin) ? student.usadPin : undefined,
+  };
+}
 students.openapi(
   {
     method: "get",
@@ -129,7 +148,7 @@ students.openapi(
       200: {
         content: {
           "application/json": {
-            schema: studentsResponseSchema
+            schema: studentsResponseSchema,
           },
         },
         description: "Update multiple students success",
@@ -148,40 +167,8 @@ students.openapi(
                 where: {
                   id: student.id,
                 },
-                select: {
-                  id: true,
-                  externalStudentId: true,
-                  division: true,
-                  gpa: true,
-                  firstName: true,
-                  lastName: true,
-                  teamId: true,
-                  schoolId: true,
-                },
-                data: {
-                  externalStudentId: !_.isUndefined(student.externalStudentId)
-                    ? student.externalStudentId
-                    : undefined,
-                  division: !_.isUndefined(student.division)
-                    ? student.division
-                    : undefined,
-                  gpa: !_.isUndefined(student.gpa) ? student.gpa : undefined,
-                  firstName: !_.isUndefined(student.firstName)
-                    ? student.firstName
-                    : undefined,
-                  lastName: !_.isUndefined(student.lastName)
-                    ? student.lastName
-                    : undefined,
-                  teamId: !_.isUndefined(student.teamId)
-                    ? student.teamId
-                    : undefined,
-                  schoolId: !_.isUndefined(student.schoolId)
-                    ? student.schoolId
-                    : undefined,
-                  usadPin: !_.isUndefined(student.usadPin)
-                    ? student.usadPin
-                    : undefined,
-                },
+                select: studentSelectSchema,
+                data: updateStudentField(student),
               })
           )
         )
