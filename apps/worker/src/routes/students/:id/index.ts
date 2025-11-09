@@ -1,8 +1,8 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import {
   studentResponseSchema,
-  studentSelectSchema,
-  studentWriteSchema,
+  studentSelectFieldsSchema,
+  studentUpdateSchema,
 } from "../../../schema";
 import _ from "lodash";
 import { updateStudentField } from "..";
@@ -35,7 +35,7 @@ id.openapi(
           equals: id,
         },
       },
-      select: studentSelectSchema,
+      select: studentSelectFieldsSchema,
     });
     return c.json({ success: true, student: result! }, 200); //TODO: if null?
   }
@@ -49,7 +49,7 @@ id.openapi(
       body: {
         content: {
           "application/json": {
-            schema: studentWriteSchema,
+            schema: studentUpdateSchema,
           },
         },
       },
@@ -73,7 +73,7 @@ id.openapi(
       where: {
         id: id,
       },
-      select: studentSelectSchema,
+      select: studentSelectFieldsSchema,
       data: updateStudentField(student),
     });
     return c.json({ success: true, student: result! }, 200);

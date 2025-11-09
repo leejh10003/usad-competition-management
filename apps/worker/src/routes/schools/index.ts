@@ -1,16 +1,16 @@
 import { OpenAPIHono, z } from "@hono/zod-openapi";
 import {
-  schoolListInsertSchema,
-  schoolListResponseSchema,
-  schoolListUpdateSchema,
+  schoolsInsertSchema,
+  schoolsResponse,
+  schoolsUpdateSchema,
   schoolQuerySchema,
   schoolSelectFieldsSchema,
-  schoolWriteSchema,
+  schoolUpdateSchema,
 } from "../../schema";
 
 const schools = new OpenAPIHono();
 
-export function updateSchoolField(school: z.infer<typeof schoolWriteSchema>){
+export function updateSchoolField(school: z.infer<typeof schoolUpdateSchema>['school']){
   return {
     externalSchoolId: school.externalSchoolId !== undefined ? school.externalSchoolId : undefined,
     name: school.name,
@@ -41,7 +41,7 @@ schools.openapi(
       200: {
         content: {
           "application/json": {
-            schema: schoolListResponseSchema,
+            schema: schoolsResponse,
           },
         },
         description: "List of schools",
@@ -75,7 +75,7 @@ schools.openapi(
             : undefined,
       },
     });
-    return c.json({ success: true, data: schools }, 200);
+    return c.json({ success: true, schools }, 200);
   }
 );
 schools.openapi(
@@ -86,7 +86,7 @@ schools.openapi(
       200: {
         content: {
           "application/json": {
-            schema: schoolListResponseSchema,
+            schema: schoolsResponse,
           },
         },
         description: "List of schools",
@@ -96,7 +96,7 @@ schools.openapi(
       body: {
         content: {
           "application/json": {
-            schema: schoolListInsertSchema,
+            schema: schoolsInsertSchema,
           },
         },
       },
@@ -109,7 +109,7 @@ schools.openapi(
       select: schoolSelectFieldsSchema,
       data: schools,
     });
-    return c.json({ success: true, data: result }, 200);
+    return c.json({ success: true, schools: result }, 200);
   }
 );
 schools.openapi(
@@ -120,7 +120,7 @@ schools.openapi(
       200: {
         content: {
           "application/json": {
-            schema: schoolListResponseSchema,
+            schema: schoolsResponse,
           },
         },
         description: "List of schools",
@@ -130,7 +130,7 @@ schools.openapi(
       body: {
         content: {
           "application/json": {
-            schema: schoolListUpdateSchema,
+            schema: schoolsUpdateSchema,
           },
         },
       },
@@ -142,15 +142,16 @@ schools.openapi(
     const result = await prisma.$transaction((tx) =>
       Promise.all(
         schools.map(
-          async (school) =>
-            await tx.school.create({
+          async ({id, school}) =>
+            await tx.school.update({
               data: updateSchoolField(school),
               select: schoolSelectFieldsSchema,
-            })
+              where: {id}
+            })!
         )
       )
     );
-    return c.json({ success: true, data: result }, 200);
+    return c.json({ success: true, schools: result }, 200);
   }
 );
 export { schools };

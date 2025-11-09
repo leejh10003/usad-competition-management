@@ -13,11 +13,11 @@ const basicStudentInsert = z.object({
   division,
 });
 export const studentInsertItem = basicStudentInsert
-  .extend(requiredStudentRelationshipInsert)
-  .extend(optionalInfos);
+  .extend(requiredStudentRelationshipInsert.def.shape)
+  .extend(optionalInfos.def.shape);
 export const studentInsertSchema = z.object({
   student: studentInsertItem,
 });
 export const studentsInsertSchema = z.object({
-  students: z.array(studentInsertItem),
+  students: z.array(studentInsertItem).optional(),
 });

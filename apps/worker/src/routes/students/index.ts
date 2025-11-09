@@ -1,11 +1,11 @@
 import {
   studentsResponseSchema,
-  studentListInsertSchema,
-  studentListUpdateSchema,
   studentQuerySchema,
-  testError,
-  studentSelectSchema,
-  studentInputFromClientSchema,
+  studentUpdateSchema,
+  studentsInsertSchema,
+  studentsUpdateSchema,
+  basicFailed,
+  studentSelectFieldsSchema
 } from "../../schema";
 // --- 🧑‍🎓 학생 (Students) 관련 엔드포인트 ---
 import { OpenAPIHono, z } from "@hono/zod-openapi";
@@ -13,7 +13,7 @@ import { id } from "./:id";
 import _ from "lodash";
 const students = new OpenAPIHono();
 export function updateStudentField(
-  student: z.infer<typeof studentInputFromClientSchema>
+  student: z.infer<typeof studentUpdateSchema>['student']
 ) {
   return {
     externalStudentId: !_.isUndefined(student.externalStudentId)
@@ -51,7 +51,7 @@ students.openapi(
       500: {
         content: {
           "application/json": {
-            schema: testError,
+            schema: basicFailed,
           },
         },
         description: "Describe the reason",
@@ -78,7 +78,7 @@ students.openapi(
             in: division.length > 0 ? division : undefined,
           },
         },
-        select: studentSelectSchema,
+        select: studentSelectFieldsSchema,
       });
       return c.json({ success: true, students: result }, 200);
     } catch (e) {
@@ -103,7 +103,7 @@ students.openapi(
       body: {
         content: {
           "application/json": {
-            schema: studentListInsertSchema,
+            schema: studentsInsertSchema,
           },
         },
       },
@@ -139,7 +139,7 @@ students.openapi(
       body: {
         content: {
           "application/json": {
-            schema: studentListUpdateSchema,
+            schema: studentsUpdateSchema,
           },
         },
       },
@@ -162,12 +162,12 @@ students.openapi(
       async (tx) =>
         await Promise.all(
           students.map(
-            async (student) =>
+            async ({student, id}) =>
               await tx.student.update({
                 where: {
-                  id: student.id,
+                  id: id,
                 },
-                select: studentSelectSchema,
+                select: studentSelectFieldsSchema,
                 data: updateStudentField(student),
               })
           )

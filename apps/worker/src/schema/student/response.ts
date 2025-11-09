@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi";
 import { division } from "../constants";
-
+import { basicSuccess } from "../baseTypes";
 
 export const studentResponseItemSchema = z.object({
   id: z.string(),
@@ -12,11 +12,11 @@ export const studentResponseItemSchema = z.object({
   teamId: z.string(),
   schoolId: z.string(),
 });
-export const studentsResponseSchema = z.object({
+export const studentsResponseSchema = basicSuccess.extend({
   success: z.literal(true),
   students: z.array(studentResponseItemSchema),
 });
-export const studentResponseSchema = z.object({
+export const studentResponseSchema = basicSuccess.extend({
   success: z.literal(true),
   student: studentResponseItemSchema,
 });

@@ -6,8 +6,8 @@ import {
 } from "./baseTypes";
 
 export const coachInsertItemSchema = requiredBasicInfos
-  .extend(schoolIdSchema)
-  .extend(optionalInfos);
+  .extend(schoolIdSchema.def.shape)
+  .extend(optionalInfos.def.shape);
 export const coachInsertSchema = z.object({
   coach: z.lazy(() => coachInsertItemSchema),
 });

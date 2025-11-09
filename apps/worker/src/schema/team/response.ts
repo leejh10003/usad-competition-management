@@ -1,14 +1,15 @@
 import { z } from "@hono/zod-openapi";
+import { basicSuccess } from "../baseTypes";
 
 export const teamResponseItemSchema = z.object({
   id: z.string(),
   externalTeamId: z.string().nullable(),
   schoolId: z.string(),
-})
-
-export const teamResponseSchema = z.object({
-  team: teamResponseItemSchema
 });
-export const teamsResponseSchema = z.object({
-  teams: z.array(teamResponseItemSchema)
-})
+
+export const teamResponseSchema = basicSuccess.extend({
+  team: teamResponseItemSchema,
+});
+export const teamsResponseSchema = basicSuccess.extend({
+  teams: z.array(teamResponseItemSchema),
+});

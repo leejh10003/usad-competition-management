@@ -11,8 +11,10 @@ export const optionalBasicInfos = z.object({
   principalName: z.string().nullable().optional(),
   principalEmail: z.string().nullable().optional(),
   emailDomain: z.string().nullable().optional(),
+  primaryCoachId: z.string().nullable().optional()
 });
-export const optionalInfos = optionalBasicInfos.extend(coachesInsertSchema);
+export const optionalInfos = optionalBasicInfos.extend(coachesInsertSchema.def.shape);
 export const basicRequiredInfos = z.object({
   name: z.string(),
+  isVirtual: z.boolean()
 });

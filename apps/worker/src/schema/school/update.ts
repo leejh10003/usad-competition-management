@@ -3,9 +3,10 @@ import { optionalInfos } from "./baseTypes";
 
 export const requiredInfosOptional = z.object({
     name: z.string().optional(),
+    isVirtual: z.boolean().optional()
 })
 
-export const schoolUpdateItem = requiredInfosOptional.extend(optionalInfos);
+export const schoolUpdateItem = requiredInfosOptional.extend(optionalInfos.def.shape);
 export const schoolUpdateSchema = z.object({
   id: z.string(),
   school: schoolUpdateItem

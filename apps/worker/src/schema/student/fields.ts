@@ -1,4 +1,4 @@
-export const studentFields = {
+export const studentSelectFieldsSchema = {
   id: true,
   externalStudentId: true,
   division: true,

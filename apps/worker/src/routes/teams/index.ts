@@ -1,15 +1,15 @@
 import { OpenAPIHono, z } from "@hono/zod-openapi";
 import {
-  teamInsertListClientInputSchema,
+  teamsInsertSchema,
   teamSelectFieldsSchema,
-  teamsListRequestQuerySchema,
-  teamsListResponseSchema,
-  teamUpdateListClientInputSchema,
+  teamsResponseSchema,
+  teamQuerySchema,
+  teamsUpdateSchema,
   teamUpdateSchema,
 } from "../../schema";
 import { id } from "./:id";
 const teams = new OpenAPIHono();
-export function updateTeam(team: z.infer<typeof teamUpdateSchema>) {
+export function updateTeam(team: z.infer<typeof teamUpdateSchema>['team']) {
   return {
     externalTeamId: team.externalTeamId !== undefined ? team.externalTeamId : undefined,
     schoolId: team.schoolId !== undefined ? team.schoolId : undefined,
@@ -22,14 +22,14 @@ teams.openapi(
     description: "Get Teams Information list",
     summary: "Get Teams",
     request: {
-      query: teamsListRequestQuerySchema,
+      query: teamQuerySchema,
     },
     responses: {
       200: {
         description: "Successful Response",
         content: {
           "application/json": {
-            schema: teamsListResponseSchema,
+            schema: teamsResponseSchema,
           },
         },
       },
@@ -55,7 +55,7 @@ teams.openapi(
       skip: offset,
       take: limit,
     });
-    return c.json({ success: true, data: result });
+    return c.json({ success: true, teams: result });
   }
 );
 teams.openapi(
@@ -66,7 +66,7 @@ teams.openapi(
       body: {
         content: {
           "application/json": {
-            schema: teamInsertListClientInputSchema
+            schema: teamsInsertSchema
           },
         },
       },
@@ -76,7 +76,7 @@ teams.openapi(
         description: "Successful Response",
         content: {
           "application/json": {
-            schema: teamsListResponseSchema,
+            schema: teamsResponseSchema,
           },
         },
       },
@@ -89,7 +89,7 @@ teams.openapi(
       data: teams,
       select: teamSelectFieldsSchema
     });
-    return c.json({success: true, data: result }, 200);
+    return c.json({success: true, teams: result }, 200);
   }
 );
 teams.openapi(
@@ -100,7 +100,7 @@ teams.openapi(
       body: {
         content: {
           "application/json": {
-            schema: teamUpdateListClientInputSchema
+            schema: teamsUpdateSchema
           },
         },
       },
@@ -110,7 +110,7 @@ teams.openapi(
         description: "Successful Response",
         content: {
           "application/json": {
-            schema: teamsListResponseSchema,
+            schema: teamsResponseSchema,
           },
         },
       },
@@ -119,14 +119,14 @@ teams.openapi(
   async (c) => {
     const { teams } = c.req.valid('json');
     const prisma = c.get('prisma');
-    const result = await prisma.$transaction(tx => Promise.all(teams.map(async (team) => await tx.team.update({
+    const result = await prisma.$transaction(tx => Promise.all(teams.map(async ({team, id}) => await tx.team.update({
       where: {
-        id: team.id
+        id: id
       },
       data: updateTeam(team),
       select: teamSelectFieldsSchema
     }))));
-    return c.json({success: true, data: result }, 200);
+    return c.json({success: true, teams: result }, 200);
   }
 );
 

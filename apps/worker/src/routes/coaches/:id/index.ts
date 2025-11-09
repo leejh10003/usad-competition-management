@@ -1,5 +1,5 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { coachResponseSchema, coachSelectFieldsSchema, coachUpdateByIdSchema } from "../../../schema";
+import { coachResponseSchema, coachSelectFieldsSchema, coachUpdateSchema } from "../../../schema";
 import { updateCoach } from "..";
 
 const id = new OpenAPIHono();
@@ -32,7 +32,7 @@ id.openapi({
     if (!result) {
       throw new Error('Coach not found'); //TODO: 에러 핸들링 개선
     }
-    return c.json({ success: true, data: result }, 200);
+    return c.json({ success: true, coach: result }, 200);
 });
 id.openapi({
   method: 'patch',
@@ -51,21 +51,22 @@ id.openapi({
     body: {
       content: {
         "application/json": {
-          schema: coachUpdateByIdSchema
+          schema: coachUpdateSchema
         }
       }
     }
   }
 }, async (c) => {
   const { coach } = c.req.valid('json');
+  const id = c.req.param('id');
   const prisma = c.get('prisma');
   const result = await prisma.coach.update({
     data: updateCoach(coach),
     where: {
-      id: coach.id
+      id: id!
     },
     select: coachSelectFieldsSchema
   });
-  return c.json({success: true, data: result}, 200);
+  return c.json({success: true, coach: result}, 200);
 });
 export { id };

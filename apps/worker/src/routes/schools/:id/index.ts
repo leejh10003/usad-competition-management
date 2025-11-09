@@ -1,8 +1,8 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import {
-  schoolResponseSchema,
+  schoolResponse,
   schoolSelectFieldsSchema,
-  schoolUpdateRequestSchema,
+  schoolUpdateSchema,
 } from "../../../schema";
 import { updateSchoolField } from "..";
 
@@ -18,7 +18,7 @@ id.openapi(
       200: {
         content: {
           "application/json": {
-            schema: schoolResponseSchema,
+            schema: schoolResponse,
           },
         },
         description: "Details of the specified school",
@@ -32,7 +32,7 @@ id.openapi(
       where: { id },
       select: schoolSelectFieldsSchema,
     });
-    return c.json({ success: true, data: school! }, 200);
+    return c.json({ success: true, school: school! }, 200);
   }
 );
 
@@ -46,7 +46,7 @@ id.openapi(
       200: {
         content: {
           "application/json": {
-            schema: schoolResponseSchema,
+            schema: schoolResponse,
           },
         },
         description: "Details of the specified school",
@@ -56,7 +56,7 @@ id.openapi(
       body: {
         content: {
           "application/json": {
-            schema: schoolUpdateRequestSchema,
+            schema: schoolUpdateSchema,
           },
         },
       },
@@ -71,7 +71,7 @@ id.openapi(
       select: schoolSelectFieldsSchema,
       data: updateSchoolField(school)
     });
-    return c.json({success: true, data: result!}, 200);
+    return c.json({success: true, school: result!}, 200);
   }
 );
 id;

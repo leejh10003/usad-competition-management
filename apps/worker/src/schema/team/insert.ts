@@ -3,8 +3,8 @@ import { optionalInfos, schoolRelationshipById } from "./baseTypes";
 import { studentsInsertSchema } from "../student";
 
 export const teamInsertItem = schoolRelationshipById
-  .extend(optionalInfos)
-  .extend(studentsInsertSchema);
+  .extend(optionalInfos.def.shape)
+  .extend(studentsInsertSchema.def.shape);
 export const teamInsertSchema = z.object({
     team: teamInsertItem
 });

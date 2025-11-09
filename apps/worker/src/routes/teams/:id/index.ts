@@ -1,5 +1,5 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { teamResponseSchema, teamSelectFieldsSchema, teamUpdateOneByIdSchema } from "../../../schema";
+import { teamResponseSchema, teamSelectFieldsSchema, teamUpdateSchema } from "../../../schema";
 import { updateTeam } from "..";
 
 const id = new OpenAPIHono();
@@ -38,7 +38,7 @@ id.openapi(
         body: {
             content: {
                 "application/json": {
-                    schema: teamUpdateOneByIdSchema
+                    schema: teamUpdateSchema
                 }
             }
         }
