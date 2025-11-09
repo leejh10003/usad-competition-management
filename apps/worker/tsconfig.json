@@ -5,6 +5,7 @@
       "ESNext"
     ],
     "moduleResolution": "node16",
+    "declaration": false,
     "module": "node16",
     "types": [
       "@cloudflare/workers-types",
