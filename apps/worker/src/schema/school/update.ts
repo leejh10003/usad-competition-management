@@ -8,7 +8,7 @@ export const requiredInfosOptional = z.object({
 
 export const schoolUpdateItem = requiredInfosOptional.extend(optionalInfos.def.shape);
 export const schoolUpdateSchema = z.object({
-  id: z.string(),
+  id: z.uuid(),
   school: schoolUpdateItem
 });
 export const schoolsUpdateSchema = z.object({

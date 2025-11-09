@@ -3,14 +3,14 @@ import { division } from "../constants";
 import { basicSuccess } from "../baseTypes";
 
 export const studentResponseItemSchema = z.object({
-  id: z.string(),
+  id: z.uuid(),
   externalStudentId: z.string().nullable(),
   division,
   gpa: z.float32().nullable(),
   firstName: z.string(),
   lastName: z.string(),
-  teamId: z.string(),
-  schoolId: z.string(),
+  teamId: z.uuid(),
+  schoolId: z.uuid(),
 });
 export const studentsResponseSchema = basicSuccess.extend({
   success: z.literal(true),

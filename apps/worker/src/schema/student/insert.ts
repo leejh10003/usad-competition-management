@@ -2,8 +2,8 @@ import { z } from "@hono/zod-openapi";
 import { division } from "../constants";
 import { optionalInfos } from "./baseTypes";
 const requiredStudentRelationshipInsert = z.object({
-  teamId: z.string(),
-  schoolId: z.string(),
+  teamId: z.uuid(),
+  schoolId: z.uuid(),
 });
 
 const basicStudentInsert = z.object({

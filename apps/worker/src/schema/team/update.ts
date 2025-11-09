@@ -2,7 +2,7 @@ import { z } from "@hono/zod-openapi";
 import { optionalInfos } from "./baseTypes";
 
 export const schoolRelationshipByIdUpdate = z.object({
-  schoolId: z.string().optional(),
+  schoolId: z.uuid().optional(),
 });
 
 export const teamUpdateItemSchema = optionalInfos.extend(
@@ -10,7 +10,7 @@ export const teamUpdateItemSchema = optionalInfos.extend(
 );
 
 export const teamUpdateSchema = z.object({
-  id: z.string(),
+  id: z.uuid(),
   team: teamUpdateItemSchema,
 });
 export const teamsUpdateSchema = z.object({

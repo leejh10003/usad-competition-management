@@ -4,12 +4,9 @@ import { basicSuccess } from "../baseTypes";
 
 export const schoolResponseItemSchema = optionalBasicInfos
   .extend({
-    id: z.string(),
+    id: z.uuid(),
   })
-  .extend(basicRequiredInfos.def.shape)
-  .extend({
-    id: z.string(),
-  });
+  .extend(basicRequiredInfos.def.shape);
 export const schoolResponse = basicSuccess.extend({
   school: schoolResponseItemSchema,
 });

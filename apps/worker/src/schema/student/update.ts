@@ -10,17 +10,18 @@ const basicStudentUpdate = z.object({
 });
 
 const studentRelationshipUpdate = z.object({
-  teamId: z.string().optional(),
+  teamId: z.uuid().optional(),
+  schoolId: z.uuid().optional()
 });
 export const studentUpdateItem = basicStudentUpdate
   .extend(studentRelationshipUpdate.def.shape)
   .extend(optionalInfos.def.shape)
   .extend({
-    schoolId: z.string().optional()
+    schoolId: z.uuid().optional()
   });
 
 export const studentUpdateSchema = z.object({
-  id: z.string(),
+  id: z.uuid(),
   student: studentUpdateItem,
 });
 export const studentsUpdateSchema = z.object({

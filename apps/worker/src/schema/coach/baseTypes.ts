@@ -6,7 +6,7 @@ export const requiredBasicInfos = z.object({
   email: z.string()
 });
 export const schoolIdSchema = z.object({
-  schoolId: z.string(),
+  schoolId: z.uuid(),
 });
 export const optionalInfos = z.object({
     externalCoachId: z.string().nullable().optional(),

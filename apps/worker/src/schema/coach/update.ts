@@ -7,13 +7,13 @@ export const requiredBasicInfosOptional = z.object({
   email: z.string().optional()
 });
 export const schoolIdSchemaUpdate = z.object({
-  schoolId: z.string().optional(),
+  schoolId: z.uuid().optional(),
 });
 export const coachUpdateItemSchema = requiredBasicInfosOptional
   .extend(schoolIdSchemaUpdate.def.shape)
   .extend(optionalInfos.def.shape);
 export const coachUpdateSchema = z.object({
-  id: z.string(),
+  id: z.uuid(),
   coach: z.lazy(() => coachUpdateItemSchema),
 });
 export const coachesUpdateSchema = z.object({

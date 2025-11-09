@@ -6,7 +6,7 @@ export const coachResponseItemSchema = requiredBasicInfos
   .extend(schoolIdSchema.def.shape)
   .extend(optionalInfos.def.shape)
   .extend({
-    id: z.string(),
+    id: z.uuid(),
   });
 
 export const coachResponseSchema = basicSuccess.extend({

@@ -1,7 +1,7 @@
 import { z } from "@hono/zod-openapi";
 
 export const schoolRelationshipById = z.object({
-    schoolId: z.string(),
+    schoolId: z.uuid(),
 });
 
 export const optionalInfos = z.object({
