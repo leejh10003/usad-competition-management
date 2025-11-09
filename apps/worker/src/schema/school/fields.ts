@@ -1,0 +1,15 @@
+export const schoolSelectFieldsSchema = {
+  id: true,
+  externalSchoolId: true,
+  name: true,
+  isVirtual: true,
+  streetAddress: true,
+  city: true,
+  state: true,
+  zipCode: true,
+  phone: true,
+  principalName: true,
+  principalEmail: true,
+  primaryCoachId: true,
+  emailDomain: true,
+};
