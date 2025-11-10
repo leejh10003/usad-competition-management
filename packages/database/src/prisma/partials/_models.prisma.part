@@ -10,15 +10,6 @@ enum Division {
   V // Varsity
 }
 
-enum ScanType {
-  REGISTRATION_COACH
-  REGISTRATION_CHECK_IN_COACH
-  CHECK_IN_SPEECH_STUDENT
-  EVALUATION_SPEECH_STUDENT
-  AWARDS
-  STUDENT_EVENT
-}
-
 
 // ----------------------------------------
 // Main Data Models
@@ -67,13 +58,20 @@ model Team {
   schoolId String @map("school_id") @db.Uuid
   school   School @relation(fields: [schoolId], references: [id])
 
-  // M-N relationship: A team can have multiple coaches, and a coach can be on multiple teams.
-  coaches Coach[]
+  coachesRelationship TeamCoachRelationship[] @relation("TeamRelationshipToCoach")
 
   // 1-N relationship: A team has multiple students.
   students Student[]
 
   @@map("teams")
+}
+
+model TeamCoachRelationship {
+  teamId String @map("team_id") @db.Uuid
+  team Team @relation("TeamRelationshipToCoach", fields: [teamId], references: [id])
+  coachId String @map("coach_id") @db.Uuid
+  coach Coach @relation("CoachRelationshipToTeam", fields: [coachId], references: [id])
+  @@id([teamId, coachId])
 }
 
 model Coach {
@@ -95,10 +93,7 @@ model Coach {
   primarySchool School? @relation("PrimaryCoachOfSchool")
 
   // M-N relationship with Team. Prisma will manage the implicit join table.
-  teams Team[]
-
-  // 1-N relationship with Scan.
-  scans Scan[]
+  teamRelationship TeamCoachRelationship[] @relation("CoachRelationshipToTeam")
 
   @@map("coaches")
 }
@@ -123,22 +118,5 @@ model Student {
   schoolId String @map("school_id") @db.Uuid
   school   School @relation(fields: [schoolId], references: [id])
 
-  // 1-N relationship with Scan.
-  scans Scan[]
-
   @@map("students")
-}
-
-model Scan {
-  id        String   @id @default(uuid()) @db.Uuid
-  type      ScanType
-  timestamp DateTime @default(now())
-
-  // A scan is associated with EITHER a Coach OR a Student.
-  coachId   String? @map("coach_id") @db.Uuid
-  coach     Coach?  @relation(fields: [coachId], references: [id])
-  studentId String? @map("student_id") @db.Uuid
-  student   Student? @relation(fields: [studentId], references: [id])
-
-  @@map("scans")
 }
