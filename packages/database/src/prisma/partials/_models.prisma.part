@@ -111,12 +111,12 @@ model Student {
   usadPin   String? @map("usad_pin")
 
   // Every student must belong to a team (even if it's a virtual "Individuals" team).
-  teamId String @map("team_id") @db.Uuid
-  team   Team   @relation(fields: [teamId], references: [id])
+  teamId String? @map("team_id") @db.Uuid
+  team   Team?   @relation(fields: [teamId], references: [id])
 
   // Every student belongs to a school.
-  schoolId String @map("school_id") @db.Uuid
-  school   School @relation(fields: [schoolId], references: [id])
+  schoolId String? @map("school_id") @db.Uuid
+  school   School? @relation(fields: [schoolId], references: [id])
 
   @@map("students")
 }

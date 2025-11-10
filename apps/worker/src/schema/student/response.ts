@@ -9,8 +9,8 @@ export const studentResponseItemSchema = z.object({
   gpa: z.float32().nullable(),
   firstName: z.string(),
   lastName: z.string(),
-  teamId: z.uuid(),
-  schoolId: z.uuid(),
+  teamId: z.uuid().nullable(),
+  schoolId: z.uuid().nullable(),
 });
 export const studentsResponseSchema = basicSuccess.extend({
   success: z.literal(true),
