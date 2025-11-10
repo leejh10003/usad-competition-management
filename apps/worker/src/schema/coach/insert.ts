@@ -14,3 +14,9 @@ export const coachInsertSchema = z.object({
 export const coachesInsertSchema = z.object({
   coaches: z.array(z.lazy(() => coachInsertItemSchema)),
 });
+export const coachNestedInsertItem = requiredBasicInfos
+  .extend(optionalInfos.def.shape);
+
+export const coachesNestedInsertSchema = z.object({
+  coaches: z.array(z.lazy(() => coachInsertItemSchema)),
+});

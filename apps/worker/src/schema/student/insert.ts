@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi";
 import { division } from "../constants";
-import { optionalInfos } from "./baseTypes";
+import { optionalInfos, studentRelationshipUndeclared } from "./baseTypes";
 const requiredStudentRelationshipInsert = z.object({
   teamId: z.uuid(),
   schoolId: z.uuid(),
@@ -19,5 +19,11 @@ export const studentInsertSchema = z.object({
   student: studentInsertItem,
 });
 export const studentsInsertSchema = z.object({
-  students: z.array(studentInsertItem).optional(),
+  students: z.array(studentInsertItem),
+});
+export const studentNestedInsertItem = basicStudentInsert
+  .extend(studentRelationshipUndeclared.def.shape)
+  .extend(optionalInfos.def.shape);
+export const studentsNestedInsertSchema = z.object({
+  students: z.array(studentNestedInsertItem),
 });

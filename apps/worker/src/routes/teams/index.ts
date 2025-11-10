@@ -8,12 +8,14 @@ import {
   teamUpdateSchema,
 } from "../../schema";
 import { id } from "./:id";
+import { insertTeams } from "../../mutation";
 const teams = new OpenAPIHono();
-export function updateTeam(team: z.infer<typeof teamUpdateSchema>['team']) {
+export function updateTeam(team: z.infer<typeof teamUpdateSchema>["team"]) {
   return {
-    externalTeamId: team.externalTeamId !== undefined ? team.externalTeamId : undefined,
+    externalTeamId:
+      team.externalTeamId !== undefined ? team.externalTeamId : undefined,
     schoolId: team.schoolId !== undefined ? team.schoolId : undefined,
-  }
+  };
 }
 teams.openapi(
   {
@@ -66,7 +68,7 @@ teams.openapi(
       body: {
         content: {
           "application/json": {
-            schema: teamsInsertSchema
+            schema: teamsInsertSchema,
           },
         },
       },
@@ -83,13 +85,12 @@ teams.openapi(
     },
   },
   async (c) => {
-    const { teams } = c.req.valid('json');
-    const prisma = c.get('prisma');
-    const result = await prisma.team.createManyAndReturn({
-      data: teams,
-      select: teamSelectFieldsSchema
-    });
-    return c.json({success: true, teams: result }, 200);
+    const { teams } = c.req.valid("json");
+    const prisma = c.get("prisma");
+    const result = await prisma.$transaction(
+      async (tx) => await insertTeams({ teams }, tx, {})
+    );
+    return c.json({ success: true, teams: result }, 200);
   }
 );
 teams.openapi(
@@ -100,7 +101,7 @@ teams.openapi(
       body: {
         content: {
           "application/json": {
-            schema: teamsUpdateSchema
+            schema: teamsUpdateSchema,
           },
         },
       },
@@ -117,19 +118,26 @@ teams.openapi(
     },
   },
   async (c) => {
-    const { teams } = c.req.valid('json');
-    const prisma = c.get('prisma');
-    const result = await prisma.$transaction(tx => Promise.all(teams.map(async ({team, id}) => await tx.team.update({
-      where: {
-        id: id
-      },
-      data: updateTeam(team),
-      select: teamSelectFieldsSchema
-    }))));
-    return c.json({success: true, teams: result }, 200);
+    const { teams } = c.req.valid("json");
+    const prisma = c.get("prisma");
+    const result = await prisma.$transaction((tx) =>
+      Promise.all(
+        teams.map(
+          async ({ team, id }) =>
+            await tx.team.update({
+              where: {
+                id: id,
+              },
+              data: updateTeam(team),
+              select: teamSelectFieldsSchema,
+            })
+        )
+      )
+    );
+    return c.json({ success: true, teams: result }, 200);
   }
 );
 
-teams.route('/:id', id);
+teams.route("/:id", id);
 
 export { teams };

@@ -5,3 +5,7 @@ export const optionalInfos = z.object({
   usadPin: z.string().nullable().optional(),
   gpa: z.float32().nullable().optional(),
 });
+export const studentRelationshipUndeclared = z.object({
+  teamId: z.uuid().optional(),
+  schoolId: z.uuid().optional()
+});

@@ -7,24 +7,35 @@ import {
   schoolSelectFieldsSchema,
   schoolUpdateSchema,
 } from "../../schema";
+import { insertSchools } from "../../mutation";
 
 const schools = new OpenAPIHono();
 
-export function updateSchoolField(school: z.infer<typeof schoolUpdateSchema>['school']){
+export function updateSchoolField(
+  school: z.infer<typeof schoolUpdateSchema>["school"]
+) {
   return {
-    externalSchoolId: school.externalSchoolId !== undefined ? school.externalSchoolId : undefined,
+    externalSchoolId:
+      school.externalSchoolId !== undefined
+        ? school.externalSchoolId
+        : undefined,
     name: school.name,
     isVirtual: school.isVirtual !== undefined ? school.isVirtual : undefined,
-    streetAddress: school.streetAddress !== undefined ? school.streetAddress : undefined,
+    streetAddress:
+      school.streetAddress !== undefined ? school.streetAddress : undefined,
     city: school.city !== undefined ? school.city : undefined,
     state: school.state !== undefined ? school.state : undefined,
     zipCode: school.zipCode !== undefined ? school.zipCode : undefined,
     phone: school.phone !== undefined ? school.phone : undefined,
-    principalName: school.principalName !== undefined ? school.principalName : undefined,
-    principalEmail: school.principalEmail !== undefined ? school.principalEmail : undefined,
-    primaryCoachId: school.primaryCoachId !== undefined ? school.primaryCoachId : undefined,
-    emailDomain: school.emailDomain !== undefined ? school.emailDomain : undefined,
-  }
+    principalName:
+      school.principalName !== undefined ? school.principalName : undefined,
+    principalEmail:
+      school.principalEmail !== undefined ? school.principalEmail : undefined,
+    primaryCoachId:
+      school.primaryCoachId !== undefined ? school.primaryCoachId : undefined,
+    emailDomain:
+      school.emailDomain !== undefined ? school.emailDomain : undefined,
+  };
 }
 
 schools.openapi(
@@ -105,10 +116,9 @@ schools.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { schools } = c.req.valid("json");
-    const result = await prisma.school.createManyAndReturn({
-      select: schoolSelectFieldsSchema,
-      data: schools,
-    });
+    const result = await prisma.$transaction(
+      async (tx) => await insertSchools({ schools }, tx)
+    );
     return c.json({ success: true, schools: result }, 200);
   }
 );
@@ -142,11 +152,11 @@ schools.openapi(
     const result = await prisma.$transaction((tx) =>
       Promise.all(
         schools.map(
-          async ({id, school}) =>
+          async ({ id, school }) =>
             await tx.school.update({
               data: updateSchoolField(school),
               select: schoolSelectFieldsSchema,
-              where: {id}
+              where: { id },
             })!
         )
       )

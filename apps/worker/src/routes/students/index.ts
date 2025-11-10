@@ -5,15 +5,16 @@ import {
   studentsInsertSchema,
   studentsUpdateSchema,
   basicFailed,
-  studentSelectFieldsSchema
+  studentSelectFieldsSchema,
 } from "../../schema";
 // --- 🧑‍🎓 학생 (Students) 관련 엔드포인트 ---
 import { OpenAPIHono, z } from "@hono/zod-openapi";
 import { id } from "./:id";
 import _ from "lodash";
+import { insertStudents } from "../../mutation";
 const students = new OpenAPIHono();
 export function updateStudentField(
-  student: z.infer<typeof studentUpdateSchema>['student']
+  student: z.infer<typeof studentUpdateSchema>["student"]
 ) {
   return {
     externalStudentId: !_.isUndefined(student.externalStudentId)
@@ -120,11 +121,9 @@ students.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { students } = c.req.valid("json");
-    const result = await prisma.student.createManyAndReturn({
-      data: students,
-      skipDuplicates: true,
-      select: { id: true },
-    });
+    const result = await prisma.$transaction(
+      async (tx) => await insertStudents({ students }, tx, {})
+    );
     return c.json({ success: true, students: result }, 200);
   }
 );
@@ -162,7 +161,7 @@ students.openapi(
       async (tx) =>
         await Promise.all(
           students.map(
-            async ({student, id}) =>
+            async ({ student, id }) =>
               await tx.student.update({
                 where: {
                   id: id,
