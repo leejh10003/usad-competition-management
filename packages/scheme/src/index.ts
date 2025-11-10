@@ -1,7 +1,23 @@
-import { coachesInsertSchema, coachInsertSchema, coachResponseItemSchema } from "./coach";
-import { schoolInsertSchema, schoolResponseItemSchema, schoolsInsertSchema } from "./school";
-import { studentInsertSchema, studentResponseItemSchema, studentsInsertSchema } from "./student";
-import { teamInsertSchema, teamResponseItemSchema, teamsInsertSchema } from "./team";
+import {
+  coachesInsertSchema,
+  coachInsertSchema,
+  coachResponseItemSchema,
+} from "./coach";
+import {
+  schoolInsertSchema,
+  schoolResponseItemSchema,
+  schoolsInsertSchema,
+} from "./school";
+import {
+  studentInsertSchema,
+  studentResponseItemSchema,
+  studentsInsertSchema,
+} from "./student";
+import {
+  teamInsertSchema,
+  teamResponseItemSchema,
+  teamsInsertSchema,
+} from "./team";
 import { z } from "@hono/zod-openapi";
 
 export {
@@ -12,7 +28,7 @@ export {
   coachInsertSchema,
   coachesInsertSchema,
   coachResponseSchema,
-  coachesResponseSchema
+  coachesResponseSchema,
 } from "./coach";
 export {
   schoolSelectFieldsSchema,
@@ -47,21 +63,27 @@ export {
 } from "./team";
 export { basicFailed } from "./baseTypes";
 export { division } from "./constants";
-export type InsertTypes = 
-  z.infer<typeof teamInsertSchema> |
-  z.infer<typeof coachInsertSchema> |
-  z.infer<typeof schoolInsertSchema> |
-  z.infer<typeof studentInsertSchema> |
-  z.infer<typeof studentsInsertSchema> |
-  z.infer<typeof teamsInsertSchema> |
-  z.infer<typeof coachesInsertSchema> |
-  z.infer<typeof schoolsInsertSchema>;
-export type ResponseTypes = 
-  z.infer<typeof teamResponseItemSchema> |
-  Array<z.infer<typeof teamResponseItemSchema>> |
-  z.infer<typeof coachResponseItemSchema> |
-  Array<z.infer<typeof coachResponseItemSchema>> |
-  z.infer<typeof studentResponseItemSchema> |
-  Array<z.infer<typeof studentResponseItemSchema>> |
-  z.infer<typeof schoolResponseItemSchema> |
-  Array<z.infer<typeof schoolResponseItemSchema>>;
+export type InsertTypes =
+  | z.infer<typeof teamInsertSchema>
+  | z.infer<typeof coachInsertSchema>
+  | z.infer<typeof schoolInsertSchema>
+  | z.infer<typeof studentInsertSchema>
+  | z.infer<typeof studentsInsertSchema>
+  | z.infer<typeof teamsInsertSchema>
+  | z.infer<typeof coachesInsertSchema>
+  | z.infer<typeof schoolsInsertSchema>;
+export type ResponseTypes =
+  | z.infer<typeof teamResponseItemSchema>
+  | Array<z.infer<typeof teamResponseItemSchema>>
+  | z.infer<typeof coachResponseItemSchema>
+  | Array<z.infer<typeof coachResponseItemSchema>>
+  | z.infer<typeof studentResponseItemSchema>
+  | Array<z.infer<typeof studentResponseItemSchema>>
+  | z.infer<typeof schoolResponseItemSchema>
+  | Array<z.infer<typeof schoolResponseItemSchema>>;
+export {
+  coachTeamMappings,
+  coachTeamMappingsFieldsSchema,
+  coachTeamMappingsQuerySchema,
+  coachTeamMappingsRespnse,
+} from "./coach-team-mappings";
