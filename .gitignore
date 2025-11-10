@@ -109,14 +109,6 @@ web_modules/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variable files
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
-.env.remote
-
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
@@ -261,7 +253,14 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,windows,macos,terraform,prisma,node
 
 .wrangler/
+# dotenv environment variable files
 .env
+!apps/field-ops/.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+.env.remote
 wrangler.toml
 *.d.ts
 .vscode/*
