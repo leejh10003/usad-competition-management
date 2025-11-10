@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "wrangler deploy --dry-run --outdir dist --minify",
-    "deploy": "wrangler deploy --outdir dist --minify",
+    "deploy": "sed -i ''  \"s|WORKER_API_HOST=.*|WORKER_API_HOST=$(wrangler deploy --outdir dist --minify | grep -o 'https://[^ ]*')|g\" ../field-ops/.env",
     "tail": "wrangler tail"
   },
   "keywords": [],
