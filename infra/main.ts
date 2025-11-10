@@ -109,7 +109,7 @@ class MyUsadPocStack extends TerraformStack {
         type: "github",
         repo: "leejh10003/usad-competition-management",
       },
-      buildCommand: "pnpm build",
+      buildCommand: "pnpm prepare && pnpm build",
       installCommand: "pnpm install",
       outputDirectory: "build",
     });
