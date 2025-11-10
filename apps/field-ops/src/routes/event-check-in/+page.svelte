@@ -1,6 +1,6 @@
 <script>
 	import { Block } from 'konsta/svelte';
-	import QrCodeScanner from '../../components/qrcode-scanner.svelte';
+	import QrCodeScanner from '$lib/components/qrcode-scanner.svelte';
 </script>
 <div class="flex grow flex-col">
 	<QrCodeScanner

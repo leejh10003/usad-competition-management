@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import SignaturePad from '../../../components/signature.svelte';
+	import SignaturePad from '$lib/components/signature.svelte';
 	import { Block, BlockTitle, Button, Dialog, DialogButton } from 'konsta/svelte';
 	import _ from 'lodash';
-	import BottomPadding from '../../../components/bottom-padding.svelte';
+	import BottomPadding from '$lib/components/bottom-padding.svelte';
 	import { eventCheckInClearButtonPressed, eventCheckInSubmitButtonPressed } from '../../store';
 	import Icon from '@iconify/svelte';
 	import { goto } from '$app/navigation';

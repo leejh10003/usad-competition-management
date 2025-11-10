@@ -1,6 +1,6 @@
 <script>
 	import { ActionsButton, Block, BlockTitle, Button } from 'konsta/svelte';
-	import QrCodeScanner from '../../components/qrcode-scanner.svelte';
+	import QrCodeScanner from '$lib/components/qrcode-scanner.svelte';
 	import { goto } from '$app/navigation';
 </script>
 
