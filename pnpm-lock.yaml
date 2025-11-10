@@ -4,7 +4,16 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  database: link:packages/database
+
 importers:
+
+  .:
+    dependencies:
+      database:
+        specifier: link:packages/database
+        version: link:packages/database
 
   apps/field-ops:
     dependencies:
@@ -173,7 +182,7 @@ importers:
         specifier: ^1.12.2
         version: 1.13.2
       database:
-        specifier: workspace:*
+        specifier: link:../../packages/database
         version: link:../../packages/database
       dotenv:
         specifier: ^17.2.3
@@ -193,6 +202,9 @@ importers:
       postgres:
         specifier: ^3.4.7
         version: 3.4.7
+      usad-scheme:
+        specifier: workspace:usad-scheme
+        version: link:../../packages/scheme
       zod:
         specifier: ^4.1.12
         version: 4.1.12
@@ -228,6 +240,25 @@ importers:
       prisma-zod-generator:
         specifier: ^1.31.6
         version: 1.31.7(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)(zod@4.1.12)
+
+  packages/scheme:
+    dependencies:
+      '@hono/zod-openapi':
+        specifier: ^1.1.4
+        version: 1.1.4(hono@4.10.4)(zod@4.1.12)
+      hono:
+        specifier: ^4.9.9
+        version: 4.10.4
+      zod:
+        specifier: ^4.1.12
+        version: 4.1.12
+    devDependencies:
+      esbuild:
+        specifier: ^0.25.10
+        version: 0.25.12
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
 
 packages:
 

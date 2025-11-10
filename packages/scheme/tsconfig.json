@@ -5,29 +5,18 @@
       "ESNext"
     ],
     "moduleResolution": "node16",
-    "declaration": false,
+    "composite": true,
     "module": "node16",
     "types": [
-      "@cloudflare/workers-types",
-      "./worker-configuration.d.ts",
       "node"
     ],
   },
   "include": [
-    "src",
-    "worker-configuration.d.ts"
+    "src"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "cdktf.out"
-  ],
-  "references": [
-    {
-      "path": "../../packages/database"
-    },
-    {
-      "path": "../../packages/scheme"
-    }
   ]
 }

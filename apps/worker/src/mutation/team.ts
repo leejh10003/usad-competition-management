@@ -4,11 +4,11 @@ import {
   teamResponseItemSchema,
   teamSelectFieldsSchema,
   teamsInsertSchema,
-} from "../schema";
+} from "usad-scheme";
 import _ from "lodash";
 import { TransactionSessionType, TransactionContextType } from "./index";
 import { insertStudents } from "./student";
-import { teamInsertItem, teamNestedInsertItem, teamsNestedInsertSchema } from "../schema/team";
+import { teamInsertItem, teamNestedInsertItem, teamsNestedInsertSchema } from "usad-scheme/src/team";
 
 function guranteeRelationship(team: z.infer<typeof teamInsertItem> | z.infer<typeof teamNestedInsertItem>, context: TransactionContextType){
   if (!_.get(team as z.infer<typeof teamInsertItem>, 'schoolId') && !context.schoolId) {

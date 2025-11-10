@@ -3,7 +3,7 @@ import {
   studentResponseSchema,
   studentSelectFieldsSchema,
   studentUpdateSchema,
-} from "../../../schema";
+} from "usad-scheme";
 import _ from "lodash";
 import { updateStudentField } from "..";
 const id = new OpenAPIHono();

@@ -3,13 +3,13 @@ import {
   studentInsertSchema,
   studentSelectFieldsSchema,
   studentsInsertSchema,
-} from "../schema";
+} from "usad-scheme";
 import _ from "lodash";
 import {
   studentInsertItem,
   studentNestedInsertItem,
   studentsNestedInsertSchema,
-} from "../schema/student";
+} from "usad-scheme/src/student";
 import { TransactionSessionType, TransactionContextType } from "./index";
 function guranteeRelationship(
   studentInput:

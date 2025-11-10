@@ -6,7 +6,7 @@ import {
   studentsUpdateSchema,
   basicFailed,
   studentSelectFieldsSchema,
-} from "../../schema";
+} from "usad-scheme";
 // --- 🧑‍🎓 학생 (Students) 관련 엔드포인트 ---
 import { OpenAPIHono, z } from "@hono/zod-openapi";
 import { id } from "./:id";

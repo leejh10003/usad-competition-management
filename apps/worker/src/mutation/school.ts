@@ -2,14 +2,14 @@ import { z } from "@hono/zod-openapi";
 import {
   schoolInsertSchema,
   teamResponseItemSchema,
-} from "../schema";
+} from "usad-scheme";
 import _ from "lodash";
-import { coachResponseItemSchema } from "../schema/coach";
+import { coachResponseItemSchema } from "usad-scheme/src/coach";
 import { TransactionSessionType, TransactionContextType } from "./index";
 import {
   schoolResponseItemSchema,
   schoolsInsertSchema,
-} from "../schema/school";
+} from "usad-scheme/src/school";
 import { insertTeams } from "./team";
 import { insertCoaches } from "./coach";
 

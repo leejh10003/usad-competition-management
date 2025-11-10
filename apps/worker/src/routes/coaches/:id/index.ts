@@ -1,5 +1,5 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { coachResponseSchema, coachSelectFieldsSchema, coachUpdateSchema } from "../../../schema";
+import { coachResponseSchema, coachSelectFieldsSchema, coachUpdateSchema } from "usad-scheme";
 import { updateCoach } from "..";
 
 const id = new OpenAPIHono();

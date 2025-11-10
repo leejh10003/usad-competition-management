@@ -3,7 +3,7 @@ import {
   schoolResponse,
   schoolSelectFieldsSchema,
   schoolUpdateSchema,
-} from "../../../schema";
+} from "usad-scheme";
 import { updateSchoolField } from "..";
 
 const id = new OpenAPIHono();

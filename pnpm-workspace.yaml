@@ -1,7 +1,11 @@
 packages:
-  - 'apps/*'
-  - 'packages/*'
+  - apps/*
+  - packages/*
   - '!infra'
+
 onlyBuiltDependencies:
   - esbuild
   - '@tailwindcss/oxide'
+
+overrides:
+  database: link:packages/database

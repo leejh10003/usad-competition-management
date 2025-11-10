@@ -6,7 +6,7 @@ import {
   teamQuerySchema,
   teamsUpdateSchema,
   teamUpdateSchema,
-} from "../../schema";
+} from "usad-scheme";
 import { id } from "./:id";
 import { insertTeams } from "../../mutation";
 const teams = new OpenAPIHono();

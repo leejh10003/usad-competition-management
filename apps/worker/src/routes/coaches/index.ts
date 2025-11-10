@@ -6,7 +6,7 @@ import {
   coachesInsertSchema,
   coachesUpdateSchema,
   coachesResponseSchema,
-} from "../../schema";
+} from "usad-scheme";
 import { id } from "./:id";
 import { insertCoaches } from "../../mutation";
 

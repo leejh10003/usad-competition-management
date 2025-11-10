@@ -6,7 +6,7 @@ import {
   schoolQuerySchema,
   schoolSelectFieldsSchema,
   schoolUpdateSchema,
-} from "../../schema";
+} from "usad-scheme";
 import { insertSchools } from "../../mutation";
 
 const schools = new OpenAPIHono();
