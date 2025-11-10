@@ -26,12 +26,18 @@ importers:
       '@types/lodash':
         specifier: ^4.17.20
         version: 4.17.20
+      axios:
+        specifier: ^1.13.2
+        version: 1.13.2
       html5-qrcode:
         specifier: ^2.3.8
         version: 2.3.8
       konsta:
         specifier: ^5.0.2
         version: 5.0.4
+      linq:
+        specifier: ^4.0.3
+        version: 4.0.3
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -3000,6 +3006,9 @@ packages:
   lilconfig@2.1.0:
     resolution: {integrity: sha512-utWOt/GHzuUxnLKxB6dk81RoOeoNeHgbrXiuGk4yyF5qlRz+iIVWu56E2fqGHFrXz0QNUhLB/8nKqvRH66JKGQ==}
     engines: {node: '>=10'}
+
+  linq@4.0.3:
+    resolution: {integrity: sha512-dP0w2ERJXfVUk6VmmAK+Tz/SxFHwyY7VM6Mrq4fnJmeQf9JNEYFH6qJfV6Qn0N91mfwz2GEE/4S+RDkmDNyUJw==}
 
   local-pkg@1.1.2:
     resolution: {integrity: sha512-arhlxbFRmoQHl33a0Zkle/YWlmNwoyt6QNZEIJcqNbdrsix5Lvc4HyyI3EnwxTYlZYc32EbYrQ8SzEZ7dqgg9A==}
@@ -7099,6 +7108,8 @@ snapshots:
       lightningcss-win32-x64-msvc: 1.30.2
 
   lilconfig@2.1.0: {}
+
+  linq@4.0.3: {}
 
   local-pkg@1.1.2:
     dependencies:
