@@ -92,7 +92,7 @@ export {
   eventResponseItemSchema,
   eventResponseSchema,
   eventSelectFieldsSchema,
-  eventsResponseItemSchema,
+  eventsResponseSchema,
   eventInsertSchema,
   eventsInsertSchema,
   eventUpdateItemSchema,

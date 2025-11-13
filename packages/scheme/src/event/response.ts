@@ -6,7 +6,7 @@ export const eventResponseItemSchema = requiredInfos.extend({
   id: z.uuid(),
 });
 
-export const eventsResponseItemSchema = basicSuccess.extend({
+export const eventsResponseSchema = basicSuccess.extend({
   events: z.array(eventResponseItemSchema),
 });
 

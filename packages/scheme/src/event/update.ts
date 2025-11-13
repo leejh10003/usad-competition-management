@@ -1,16 +1,19 @@
 import { z } from "@hono/zod-openapi";
 
 export const eventUpdateItemSchema = z.object({
-    name: z.string().optional(),
-    startsAt: z.date().optional(),
+  name: z.string().optional(),
+  startsAt: z.date().optional(),
 });
 
-
 export const eventUpdateSchema = z.object({
-    id: z.uuid(),
-    event: eventUpdateItemSchema
+  event: eventUpdateItemSchema,
 });
 
 export const eventsUpdateSchema = z.object({
-    events: z.array(eventUpdateSchema)
+  events: z.array(
+    z.object({
+      id: z.uuid(),
+      event: eventUpdateItemSchema,
+    })
+  ),
 });
