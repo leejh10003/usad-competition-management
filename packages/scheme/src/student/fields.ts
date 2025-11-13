@@ -7,4 +7,5 @@ export const studentSelectFieldsSchema = {
   lastName: true,
   teamId: true,
   schoolId: true,
+  signature: true,
 };

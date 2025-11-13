@@ -21,6 +21,7 @@ export function updateCoach(coach: z.infer<typeof coachUpdateSchema>["coach"]) {
     email: coach.email !== undefined ? coach.email : undefined,
     phone: coach.phone !== undefined ? coach.phone : undefined,
     schoolId: coach.schoolId !== undefined ? coach.schoolId : undefined,
+    signature: coach.signature !== undefined ? coach.signature : undefined,
   };
 }
 // [목록] 모든 코치 리스트 조회

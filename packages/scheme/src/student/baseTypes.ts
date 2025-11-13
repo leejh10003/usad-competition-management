@@ -5,5 +5,6 @@ export const optionalInfos = z.object({
   usadPin: z.string().nullable().optional(),
   gpa: z.float32().nullable().optional(),
   teamId: z.uuid().nullable().optional(),
-  schoolId: z.uuid().nullable().optional()
+  schoolId: z.uuid().nullable().optional(),
+  signature: z.string().nullable().optional()
 });

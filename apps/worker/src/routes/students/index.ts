@@ -29,6 +29,7 @@ export function updateStudentField(
     teamId: !_.isUndefined(student.teamId) ? student.teamId : undefined,
     schoolId: !_.isUndefined(student.schoolId) ? student.schoolId : undefined,
     usadPin: !_.isUndefined(student.usadPin) ? student.usadPin : undefined,
+    signature: !_.isUndefined(student.signature) ? student.signature : undefined,
   };
 }
 students.openapi(
