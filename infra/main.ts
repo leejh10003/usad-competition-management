@@ -88,19 +88,6 @@ class MyUsadPocStack extends TerraformStack {
         enabled: true,
       }
     });
-
-    new VercelProject(this, "qr-scanner", {
-      name: "qr-scanner",
-      framework: "vite",
-      rootDirectory: "apps/qr-scanner",
-      gitRepository: {
-        type: "github",
-        repo: "leejh10003/usad-competition-management",
-      },
-      buildCommand: "pnpm build",
-      installCommand: "pnpm install",
-      outputDirectory: "dist",
-    });
     new VercelProject(this, "field-ops", {
       name: "field-ops",
       framework: "vite",
