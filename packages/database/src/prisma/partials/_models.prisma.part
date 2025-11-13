@@ -94,6 +94,7 @@ model Coach {
 
   // M-N relationship with Team. Prisma will manage the implicit join table.
   teamRelationship TeamCoachRelationship[] @relation("CoachRelationshipToTeam")
+  signature String?
 
   @@map("coaches")
 }
@@ -117,6 +118,26 @@ model Student {
   // Every student belongs to a school.
   schoolId String? @map("school_id") @db.Uuid
   school   School? @relation(fields: [schoolId], references: [id])
+  signature String?
+  eventCheckIns EventCheckIn[] @relation("StudentOfEventCheckIn")
 
   @@map("students")
+}
+
+model Event {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  startsAt DateTime @map("starts_at") @db.Timestamptz(3)
+  eventCheckIn EventCheckIn[] @relation("EventOfEventCheckIn")
+  @@map("events")
+}
+
+model EventCheckIn {
+  studentId String @db.Uuid
+  student Student @relation("StudentOfEventCheckIn", fields: [studentId], references: [id])
+  eventId String @db.Uuid
+  event Event @relation("EventOfEventCheckIn", fields: [eventId], references: [id])
+  checkedInAt DateTime @map("cheked_in_at") @db.Timestamptz(3)
+  @@id([studentId, eventId])
+  @@map("event_check_ins")
 }
