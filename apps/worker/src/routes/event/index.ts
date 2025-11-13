@@ -111,10 +111,20 @@ events.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { events } = c.req.valid("json");
-    const result = await prisma.event.createManyAndReturn({
+    /*const result = await prisma.event.createManyAndReturn({
       data: events,
       select: eventSelectFieldsSchema,
-    });
+    });*/
+    const result = await prisma.$transaction((tx) =>
+      Promise.all(
+        events.map((event) =>
+          tx.event.create({
+            data: event,
+            select: eventSelectFieldsSchema,
+          })
+        )
+      )
+    );
     return c.json({ success: true, events: result }, 200);
   }
 );

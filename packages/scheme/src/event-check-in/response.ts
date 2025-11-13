@@ -1,16 +1,11 @@
 import { z } from "@hono/zod-openapi";
 import { basicSuccess } from "../baseTypes";
-
-export const eventCheckedInResponseItem = z.object({
-  studentId: z.uuid(),
-  eventId: z.uuid(),
-  checkedInAt: z.date(),
-});
+import { eventCheckedInItem } from "./baseTypes";
 
 export const eventCheckedInsResponseSchema = basicSuccess.extend({
-  events: z.array(eventCheckedInResponseItem),
+  eventCheckIns: z.array(eventCheckedInItem),
 });
 
 export const eventCheckedInResponseSchema = basicSuccess.extend({
-  event: eventCheckedInResponseItem,
+  eventCheckIn: eventCheckedInItem,
 });

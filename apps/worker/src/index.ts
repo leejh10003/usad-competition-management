@@ -8,6 +8,7 @@ import { coaches } from './routes/coaches';
 import { schools } from './routes/schools';
 import { teams } from './routes/teams';
 import { events } from './routes/event';
+import { eventCheckIns } from './routes/event-check-in';
 //import { PrismaClientUnknownRequestError, PrismaClientValidationError, PrismaClientKnownRequestError, PrismaClientInitializationError } from '@prisma/client/runtime/library';
 
 const app = new OpenAPIHono<Env>({});
@@ -64,6 +65,7 @@ api.route('/coaches', coaches);
 api.route('/schools', schools);
 api.route('/teams', teams);
 api.route('/events', events);
+api.route('/event-check-ins', eventCheckIns)
 
 //api.route('/', students);
 

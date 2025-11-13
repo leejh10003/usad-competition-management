@@ -102,7 +102,9 @@ export {
 
 export {
   eventCheckInSelectFieldsSchema,
-  eventCheckedInResponseItem,
+  eventCheckedInItem,
   eventCheckedInResponseSchema,
-  eventCheckedInsResponseSchema
+  eventCheckedInsResponseSchema,
+  eventCheckedInInsert,
+  eventCheckedInsInsert
 } from './event-check-in';
