@@ -87,3 +87,22 @@ export {
   coachTeamMappingsQuerySchema,
   coachTeamMappingsRespnse,
 } from "./coach-team-mappings";
+
+export {
+  eventResponseItemSchema,
+  eventResponseSchema,
+  eventSelectFieldsSchema,
+  eventsResponseItemSchema,
+  eventInsertSchema,
+  eventsInsertSchema,
+  eventUpdateItemSchema,
+  eventUpdateSchema,
+  eventsUpdateSchema
+} from './event';
+
+export {
+  eventCheckInSelectFieldsSchema,
+  eventCheckedInResponseItem,
+  eventCheckedInResponseSchema,
+  eventCheckedInsResponseSchema
+} from './event-check-in';

@@ -1,16 +1,15 @@
 import { z } from "@hono/zod-openapi";
 import { basicSuccess } from "../baseTypes";
+import { requiredInfos } from "./baseTypes";
 
-export const eventResponseItemSchema = z.object({
-    id: z.uuid(),
-    name: z.string(),
-    startsAt: z.date(),
+export const eventResponseItemSchema = requiredInfos.extend({
+  id: z.uuid(),
 });
 
 export const eventsResponseItemSchema = basicSuccess.extend({
-    events: z.array(eventResponseItemSchema)
+  events: z.array(eventResponseItemSchema),
 });
 
 export const eventResponseSchema = basicSuccess.extend({
-    event: eventResponseItemSchema
-})
+  event: eventResponseItemSchema,
+});
