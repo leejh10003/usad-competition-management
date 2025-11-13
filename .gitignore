@@ -256,6 +256,8 @@ $RECYCLE.BIN/
 # dotenv environment variable files
 .env
 !apps/field-ops/.env
+!apps/dashboard/.env
+!apps/registration/.env
 .env.development.local
 .env.test.local
 .env.production.local
