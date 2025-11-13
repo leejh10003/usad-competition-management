@@ -100,6 +100,30 @@ class MyUsadPocStack extends TerraformStack {
       installCommand: "pnpm install",
       outputDirectory: "build",
     });
+    new VercelProject(this, "dashboard", {
+      name: "dashboard",
+      framework: "vite",
+      rootDirectory: "apps/dashboard",
+      gitRepository: {
+        type: "github",
+        repo: "leejh10003/usad-competition-management",
+      },
+      buildCommand: "pnpm prepare && pnpm build",
+      installCommand: "pnpm install",
+      outputDirectory: "build",
+    });
+    new VercelProject(this, "registration", {
+      name: "registration",
+      framework: "vite",
+      rootDirectory: "apps/registration",
+      gitRepository: {
+        type: "github",
+        repo: "leejh10003/usad-competition-management",
+      },
+      buildCommand: "pnpm prepare && pnpm build",
+      installCommand: "pnpm install",
+      outputDirectory: "build",
+    });
     new File(this, "wrangler-config-file", {
       content: Fn.templatefile(
         path.join(__dirname, '..', 'apps', 'worker', 'wrangler.toml.tftpl'),
