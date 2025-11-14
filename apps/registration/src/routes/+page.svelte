@@ -1,2 +1,13 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script lang="ts">
+//import { But } from '@skeletonlabs/skeleton-svelte';
+</script>
+<div class="flex grow flex-col">
+    <div class="m-auto flex flex-col items-center">
+        <h1 class="h1">Are you coach from school or individualy participating?</h1>
+        <br />
+        <nav class="btn-group preset-outlined-surface-200-800 flex-col p-2 md:flex-row w-min">
+            <button type="button" class="btn preset-filled-primary-500 btn-lg">I'm coach from school</button>
+            <button type="button" class="btn preset-outlined-primary-500 btn-lg">I'm participating individualy</button>
+        </nav>
+    </div>
+</div>
