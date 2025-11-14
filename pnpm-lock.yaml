@@ -192,6 +192,10 @@ importers:
         version: 7.2.2(@types/node@20.19.24)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.1)
 
   apps/registration:
+    dependencies:
+      zod:
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@eslint/compat':
         specifier: ^1.4.0
@@ -256,6 +260,9 @@ importers:
       typescript-eslint:
         specifier: ^8.46.1
         version: 8.46.3(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      usad-scheme:
+        specifier: workspace:usad-scheme
+        version: link:../../packages/scheme
       vite:
         specifier: ^7.1.10
         version: 7.2.2(@types/node@20.19.24)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.1)
