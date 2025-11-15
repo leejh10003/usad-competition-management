@@ -6,58 +6,55 @@
 
 	let { children } = $props();
 	let anchorSidebar = 'btn hover:preset-tonal justify-start px-2 w-full';
+	let menuStructure: {groupName: string, items: {icon: typeof SchoolIcon, title: string, path: string}[]}[] = [{
+		groupName: "Participants",
+		items: [
+			{icon: SchoolIcon, title: "School", path: "school"},
+			{icon: IdCardLanyardIcon, title: "Coach", path: "coach"},
+			{icon: UsersIcon, title: "Team", path: "team"},
+			{icon: UserIcon, title: "Student", path: "student"},
+		]
+	}, {
+		groupName: "Events",
+		items: [
+			{icon: CalendarIcon, title: "Event", path: "event"},
+			{icon: UserCheckIcon, title: "Check in", path: "event-check-in"},
+		]
+	}];
 </script>
 
 <div class="flex flex-col h-full">
 	<AppBar>
-	<AppBar.Toolbar class="grid-cols-[auto_1fr_auto]">
-		<AppBar.Lead>
-		</AppBar.Lead>
-		<AppBar.Headline>
-			<p class="text-2xl">USAD Final Management System</p>
-		</AppBar.Headline>
-		<AppBar.Trail>
-			<button type="button" class="btn-icon hover:preset-tonal"><SearchIcon class="size-6" /></button>
-			<button type="button" class="btn-icon hover:preset-tonal"><CalendarIcon class="size-6" /></button>
-			<button type="button" class="btn-icon hover:preset-tonal"><CircleUserIcon class="size-6" /></button>
-		</AppBar.Trail>
-	</AppBar.Toolbar>
-</AppBar>
-<div class="flex flex-row h-full">
-	<Navigation layout="sidebar" class="grid grid-rows-[auto_1fr_auto] gap-4">
-	<Navigation.Content>
-		<Navigation.Group>
-			<Navigation.Label>Participants</Navigation.Label>
-			<Navigation.Menu class={anchorSidebar}>
-				<SchoolIcon />
-				<span>School</span>
-			</Navigation.Menu>
-			<Navigation.Menu class={anchorSidebar}>
-				<IdCardLanyardIcon />
-				<span>Coach</span>
-			</Navigation.Menu>
-			<Navigation.Menu class={anchorSidebar}>
-				<UsersIcon />
-				<span>Team</span>
-			</Navigation.Menu>
-			<Navigation.Menu class={anchorSidebar}>
-				<UserIcon />
-				<span>Student</span>
-			</Navigation.Menu>
-		</Navigation.Group>
-		<Navigation.Group>
-			<Navigation.Label>Events</Navigation.Label>
-			<Navigation.Menu class={anchorSidebar}>
-				<CalendarIcon />
-				<span>Event</span>
-			</Navigation.Menu>
-			<Navigation.Menu class={anchorSidebar}>
-				<UserCheckIcon />
-				<span>Check in</span>
-			</Navigation.Menu>
-		</Navigation.Group>
-	</Navigation.Content>
-</Navigation>
-{@render children()}
-</div>
+		<AppBar.Toolbar class="grid-cols-[auto_1fr_auto]">
+			<AppBar.Lead>
+			</AppBar.Lead>
+			<AppBar.Headline>
+				<p class="text-2xl">USAD Final Management System</p>
+			</AppBar.Headline>
+			<AppBar.Trail>
+				<button type="button" class="btn-icon hover:preset-tonal"><SearchIcon class="size-6" /></button>
+				<button type="button" class="btn-icon hover:preset-tonal"><CalendarIcon class="size-6" /></button>
+				<button type="button" class="btn-icon hover:preset-tonal"><CircleUserIcon class="size-6" /></button>
+			</AppBar.Trail>
+		</AppBar.Toolbar>
+	</AppBar>
+	<div class="flex flex-row h-full">
+		<Navigation layout="sidebar" class="grid grid-rows-[auto_1fr_auto] gap-4">
+			<Navigation.Content>
+				{#each menuStructure as menuGroups}
+					<Navigation.Group>
+						<Navigation.Label>{menuGroups.groupName}</Navigation.Label>
+						{#each menuGroups.items as item}
+							<Navigation.Menu class={anchorSidebar}>
+								{@const Icon = item.icon}
+								<Icon />
+								<span>{item.title}</span>
+							</Navigation.Menu>
+						{/each}
+					</Navigation.Group>
+				{/each}
+			</Navigation.Content>
+		</Navigation>
+		{@render children()}
+	</div>
 </div>
