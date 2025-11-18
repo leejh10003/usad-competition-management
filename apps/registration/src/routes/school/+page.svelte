@@ -36,7 +36,19 @@
             students: [..._.times(3, () => generateStudents("H")), ..._.times(3, () => generateStudents("S")), ..._.times(3, () => generateStudents("V"))],
         };
     }
-    function removeTeam(index: number) { //TODO
+    function removeTeam(index: number) {
+        school.teams.splice(index, 1);
+        school.coachTeamMappings = school.coachTeamMappings.filter(({teamIndex}) => teamIndex !== index).map(({teamIndex, coachIndex}) => ({
+            coachIndex,
+            teamIndex: teamIndex < index ? teamIndex : teamIndex - 1
+        }));
+    }
+    function removeCoach(index: number) {
+        school.coaches.splice(index, 1);
+        school.coachTeamMappings = school.coachTeamMappings.filter(({coachIndex}) => coachIndex !== index).map(({teamIndex, coachIndex}) => ({
+            teamIndex,
+            coachIndex: coachIndex < index ? coachIndex : coachIndex - 1
+        }));
     }
     function addTeam() {
         school.teams.push(generateTeam());
