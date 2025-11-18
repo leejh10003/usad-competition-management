@@ -109,6 +109,7 @@
                 <input class="input flex-3" type="text" placeholder="Phone..." bind:value={coach.phone}/>
                 <input class="input flex-3" type="text" placeholder="Email..." bind:value={coach.email}/>
                 <input class="radio" type="radio" bind:group={school.primaryCoachIndex} value={i} />
+                {#if school.coaches.length > 1}&nbsp;&nbsp;<button type="button" class="btn preset-outlined-primary-500 btn-sm" onclick={() => removeCoach(i)}>Remove coach</button>{/if}
             </div>
         {/each}
         <div class="flex-row">
@@ -116,6 +117,8 @@
         </div>
         <h3 class="h3">Teams</h3>
         {#each school.teams as team, i}
+            <!--TODO: Add coach inline-->
+            <!--TODO: Add coach reference-->
             {@const honors = team.students.filter(({division}) => division === 'H')}
             {@const scholastic = team.students.filter(({division}) => division === 'S')}
             {@const varsity = team.students.filter(({division}) => division === 'V')}
