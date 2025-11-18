@@ -5,7 +5,6 @@ import { optionalInfos } from "./baseTypes";
 const basicStudentInsert = z.object({
   lastName: z.string(),
   firstName: z.string(),
-  externalStudentId: z.string(),
   division,
 });
 
