@@ -2,7 +2,7 @@
     import { teamInsertSchema } from 'usad-scheme';
 	import type z from 'zod';
     type Student = z.infer<typeof teamInsertSchema>['team']['students'][number];
-    const { student = $bindable() } = $props<{student: Student}>();
+    const { student = $bindable<Student>() } = $props<{student: Student}>();
 </script>
 <div class="flex flex-row space-x-1.5">
     <div class="input-group grid-cols=[auto_1fr_auto] flex flex-row w-5xl">
