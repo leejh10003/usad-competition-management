@@ -40,6 +40,8 @@
 		"vite": "^7.1.10"
 	},
 	"dependencies": {
+		"@types/lodash": "^4.17.20",
+		"lodash": "^4.17.21",
 		"zod": "^4.1.12"
 	}
 }
