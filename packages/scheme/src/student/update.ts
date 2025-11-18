@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi";
 import { division } from "../constants";
-import { optionalInfos } from "./baseTypes";
+import { optionalInfosCommon } from "./baseTypes";
 
 const basicStudentUpdate = z.object({
   lastName: z.string().optional(),
@@ -8,11 +8,18 @@ const basicStudentUpdate = z.object({
   externalStudentId: z.string().optional(),
   division: division.optional(),
 });
+
+const optionalInfos = optionalInfosCommon.extend({
+  schoolId: z.uuid().nullable().optional(),
+  streetAddress: z.string().nullable().optional(),
+  city: z.string().nullable().optional(),
+  state: z.string().nullable().optional(),
+  zipCode: z.string().nullable().optional(),
+})
+
 export const studentUpdateItem = basicStudentUpdate
-  .extend(optionalInfos.def.shape)
-  .extend({
-    schoolId: z.uuid().optional()
-  });
+  .and(optionalInfos);
+  
 
 export const studentUpdateSchema = z.object({
   id: z.uuid(),

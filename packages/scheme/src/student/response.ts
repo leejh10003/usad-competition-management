@@ -11,6 +11,10 @@ export const studentResponseItemSchema = z.object({
   lastName: z.string(),
   teamId: z.uuid().nullable(),
   schoolId: z.uuid().nullable(),
+  streetAddress: z.string().nullable(),
+  city: z.string().nullable(),
+  state: z.string().nullable(),
+  zipCode: z.string().nullable(),
 });
 export const studentsResponseSchema = basicSuccess.extend({
   success: z.literal(true),

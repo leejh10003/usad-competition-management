@@ -8,4 +8,8 @@ export const studentSelectFieldsSchema = {
   teamId: true,
   schoolId: true,
   signature: true,
+  streetAddress: true,
+  city: true,
+  state: true,
+  zipCode: true,
 };
