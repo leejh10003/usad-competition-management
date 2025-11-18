@@ -5,7 +5,6 @@ import {
   studentUpdateSchema,
 } from "usad-scheme";
 import _ from "lodash";
-import { updateStudentField } from "..";
 const id = new OpenAPIHono();
 id.get("", (c) => {
   return c.json({ message: `Details for student ${id}` });
@@ -74,7 +73,7 @@ id.openapi(
         id: id,
       },
       select: studentSelectFieldsSchema,
-      data: updateStudentField(student),
+      data: student,
     });
     return c.json({ success: true, student: result! }, 200);
   }

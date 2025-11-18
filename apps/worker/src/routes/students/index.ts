@@ -1,37 +1,17 @@
 import {
   studentsResponseSchema,
   studentQuerySchema,
-  studentUpdateSchema,
   studentsInsertSchema,
   studentsUpdateSchema,
   basicFailed,
   studentSelectFieldsSchema,
 } from "usad-scheme";
 // --- 🧑‍🎓 학생 (Students) 관련 엔드포인트 ---
-import { OpenAPIHono, z } from "@hono/zod-openapi";
+import { OpenAPIHono } from "@hono/zod-openapi";
 import { id } from "./:id";
 import _ from "lodash";
 import { insertStudents } from "../../mutation";
 const students = new OpenAPIHono();
-export function updateStudentField(
-  student: z.infer<typeof studentUpdateSchema>["student"]
-) {
-  return {
-    externalStudentId: !_.isUndefined(student.externalStudentId)
-      ? student.externalStudentId
-      : undefined,
-    division: !_.isUndefined(student.division) ? student.division : undefined,
-    gpa: !_.isUndefined(student.gpa) ? student.gpa : undefined,
-    firstName: !_.isUndefined(student.firstName)
-      ? student.firstName
-      : undefined,
-    lastName: !_.isUndefined(student.lastName) ? student.lastName : undefined,
-    teamId: !_.isUndefined(student.teamId) ? student.teamId : undefined,
-    schoolId: !_.isUndefined(student.schoolId) ? student.schoolId : undefined,
-    usadPin: !_.isUndefined(student.usadPin) ? student.usadPin : undefined,
-    signature: !_.isUndefined(student.signature) ? student.signature : undefined,
-  };
-}
 students.openapi(
   {
     method: "get",
@@ -168,7 +148,7 @@ students.openapi(
                   id: id,
                 },
                 select: studentSelectFieldsSchema,
-                data: updateStudentField(student),
+                data: student,
               })
           )
         )
