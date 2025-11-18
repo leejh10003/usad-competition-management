@@ -21,7 +21,7 @@
         teams: [generateTeam()],
         coachTeamMappings: [],
         coaches: [],
-        primaryCoachIndex: 0,
+        primaryCoachIndex: -1,
     });
     function generateStudents(division: Division) {
         return {
@@ -49,6 +49,14 @@
             teamIndex,
             coachIndex: coachIndex < index ? coachIndex : coachIndex - 1
         }));
+    }
+    function addCoach() {
+        school.coaches.push({
+            firstName: "",
+            lastName: "",
+            email: "",
+            phone: ""
+        })
     }
     function addTeam() {
         school.teams.push(generateTeam());
@@ -93,6 +101,20 @@
                 <input class="input" type="text" placeholder="Principal email..." bind:value={school.principalEmail}/>
             </label>
         </div>
+        <h3 class="h3">Coaches</h3>
+        {#each school.coaches as coach, i}
+            <div class="flex flex-row space-x-1.5">
+                <input class="input flex-3" type="text" placeholder="First name..." bind:value={coach.firstName}/>
+                <input class="input flex-3" type="text" placeholder="Last name..." bind:value={coach.lastName}/>
+                <input class="input flex-3" type="text" placeholder="Phone..." bind:value={coach.phone}/>
+                <input class="input flex-3" type="text" placeholder="Email..." bind:value={coach.email}/>
+                <input class="radio" type="radio" bind:group={school.primaryCoachIndex} value={i} />
+            </div>
+        {/each}
+        <div class="flex-row">
+            <button type="button" class="btn preset-filled-primary-500" onclick={() => addCoach()}>Add coach...</button>
+        </div>
+        <h3 class="h3">Teams</h3>
         {#each school.teams as team, i}
             {@const honors = team.students.filter(({division}) => division === 'H')}
             {@const scholastic = team.students.filter(({division}) => division === 'S')}
