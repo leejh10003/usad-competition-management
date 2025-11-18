@@ -8,6 +8,6 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
-<div class="flex flex-col h-full">
+<div class="flex flex-col h-full w-full">
 {@render children()}
 </div>
