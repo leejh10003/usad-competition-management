@@ -3,11 +3,15 @@
     import _ from 'lodash';
     import {
         schoolInsertSchema,
-        division
+        division,
+
+		eventResponseItemSchema
+
     } from 'usad-scheme';
 	import type z from 'zod';
     import StudentInput from '$lib/components/student.svelte';
     import CoachInput from '$lib/components/coach.svelte';
+    import {Listbox, useListCollection} from '@skeletonlabs/skeleton-svelte';
     import Enumerable from 'linq';
     type SchoolType = Omit<z.infer<typeof schoolInsertSchema>['school'], 'isVirtual' | 'emailDomain'>;
     type Division = z.infer<typeof division>;
@@ -25,6 +29,14 @@
         coaches: [],
         primaryCoachIndex: -1,
     });
+    var teamCoachMapping: {[teamId: number]: string[]} = $state({0: []});
+    const collection = $derived.by(() => {
+        return useListCollection({
+            items: school.coaches.map((item, index) => ({label: `${index}: ${item.firstName} ${item.lastName}`, value: index.toString()})),
+            itemToValue: ({value}) => value,
+            itemToString: ({label}) => label
+        });
+    });
     function generateStudents(division: Division) {
         return {
             lastName: "",
@@ -40,17 +52,20 @@
     }
     function removeTeam(index: number) {
         school.teams.splice(index, 1);
-        school.coachTeamMappings = school.coachTeamMappings.filter(({teamIndex}) => teamIndex !== index).map(({teamIndex, coachIndex}) => ({
-            coachIndex,
-            teamIndex: teamIndex < index ? teamIndex : teamIndex - 1
+        teamCoachMapping = _.fromPairs(_.entries(teamCoachMapping).filter(([teamId]) => teamId !== index.toString()).map(([teamId, coaches]) => {
+            const parsedTeamId = parseInt(teamId);
+            const adjustedTeamId = parsedTeamId - (parsedTeamId < index ? 0 : 1);
+            return [adjustedTeamId, coaches];
         }));
     }
     function removeCoach(index: number) {
         school.coaches.splice(index, 1);
-        school.coachTeamMappings = school.coachTeamMappings.filter(({coachIndex}) => coachIndex !== index).map(({teamIndex, coachIndex}) => ({
-            teamIndex,
-            coachIndex: coachIndex < index ? coachIndex : coachIndex - 1
-        }));
+        _.entries(teamCoachMapping).forEach(([i, coaches]) => {
+            teamCoachMapping[parseInt(i)] = coaches.filter(i => parseInt(i) !== index).map(key => {
+                const i = parseInt(key);
+                return (i - (i < index ? 0 : 1)).toString();
+            })
+        })
     }
     function addCoach() {
         school.coaches.push({
@@ -58,13 +73,15 @@
             lastName: "",
             email: "",
             phone: ""
-        })
+        });
     }
     function addTeam() {
+        teamCoachMapping[school.coaches.length] = [];
         school.teams.push(generateTeam());
     }
     function onSubmit() {
-        console.log($state.snapshot(school));
+        //console.log($state.snapshot(school));
+        console.log($state.snapshot(teamCoachMapping));
     }
 </script>
 <div class="w-full h-full">
@@ -116,14 +133,19 @@
             {@const honors = team.students.filter(({division}) => division === 'H')}
             {@const scholastic = team.students.filter(({division}) => division === 'S')}
             {@const varsity = team.students.filter(({division}) => division === 'V')}
-            {@const teamCoachesEnumerable = Enumerable.from(school.coaches.entries()).select(([index, value]) => ({index, value}))}
-            {@const joinedCoachIndexes = Enumerable.from(school.coachTeamMappings.entries()).where(([_, {teamIndex}]) => teamIndex === i).select(([mappingIndex, {coachIndex}]) => ({mappingIndex, coachIndex}))}
-            {@const notJoinedCoachIndexes = Enumerable.range(0, school.coaches.length).where(i => joinedCoachIndexes.select(({coachIndex}) => coachIndex).where((j) => i === j).count() === 0)};
-            {@const joined = teamCoachesEnumerable.join(joinedCoachIndexes, ({index}) => index, ({coachIndex}) => coachIndex, ({value}, {mappingIndex, coachIndex}) => ({coach: value, mappingIndex, coachIndex}))}
-            {@const notJoined = teamCoachesEnumerable.join(notJoinedCoachIndexes, ({index}) => index, (i) => i, ({value}, _) => ({coach: value}))}
             <div class="space-y-2">
                 <div class="flex-row flex"><h3 class="h3">Team {i + 1}</h3>{#if school.teams.length > 1}&nbsp;&nbsp;<button type="button" class="btn preset-outlined-primary-500 btn-sm" onclick={() => removeTeam(i)}>Remove team</button>{/if}</div>
                 <h4 class="h4">Team coaches</h4>
+                <Listbox {collection} value={teamCoachMapping[i]} onValueChange={(v) => teamCoachMapping[i] = v.value} selectionMode="multiple">
+                    <Listbox.Content>
+                        {#each collection.items as item}
+                            <Listbox.Item {item}>
+                                <Listbox.ItemText>{item.label}</Listbox.ItemText>
+                                <Listbox.ItemIndicator />
+                            </Listbox.Item>
+                        {/each}
+                    </Listbox.Content>
+                </Listbox>
                 <h4 class="h4">Honors</h4>
                 {#each honors as _, j}
                     <StudentInput bind:student={honors[j]}/>
