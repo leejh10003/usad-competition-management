@@ -7,6 +7,8 @@
     } from 'usad-scheme';
 	import type z from 'zod';
     import StudentInput from '$lib/components/student.svelte';
+    import CoachInput from '$lib/components/coach.svelte';
+    import Enumerable from 'linq';
     type SchoolType = Omit<z.infer<typeof schoolInsertSchema>['school'], 'isVirtual' | 'emailDomain'>;
     type Division = z.infer<typeof division>;
     var school = $state<SchoolType>({
@@ -101,38 +103,37 @@
                 <input class="input" type="text" placeholder="Principal email..." bind:value={school.principalEmail}/>
             </label>
         </div>
-        <h3 class="h3">Coaches</h3>
-        {#each school.coaches as coach, i}
-            <div class="flex flex-row space-x-1.5">
-                <input class="input flex-3" type="text" placeholder="First name..." bind:value={coach.firstName}/>
-                <input class="input flex-3" type="text" placeholder="Last name..." bind:value={coach.lastName}/>
-                <input class="input flex-3" type="text" placeholder="Phone..." bind:value={coach.phone}/>
-                <input class="input flex-3" type="text" placeholder="Email..." bind:value={coach.email}/>
-                <input class="radio" type="radio" bind:group={school.primaryCoachIndex} value={i} />
-                {#if school.coaches.length > 1}&nbsp;&nbsp;<button type="button" class="btn preset-outlined-primary-500 btn-sm" onclick={() => removeCoach(i)}>Remove coach</button>{/if}
-            </div>
+        <h2 class="h2">Coaches</h2>
+        {#each school.coaches as _, i}
+            <CoachInput bind:coach={school.coaches[i]} index={i} removable={school.coaches.length > 1} remove={removeCoach} bind:primaryCoachIndex={school.primaryCoachIndex}/>
         {/each}
         <div class="flex-row">
             <button type="button" class="btn preset-filled-primary-500" onclick={() => addCoach()}>Add coach...</button>
         </div>
-        <h3 class="h3">Teams</h3>
+        <h2 class="h2">Teams</h2>
         {#each school.teams as team, i}
             <!--TODO: Add coach inline-->
             <!--TODO: Add coach reference-->
             {@const honors = team.students.filter(({division}) => division === 'H')}
             {@const scholastic = team.students.filter(({division}) => division === 'S')}
             {@const varsity = team.students.filter(({division}) => division === 'V')}
+            {@const teamCoachesEnumerable = Enumerable.from(school.coaches.entries()).select(([index, value]) => ({index, value}))}
+            {@const joinedCoachIndexes = Enumerable.from(school.coachTeamMappings.entries()).where(([_, {teamIndex}]) => teamIndex === i).select(([mappingIndex, {coachIndex}]) => ({mappingIndex, coachIndex}))}
+            {@const notJoinedCoachIndexes = Enumerable.range(0, school.coaches.length).where(i => joinedCoachIndexes.select(({coachIndex}) => coachIndex).where((j) => i === j).count() === 0)};
+            {@const joined = teamCoachesEnumerable.join(joinedCoachIndexes, ({index}) => index, ({coachIndex}) => coachIndex, ({value}, {mappingIndex, coachIndex}) => ({coach: value, mappingIndex, coachIndex}))}
+            {@const notJoined = teamCoachesEnumerable.join(notJoinedCoachIndexes, ({index}) => index, (i) => i, ({value}, _) => ({coach: value}))}
             <div class="space-y-2">
-                <div class="flex-row flex"><h4 class="h4">Team {i + 1}</h4>{#if school.teams.length > 1}&nbsp;&nbsp;<button type="button" class="btn preset-outlined-primary-500 btn-sm" onclick={() => removeTeam(i)}>Remove team</button>{/if}</div>
-                <h5 class="h5">Honors</h5>
+                <div class="flex-row flex"><h3 class="h3">Team {i + 1}</h3>{#if school.teams.length > 1}&nbsp;&nbsp;<button type="button" class="btn preset-outlined-primary-500 btn-sm" onclick={() => removeTeam(i)}>Remove team</button>{/if}</div>
+                <h4 class="h4">Team coaches</h4>
+                <h4 class="h4">Honors</h4>
                 {#each honors as _, j}
                     <StudentInput bind:student={honors[j]}/>
                 {/each}
-                <h5 class="h5">Scholastic</h5>
+                <h4 class="h4">Scholastic</h4>
                 {#each scholastic as _, j}
                     <StudentInput bind:student={scholastic[j]}/>
                 {/each}
-                <h5 class="h5">Varsity</h5>
+                <h4 class="h4">Varsity</h4>
                 {#each varsity as _, j}
                     <StudentInput bind:student={varsity[j]}/>
                 {/each}
