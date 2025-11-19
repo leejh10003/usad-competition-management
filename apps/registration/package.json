@@ -41,6 +41,7 @@
 	},
 	"dependencies": {
 		"@types/lodash": "^4.17.20",
+		"linq": "^4.0.3",
 		"lodash": "^4.17.21",
 		"zod": "^4.1.12"
 	}
