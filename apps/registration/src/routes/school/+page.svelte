@@ -113,7 +113,6 @@
         <h2 class="h2">Teams</h2>
         {#each school.teams as team, i}
             <!--TODO: Add coach inline-->
-            <!--TODO: Add coach reference-->
             {@const honors = team.students.filter(({division}) => division === 'H')}
             {@const scholastic = team.students.filter(({division}) => division === 'S')}
             {@const varsity = team.students.filter(({division}) => division === 'V')}
