@@ -14,12 +14,10 @@
     var offset = $derived.by(() => pagination * limit);
     var total = $state<number>(0);
     var currentCount = $state<number>(0);
-    let searchParams = $derived(schoolQuerySchema.safeParse(Object.fromEntries(page.url.searchParams.entries())));
     var schools = $state<SchoolResponseItem[]>([]);
     async function fetch(searchParams: z.infer<typeof schoolQuerySchema>) {
         isLoading = true;
         //TODO: server fetch
-        
         schools = _.range(0, 10).map((_) => ({
             isVirtual: false,
             name: "Midwest US Science High School",
@@ -35,8 +33,12 @@
         isLoading = false;
     }
     $effect(() => {
+        let searchParams = schoolQuerySchema.safeParse(Object.fromEntries(page.url.searchParams.entries()));
+        console.log('prerender')
         if (searchParams.success){
             fetch(searchParams.data);
+        } else {
+            console.log('not using');
         }
     })
     function changeFilter(){
@@ -47,6 +49,7 @@
 </script>
 <div class="flex flex-col h-full w-full p-8 gap-y-3.5">
     <h1 class="h1 font-bold">School</h1>
+    <button onclick={() => goto('?asdf=asdf')}>tt</button>
     <table class="table">
         <thead>
             <tr>
