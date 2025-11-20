@@ -34,11 +34,10 @@
     }
     $effect(() => {
         let searchParams = schoolQuerySchema.safeParse(Object.fromEntries(page.url.searchParams.entries()));
-        console.log('prerender')
         if (searchParams.success){
             fetch(searchParams.data);
         } else {
-            console.log('not using');
+            //TODO:
         }
     })
     function changeFilter(){
