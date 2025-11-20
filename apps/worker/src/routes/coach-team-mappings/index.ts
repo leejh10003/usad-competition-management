@@ -28,7 +28,7 @@ coachTeamMappings.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { teamId, coachId } = c.req.valid("query");
-    const condition: Exclude<Parameters<(typeof prisma)['teamCoachRelationship']['findMany']>[0], undefined>['where'] = {
+    const condition: Exclude<Parameters<typeof prisma['teamCoachRelationship']['findMany']>[0], undefined>['where'] = {
         teamId,
         coachId,
       };

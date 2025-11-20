@@ -46,7 +46,7 @@ students.openapi(
         c.req.valid("query");
       console.log(`Fetching students with offset ${offset} and limit ${limit}`);
       const prisma = c.get("prisma");
-      const condition: Exclude<Parameters<(typeof prisma)['student']['findMany']>[0], undefined>['where'] = {
+      const condition: Exclude<Parameters<typeof prisma['student']['findMany']>[0], undefined>['where'] = {
         firstName: {
           contains: firstName,
         },

@@ -63,7 +63,7 @@ schools.openapi(
     const prisma = c.get("prisma");
     const { externalSchoolId, name, isVirtual, limit, offset } =
       c.req.valid("query");
-    const condition: Exclude<Parameters<(typeof prisma)['school']['findMany']>[0], undefined>['where'] = {
+    const condition: Exclude<Parameters<typeof prisma['school']['findMany']>[0], undefined>['where'] = {
         externalSchoolId: externalSchoolId
           ? {
               equals: externalSchoolId,

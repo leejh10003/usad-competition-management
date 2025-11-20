@@ -40,7 +40,7 @@ teams.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { offset, limit, id, externalTeamId } = c.req.valid("query");
-    const condition = {
+    const condition: Exclude<Parameters<typeof prisma['team']['findMany']>[0], undefined>['where'] = {
       id: id
         ? {
             equals: id,
