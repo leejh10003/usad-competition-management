@@ -40,6 +40,8 @@
 	"dependencies": {
 		"@lucide/svelte": "^0.553.0",
 		"@types/lodash": "^4.17.20",
-		"lodash": "^4.17.21"
+		"lodash": "^4.17.21",
+		"usad-scheme": "workspace:usad-scheme",
+		"zod": "^4.1.12"
 	}
 }

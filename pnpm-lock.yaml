@@ -26,6 +26,12 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      usad-scheme:
+        specifier: workspace:usad-scheme
+        version: link:../../packages/scheme
+      zod:
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@eslint/compat':
         specifier: ^1.4.0
