@@ -21,14 +21,14 @@
         schools = _.range(0, 10).map((_) => ({
             isVirtual: false,
             name: "Midwest US Science High School",
-            streetAddress: "7601, Wildwood Court B3",
-            city: "Lorton",
-            state: "VA",
-            zipCode: "22079",
+            streetAddress: "47 W 13th St",
+            city: "New York",
+            state: "NY",
+            zipCode: "10011",
             id: "",
-            principalEmail: "leejh10003@gmail.com",
-            phone: "(361)343-6656",
-            principalName: "Arthur Dominguez"
+            principalEmail: "random@domain.com",
+            phone: "(123)456-7890",
+            principalName: "Lorem Ipsum"
         }));
         isLoading = false;
     }
