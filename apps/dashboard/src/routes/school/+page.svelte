@@ -42,7 +42,7 @@
         }
     })
     function changeFilter(){
-        const searchParams = new URLSearchParams(window.location.search);
+        const searchParams = page.url.searchParams;
         searchParams.set('test', 'true');
         goto(`?${searchParams.toString()}`);
     }
