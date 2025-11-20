@@ -38,6 +38,8 @@
 		"vite": "^7.1.10"
 	},
 	"dependencies": {
-		"@lucide/svelte": "^0.553.0"
+		"@lucide/svelte": "^0.553.0",
+		"@types/lodash": "^4.17.20",
+		"lodash": "^4.17.21"
 	}
 }
