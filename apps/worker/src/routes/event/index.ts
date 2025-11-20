@@ -37,7 +37,8 @@ events.openapi(
     const result = await prisma.event.findMany({
       select: eventSelectFieldsSchema,
     });
-    return c.json({ success: true, events: result }, 200); //TODO: Add offset, limit
+    const count = await prisma.event.count(); //TODO
+    return c.json({ success: true, events: result, count }, 200); //TODO: Add offset, limit
   }
 );
 
@@ -81,7 +82,7 @@ events.openapi(
         )
       )
     );
-    return c.json({ success: true, events: result! }, 200);
+    return c.json({ success: true, events: result!, count: result.length }, 200);
   }
 );
 events.openapi(
@@ -125,7 +126,7 @@ events.openapi(
         )
       )
     );
-    return c.json({ success: true, events: result }, 200);
+    return c.json({ success: true, events: result, count: result.length }, 200);
   }
 );
 

@@ -28,7 +28,8 @@ eventCheckIns.openapi(
     const result = await prisma.eventCheckIn.findMany({
       select: eventCheckInSelectFieldsSchema,
     });
-    return c.json({ success: true, eventCheckIns: result }, 200);
+    const count = await prisma.eventCheckIn.count(); //TODO
+    return c.json({ success: true, eventCheckIns: result, count }, 200);
   }
 );
 eventCheckIns.openapi(
@@ -68,7 +69,7 @@ eventCheckIns.openapi(
         )
       )
     );
-    return c.json({ success: true, eventCheckIns: result! }, 200);
+    return c.json({ success: true, eventCheckIns: result!, count: result.length }, 200);
   }
 );
 

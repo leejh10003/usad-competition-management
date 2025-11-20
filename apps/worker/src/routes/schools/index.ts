@@ -63,11 +63,7 @@ schools.openapi(
     const prisma = c.get("prisma");
     const { externalSchoolId, name, isVirtual, limit, offset } =
       c.req.valid("query");
-    const schools = await prisma.school.findMany({
-      select: schoolSelectFieldsSchema,
-      skip: offset,
-      take: limit,
-      where: {
+    const condition: Exclude<Parameters<(typeof prisma)['school']['findMany']>[0], undefined>['where'] = {
         externalSchoolId: externalSchoolId
           ? {
               equals: externalSchoolId,
@@ -84,9 +80,17 @@ schools.openapi(
                 equals: isVirtual,
               }
             : undefined,
-      },
+      };
+    const schools = await prisma.school.findMany({
+      select: schoolSelectFieldsSchema,
+      skip: offset,
+      take: limit,
+      where: condition,
     });
-    return c.json({ success: true, schools }, 200);
+    const count = await prisma.school.count({
+      where: condition
+    })
+    return c.json({ success: true, schools, count }, 200);
   }
 );
 schools.openapi(
@@ -119,7 +123,7 @@ schools.openapi(
     const result = await prisma.$transaction(
       async (tx) => await insertSchools({ schools }, tx)
     );
-    return c.json({ success: true, schools: result }, 200);
+    return c.json({ success: true, schools: result, count: result.length }, 200);
   }
 );
 schools.openapi(
@@ -161,7 +165,7 @@ schools.openapi(
         )
       )
     );
-    return c.json({ success: true, schools: result }, 200);
+    return c.json({ success: true, schools: result, count: result.length }, 200);
   }
 );
 export { schools };

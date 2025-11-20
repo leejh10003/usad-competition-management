@@ -19,6 +19,7 @@ export const studentResponseItemSchema = z.object({
 export const studentsResponseSchema = basicSuccess.extend({
   success: z.literal(true),
   students: z.array(studentResponseItemSchema),
+  count: z.int()
 });
 export const studentResponseSchema = basicSuccess.extend({
   success: z.literal(true),

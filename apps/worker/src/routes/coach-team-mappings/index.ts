@@ -28,14 +28,18 @@ coachTeamMappings.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { teamId, coachId } = c.req.valid("query");
-    const result = await prisma.teamCoachRelationship.findMany({
-      select: coachTeamMappingsFieldsSchema,
-      where: {
+    const condition: Exclude<Parameters<(typeof prisma)['teamCoachRelationship']['findMany']>[0], undefined>['where'] = {
         teamId,
         coachId,
-      },
+      };
+    const result = await prisma.teamCoachRelationship.findMany({
+      select: coachTeamMappingsFieldsSchema,
+      where: condition,
     });
-    return c.json({ success: true, coachTeamMappings: result! }, 200);
+    const count = await prisma.teamCoachRelationship.count({
+      where: condition
+    })
+    return c.json({ success: true, coachTeamMappings: result!, count }, 200);
   }
 );
 

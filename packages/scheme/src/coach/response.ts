@@ -14,4 +14,5 @@ export const coachResponseSchema = basicSuccess.extend({
 });
 export const coachesResponseSchema = basicSuccess.extend({
   coaches: z.array(z.lazy(() => coachResponseItemSchema)),
+  count: z.int()
 });

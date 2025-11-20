@@ -49,9 +49,7 @@ coaches.openapi(
     const prisma = c.get("prisma");
     const { externalCoachId, lastName, firstName, schoolId, limit, offset } =
       c.req.valid("query");
-    const result = await prisma.coach.findMany({
-      select: coachSelectFieldsSchema,
-      where: {
+    const condition: Exclude<Parameters<typeof prisma['coach']['findMany']>[0], undefined>['where'] = {
         externalCoachId: externalCoachId
           ? {
               contains: externalCoachId,
@@ -72,11 +70,17 @@ coaches.openapi(
               equals: schoolId,
             }
           : undefined,
-      },
+      };
+    const result = await prisma.coach.findMany({
+      select: coachSelectFieldsSchema,
+      where: condition,
       take: limit,
       skip: offset,
     });
-    return c.json({ success: true, coaches: result }, 200);
+    const count = await prisma.coach.count({
+      where: condition
+    })
+    return c.json({ success: true, coaches: result, count }, 200);
   }
 );
 coaches.openapi(
@@ -120,7 +124,7 @@ coaches.openapi(
         )
       )
     );
-    return c.json({ success: true, coaches: result }, 200);
+    return c.json({ success: true, coaches: result, count: result.length }, 200);
   }
 );
 coaches.openapi(
@@ -153,7 +157,7 @@ coaches.openapi(
     const result = await prisma.$transaction(
       async (tx) => await insertCoaches({ coaches }, tx)
     );
-    return c.json({ success: true, coaches: result }, 200);
+    return c.json({ success: true, coaches: result, count: result.length }, 200);
   }
 );
 coaches.route("/:id", id);

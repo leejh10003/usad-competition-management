@@ -8,6 +8,7 @@ export const eventResponseItemSchema = requiredInfos.extend({
 
 export const eventsResponseSchema = basicSuccess.extend({
   events: z.array(eventResponseItemSchema),
+  count: z.int(),
 });
 
 export const eventResponseSchema = basicSuccess.extend({

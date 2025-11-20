@@ -12,4 +12,5 @@ export const schoolResponse = basicSuccess.extend({
 });
 export const schoolsResponse = basicSuccess.extend({
   schools: z.array(schoolResponseItemSchema),
+  count: z.int()
 });

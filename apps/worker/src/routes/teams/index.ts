@@ -40,24 +40,28 @@ teams.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { offset, limit, id, externalTeamId } = c.req.valid("query");
+    const condition = {
+      id: id
+        ? {
+            equals: id,
+          }
+        : undefined,
+      externalTeamId: externalTeamId
+        ? {
+            contains: externalTeamId,
+          }
+        : undefined,
+    };
     const result = await prisma.team.findMany({
       select: teamSelectFieldsSchema,
-      where: {
-        id: id
-          ? {
-              equals: id,
-            }
-          : undefined,
-        externalTeamId: externalTeamId
-          ? {
-              contains: externalTeamId,
-            }
-          : undefined,
-      },
+      where: condition,
       skip: offset,
       take: limit,
     });
-    return c.json({ success: true, teams: result });
+    const count = await prisma.team.count({
+      where: condition
+    })
+    return c.json({ success: true, teams: result, count });
   }
 );
 teams.openapi(
@@ -90,7 +94,7 @@ teams.openapi(
     const result = await prisma.$transaction(
       async (tx) => await insertTeams({ teams }, tx, {})
     );
-    return c.json({ success: true, teams: result }, 200);
+    return c.json({ success: true, teams: result, count: result.length }, 200);
   }
 );
 teams.openapi(
@@ -134,7 +138,7 @@ teams.openapi(
         )
       )
     );
-    return c.json({ success: true, teams: result }, 200);
+    return c.json({ success: true, teams: result, count: result.length }, 200);
   }
 );
 
