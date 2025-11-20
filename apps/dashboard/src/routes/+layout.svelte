@@ -3,6 +3,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { CalendarIcon, CircleUserIcon, SearchIcon, SchoolIcon, UserCheckIcon, IdCardLanyardIcon, UsersIcon, UserIcon } from '@lucide/svelte';
 	import { AppBar, Navigation } from '@skeletonlabs/skeleton-svelte';
+	import { page } from '$app/state';
 
 	let { children } = $props();
 	let anchorSidebar = 'btn hover:preset-tonal justify-start px-2 w-full';
@@ -45,10 +46,12 @@
 					<Navigation.Group>
 						<Navigation.Label>{menuGroups.groupName}</Navigation.Label>
 						{#each menuGroups.items as item}
-							<Navigation.Menu class={anchorSidebar}>
+							<Navigation.Menu>
 								{@const Icon = item.icon}
-								<Icon />
-								<span>{item.title}</span>
+								<a href={`/${item.path}`} title={item.title} aria-label={item.title} class={`${anchorSidebar} ${page.url.pathname.replace(/^\//g, '').startsWith(`${item.path}/`) ? 'preset-filled-primary-500' : ''}`}>
+									<Icon />
+									<span>{item.title}</span>
+								</a>
 							</Navigation.Menu>
 						{/each}
 					</Navigation.Group>
