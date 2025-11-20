@@ -49,7 +49,6 @@
 </script>
 <div class="flex flex-col h-full w-full p-8 gap-y-3.5">
     <h1 class="h1 font-bold">School</h1>
-    <button onclick={() => goto('?asdf=asdf')}>tt</button>
     <table class="table">
         <thead>
             <tr>
