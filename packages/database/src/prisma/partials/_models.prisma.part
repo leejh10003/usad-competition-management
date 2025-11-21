@@ -10,21 +10,19 @@ enum Division {
   V // Varsity
 }
 
-
 // ----------------------------------------
 // Main Data Models
 // ----------------------------------------
 
 model School {
-  // Internal, immutable UUID for stable relations.
   id String @id @default(uuid()) @db.Uuid
 
-  // Business-facing ID provided by USAD.
   externalSchoolId String? @unique @map("external_school_id")
 
   name      String
   isVirtual Boolean @default(false) @map("is_virtual")
 
+  // Address & Contact Info
   streetAddress  String? @map("street_address")
   city           String?
   state          String?
@@ -33,11 +31,10 @@ model School {
   principalName  String? @map("principal_name")
   principalEmail String? @map("principal_email")
 
-  // The school's primary coach. Enforces the "one primary coach per school" rule.
+  // Primary Coach (1:1)
   primaryCoachId String? @unique @map("primary_coach_id") @db.Uuid
   primaryCoach   Coach?  @relation("PrimaryCoachOfSchool", fields: [primaryCoachId], references: [id])
 
-  // The email domain is a property of the School, derived from the primary coach.
   emailDomain String? @unique @map("email_domain")
 
   // Relations
@@ -45,39 +42,50 @@ model School {
   teams    Team[]
   students Student[]
 
+  // --- Indexes ---
+  @@index([state, city])
+  @@index([name])
+  
   @@map("schools")
 }
 
 model Team {
   id String @id @default(uuid()) @db.Uuid
 
-  // Team ID #, unique only within a specific school.
   externalTeamId String? @map("external_team_id")
 
-  // Foreign key to the School.
   schoolId String @map("school_id") @db.Uuid
   school   School @relation(fields: [schoolId], references: [id])
 
+  // Explicit M:N Relationship via Join Table
   coachesRelationship TeamCoachRelationship[] @relation("TeamRelationshipToCoach")
 
-  // 1-N relationship: A team has multiple students.
   students Student[]
 
+  // --- Indexes ---
+  @@index([schoolId]) // FK Index
   @@map("teams")
 }
 
+// Explicit Join Table for Team <-> Coach
 model TeamCoachRelationship {
   teamId String @map("team_id") @db.Uuid
-  team Team @relation("TeamRelationshipToCoach", fields: [teamId], references: [id])
+  team   Team   @relation("TeamRelationshipToCoach", fields: [teamId], references: [id])
+  
   coachId String @map("coach_id") @db.Uuid
-  coach Coach @relation("CoachRelationshipToTeam", fields: [coachId], references: [id])
+  coach   Coach  @relation("CoachRelationshipToTeam", fields: [coachId], references: [id])
+
   @@id([teamId, coachId])
+
+  // --- Indexes ---
+  @@index([coachId]) // FK Index for reverse lookup
+
+  @@map("team_coach_relationships")
 }
 
 model Coach {
   id String @id @default(uuid()) @db.Uuid
 
-  // Business-facing ID provided by USAD.
   externalCoachId String? @unique @map("external_coach_id")
 
   firstName String @map("first_name")
@@ -85,16 +93,20 @@ model Coach {
   email     String @unique
   phone     String?
 
-  // Every coach must belong to exactly one school.
+  // R2 Object Key (Check-in signature)
+  signature String?
+
+  // Relations
   schoolId String @map("school_id") @db.Uuid
   school   School @relation("CoachesOfSchool", fields: [schoolId], references: [id])
 
-  // The school where this coach is designated as the primary. (Will be null for assistants).
   primarySchool School? @relation("PrimaryCoachOfSchool")
 
-  // M-N relationship with Team. Prisma will manage the implicit join table.
   teamRelationship TeamCoachRelationship[] @relation("CoachRelationshipToTeam")
-  signature String?
+
+  // --- Indexes ---
+  @@index([schoolId])
+  @@index([lastName, firstName]) // Name search
 
   @@map("coaches")
 }
@@ -102,7 +114,6 @@ model Coach {
 model Student {
   id String @id @default(uuid()) @db.Uuid
 
-  // The globally unique, concatenated ID provided by USAD.
   externalStudentId String? @unique @map("external_student_id")
 
   division  Division
@@ -111,38 +122,60 @@ model Student {
   lastName  String @map("last_name")
   usadPin   String? @map("usad_pin")
 
-  // Every student must belong to a team (even if it's a virtual "Individuals" team).
-  teamId String? @map("team_id") @db.Uuid
-  team   Team?   @relation(fields: [teamId], references: [id])
-
-  // Every student belongs to a school.
-  schoolId String? @map("school_id") @db.Uuid
-  school   School? @relation(fields: [schoolId], references: [id])
+  // R2 Object Key (Check-in signature)
   signature String?
-  eventCheckIns EventCheckIn[] @relation("StudentOfEventCheckIn")
 
+  // Address Info (Preserved from your previous schema)
   streetAddress  String? @map("street_address")
   city           String?
   state          String?
   zipCode        String? @map("zip_code")
 
+  // Relations
+  teamId String? @map("team_id") @db.Uuid
+  team   Team?   @relation(fields: [teamId], references: [id])
+
+  schoolId String? @map("school_id") @db.Uuid
+  school   School? @relation(fields: [schoolId], references: [id])
+  
+  eventCheckIns EventCheckIn[] @relation("StudentOfEventCheckIn")
+
+  // --- Indexes ---
+  @@index([teamId])
+  @@index([schoolId])
+  @@index([lastName, firstName])
+  @@index([schoolId, division])
+
   @@map("students")
 }
 
 model Event {
-  id String @id @default(uuid()) @db.Uuid
-  name String
+  id       String   @id @default(uuid()) @db.Uuid
+  name     String
   startsAt DateTime @map("starts_at") @db.Timestamptz(3)
+  
   eventCheckIn EventCheckIn[] @relation("EventOfEventCheckIn")
+
+  // --- Indexes ---
+  @@index([startsAt])
+
   @@map("events")
 }
 
 model EventCheckIn {
-  studentId String @db.Uuid
-  student Student @relation("StudentOfEventCheckIn", fields: [studentId], references: [id])
-  eventId String @db.Uuid
-  event Event @relation("EventOfEventCheckIn", fields: [eventId], references: [id])
-  checkedInAt DateTime @map("cheked_in_at") @db.Timestamptz(3)
+  studentId String  @map("student_id") @db.Uuid
+  student   Student @relation("StudentOfEventCheckIn", fields: [studentId], references: [id])
+  
+  eventId   String  @map("event_id") @db.Uuid
+  event     Event   @relation("EventOfEventCheckIn", fields: [eventId], references: [id])
+  
+  // Timestamp when the student checked in (Null if just assigned but not present)
+  checkedInAt DateTime? @map("cheked_in_at") @db.Timestamptz(3)
+
   @@id([studentId, eventId])
+
+  // --- Indexes ---
+  @@index([eventId]) // "Who checked in to this event?"
+
   @@map("event_check_ins")
 }
