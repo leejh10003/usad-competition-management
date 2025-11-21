@@ -107,6 +107,8 @@ model Coach {
   // --- Indexes ---
   @@index([schoolId])
   @@index([lastName, firstName]) // Name search
+  @@index([schoolId, signature])
+  @@index([signature])
 
   @@map("coaches")
 }
@@ -145,6 +147,9 @@ model Student {
   @@index([schoolId])
   @@index([lastName, firstName])
   @@index([schoolId, division])
+  @@index([schoolId, signature])
+  @@index([teamId, signature])
+  @@index([signature])
 
   @@map("students")
 }
@@ -176,6 +181,8 @@ model EventCheckIn {
 
   // --- Indexes ---
   @@index([eventId]) // "Who checked in to this event?"
+  @@index([checkedInAt])
+  @@index([eventId,checkedInAt])
 
   @@map("event_check_ins")
 }
