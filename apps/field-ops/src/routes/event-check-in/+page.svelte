@@ -1,6 +1,7 @@
 <script>
 	import { Block } from 'konsta/svelte';
 	import QrCodeScanner from '$lib/components/qrcode-scanner.svelte';
+	import BottomPadding from '$lib/components/bottom-padding.svelte';
 </script>
 <div class="flex grow flex-col">
 	<QrCodeScanner
@@ -11,8 +12,9 @@
         }}
 		error={(e) => console.log({ type: 'ERROR', message: e })}
 		paused={false}
-		width={160}
-		height={160}
+		width={320}
+		height={320}
 		class="max-w-sm m-auto"
 	/>
+	<BottomPadding />
 </div>
