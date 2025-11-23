@@ -11,12 +11,16 @@
     var zipCode = $state<string>();
     var gpa = $state<number>();
     var group = $state<z.infer<typeof division>>();
+    var firstName = $state<string>();
+    var lastName = $state<string>();
     var streetAddressInvalid = $state(false);
     var cityInvalid = $state(false);
     var stateInputInvalid = $state(false);
     var zipCodeInvalid = $state(false);
     var gpaInvalid = $state(false);
     var groupInvalid = $state(false);
+    var firstNameInvalid = $state(false);
+    var lastNameInvalid = $state(false);
     function onSubmit(){
         streetAddressInvalid = (streetAddress?.trim()?.length ?? 0) < 1;
         cityInvalid = (city?.trim()?.length ?? 0) < 1;
@@ -24,6 +28,8 @@
         zipCodeInvalid = (zipCode?.trim()?.length ?? 0) !== 5 || (zipCode?.match(/^\d/g)?.length ?? 0) < 1;
         gpaInvalid = (gpa ?? 0) < 0 || (gpa ?? 0) > 4.5;
         groupInvalid = !group;
+        firstNameInvalid = (firstName?.trim()?.length ?? 0) < 1;
+        lastNameInvalid = (lastName?.trim()?.length ?? 0) < 1;
         //TODO: if all valid, submit and go back to main view
     }
     
@@ -47,6 +53,15 @@
             <label class="label">
                 <span class="label-text">Zip code<span class={`text-red-500 ${zipCodeInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;Check the zipcode format</span></span>
                 <input maxlength="5" class="input" pattern="[0-9]*" placeholder="Zip code..." bind:value={zipCode}/>
+            </label>
+
+            <label class="label">
+                <span class="label-text">First Name<span class={`text-red-500 ${firstNameInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;First name is invalid</span></span>
+                <input class="input flex-5" type="text" placeholder="First name..." bind:value={firstName}/>
+            </label>
+            <label class="label">
+                <span class="label-text">Last Name<span class={`text-red-500 ${lastNameInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;Check the zipcode format</span></span>
+                <input class="input flex-5" type="text" placeholder="Last name..." bind:value={lastName}/>
             </label>
             <label class="label">
                 <span class="label-text">GPA<span class={`text-red-500 ${gpaInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;GPA not in between 0 and 4.5</span></span>
