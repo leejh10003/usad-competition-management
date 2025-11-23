@@ -2,6 +2,7 @@
     import { teamInsertSchema } from 'usad-scheme';
 	import type z from 'zod';
     import _ from 'lodash'
+    import {disableNonNumeric, onGpaChange} from '$lib/utils/validation';
     type Student = z.infer<typeof teamInsertSchema>['team']['students'][number];
     const { student = $bindable<Student>() } = $props<{student: Student}>();
 </script>
