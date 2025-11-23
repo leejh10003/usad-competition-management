@@ -11,8 +11,8 @@
         }}
 		error={(e) => console.log({ type: 'ERROR', message: e })}
 		paused={false}
-		width={320}
-		height={320}
+		width={160}
+		height={160}
 		class="max-w-sm m-auto"
 	/>
 </div>
