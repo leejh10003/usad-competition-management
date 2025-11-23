@@ -3,11 +3,12 @@
 </script>
 <div class="flex grow flex-col">
     <div class="m-auto flex flex-col items-center text-center">
-        <h1 class="h1">Are you a coach with a school or a parent/guardian registering an individual?</h1>
+        <h1 class="h1">Are you registering a Team?</h1>
         <br />
-        <nav class="btn-group flex-col p-2 md:flex-row w-min">
-            <button type="button" class="btn preset-filled-primary-500 btn-lg" onclick={() => goto('/school')}>Coach from school</button>
-            <button type="button" class="btn preset-outlined-primary-500 btn-lg" onclick={() => goto('/individual')}>Parent/guardian registering an individual</button>
-        </nav>
+        <button type="button" class="btn preset-filled-primary-500 btn-lg" onclick={() => goto('/school')}>Team</button>
+        <br />
+        <h1 class="h1">Are you registering as an Individual?</h1>
+        <br />
+        <button type="button" class="btn preset-filled-primary-500 btn-lg" onclick={() => goto('/individual')}>Individual</button>
     </div>
 </div>
