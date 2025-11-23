@@ -3,6 +3,8 @@
     import StudentRow from "$lib/components/student.svelte";
     import { division } from 'usad-scheme';
 	import type z from "zod";
+    import _ from 'lodash';
+    import StateDropdown from "$lib/components/states.svelte"
     var streetAddress = $state<string>();
     var city = $state<string>();
     var stateInput = $state<string>();
@@ -40,18 +42,32 @@
             </label>
             <label class="label">
                 <span class="label-text">State<span class={`text-red-500 ${stateInputInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;Check the state is valid or not</span></span>
-                <input class="input" type="text" placeholder="State..." bind:value={stateInput}/>
+                <StateDropdown placeholder="State..." bind:state={stateInput}/>
             </label>
             <label class="label">
                 <span class="label-text">Zip code<span class={`text-red-500 ${zipCodeInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;Check the zipcode format</span></span>
-                <input class="input" type="text" placeholder="Zip code..." bind:value={zipCode}/>
+                <input maxlength="5" class="input" pattern="[0-9]*" placeholder="Zip code..." bind:value={zipCode}/>
             </label>
             <label class="label">
                 <span class="label-text">GPA<span class={`text-red-500 ${gpaInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;GPA not in between 0 and 4.5</span></span>
-                <input class="input" type="number" step="0.1" placeholder="GPA..." min={0} max={4.5} bind:value={gpa}/>
+                <input class="input" onkeypress={(e) => {
+                    if (e.code.startsWith('Key')){
+                            e.preventDefault();
+                        }
+                    }} onchange={(e) => {
+                        if (_.isNumber(gpa) && gpa as number > 4.5) {
+                            e.preventDefault();
+                            gpa = 4.5;
+                        }
+                        if (_.isNumber(gpa) && gpa as number < 0) {
+                            e.preventDefault();
+                            gpa = 0;
+                        }
+                        gpa = parseFloat((gpa as number).toPrecision(2));
+                }} type="number" step="0.1" placeholder="GPA..." min={0} max={4.5} bind:value={gpa}/>
             </label>
             <label class="label">
-                <span class="label-text">Group<span class={`text-red-500 ${groupInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;Select group</span></span>
+                <span class="label-text">GPA Division<span class={`text-red-500 ${groupInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;Select group</span></span>
                 <select class="select" bind:value={group}>
                     <option disabled selected value> -- Select an option -- </option>
                     <option value="H">Honors</option>

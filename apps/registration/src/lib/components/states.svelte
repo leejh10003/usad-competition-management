@@ -1,0 +1,62 @@
+<script lang="ts">
+    const states = [
+        {original: "Alabama",	        shorthand: "AL"},
+        {original: "Alaska",	        shorthand: "AK"},
+        {original: "Arizona",	        shorthand: "AZ"},
+        {original: "Arkansas",	        shorthand: "AR"},
+        {original: "California",	    shorthand: "CA"},
+        {original: "Colorado",	        shorthand: "CO"},
+        {original: "Connecticut",	    shorthand: "CT"},
+        {original: "Delaware",	        shorthand: "DE"},
+        {original: "Florida",	        shorthand: "FL"},
+        {original: "Georgia",	        shorthand: "GA"},
+        {original: "Hawaii",	        shorthand: "HI"},
+        {original: "Idaho",	            shorthand: "ID"},
+        {original: "Illinois",	        shorthand: "IL"},
+        {original: "Indiana",	        shorthand: "IN"},
+        {original: "Iowa",	            shorthand: "IA"},
+        {original: "Kansas",	        shorthand: "KS"},
+        {original: "Kentucky",	        shorthand: "KY"},
+        {original: "Louisiana",	        shorthand: "LA"},
+        {original: "Maine",	            shorthand: "ME"},
+        {original: "Maryland",	        shorthand: "MD"},
+        {original: "Massachusetts",	    shorthand: "MA"},
+        {original: "Michigan",	        shorthand: "MI"},
+        {original: "Minnesota",	        shorthand: "MN"},
+        {original: "Mississippi ",	    shorthand: "MS"},
+        {original: "Missouri",	        shorthand: "MO"},
+        {original: "Montana",	        shorthand: "MT"},
+        {original: "Nebraska",	        shorthand: "NE"},
+        {original: "Nevada",	        shorthand: "NV"},
+        {original: "New Hampshire",	    shorthand: "NH"},
+        {original: "New Jersey",	    shorthand: "NJ"},
+        {original: "New Mexico",	    shorthand: "NM"},
+        {original: "New York",	        shorthand: "NY"},
+        {original: "North Carolina",	shorthand: "NC"},
+        {original: "North Dakota",	    shorthand: "ND"},
+        {original: "Ohio",	            shorthand: "OH"},
+        {original: "Oklahoma",	        shorthand: "OK"},
+        {original: "Oregon",	        shorthand: "OR"},
+        {original: "Pennsylvania",	    shorthand: "PA"},
+        {original: "Rhode Island",	    shorthand: "RI"},
+        {original: "South Carolina",	shorthand: "SC"},
+        {original: "South Dakota",	    shorthand: "SD"},
+        {original: "Tennessee",	        shorthand: "TN"},
+        {original: "Texas",	            shorthand: "TX"},
+        {original: "Utah",	            shorthand: "UT"},
+        {original: "Vermont",	        shorthand: "VT"},
+        {original: "Virginia",	        shorthand: "VA"},
+        {original: "Washington",	    shorthand: "WA"},
+        {original: "West Virginia",	    shorthand: "WV"},
+        {original: "Wisconsin",	        shorthand: "WI"},
+        {original: "Wyoming",	        shorthand: "WY"},
+    ];
+    var {state = $bindable(), placeholder} = $props<{state: string | null | undefined, placeholder?: string | null | undefined}>();
+</script>
+<select class="select" bind:value={state}>
+    <option disabled selected value={null}>{placeholder}</option>
+    {#each states as {shorthand, original}}
+        <option value={shorthand}>{original} ({shorthand})</option>
+    {/each}
+</select>
+<!--<input class="input" type="text" placeholder="School state..." bind:value={school.state}/>-->

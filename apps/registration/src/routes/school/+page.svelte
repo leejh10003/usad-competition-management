@@ -13,11 +13,12 @@
     import CoachInput from '$lib/components/coach.svelte';
     import {Listbox, useListCollection} from '@skeletonlabs/skeleton-svelte';
     import Enumerable from 'linq';
+    import StateDropdown from '$lib/components/states.svelte';
     type SchoolType = Omit<z.infer<typeof schoolInsertSchema>['school'], 'isVirtual' | 'emailDomain'>;
     type Division = z.infer<typeof division>;
     var school = $state<SchoolType>({
         name: "",
-        state: "",
+        state: null,
         streetAddress: "",
         city: "",
         zipCode: "",
@@ -32,7 +33,7 @@
     var teamCoachMapping: {[teamId: number]: string[]} = $state({0: []});
     const collection = $derived.by(() => {
         return useListCollection({
-            items: school.coaches.map((item, index) => ({label: `${index}: ${item.firstName} ${item.lastName}`, value: index.toString()})),
+            items: school.coaches.map((item, index) => ({label: `${index + 1}: ${item.firstName} ${item.lastName}`, value: index.toString()})),
             itemToValue: ({value}) => value,
             itemToString: ({label}) => label
         });
@@ -41,7 +42,7 @@
         return {
             lastName: "",
             firstName: "",
-            gpa: 0,
+            gpa: undefined,
             division
         };
     }
@@ -81,7 +82,7 @@
     }
     function onSubmit() {
         //console.log($state.snapshot(school));
-        console.log($state.snapshot(teamCoachMapping));
+        console.log($state.snapshot(school.state));
     }
 </script>
 <div class="w-full h-full">
@@ -101,15 +102,16 @@
             </label>
             <label class="label grid">
                 <span class="label-text">School State</span>
-                <input class="input" type="text" placeholder="School state..." bind:value={school.state}/>
+                <StateDropdown placeholder="School State..." bind:state={school.state}/>
+                <!--<input class="input" type="text" placeholder="School state..." bind:value={school.state}/>-->
             </label>
             <label class="label grid">
                 <span class="label-text">School zip code</span>
-                <input class="input" type="text" placeholder="Zip code..." bind:value={school.zipCode}/>
+                <input class="input" type="text" maxlength="5" pattern="[0-9]*" placeholder="Zip code..." bind:value={school.zipCode}/>
             </label>
             <label class="label grid">
-                <span class="label-text">School phone number</span>
-                <input class="input" type="text" placeholder="Phone number..." bind:value={school.phone}/>
+                <span class="label-text">School phone number (Numbers only, do not use ‘-’, format ##########)</span>
+                <input class="input" type="text" placeholder="Phone number..." pattern="[0-9]*" bind:value={school.phone}/>
             </label>
             <label class="label grid">
                 <span class="label-text">School principal name</span>
