@@ -5,7 +5,9 @@
 	import type z from "zod";
     import _ from 'lodash';
     import StateDropdown from "$lib/components/states.svelte"
-    import {validateZipCode, onGpaChange, disableNonNumeric} from "$lib/utils/validation";
+    import { validateZipCode, onGpaChange, disableNonNumeric } from "$lib/utils/validation";
+    import { FileIcon } from '@lucide/svelte'
+    import { FileUpload } from '@skeletonlabs/skeleton-svelte'
     var streetAddress = $state<string>();
     var city = $state<string>();
     var stateInput = $state<string>();
@@ -90,21 +92,45 @@
                 </select>
             </label>
             <label class="label">
-                <span class="label-text">Guardian/Parent First Name<span class={`text-red-500 ${guardianFirstNameInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;Check Guardian/Parent First</span></span>
-                <input required class="input flex-5" type="text" placeholder="Guardian/Parent First Name..." bind:value={guardianFirstName}/>
+                <span class="label-text">Parent/Guardian First Name<span class={`text-red-500 ${guardianFirstNameInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;Check Parent/Guardian First</span></span>
+                <input required class="input flex-5" type="text" placeholder="Parent/Guardian First Name..." bind:value={guardianFirstName}/>
             </label>
             <label class="label">
-                <span class="label-text">Guardian/Parent Last Name<span class={`text-red-500 ${guardianLastNameInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;Check Guardian/Parent Last</span></span>
-                <input required class="input flex-5" type="text" placeholder="Guardian/Parent Last Name..." bind:value={guardianLastName}/>
+                <span class="label-text">Parent/Guardian Last Name<span class={`text-red-500 ${guardianLastNameInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;Check Parent/Guardian Last</span></span>
+                <input required class="input flex-5" type="text" placeholder="Parent/Guardian Last Name..." bind:value={guardianLastName}/>
             </label>
             <label class="label">
-                <span class="label-text">Guardian/Parent Phone<span class={`text-red-500 ${guardianPhoneInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;Check Guardian/Parent Phone</span></span>
-                <input required class="input flex-5" type="text" pattern="[0-9]*" placeholder="Guardian/Parent Phone..." bind:value={guardianPhone}/>
+                <span class="label-text">Parent/Guardian Phone<span class={`text-red-500 ${guardianPhoneInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;Check Parent/Guardian Phone</span></span>
+                <input required class="input flex-5" type="text" pattern="[0-9]*" placeholder="Parent/Guardian Phone..." bind:value={guardianPhone}/>
             </label>
             <label class="label">
                 <span class="label-text">Guardian/Pareent Email<span class={`text-red-500 ${guardianEmailInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;Check Guardian/Pareent Email</span></span>
                 <input required class="input flex-5" type="text" placeholder="Guardian/Pareent Email..." bind:value={guardianEmail}/>
             </label>
+        </fieldset>
+        <fieldset class="flex justify-end">
+            <FileUpload>
+                <FileUpload.Label>File Upload</FileUpload.Label>
+                <FileUpload.Dropzone>
+                    <FileIcon class="size-10" />
+                    <span>Select file or drag here.</span>
+                    <FileUpload.Trigger>Browse Files</FileUpload.Trigger>
+                    <FileUpload.HiddenInput />
+                </FileUpload.Dropzone>
+                <FileUpload.ItemGroup>
+                    <FileUpload.Context>
+                        {#snippet children(fileUpload)}
+                            {#each fileUpload().acceptedFiles as file (file.name)}
+                                <FileUpload.Item {file}>
+                                    <FileUpload.ItemName>{file.name}</FileUpload.ItemName>
+                                    <FileUpload.ItemSizeText>{file.size} bytes</FileUpload.ItemSizeText>
+                                    <FileUpload.ItemDeleteTrigger />
+                                </FileUpload.Item>
+                            {/each}
+                        {/snippet}
+                    </FileUpload.Context>
+                </FileUpload.ItemGroup>
+            </FileUpload>
         </fieldset>
         <fieldset class="flex justify-end">
             <!-- Button -->
