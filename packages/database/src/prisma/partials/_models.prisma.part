@@ -152,11 +152,11 @@ model Student {
   // --- Indexes ---
   @@index([teamId])
   @@index([schoolId])
-  @@index([lastName, firstName])
-  @@index([schoolId, division])
-  @@index([schoolId, signature])
-  @@index([teamId, signature])
-  @@index([signature])
+  @@index([id, externalStudentId, firstName, lastName])
+  @@index([id, externalStudentId, schoolId, division])
+  @@index([id, externalStudentId, schoolId, signature])
+  @@index([id, externalStudentId, teamId, signature])
+  @@index([id, externalStudentId, signature])
 
   @@map("students")
 }
