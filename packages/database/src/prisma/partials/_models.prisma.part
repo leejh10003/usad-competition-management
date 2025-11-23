@@ -133,6 +133,13 @@ model Student {
   state          String?
   zipCode        String? @map("zip_code")
 
+  // Guardian Info
+
+  guardianFirstName String? @map("guardian_first_name")
+  guardianLastName  String? @map("guardian_last_name")
+  guardianPhone     String? @map("guardian_phone")
+  guardianEmail     String? @map("guardian_email")
+
   // Relations
   teamId String? @map("team_id") @db.Uuid
   team   Team?   @relation(fields: [teamId], references: [id])

@@ -5,7 +5,11 @@ export const optionalInfosCommon = z.object({
   usadPin: z.string().nullable().optional(),
   gpa: z.float32().nullable().optional(),
   teamId: z.uuid().nullable().optional(),
-  signature: z.string().nullable().optional()
+  signature: z.string().nullable().optional(),
+  guardianFirstName: z.string().nullable().optional(),
+  guardianLastName: z.string().nullable().optional(),
+  guardianPhone: z.string().nullable().optional(),
+  guardianEmail: z.string().nullable().optional(),
 });
 
 

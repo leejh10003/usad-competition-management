@@ -53,7 +53,7 @@
     ];
     var {state = $bindable(), placeholder} = $props<{state: string | null | undefined, placeholder?: string | null | undefined}>();
 </script>
-<select class="select" bind:value={state}>
+<select required class="select" bind:value={state}>
     <option disabled selected value={null}>{placeholder}</option>
     {#each states as {shorthand, original}}
         <option value={shorthand}>{original} ({shorthand})</option>

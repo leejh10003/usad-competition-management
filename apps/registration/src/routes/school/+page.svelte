@@ -14,6 +14,7 @@
     import {Listbox, useListCollection} from '@skeletonlabs/skeleton-svelte';
     import Enumerable from 'linq';
     import StateDropdown from '$lib/components/states.svelte';
+	import { validateZipCode } from '$lib/utils/validation';
     type SchoolType = Omit<z.infer<typeof schoolInsertSchema>['school'], 'isVirtual' | 'emailDomain'>;
     type Division = z.infer<typeof division>;
     var school = $state<SchoolType>({
@@ -107,7 +108,7 @@
             </label>
             <label class="label grid">
                 <span class="label-text">School zip code</span>
-                <input class="input" type="text" maxlength="5" pattern="[0-9]*" placeholder="Zip code..." bind:value={school.zipCode}/>
+                <input class="input" type="text" maxlength="5" pattern="[0-9]*" onkeypress={(e) => validateZipCode(e as unknown as KeyboardEvent)} placeholder="Zip code..." bind:value={school.zipCode}/>
             </label>
             <label class="label grid">
                 <span class="label-text">School phone number (Numbers only, do not use ‘-’, format ##########)</span>

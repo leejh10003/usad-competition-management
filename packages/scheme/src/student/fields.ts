@@ -12,4 +12,8 @@ export const studentSelectFieldsSchema = {
   city: true,
   state: true,
   zipCode: true,
+  guardianFirstName: true,
+  guardianLastName: true,
+  guardianPhone: true,
+  guardianEmail: true,
 };
