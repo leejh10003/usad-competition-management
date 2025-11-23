@@ -9,7 +9,7 @@
 	<QrCodeScanner
 		detect={(e, scanner) => {
 			scanner.pause();
-			goto(`scanned?id=${e.decodedText}`)
+			goto(`/check-in-team/scanned?id=${e.decodedText}`)
 		}}
 		error={(e) => console.log({ type: 'ERROR', message: e })}
 		paused={false}
