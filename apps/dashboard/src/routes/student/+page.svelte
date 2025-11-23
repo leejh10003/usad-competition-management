@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
     import { Pagination } from '@skeletonlabs/skeleton-svelte';
-    import _ from 'lodash';
+    import _, { split } from 'lodash';
     import { division, studentQuerySchema, studentResponseSchema } from 'usad-scheme';
     import { ArrowLeftIcon, ArrowRightIcon } from '@lucide/svelte';
     import z from 'zod'
@@ -18,20 +18,60 @@
     async function fetch(searchParams: z.infer<typeof studentQuerySchema>) {
         isLoading = true;
         //TODO: server fetch
-        students = _.range(0, 10).map((_) => ({
-            id: "",
-            externalStudentId: "7601",
-            division: "H",
-            gpa: 2.4,
-            firstName: "Lorem",
-            lastName: "Ipsum",
-            teamId: "",
-            schoolId: "",
-            streetAddress: "47 W 13th St",
-            city: "New York",
-            state: "NY",
-            zipCode: "10011",
-        }));
+        const entities = [{id: "H1"          , firstName: "Lucille", lastName: 	"Mock"},
+        {id: "H2"	 	    , firstName: "Marissa", lastName: 	"Guo"},
+        {id: "H3"	 	    , firstName: "Shelby", lastName:	"Aust"},
+        {id: "S4"	 	    , firstName: "JT", lastName: 	"Hare"},
+        {id: "S5"	 	    , firstName: "Reyhan", lastName:	"Ramrakhyani"},
+        {id: "S6"	 	    , firstName: "Lia", lastName: 	"Ha"},
+        {id: "V7"	 	    , firstName: "Nathan", lastName:	"Frost"},
+        {id: "V8"	 	    , firstName: "Gavin", lastName:	"Fox"},
+        {id: "V9"	 	    , firstName: "Yuliya", lastName:	"Gorbunova"},
+        {id: "ALT1-H1"	 	, firstName: "Luke", lastName:	"O'Brien"},
+        {id: "ALT1-H2"	 	, firstName: "Caleb", lastName:	"Olson"},
+        {id: "ALT1-H3"	 	, firstName: "Kylie", lastName: 	"Weaver"},
+        {id: "ALT1-S4"	 	, firstName: "Rowan", lastName:	"LeFevre"},
+        {id: "ALT1-S5"	 	, firstName: "Austin", lastName: 	"Strong"},
+        {id: "ALT1-S6"	 	, firstName: "Heidi", lastName:	"Curtis"},
+        {id: "ALT1-V7"	 	, firstName: "Gabriel", lastName:	"Gois"},
+        {id: "ALT1-V8"	 	, firstName: "Maddy", lastName:	"Inman"},
+        {id: "ALT2-H1"	 	, firstName: "Aariyaka", lastName:	"Jain"},
+        {id: "ALT2-H2"	 	, firstName: "Riley", lastName:	"Delorey"},
+        {id: "ALT2-H3"	 	, firstName: "Ethan", lastName: 	"Chaing"},
+        {id: "ALT2-S4"	 	, firstName: "Ocean", lastName: 	"Hauke"},
+        {id: "ALT2-S5"	 	, firstName: "Conor", lastName:	"Long"},
+        {id: "ALT3-H1"	 	, firstName: "Raya", lastName:	"Waldron"},
+        {id: "ALT3-H2"	 	, firstName: "Dylan", lastName:	"Portugal"},
+        {id: "ALT3-H3"	 	, firstName: "Gregory", lastName: 	"DeFauw"},
+        {id: "ALT3-S4"	 	, firstName: "Tyler", lastName:	"Bettner"},
+        {id: "ALT3-S5"	 	, firstName: "AJ", lastName:	"Morris"},
+        {id: "ALT4-H1"	 	, firstName: "Ishaan", lastName:	"Deshpande"},
+        {id: "ALT4-H2"	 	, firstName: "Charles", lastName:	"Watts"},
+        {id: "ALT4-H3"	 	, firstName: "Frederick", lastName:	"Sh"},
+        {id: "ALT5-H1"	 	, firstName: "Thomas", lastName: 	"Bender"},
+        {id: "ALT5-H2"	 	, firstName: "Ryan", lastName: 	"Waldro"},]
+        students = entities.map((e) => {
+            const group = (e.id.startsWith("ALT") ? e.id.split("-")[1].charAt(0) : e.id.charAt(0)) as z.infer<typeof division>;
+            const gpa = group === 'H' ? 3.8 : group === 'S' ? 3.2 : 2.5;
+            return {
+                id: e.id,
+                externalStudentId: e.id,
+                division: group,
+                gpa: gpa,
+                firstName: e.firstName,
+                lastName: e.lastName,
+                teamId: "",
+                schoolId: "",
+                streetAddress: "47 W 13th St",
+                city: "New York",
+                state: "NY",
+                zipCode: "10011",
+                guardianEmail: "",
+                guardianFirstName: "",
+                guardianLastName: "",
+                guardianPhone: ""
+            };
+        });
         isLoading = false;
     }
     $effect(() => {
