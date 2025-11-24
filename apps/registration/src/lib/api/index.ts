@@ -19,15 +19,15 @@ class WorkerRequest {
 		form.append('fileKey', input.fileKey);
 		form.append('index', input.index.toString());
 		form.append('kind', input.kind);
-		const result = await this.axiosClient.post<
+		const { data } = await this.axiosClient.post<
 			z.infer<typeof fileUploadingFormSchema>,
-			z.infer<typeof fileUploadingResponseSchema>
+            { data: z.infer<typeof fileUploadingResponseSchema>}
 		>(`/files`, form, {
 			headers: {
 				'Content-Type': 'multipart/form-data'
 			}
 		});
-		return result;
+		return data;
 	}
 }
 
