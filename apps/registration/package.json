@@ -37,13 +37,14 @@
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.46.1",
 		"usad-scheme": "workspace:usad-scheme",
-		"vite": "^7.1.10"
+		"vite": "^7.1.10",
+		"zod": "^4.1.12"
 	},
 	"dependencies": {
 		"@lucide/svelte": "^0.553.0",
 		"@types/lodash": "^4.17.20",
+		"axios": "^1.13.2",
 		"linq": "^4.0.3",
-		"lodash": "^4.17.21",
-		"zod": "^4.1.12"
+		"lodash": "^4.17.21"
 	}
 }
