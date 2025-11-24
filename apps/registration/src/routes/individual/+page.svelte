@@ -115,7 +115,7 @@
                     index: 0,
                     kind: 'registering-additional',
                     file: details.files[0],
-                    fileKey: 'test'
+                    fileKey: details.files[0].name
                 });
             }}>
                 <FileUpload.Label>File Upload</FileUpload.Label>
