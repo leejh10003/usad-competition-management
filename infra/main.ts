@@ -9,6 +9,7 @@ import { Project as VercelProject } from './.gen/providers/vercel/project';
 import { LocalProvider } from '@cdktf/provider-local/lib/provider';
 import { File } from '@cdktf/provider-local/lib/file';
 import { HyperdriveConfig } from '@cdktf/provider-cloudflare/lib/hyperdrive-config';
+import { R2Bucket } from '@cdktf/provider-cloudflare/lib/r2-bucket';
 import { Cluster as CockroachCluster } from './.gen/providers/cockroach/cluster';
 import { CockroachProvider } from './.gen/providers/cockroach/provider';
 import { DataCockroachConnectionString } from './.gen/providers/cockroach/data-cockroach-connection-string';
@@ -64,6 +65,12 @@ class MyUsadPocStack extends TerraformStack {
       id: cockroachCluster.id,
       sqlUser: COCKROACH_SQL_USERNAME,
       password: COCKROACH_SQL_USER_PASSWORD,
+    });
+    new R2Bucket(this, 'usad-bucket', {
+      name: 'usad-bucket',
+      accountId: CLOUDFLARE_ACCOUNT_ID,
+      storageClass: 'Standard',
+      location: 'wnam'
     });
     const hyperdrive = new HyperdriveConfig(this, "usad-hyperdrive", {
       name: "usad-hyperdrive",
