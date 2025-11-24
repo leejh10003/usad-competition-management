@@ -1,5 +1,9 @@
-import { OpenAPIHono, z } from "@hono/zod-openapi";
+import { OpenAPIHono } from "@hono/zod-openapi";
 import { Env } from "../../env";
+import {
+  fileUploadingFormSchema,
+  fileUploadingResponseSchema,
+} from "usad-scheme";
 
 const files = new OpenAPIHono<Env>();
 
@@ -11,12 +15,7 @@ files.openapi(
       body: {
         content: {
           "multipart/form-data": {
-            schema: z.object({
-              file: z.instanceof(File),
-              fileKey: z.string(),
-              kind: z.enum(['registering-additional', 'signature']),
-              index: z.coerce.number(),
-            }),
+            schema: fileUploadingFormSchema,
           },
         },
       },
@@ -25,10 +24,7 @@ files.openapi(
       200: {
         content: {
           "application/json": {
-            schema: z.object({
-              success: z.literal(true),
-              fileKey: z.string(),
-            }),
+            schema: fileUploadingResponseSchema,
           },
         },
         description: "File uploaded successfully",
@@ -37,7 +33,13 @@ files.openapi(
   },
   async (c) => {
     const { file, fileKey, kind, index } = c.req.valid("form");
-    const uploaded = await c.env.USAD_BUCKET.put(`/${kind}/${crypto.randomUUID()}/${Date.now()}/${index}/${fileKey.replace(/^\//g, '')}`, file);
+    const uploaded = await c.env.USAD_BUCKET.put(
+      `/${kind}/${crypto.randomUUID()}/${Date.now()}/${index}/${fileKey.replace(
+        /^\//g,
+        ""
+      )}`,
+      file
+    );
     return c.json({ success: true as true, fileKey: uploaded!.key }, 200);
   }
 );

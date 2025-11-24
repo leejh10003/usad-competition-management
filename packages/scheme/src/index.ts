@@ -97,8 +97,8 @@ export {
   eventsInsertSchema,
   eventUpdateItemSchema,
   eventUpdateSchema,
-  eventsUpdateSchema
-} from './event';
+  eventsUpdateSchema,
+} from "./event";
 
 export {
   eventCheckInSelectFieldsSchema,
@@ -106,5 +106,7 @@ export {
   eventCheckedInResponseSchema,
   eventCheckedInsResponseSchema,
   eventCheckedInInsert,
-  eventCheckedInsInsert
-} from './event-check-in';
+  eventCheckedInsInsert,
+} from "./event-check-in";
+
+export { fileUploadingFormSchema, fileUploadingResponseSchema } from "./file";
