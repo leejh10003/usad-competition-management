@@ -8,6 +8,7 @@
     import { validateZipCode, onGpaChange, disableNonNumeric } from "$lib/utils/validation";
     import { FileIcon } from '@lucide/svelte'
     import { FileUpload } from '@skeletonlabs/skeleton-svelte'
+    import { workerRequest } from '$lib/api';
     var streetAddress = $state<string>();
     var city = $state<string>();
     var stateInput = $state<string>();
@@ -109,7 +110,14 @@
             </label>
         </fieldset>
         <fieldset class="flex justify-end">
-            <FileUpload>
+            <FileUpload maxFiles={1} onFileAccept={async (details) => {
+                await workerRequest.uploadFile({
+                    index: 0,
+                    kind: 'registering-additional',
+                    file: details.files[0],
+                    fileKey: 'test'
+                });
+            }}>
                 <FileUpload.Label>File Upload</FileUpload.Label>
                 <FileUpload.Dropzone>
                     <FileIcon class="size-10" />
