@@ -9,6 +9,8 @@
     import { FileIcon } from '@lucide/svelte'
     import { FileUpload } from '@skeletonlabs/skeleton-svelte'
     import { workerRequest } from '$lib/api';
+	import type { FileUploadState } from "$lib/enums/file";
+    
     var streetAddress = $state<string>();
     var city = $state<string>();
     var stateInput = $state<string>();
@@ -22,6 +24,7 @@
     var guardianPhone = $state<string>();
     var guardianEmail = $state<string>();
     var fileKey = $state<string>();
+    var fileState = $state<FileUploadState>('none');
     var streetAddressInvalid = $state(false);
     var cityInvalid = $state(false);
     var stateInputInvalid = $state(false);
@@ -113,14 +116,23 @@
         </fieldset>
         <fieldset class="flex justify-end">
             <FileUpload maxFiles={1} onFileAccept={async (details) => {
-                const { fileKey: retrieved } = await workerRequest.uploadFile({
-                    index: 0,
-                    kind: 'registering-additional',
-                    file: details.files[0],
-                    fileKey: details.files[0].name
-                });
-                fileKey = retrieved;
-                console.log($state.snapshot(fileKey));
+                var currentState: FileUploadState = 'none';
+                try {
+                    currentState = fileState;
+                    fileState = 'uploading';
+                    const { fileKey: retrieved } = await workerRequest.uploadFile({
+                        index: 0,
+                        kind: 'registering-additional',
+                        file: details.files[0],
+                        fileKey: details.files[0].name
+                    });
+                    fileKey = retrieved;
+                    console.log($state.snapshot(fileKey));
+                    fileState = 'uploaded';
+                } catch (e){
+                    console.error(e);
+                    fileState = currentState;
+                }
             }}>
                 <FileUpload.Label>File Upload</FileUpload.Label>
                 <FileUpload.Dropzone>
