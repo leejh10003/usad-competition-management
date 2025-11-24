@@ -120,13 +120,14 @@
                 try {
                     currentState = fileState;
                     fileState = 'uploading';
-                    const { fileKey: retrieved } = await workerRequest.uploadFile({
+                    const response = await workerRequest.uploadFile({
                         index: 0,
                         kind: 'registering-additional',
                         file: details.files[0],
                         fileKey: details.files[0].name
                     });
-                    fileKey = retrieved;
+                    console.log(response);
+                    fileKey = response.fileKey;
                     console.log($state.snapshot(fileKey));
                     fileState = 'uploaded';
                 } catch (e){
