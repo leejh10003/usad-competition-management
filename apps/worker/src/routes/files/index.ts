@@ -33,7 +33,6 @@ files.openapi({
     }
 }, async (c) => {
   const {file, fileKey} = c.req.valid('form');
-  console.log(file, fileKey);
   const uploaded = await c.env.USAD_BUCKET.put(fileKey, file);
   return c.json({ success: true as true, fileKey: uploaded!.key }, 200);
 });
