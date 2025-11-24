@@ -21,6 +21,7 @@
     var guardianLastName = $state<string>();
     var guardianPhone = $state<string>();
     var guardianEmail = $state<string>();
+    var fileKey = $state<string>();
     var streetAddressInvalid = $state(false);
     var cityInvalid = $state(false);
     var stateInputInvalid = $state(false);
@@ -33,6 +34,7 @@
     var guardianLastNameInvalid = $state(false);
     var guardianPhoneInvalid = $state(false);
     var guardianEmailInvalid = $state(false);
+    var fileKeyInvalid = $state(false);
     function onSubmit(){
         streetAddressInvalid = (streetAddress?.trim()?.length ?? 0) < 1;
         cityInvalid = (city?.trim()?.length ?? 0) < 1;
@@ -111,12 +113,14 @@
         </fieldset>
         <fieldset class="flex justify-end">
             <FileUpload maxFiles={1} onFileAccept={async (details) => {
-                await workerRequest.uploadFile({
+                const { fileKey: retrieved } = await workerRequest.uploadFile({
                     index: 0,
                     kind: 'registering-additional',
                     file: details.files[0],
                     fileKey: details.files[0].name
                 });
+                fileKey = retrieved;
+                console.log($state.snapshot(fileKey));
             }}>
                 <FileUpload.Label>File Upload</FileUpload.Label>
                 <FileUpload.Dropzone>
