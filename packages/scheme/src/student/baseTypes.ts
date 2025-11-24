@@ -10,6 +10,7 @@ export const optionalInfosCommon = z.object({
   guardianLastName: z.string().nullable().optional(),
   guardianPhone: z.string().nullable().optional(),
   guardianEmail: z.string().nullable().optional(),
+  attachmentOnRegistering: z.string().nullable().optional()
 });
 
 

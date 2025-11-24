@@ -16,4 +16,5 @@ export const studentSelectFieldsSchema = {
   guardianLastName: true,
   guardianPhone: true,
   guardianEmail: true,
+  attachmentOnRegistering: true,
 };

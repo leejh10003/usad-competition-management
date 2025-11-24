@@ -124,8 +124,9 @@ model Student {
   lastName  String @map("last_name")
   usadPin   String? @map("usad_pin")
 
-  // R2 Object Key (Check-in signature)
+  // R2 Object Key
   signature String?
+  attachmentOnRegistering String?  @map("attachment_on_registering")
 
   // Address Info (Preserved from your previous schema)
   streetAddress  String? @map("street_address")
