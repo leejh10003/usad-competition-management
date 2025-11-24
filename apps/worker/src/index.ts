@@ -10,6 +10,7 @@ import { teams } from './routes/teams';
 import { events } from './routes/event';
 import { eventCheckIns } from './routes/event-check-in';
 import { files } from './routes/files';
+import { cors } from 'hono/cors';
 //import { PrismaClientUnknownRequestError, PrismaClientValidationError, PrismaClientKnownRequestError, PrismaClientInitializationError } from '@prisma/client/runtime/library';
 
 const app = new OpenAPIHono<Env>({});
@@ -30,6 +31,15 @@ app.use('*', async (c, next) => {
   c.set('prisma', prisma);
   await next();
 });
+app.use('*', cors({
+    origin: (origin, context) => {
+      const env = context.env as Env['Bindings'];
+      const urls = [env.DASHBOARD_URL, env.FIELD_OPS_URL, env.REGISTRATION_URL];
+      return urls.includes(origin) ? origin : null;
+    },
+    credentials: true,
+  })
+);
 
 app.use('*', async (c, next) => {
   const requestId = c.req.header('cf-request-id');
@@ -68,6 +78,9 @@ api.route('/teams', teams);
 api.route('/events', events);
 api.route('/event-check-ins', eventCheckIns);
 api.route('/files', files);
+api.get('/test', async (c) => {
+  return c.json({success: true});
+})
 
 //api.route('/', students);
 
