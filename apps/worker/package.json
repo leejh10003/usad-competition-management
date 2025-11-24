@@ -17,6 +17,7 @@
     "@cloudflare/workers-types": "^4.20250927.0",
     "esbuild": "^0.25.10",
     "typescript": "^5.9.2",
+    "vercel": "^48.10.11",
     "wrangler": "^4.45.3"
   },
   "dependencies": {
@@ -35,7 +36,7 @@
     "lodash": "^4.17.21",
     "pg": "^8.16.3",
     "postgres": "^3.4.7",
-    "zod": "^4.1.12",
-    "usad-scheme": "workspace:usad-scheme"
+    "usad-scheme": "workspace:usad-scheme",
+    "zod": "^4.1.12"
   }
 }
