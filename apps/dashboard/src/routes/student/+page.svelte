@@ -138,7 +138,7 @@
                                             </Dialog.CloseTrigger>
                                         </header>
                                         <Dialog.Description>
-                                            <Pdf data="https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf" />
+                                            <Pdf data="https://api.printnode.com/static/test/pdf/a4_500_pages.pdf" />
                                         </Dialog.Description>
                                         <footer class="flex justify-end gap-2">
                                             <Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>

@@ -79,7 +79,8 @@
 
 <div>
   <canvas bind:this={canvasRef}></canvas>
-  <Pagination count={maxPages} pageSize={1} page={currentPageNum}>
+  <div class="flex flex-row">
+    <Pagination count={maxPages} pageSize={1} page={currentPageNum}>
         <Pagination.PrevTrigger onclick={() => prevPage()}><ArrowLeftIcon class="size-4"/></Pagination.PrevTrigger>
         <Pagination.Context>
             {#snippet children(pagination)}
@@ -96,4 +97,12 @@
         </Pagination.Context>
         <Pagination.NextTrigger onclick={() => nextPage()}><ArrowRightIcon class="size-4"/></Pagination.NextTrigger>
     </Pagination>
+    <input type="number" class="input" min="1" step="1" max={maxPages} bind:value={currentPageNum} onchange={(e) => {
+      if (e.type === "change") {
+        var page = parseInt((e.target as HTMLInputElement).value) as number;
+        currentPageNum = page;
+        renderPage(currentPageNum);
+      }
+    }} />
+  </div>
 </div>
