@@ -57,7 +57,7 @@ teams.openapi(
       where: condition,
       skip: offset,
       take: limit,
-    });
+    }) as z.infer<typeof teamsResponseSchema>['teams'];
     const count = await prisma.team.count({
       where: condition
     })
@@ -134,7 +134,7 @@ teams.openapi(
               },
               data: updateTeam(team),
               select: teamSelectFieldsSchema,
-            })
+            })  as z.infer<typeof teamsResponseSchema>['teams'][number]
         )
       )
     );

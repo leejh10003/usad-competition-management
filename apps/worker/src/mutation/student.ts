@@ -18,12 +18,12 @@ function guranteeRelationship(
   context: TransactionContextType
 ) {
   if (
-    (!context.schoolId && !studentInput.schoolId) ||
+    (!context.schoolId && !(studentInput as {schoolId: string})?.schoolId) ||
     (!context.teamId && !studentInput.teamId)
   ) {
     throw new Error("Relationships needed for student are not provided");
   }
-  const schoolId = studentInput.schoolId ?? context.schoolId!;
+  const schoolId = (studentInput as {schoolId: string}).schoolId ?? context.schoolId!;
   const teamId = studentInput.teamId ?? context.teamId;
   return {
     ...studentInput,

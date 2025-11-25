@@ -12,4 +12,5 @@ export const schoolSelectFieldsSchema = {
   principalEmail: true,
   primaryCoachId: true,
   emailDomain: true,
+  division: true,
 };

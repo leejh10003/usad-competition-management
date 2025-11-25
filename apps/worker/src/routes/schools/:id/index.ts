@@ -1,4 +1,4 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
+import { OpenAPIHono, z } from "@hono/zod-openapi";
 import {
   schoolResponse,
   schoolSelectFieldsSchema,
@@ -31,7 +31,7 @@ id.openapi(
     const school = await prisma.school.findUnique({
       where: { id },
       select: schoolSelectFieldsSchema,
-    });
+    }) as z.infer<typeof schoolResponse>['school'];
     return c.json({ success: true, school: school! }, 200);
   }
 );
@@ -70,7 +70,7 @@ id.openapi(
       where: { id },
       select: schoolSelectFieldsSchema,
       data: updateSchoolField(school)
-    });
+    }) as z.infer<typeof schoolResponse>['school'];
     return c.json({success: true, school: result!}, 200);
   }
 );

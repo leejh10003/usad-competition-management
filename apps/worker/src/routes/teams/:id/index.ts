@@ -1,5 +1,5 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
-import { teamResponseSchema, teamSelectFieldsSchema, teamUpdateSchema } from "usad-scheme";
+import { OpenAPIHono, z } from "@hono/zod-openapi";
+import { teamResponseItemSchema, teamResponseSchema, teamSelectFieldsSchema, teamUpdateSchema } from "usad-scheme";
 import { updateTeam } from "..";
 
 const id = new OpenAPIHono();
@@ -25,7 +25,7 @@ id.openapi(
       where: {
         id,
       },
-    });
+    }) as z.infer<typeof teamResponseItemSchema>;
     return c.json({ success: true, team: result! }, 200);
   }
 );
@@ -64,7 +64,7 @@ id.openapi(
       where: {
         id,
       }
-    });
+    }) as z.infer<typeof teamResponseItemSchema>;
     return c.json({ success: true, team: result! }, 200);
   }
 );

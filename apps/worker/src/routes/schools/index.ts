@@ -81,12 +81,12 @@ schools.openapi(
               }
             : undefined,
       };
-    const schools = await prisma.school.findMany({
+    const schools = (await prisma.school.findMany({
       select: schoolSelectFieldsSchema,
       skip: offset,
       take: limit,
       where: condition,
-    });
+    })) as z.infer<typeof schoolsResponse>['schools'];
     const count = await prisma.school.count({
       where: condition
     })
@@ -157,11 +157,11 @@ schools.openapi(
       Promise.all(
         schools.map(
           async ({ id, school }) =>
-            await tx.school.update({
+            (await tx.school.update({
               data: updateSchoolField(school),
               select: schoolSelectFieldsSchema,
               where: { id },
-            })!
+            })!) as z.infer<typeof schoolsResponse>['schools'][number]
         )
       )
     );

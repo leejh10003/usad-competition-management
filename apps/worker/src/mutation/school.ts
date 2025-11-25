@@ -20,7 +20,7 @@ export async function insertSchool(
 ): Promise<z.infer<typeof schoolResponseItemSchema>> {
   const school = await tx.school.create({
     data: _.omit(schoolInput.school, "primaryCoachId", "coaches", "teams"),
-  });
+  }) as z.infer<typeof schoolResponseItemSchema>;
   context.schoolId = school.id;
   const teams = (await insertTeams(
     { teams: schoolInput.school.teams },

@@ -29,7 +29,7 @@ export async function insertTeam(
   const team = await tx.team.create({
     data: guranteeRelationship(teamInput.team, context),
     select: teamSelectFieldsSchema,
-  });
+  }) as z.infer<typeof teamResponseItemSchema>;
   const teamId = team.id;
   if (!context.schoolId) {
     context.schoolId = team.schoolId;

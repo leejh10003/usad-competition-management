@@ -36,6 +36,7 @@ model School {
   primaryCoach   Coach?  @relation("PrimaryCoachOfSchool", fields: [primaryCoachId], references: [id])
 
   emailDomain String? @unique @map("email_domain")
+  division Int?
 
   // Relations
   coaches  Coach[] @relation("CoachesOfSchool")
@@ -44,6 +45,7 @@ model School {
 
   // --- Indexes ---
   @@index([state, city])
+  @@index([division])
   @@index([name])
   
   @@map("schools")
@@ -56,6 +58,7 @@ model Team {
 
   schoolId String @map("school_id") @db.Uuid
   school   School @relation(fields: [schoolId], references: [id])
+  division Int?
 
   // Explicit M:N Relationship via Join Table
   coachesRelationship TeamCoachRelationship[] @relation("TeamRelationshipToCoach")
@@ -64,6 +67,7 @@ model Team {
 
   // --- Indexes ---
   @@index([schoolId]) // FK Index
+  @@index([division])
   @@map("teams")
 }
 
