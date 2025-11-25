@@ -2,6 +2,7 @@ VERCEL_RESULT="$(pnpm vercel project list 2>&1)"
 DASHBOARD_URL="$(echo $VERCEL_RESULT | grep -o 'https:\/\/dashboard[a-z|A-Z|0-9|\-]*.vercel.app')"
 FIELD_OPS_URL="$(echo $VERCEL_RESULT | grep -o 'https:\/\/field-ops[a-z|A-Z|0-9|\-]*.vercel.app')"
 REGISTRATION_URL="$(echo $VERCEL_RESULT | grep -o 'https:\/\/registration[a-z|A-Z|0-9|\-]*.vercel.app')"
+echo $VERCEL_RESULT
 echo $DASHBOARD_URL $FIELD_OPS_URL $REGISTRATION_URL
 sed -i ''  "s|DASHBOARD_URL=.*|DASHBOARD_URL=\"${DASHBOARD_URL}\"|g" ./wrangler.toml.tftpl
 sed -i ''  "s|DASHBOARD_URL=.*|DASHBOARD_URL=\"${DASHBOARD_URL}\"|g" ./wrangler.toml
