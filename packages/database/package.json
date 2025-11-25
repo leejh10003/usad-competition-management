@@ -24,6 +24,8 @@
   },
   "devDependencies": {
     "dotenv-cli": "^10.0.0",
+    "eslint": "^9.39.1",
+    "prettier": "^3.6.2",
     "prisma-zod-generator": "^1.31.6"
   }
 }
