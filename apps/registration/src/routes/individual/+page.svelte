@@ -115,7 +115,7 @@
             </label>
         </fieldset>
         <fieldset class="flex justify-end">
-            <FileUpload maxFiles={1} onFileAccept={async (details) => {
+            <FileUpload maxFiles={1} accept={["application/pdf"]} onFileAccept={async (details) => {
                 var currentState: FileUploadState = 'none';
                 try {
                     currentState = fileState;
