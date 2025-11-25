@@ -44,4 +44,12 @@ files.openapi(
   }
 );
 
+files.get('*', async (c) => {
+  const fileKey = c.req.path.replace(/^\//g, '').replace('api/files', '');
+  const file = await c.env.USAD_BUCKET.get(fileKey)
+  const headers = new Headers();
+  headers.set('Content-Type', file!.httpMetadata!.contentType!);
+  return c.body(file!.body!, { headers, status: 200});
+})
+
 export { files };
