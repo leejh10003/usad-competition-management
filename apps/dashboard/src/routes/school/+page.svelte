@@ -53,7 +53,7 @@
     <h1 class="h1 font-bold">School</h1>
     <Collapsible class="border-primary-100 border rounded-xs p-4">
         <div class="w-full flex justify-between items-center">
-            <p class="font-bold">Filter, Search and Sort</p>
+            <p class="font-bold">Filter, Search, Sort and Actions</p>
             <Collapsible.Trigger class="btn-icon hover:preset-tonal">
                 <ArrowUpDownIcon class="size-4" />
             </Collapsible.Trigger>

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-    import { Pagination } from '@skeletonlabs/skeleton-svelte';
+    import { Collapsible, Pagination } from '@skeletonlabs/skeleton-svelte';
     import _ from 'lodash';
     import { coachQuerySchema, coachResponseSchema } from 'usad-scheme';
-    import { ArrowLeftIcon, ArrowRightIcon } from '@lucide/svelte';
+    import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon } from '@lucide/svelte';
     import z from 'zod'
     type CoachResponseItem = z.infer<typeof coachResponseSchema>['coach'];
     var isLoading = $state<boolean>(true);
@@ -15,6 +15,8 @@
     var total = $state<number>(0);
     var currentCount = $state<number>(0);
     var coaches = $state<CoachResponseItem[]>([]);
+    var queryString = $state<string>();
+    var debouncedQuery = $state<string>();
     async function fetch(searchParams: z.infer<typeof coachQuerySchema>) {
         isLoading = true;
         //TODO: server fetch
@@ -25,6 +27,7 @@
             email: "test@mail.com",
             phone: "(123)456-7890",
             schoolId: "",
+            externalCoachId: "101"
         }));
         isLoading = false;
     }
@@ -44,9 +47,26 @@
 </script>
 <div class="flex flex-col h-full w-full p-8 gap-y-3.5">
     <h1 class="h1 font-bold">Coach</h1>
+    <Collapsible class="border-primary-100 border rounded-xs p-4">
+        <div class="w-full flex justify-between items-center">
+            <p class="font-bold">Filter, Search, Sort and Actions</p>
+            <Collapsible.Trigger class="btn-icon hover:preset-tonal">
+                <ArrowUpDownIcon class="size-4" />
+            </Collapsible.Trigger>
+        </div>
+        <Collapsible.Content class="gap-1 grid grid-cols-3 w-full">
+            <label class="label">
+                <span class="label-text">Search text</span>
+                <input class="input" oninput={_.debounce(() => {
+                    debouncedQuery = queryString;
+                }, 500)} bind:value={queryString}/>
+            </label>
+        </Collapsible.Content>
+    </Collapsible>
     <table class="table">
         <thead>
             <tr>
+                <td>Coach ID</td>
                 <td>Name</td>
                 <td>Phone</td>
                 <td>Email</td>
@@ -63,9 +83,31 @@
             {/each}
             {:else}
                 {#each coaches as coach}
-                {@const { firstName, lastName, email, phone } = coach}
+                {@const { externalCoachId, firstName, lastName, email, phone } = coach}
+                {@const name = `${firstName} ${lastName}`}
+                {@const nameSplit = (debouncedQuery?.trim()?.length ?? 0) > 0 ? name.split(debouncedQuery ?? '') : [name]}
+                {@const externalCoachlIdSplit = (debouncedQuery?.trim()?.length ?? 0) > 0 ? externalCoachId?.split(debouncedQuery ?? '') ?? [] : [externalCoachId]}
                 <tr>
-                    <td>{firstName} {lastName}</td>
+                    <td>
+                        <div class="flex flex-row">
+                            {#each externalCoachlIdSplit as part, i}
+                                <span class="whitespace-pre">{part}</span>
+                                {#if i < externalCoachlIdSplit.length - 1}
+                                    <span class="bg-blue-500 whitespace-pre">{debouncedQuery}</span>
+                                {/if}
+                            {/each}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="flex flex-row">
+                            {#each nameSplit as part, i}
+                                <span class="whitespace-pre">{part}</span>
+                                {#if i < nameSplit.length - 1}
+                                    <span class="bg-blue-500 whitespace-pre">{debouncedQuery}</span>
+                                {/if}
+                            {/each}
+                        </div>
+                    </td>
                     <td><a href={`tel:${phone}`}>{phone}</a></td>
                     <td><a href={`mailto:${email}`}>{email}</a></td>
                 </tr>
@@ -74,7 +116,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="2">Total</td>
+                <td colspan="3">Total</td>
                 {#if isFirstLoaded}
                 <td colspan="1">{offset + 1} - {offset + currentCount}/{total} Elements</td>
                 {:else}
