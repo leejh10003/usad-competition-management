@@ -4,7 +4,7 @@ import { optionalInfos } from "./baseTypes";
 export const requiredBasicInfosOptional = z.object({
   firstName: z.string().optional(),
   lastName: z.string().optional(),
-  email: z.string().optional()
+  email: z.string().optional(),
 });
 export const schoolIdSchemaUpdate = z.object({
   schoolId: z.uuid().optional(),

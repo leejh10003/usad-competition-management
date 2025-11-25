@@ -11,5 +11,5 @@ export const schoolIdSchema = z.object({
 export const optionalInfos = z.object({
   externalCoachId: z.string().nullable().optional(),
   phone: z.string().nullable().optional(),
-  signature: z.string().nullable().optional()
+  signature: z.string().nullable().optional(),
 });

@@ -14,7 +14,7 @@ export const schoolInsertItem = basicRequiredInfos
   .extend(coachesNestedInsertSchema.def.shape)
   .extend({
     coachTeamMappings: z.array(coachTeamMapping),
-    primaryCoachIndex: z.int()
+    primaryCoachIndex: z.int(),
   });
 export const schoolInsertSchema = z.object({
   school: schoolInsertItem,

@@ -14,6 +14,6 @@ export const eventsUpdateSchema = z.object({
     z.object({
       id: z.uuid(),
       event: eventUpdateItemSchema,
-    })
+    }),
   ),
 });

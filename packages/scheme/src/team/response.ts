@@ -16,5 +16,5 @@ export const teamResponseSchema = basicSuccess.extend({
 });
 export const teamsResponseSchema = basicSuccess.extend({
   teams: z.array(teamResponseItemSchema),
-  count: z.int()
+  count: z.int(),
 });

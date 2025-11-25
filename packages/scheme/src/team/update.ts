@@ -6,7 +6,7 @@ export const schoolRelationshipByIdUpdate = z.object({
 });
 
 export const teamUpdateItemSchema = optionalInfos.extend(
-  schoolRelationshipByIdUpdate.def.shape
+  schoolRelationshipByIdUpdate.def.shape,
 );
 
 export const teamUpdateSchema = z.object({

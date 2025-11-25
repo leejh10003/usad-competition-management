@@ -19,12 +19,12 @@ export const studentResponseItemSchema = z.object({
   guardianLastName: z.string().nullable(),
   guardianPhone: z.string().nullable(),
   guardianEmail: z.string().nullable(),
-  attachmentOnRegistering: z.string().nullable()
+  attachmentOnRegistering: z.string().nullable(),
 });
 export const studentsResponseSchema = basicSuccess.extend({
   success: z.literal(true),
   students: z.array(studentResponseItemSchema),
-  count: z.int()
+  count: z.int(),
 });
 export const studentResponseSchema = basicSuccess.extend({
   success: z.literal(true),

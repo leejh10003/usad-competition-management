@@ -12,8 +12,8 @@ export const teamsInsertSchema = z.object({
   teams: z.array(teamInsertItem),
 });
 export const teamNestedInsertItem = optionalInfos.extend(
-  studentsNestedInsertSchema.def.shape
+  studentsNestedInsertSchema.def.shape,
 );
 export const teamsNestedInsertSchema = z.object({
   teams: z.array(teamNestedInsertItem),
-})
+});

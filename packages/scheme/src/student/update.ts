@@ -15,11 +15,9 @@ const optionalInfos = optionalInfosCommon.extend({
   city: z.string().nullable().optional(),
   state: z.string().nullable().optional(),
   zipCode: z.string().nullable().optional(),
-})
+});
 
-export const studentUpdateItem = basicStudentUpdate
-  .and(optionalInfos);
-  
+export const studentUpdateItem = basicStudentUpdate.and(optionalInfos);
 
 export const studentUpdateSchema = z.object({
   id: z.uuid(),

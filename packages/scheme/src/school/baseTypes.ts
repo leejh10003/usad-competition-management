@@ -17,8 +17,10 @@ export const optionalBasicInfos = z.object({
   objectiveScore: z.float32().nullable().optional(),
   subjectiveScore: z.float32().nullable().optional(),
 });
-export const optionalInfos = optionalBasicInfos.extend(coachesInsertSchema.def.shape);
+export const optionalInfos = optionalBasicInfos.extend(
+  coachesInsertSchema.def.shape,
+);
 export const basicRequiredInfos = z.object({
   name: z.string(),
-  isVirtual: z.boolean()
+  isVirtual: z.boolean(),
 });

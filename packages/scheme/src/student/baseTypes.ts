@@ -10,9 +10,8 @@ export const optionalInfosCommon = z.object({
   guardianLastName: z.string().nullable().optional(),
   guardianPhone: z.string().nullable().optional(),
   guardianEmail: z.string().nullable().optional(),
-  attachmentOnRegistering: z.string().nullable().optional()
+  attachmentOnRegistering: z.string().nullable().optional(),
 });
-
 
 export const insertStudentWithSchoolId = z.object({
   schoolId: z.uuid().nullable().optional(),
@@ -26,6 +25,5 @@ export const insertStudentWithIndividualAddress = z.object({
 });
 
 export const optionalInfos = optionalInfosCommon.and(
-  z.union([insertStudentWithSchoolId, insertStudentWithIndividualAddress])
+  z.union([insertStudentWithSchoolId, insertStudentWithIndividualAddress]),
 );
-

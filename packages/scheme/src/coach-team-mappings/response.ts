@@ -3,6 +3,6 @@ import { basicSuccess } from "../baseTypes";
 import { coachTeamMappings } from "./baseTypes";
 
 export const coachTeamMappingsRespnse = basicSuccess.extend({
-    coachTeamMappings: z.array(coachTeamMappings),
-    count: z.int()
-})
+  coachTeamMappings: z.array(coachTeamMappings),
+  count: z.int(),
+});

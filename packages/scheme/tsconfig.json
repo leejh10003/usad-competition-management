@@ -1,22 +1,12 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "lib": [
-      "ESNext"
-    ],
+    "lib": ["ESNext"],
     "moduleResolution": "node16",
     "composite": true,
     "module": "node16",
-    "types": [
-      "node"
-    ],
+    "types": ["node"]
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "cdktf.out"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "cdktf.out"]
 }

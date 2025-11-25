@@ -8,9 +8,6 @@ const basicStudentInsert = z.object({
   division,
 });
 
-
-
-
 export const studentInsertItem = basicStudentInsert.and(optionalInfos);
 export const studentInsertSchema = z.object({
   student: studentInsertItem,
