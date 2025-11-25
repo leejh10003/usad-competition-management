@@ -13,7 +13,9 @@ export const optionalBasicInfos = z.object({
   principalEmail: z.string().nullable().optional(),
   emailDomain: z.string().nullable().optional(),
   primaryCoachId: z.string().nullable().optional(),
-  division: schoolDivisionEnums.nullable().optional()
+  division: schoolDivisionEnums.nullable().optional(),
+  objectiveScore: z.float32().nullable().optional(),
+  subjectiveScore: z.float32().nullable().optional(),
 });
 export const optionalInfos = optionalBasicInfos.extend(coachesInsertSchema.def.shape);
 export const basicRequiredInfos = z.object({

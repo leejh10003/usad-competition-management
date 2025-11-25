@@ -4,4 +4,6 @@ export const teamSelectFieldsSchema = {
   externalTeamId: true,
   schoolId: true,
   division: true,
+  objectiveScore: true,
+  subjectiveScore: true,
 };

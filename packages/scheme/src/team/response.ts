@@ -6,7 +6,9 @@ export const teamResponseItemSchema = z.object({
   id: z.uuid(),
   externalTeamId: z.string().nullable(),
   schoolId: z.uuid(),
-  division: teamDivisionEnums.nullable()
+  division: teamDivisionEnums.nullable(),
+  objectiveScore: z.float32().nullable(),
+  subjectiveScore: z.float32().nullable(),
 });
 
 export const teamResponseSchema = basicSuccess.extend({

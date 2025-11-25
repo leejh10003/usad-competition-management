@@ -7,5 +7,7 @@ export const schoolRelationshipById = z.object({
 
 export const optionalInfos = z.object({
     externalTeamId: z.string().nullable().optional(),
-    division: teamDivisionEnums
+    division: teamDivisionEnums.nullable().optional(),
+    objectiveScore: z.float32().nullable().optional(),
+    subjectiveScore: z.float32().nullable().optional(),
 })

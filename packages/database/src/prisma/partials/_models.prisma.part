@@ -59,6 +59,8 @@ model Team {
   schoolId String @map("school_id") @db.Uuid
   school   School @relation(fields: [schoolId], references: [id])
   division Int?
+  objectiveScore  Float?  @map("objective_score")
+  subjectiveScore Float?  @map("subjective_score")
 
   // Explicit M:N Relationship via Join Table
   coachesRelationship TeamCoachRelationship[] @relation("TeamRelationshipToCoach")
@@ -99,6 +101,9 @@ model Coach {
 
   // R2 Object Key (Check-in signature)
   signature String?
+
+  objectiveScore  Float?  @map("objective_score")
+  subjectiveScore Float?  @map("subjective_score")
 
   // Relations
   schoolId String @map("school_id") @db.Uuid

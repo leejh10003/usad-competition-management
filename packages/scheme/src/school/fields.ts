@@ -13,4 +13,6 @@ export const schoolSelectFieldsSchema = {
   primaryCoachId: true,
   emailDomain: true,
   division: true,
+  objectiveScore: true,
+  subjectiveScore: true,
 };
