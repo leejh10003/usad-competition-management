@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-    import { Pagination } from '@skeletonlabs/skeleton-svelte';
-    import _, { split } from 'lodash';
+    import { Dialog, Portal, Pagination } from '@skeletonlabs/skeleton-svelte';
+    import _ from 'lodash';
     import { division, studentQuerySchema, studentResponseSchema } from 'usad-scheme';
-    import { ArrowLeftIcon, ArrowRightIcon } from '@lucide/svelte';
+    import { ArrowLeftIcon, ArrowRightIcon, XIcon } from '@lucide/svelte';
     import z from 'zod'
+    import Pdf from '$lib/components/pdf.svelte'
     type StudentResponseItem = z.infer<typeof studentResponseSchema>['student'];
     var isLoading = $state<boolean>(true);
     var isFirstLoaded = $state<boolean>(true);
@@ -15,6 +16,7 @@
     var total = $state<number>(0);
     var currentCount = $state<number>(0);
     var students = $state<StudentResponseItem[]>([]);
+    const animation = 'transition transition-discrete opacity-0 translate-y-[100px] starting:data-[state=open]:opacity-0 starting:data-[state=open]:translate-y-[100px] data-[state=open]:opacity-100 data-[state=open]:translate-y-0';
     async function fetch(searchParams: z.infer<typeof studentQuerySchema>) {
         isLoading = true;
         //TODO: server fetch
@@ -69,7 +71,8 @@
                 guardianEmail: "",
                 guardianFirstName: "",
                 guardianLastName: "",
-                guardianPhone: ""
+                guardianPhone: "",
+                attachmentOnRegistering: null
             };
         });
         isLoading = false;
@@ -98,6 +101,7 @@
                 <td>Address</td>
                 <td>GPA</td>
                 <td>Group</td>
+                <td>Attachment</td>
             </tr>
         </thead>
         <tbody>
@@ -120,13 +124,37 @@
                     <td>{streetAddress}, {city}, {state} ({zipCode})</td>
                     <td>{gpa}</td>
                     <td>{division === 'H' ? 'Honors' : division === 'S' ? 'Scholastic' : division === 'V' ? 'Varsity': 'Not assigned'}</td>
+                    <td>
+                        <Dialog>
+                            <Dialog.Trigger class="btn preset-filled">Trigger</Dialog.Trigger>
+                            <Portal>
+                                <Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+                                <Dialog.Positioner class="fixed inset-0 z-50 flex justify-center items-center p-4">
+                                    <Dialog.Content class="card bg-surface-100-900 p-4 space-y-4 shadow-xl {animation}">
+                                        <header class="flex justify-between items-center">
+                                            <Dialog.Title class="text-lg font-bold">Pdf Viewer</Dialog.Title>
+                                            <Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+                                                <XIcon class="size-4" />
+                                            </Dialog.CloseTrigger>
+                                        </header>
+                                        <Dialog.Description>
+                                            <Pdf data="https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf" />
+                                        </Dialog.Description>
+                                        <footer class="flex justify-end gap-2">
+                                            <Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+                                        </footer>
+                                    </Dialog.Content>
+                                </Dialog.Positioner>
+                            </Portal>
+                        </Dialog>
+                    </td>
                 </tr>
                 {/each}
             {/if}
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="4">Total</td>
+                <td colspan="5">Total</td>
                 {#if isFirstLoaded}
                 <td colspan="1">{offset + 1} - {offset + currentCount}/{total} Elements</td>
                 {:else}

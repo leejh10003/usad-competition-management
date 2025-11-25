@@ -1,9 +1,9 @@
 <script lang="ts">
 	import '../app.css';
+	import { page } from '$app/state';
 	import favicon from '$lib/assets/favicon.svg';
 	import { CalendarIcon, CircleUserIcon, SearchIcon, SchoolIcon, UserCheckIcon, IdCardLanyardIcon, UsersIcon, UserIcon } from '@lucide/svelte';
 	import { AppBar, Navigation } from '@skeletonlabs/skeleton-svelte';
-	import { page } from '$app/state';
 
 	let { children } = $props();
 	let anchorSidebar = 'btn hover:preset-tonal justify-start px-2 w-full';
