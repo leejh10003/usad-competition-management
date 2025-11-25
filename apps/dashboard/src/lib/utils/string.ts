@@ -1,6 +1,6 @@
 export function splitStringForQueryHighlight(original: string | null | undefined, query: string | null | undefined){
     if (original){
-        if (query){
+        if (query && query.trim().length > 0){
             const loweredOriginal = original.toLowerCase();
             const loweredQuery = query.toLowerCase();
             var currentIndex = 0;
