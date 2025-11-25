@@ -34,7 +34,7 @@ app.use('*', async (c, next) => {
 app.use('*', cors({
     origin: (origin, context) => {
       const env = context.env as Env['Bindings'];
-      const urls = [env.DASHBOARD_URL, env.FIELD_OPS_URL, env.REGISTRATION_URL];
+      const urls = [env.DASHBOARD_URL, env.FIELD_OPS_URL, env.REGISTRATION_URL, 'http://localhost:5173']; //TODO: Remove localhost
       return urls.includes(origin) ? origin : null;
     },
     credentials: true,
