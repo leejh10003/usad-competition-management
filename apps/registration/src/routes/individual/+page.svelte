@@ -5,7 +5,7 @@
 	import type z from "zod";
     import _ from 'lodash';
     import StateDropdown from "$lib/components/states.svelte"
-    import { validateZipCode, onGpaChange, disableNonNumeric } from "$lib/utils/validation";
+    import { validateZipCode, onGpaChange, disableNonNumeric, onScoreChange } from "$lib/utils/validation";
     import { FileIcon } from '@lucide/svelte'
     import { FileUpload } from '@skeletonlabs/skeleton-svelte'
     import { workerRequest } from '$lib/api';
@@ -25,6 +25,9 @@
     var guardianEmail = $state<string>();
     var fileKey = $state<string>();
     var fileState = $state<FileUploadState>('none');
+    var objectiveScore = $state<number>();
+    var subjectiveScore = $state<number>();
+    var totalScore = $derived((objectiveScore ?? 0) + (subjectiveScore ?? 0));
     var streetAddressInvalid = $state(false);
     var cityInvalid = $state(false);
     var stateInputInvalid = $state(false);
@@ -37,7 +40,8 @@
     var guardianLastNameInvalid = $state(false);
     var guardianPhoneInvalid = $state(false);
     var guardianEmailInvalid = $state(false);
-    var fileKeyInvalid = $state(false);
+    var objectiveScoreInvalid = $state(false);
+    var subjectiveScoreInvalid = $state(false);
     function onSubmit(){
         streetAddressInvalid = (streetAddress?.trim()?.length ?? 0) < 1;
         cityInvalid = (city?.trim()?.length ?? 0) < 1;
@@ -51,6 +55,8 @@
         guardianLastNameInvalid = (guardianLastName?.trim()?.length ?? 0) < 1;
         guardianPhoneInvalid = (guardianPhone?.trim()?.length ?? 0) < 1;
         guardianEmailInvalid = (guardianEmail?.trim()?.length ?? 0) < 1;
+        objectiveScoreInvalid = (_.isNil(objectiveScore) && objectiveScore !== 0);
+        subjectiveScoreInvalid = (_.isNil(subjectiveScore) && subjectiveScore !== 0);
         //TODO: if all valid, submit and go back to main view
     }
     
@@ -96,6 +102,18 @@
                     <option value="S">Scholastic</option>
                     <option value="V">Varsity</option>
                 </select>
+            </label>
+            <label class="label">
+                <span class="label-text">Objective Score<span class={`text-red-500 ${objectiveScoreInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;Fill the objective score</span></span>
+                <input required class="input" onkeypress={disableNonNumeric} onchange={(e) => onScoreChange(e as unknown as InputEvent, {score: objectiveScore})} type="number" step="0.1" placeholder="Objective Score..." bind:value={objectiveScore}/>
+            </label>
+            <label class="label">
+                <span class="label-text">Subjective Score<span class={`text-red-500 ${subjectiveScoreInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;Fill the subjective score</span></span>
+                <input required class="input" onkeypress={disableNonNumeric} onchange={(e) => onScoreChange(e as unknown as InputEvent, {score: subjectiveScore})} type="number" step="0.1" placeholder="Subjective Score..." bind:value={subjectiveScore}/>
+            </label>
+            <label class="label">
+                <span class="label-text">Total Score</span>
+                <input disabled class="input" type="number" step="0.1" placeholder="Total Score..." bind:value={totalScore}/>
             </label>
             <label class="label">
                 <span class="label-text">Parent/Guardian First Name<span class={`text-red-500 ${guardianFirstNameInvalid ? 'visible' : 'hidden'}`}>&nbsp;&nbsp;Check Parent/Guardian First</span></span>

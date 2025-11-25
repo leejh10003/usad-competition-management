@@ -4,9 +4,6 @@
     import {
         schoolInsertSchema,
         division,
-
-		eventResponseItemSchema
-
     } from 'usad-scheme';
 	import type z from 'zod';
     import StudentInput from '$lib/components/student.svelte';
@@ -14,7 +11,7 @@
     import {Listbox, useListCollection} from '@skeletonlabs/skeleton-svelte';
     import Enumerable from 'linq';
     import StateDropdown from '$lib/components/states.svelte';
-	import { validateZipCode } from '$lib/utils/validation';
+	import { validateZipCode, onScoreChange, disableNonNumeric } from '$lib/utils/validation';
     type SchoolType = Omit<z.infer<typeof schoolInsertSchema>['school'], 'isVirtual' | 'emailDomain'>;
     type Division = z.infer<typeof division>;
     var school = $state<SchoolType>({
@@ -50,6 +47,8 @@
     function generateTeam() {
         return {
             students: [..._.times(3, () => generateStudents("H")), ..._.times(3, () => generateStudents("S")), ..._.times(3, () => generateStudents("V"))],
+            subjectiveStore: undefined,
+            objectiveScore: undefined,
         };
     }
     function removeTeam(index: number) {
@@ -132,7 +131,13 @@
         </div>
         <h2 class="h2">Teams</h2>
         {#each school.teams as team, i}
-            <!--TODO: Add coach inline-->
+            <div class="flex flex-row space-x-1.5 items-center">
+                <input class="input flex-3" onkeypress={disableNonNumeric} onchange={(e) => onScoreChange(e as unknown as InputEvent, {score: team.objectiveScore})} type="number" inputmode="numeric" pattern="[0-9.]*" step="0.1" placeholder="Objective Score..." bind:value={team.objectiveScore}/>
+                <input class="input flex-3" onkeypress={disableNonNumeric} onchange={(e) => onScoreChange(e as unknown as InputEvent, {score: team.subjectiveScore})} type="number" inputmode="numeric" pattern="[0-9.]*" step="0.1" placeholder="Subjective Score..." bind:value={team.subjectiveScore}/>
+                <div class="flex-1 text-end">
+                    Total score: {(team.objectiveScore ?? 0) + (team.subjectiveScore ?? 0)}
+                </div>
+            </div>
             {@const honors = team.students.filter(({division}) => division === 'H')}
             {@const scholastic = team.students.filter(({division}) => division === 'S')}
             {@const varsity = team.students.filter(({division}) => division === 'V')}

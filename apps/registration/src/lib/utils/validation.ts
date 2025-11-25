@@ -19,6 +19,11 @@ export function onGpaChange(e: InputEvent, context: {gpa: number | undefined}){
         context.gpa = 0;
     }
 }
+export function onScoreChange(e: InputEvent, context:{ score: number | null | undefined}){
+    if (!(_.isNumber(context.score))) {
+        context.score = 0;
+    }
+}
 export function validateZipCode(e: KeyboardEvent) {
     if ((e.key.match(/^[0-9]*$/g)?.length ?? 0) < 1) {
         e.preventDefault()
