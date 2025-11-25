@@ -6,7 +6,9 @@
 	import _ from 'lodash';
 	import BottomPadding from '$lib/components/bottom-padding.svelte';
 	import { eventCheckInClearButtonPressed, eventCheckInSubmitButtonPressed } from '../../store';
+	/*eslint-disable-next-line @typescript-eslint/no-unused-vars*/
 	import Icon from '@iconify/svelte';
+	/*eslint-disable-next-line @typescript-eslint/no-unused-vars*/
 	import { goto } from '$app/navigation';
 	let id: string | undefined = $state(undefined);
 	var coach: SignaturePad | undefined = $state(undefined);
@@ -97,41 +99,41 @@
 			vitae mattis tincidunt. Ut sit amet quam mollis, vulputate turpis vel, sagittis felis.
 		</p>
 	</Block>
-	{/* @ts-ignore */ null}
+	{/* @ts-expect-error: Ignore KonstUI's incomplete Typescript support */ null}
 	<Dialog opened={showClearAllDialog} onBackdropClick={closeClearAllDialog}>
 		{#snippet title()}
 			Clear all signatures
 		{/snippet}
 		Are you sure to clear all signatures? All students an coach signatures will be cleared.
 		{#snippet buttons()}
-			{/* @ts-ignore */ null}
+			{/* @ts-expect-error: Ignore KonstUI's incomplete Typescript support */ null}
 			<DialogButton onClick={closeClearAllDialog}>No</DialogButton>
-			{/* @ts-ignore */ null}
+			{/* @ts-expect-error: Ignore KonstUI's incomplete Typescript support */ null}
 			<DialogButton class="k-color-brand-red" strong onClick={clearAndCloseDialog}>Yes</DialogButton
 			>
 		{/snippet}
 	</Dialog>
-	{/* @ts-ignore */ null}
+	{/* @ts-expect-error: Ignore KonstUI's incomplete Typescript support */ null}
 	<Dialog opened={showUnsubmittableReasonDialog} onBackdropClick={closeUnsubmittableReasonDialog}>
 		{#snippet title()}
 			Incomplete signatures
 		{/snippet}
 		Please ensure all signatures are provided before submitting.
 		{#snippet buttons()}
-			{/* @ts-ignore */ null}
+			{/* @ts-expect-error: Ignore KonstUI's incomplete Typescript support */ null}
 			<DialogButton strong onClick={closeUnsubmittableReasonDialog}>Ok</DialogButton>
 		{/snippet}
 	</Dialog>
-	{/* @ts-ignore */ null}
+	{/* @ts-expect-error: Ignore KonstUI's incomplete Typescript support */ null}
 	<Dialog opened={showSubmitDialog} onBackdropClick={closeSubmitDialog}>
 		{#snippet title()}
 			Sbumit signatures
 		{/snippet}
 		Are you sure to submit? This action is not reversable.
 		{#snippet buttons()}
-			{/* @ts-ignore */ null}
+			{/* @ts-expect-error: Ignore KonstUI's incomplete Typescript support */ null}
 			<DialogButton onClick={closeSubmitDialog}>No</DialogButton>
-			{/* @ts-ignore */ null}
+			{/* @ts-expect-error: Ignore KonstUI's incomplete Typescript support */ null}
 			<DialogButton strong onClick={submit}>Yes</DialogButton>
 		{/snippet}
 	</Dialog>
@@ -147,7 +149,8 @@
 	<BlockTitle medium>Honors</BlockTitle>
 	<Block>
 		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-			{#each students.honors as _, i}
+			{/*eslint-disable-next-line @typescript-eslint/no-unused-vars*/ null}
+			{#each students.honors as _, i (i)}
 				<div class="signature-group">
 					<h1 class="text-center font-medium">Signature {i + 1}</h1>
 					<SignaturePad
@@ -164,7 +167,8 @@
 	<BlockTitle medium>Scholastic</BlockTitle>
 	<Block>
 		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-			{#each students.scholastic as _, i}
+			{/*eslint-disable-next-line @typescript-eslint/no-unused-vars*/ null}
+			{#each students.scholastic as _, i (i)}
 				<div class="signature-group">
 					<h1 class="text-center font-medium">Signature {i + 1}</h1>
 					<SignaturePad
@@ -183,7 +187,8 @@
 	<BlockTitle medium>Varsity</BlockTitle>
 	<Block>
 		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-			{#each students.varsity as _, i}
+			{/*eslint-disable-next-line @typescript-eslint/no-unused-vars*/ null}
+			{#each students.varsity as _, i (i)}
 				<div class="signature-group">
 					<h1 class="text-center font-medium">Signature {i + 1}</h1>
 					<SignaturePad

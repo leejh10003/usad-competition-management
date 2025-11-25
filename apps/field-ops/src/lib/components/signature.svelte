@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Button } from 'konsta/svelte';
 	import SignaturePad from 'signature_pad';
 	interface SignatureCanvasProps {
 		signatureId: string;
@@ -29,7 +28,7 @@
 
 <div>
 	<canvas
-        class="signature-canvas"
+		class="signature-canvas"
 		width={`${width ?? 300}px`}
 		height={`${height ?? 300}px`}
 		id={`signature-canvas-${signatureId}`}
@@ -40,6 +39,6 @@
 <style>
 	.signature-canvas {
 		border: 1px solid #000;
-        border-radius: 10px;
+		border-radius: 10px;
 	}
 </style>

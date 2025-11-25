@@ -5,8 +5,7 @@
 		type Html5QrcodeResult,
 		Html5QrcodeScanType,
 		Html5QrcodeSupportedFormats,
-		Html5QrcodeScannerState,
-		Html5Qrcode
+		Html5QrcodeScannerState
 	} from 'html5-qrcode';
 
 	interface QrCodeScannerProps {
@@ -31,7 +30,7 @@
 		decodedResult: Html5QrcodeResult,
 		scanner: Html5QrcodeScanner
 	): void {
-		detect(decodedResult,scanner);
+		detect(decodedResult, scanner);
 	}
 
 	// usually better to ignore and keep scanning

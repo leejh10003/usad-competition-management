@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 @import 'konsta/svelte/theme.css';
 @theme {
-  --color-brand-primary: #007aff;
-  --color-brand-red: #ff0000;
-  --color-brand-green: #00ff00;
+	--color-brand-primary: #007aff;
+	--color-brand-red: #ff0000;
+	--color-brand-green: #00ff00;
 }
