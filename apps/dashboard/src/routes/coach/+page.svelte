@@ -6,6 +6,7 @@
     import { coachQuerySchema, coachResponseSchema } from 'usad-scheme';
     import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon } from '@lucide/svelte';
     import z from 'zod'
+    import { splitStringForQueryHighlight } from '$lib/utils/string';
     type CoachResponseItem = z.infer<typeof coachResponseSchema>['coach'];
     var isLoading = $state<boolean>(true);
     var isFirstLoaded = $state<boolean>(true);
@@ -100,34 +101,28 @@
             {:else}
                 {#each coaches as coach}
                 {@const { externalCoachId, firstName, lastName, email, phone } = coach}
-                {@const firstNameSplit = (debouncedCoachFirstNameQueryString?.trim()?.length ?? 0) > 0 ? firstName.split(debouncedCoachFirstNameQueryString ?? '') : [firstName]}
-                {@const lastNameSplit = (debouncedCoachLastNameQueryString?.trim()?.length ?? 0) > 0 ? lastName.split(debouncedCoachLastNameQueryString ?? '') : [lastName]}
-                {@const externalCoachlIdSplit = (debouncedExternalCoachIdQueryString?.trim()?.length ?? 0) > 0 ? externalCoachId?.split(debouncedExternalCoachIdQueryString ?? '') ?? [] : [externalCoachId]}
+                {@const firstNameSplit = splitStringForQueryHighlight(firstName, debouncedCoachFirstNameQueryString)}
+                {@const lastNameSplit = splitStringForQueryHighlight(lastName, debouncedCoachLastNameQueryString)}
+                {@const externalCoachlIdSplit = splitStringForQueryHighlight(externalCoachId, debouncedExternalCoachIdQueryString)}
                 <tr>
                     <td>
                         <div class="flex flex-row">
-                            {#each externalCoachlIdSplit as part, i}
-                                <span class="whitespace-pre">{part}</span>
-                                {#if i < externalCoachlIdSplit.length - 1}
-                                    <span class="bg-blue-500 whitespace-pre">{debouncedExternalCoachIdQueryString}</span>
-                                {/if}
+                            {#each externalCoachlIdSplit as {originalQuery, originalString}}
+                                <span class="whitespace-pre">{originalString}</span>
+                                <span class="bg-blue-500 whitespace-pre">{originalQuery}</span>
                             {/each}
                         </div>
                     </td>
                     <td>
                         <div class="flex flex-row">
-                            {#each firstNameSplit as part, i}
-                                <span class="whitespace-pre">{part}</span>
-                                {#if i < firstNameSplit.length - 1}
-                                    <span class="bg-blue-500 whitespace-pre">{debouncedCoachFirstNameQueryString}</span>
-                                {/if}
+                            {#each firstNameSplit as {originalQuery, originalString}}
+                                <span class="whitespace-pre">{originalString}</span>
+                                <span class="bg-blue-500 whitespace-pre">{originalQuery}</span>
                             {/each}
                             &nbsp;
-                            {#each lastNameSplit as part, i}
-                                <span class="whitespace-pre">{part}</span>
-                                {#if i < lastNameSplit.length - 1}
-                                    <span class="bg-blue-500 whitespace-pre">{debouncedCoachLastNameQueryString}</span>
-                                {/if}
+                            {#each lastNameSplit as {originalQuery, originalString}}
+                                <span class="whitespace-pre">{originalString}</span>
+                                <span class="bg-blue-500 whitespace-pre">{originalQuery}</span>
                             {/each}
                         </div>
                     </td>

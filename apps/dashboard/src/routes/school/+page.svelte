@@ -3,6 +3,7 @@
 	import { page } from '$app/state';
     import { Collapsible, Pagination } from '@skeletonlabs/skeleton-svelte';
     import _ from 'lodash';
+    import { splitStringForQueryHighlight } from '$lib/utils/string';
     import { schoolQuerySchema, schoolResponse } from 'usad-scheme';
     import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon } from '@lucide/svelte';
     import z from 'zod'
@@ -98,26 +99,22 @@
             {:else}
                 {#each schools as school}
                 {@const {externalSchoolId, name, principalEmail, principalName, phone, streetAddress, city, state, zipCode } = school}
-                {@const nameSplit = (debouncedSchoolNameQueryString?.trim()?.length ?? 0) > 0 ? name.split(debouncedSchoolNameQueryString ?? '') : [name]}
-                {@const externalSchoolIdSplit = (debouncedExternalSchoolIdQueryString?.trim()?.length ?? 0) > 0 ? externalSchoolId?.split(debouncedExternalSchoolIdQueryString ?? '') ?? [] : [externalSchoolId]}
+                {@const nameSplit = splitStringForQueryHighlight(name, debouncedSchoolNameQueryString)}
+                {@const externalSchoolIdSplit = splitStringForQueryHighlight(name, debouncedExternalSchoolIdQueryString)}
                 <tr>
                     <td>
                         <div class="flex flex-row">
-                            {#each externalSchoolIdSplit as part, i}
-                                <span class="whitespace-pre">{part}</span>
-                                {#if i < externalSchoolIdSplit.length - 1}
-                                    <span class="bg-blue-500 whitespace-pre">{debouncedExternalSchoolIdQueryString}</span>
-                                {/if}
+                            {#each externalSchoolIdSplit as {originalQuery, originalString}}
+                                <span class="whitespace-pre">{originalString}</span>
+                                <span class="bg-blue-500 whitespace-pre">{originalQuery}</span>
                             {/each}
                         </div>
                     </td>
                     <td>
                         <div class="flex flex-row">
-                            {#each nameSplit as part, i}
-                                <span class="whitespace-pre">{part}</span>
-                                {#if i < nameSplit.length - 1}
-                                    <span class="bg-blue-500 whitespace-pre">{debouncedSchoolNameQueryString}</span>
-                                {/if}
+                            {#each nameSplit as {originalQuery, originalString}}
+                                <span class="whitespace-pre">{originalString}</span>
+                                <span class="bg-blue-500 whitespace-pre">{originalQuery}</span>
                             {/each}
                         </div>
                     </td>
