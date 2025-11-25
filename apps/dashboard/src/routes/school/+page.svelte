@@ -15,8 +15,10 @@
     var total = $state<number>(0);
     var currentCount = $state<number>(0);
     var schools = $state<SchoolResponseItem[]>([]);
-    var queryString = $state<string>();
-    var debouncedQuery = $state<string>();
+    var schoolNameQueryString = $state<string>();
+    var debouncedSchoolNameQueryString = $state<string>();
+    var externalSchoolIdQueryString = $state<string>();
+    var debouncedExternalSchoolIdQueryString = $state<string>();
     async function fetch(searchParams: z.infer<typeof schoolQuerySchema>) {
         isLoading = true;
         //TODO: server fetch
@@ -60,10 +62,16 @@
         </div>
         <Collapsible.Content class="gap-1 grid grid-cols-3 w-full">
             <label class="label">
-                <span class="label-text">Search text</span>
+                <span class="label-text">School Name</span>
                 <input class="input" oninput={_.debounce(() => {
-                    debouncedQuery = queryString;
-                }, 500)} bind:value={queryString}/>
+                    debouncedSchoolNameQueryString = schoolNameQueryString;
+                }, 500)} bind:value={schoolNameQueryString}/>
+            </label>
+            <label class="label">
+                <span class="label-text">School Id</span>
+                <input class="input" oninput={_.debounce(() => {
+                    debouncedExternalSchoolIdQueryString = externalSchoolIdQueryString;
+                }, 500)} bind:value={externalSchoolIdQueryString}/>
             </label>
         </Collapsible.Content>
     </Collapsible>
@@ -90,15 +98,15 @@
             {:else}
                 {#each schools as school}
                 {@const {externalSchoolId, name, principalEmail, principalName, phone, streetAddress, city, state, zipCode } = school}
-                {@const nameSplit = (debouncedQuery?.trim()?.length ?? 0) > 0 ? name.split(debouncedQuery ?? '') : [name]}
-                {@const externalSchoolIdSplit = (debouncedQuery?.trim()?.length ?? 0) > 0 ? externalSchoolId?.split(debouncedQuery ?? '') ?? [] : [externalSchoolId]}
+                {@const nameSplit = (debouncedSchoolNameQueryString?.trim()?.length ?? 0) > 0 ? name.split(debouncedSchoolNameQueryString ?? '') : [name]}
+                {@const externalSchoolIdSplit = (debouncedExternalSchoolIdQueryString?.trim()?.length ?? 0) > 0 ? externalSchoolId?.split(debouncedExternalSchoolIdQueryString ?? '') ?? [] : [externalSchoolId]}
                 <tr>
                     <td>
                         <div class="flex flex-row">
                             {#each externalSchoolIdSplit as part, i}
                                 <span class="whitespace-pre">{part}</span>
                                 {#if i < externalSchoolIdSplit.length - 1}
-                                    <span class="bg-blue-500 whitespace-pre">{debouncedQuery}</span>
+                                    <span class="bg-blue-500 whitespace-pre">{debouncedExternalSchoolIdQueryString}</span>
                                 {/if}
                             {/each}
                         </div>
@@ -108,7 +116,7 @@
                             {#each nameSplit as part, i}
                                 <span class="whitespace-pre">{part}</span>
                                 {#if i < nameSplit.length - 1}
-                                    <span class="bg-blue-500 whitespace-pre">{debouncedQuery}</span>
+                                    <span class="bg-blue-500 whitespace-pre">{debouncedSchoolNameQueryString}</span>
                                 {/if}
                             {/each}
                         </div>

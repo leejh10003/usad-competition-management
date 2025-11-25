@@ -15,8 +15,12 @@
     var total = $state<number>(0);
     var currentCount = $state<number>(0);
     var coaches = $state<CoachResponseItem[]>([]);
-    var queryString = $state<string>();
-    var debouncedQuery = $state<string>();
+    var externalCoachIdQueryString = $state<string>();
+    var debouncedExternalCoachIdQueryString = $state<string>();
+    var coachFirstNameQueryString = $state<string>();
+    var debouncedCoachFirstNameQueryString = $state<string>();
+    var coachLastNameQueryString = $state<string>();
+    var debouncedCoachLastNameQueryString = $state<string>();
     async function fetch(searchParams: z.infer<typeof coachQuerySchema>) {
         isLoading = true;
         //TODO: server fetch
@@ -56,10 +60,22 @@
         </div>
         <Collapsible.Content class="gap-1 grid grid-cols-3 w-full">
             <label class="label">
-                <span class="label-text">Search text</span>
+                <span class="label-text">Coach ID</span>
                 <input class="input" oninput={_.debounce(() => {
-                    debouncedQuery = queryString;
-                }, 500)} bind:value={queryString}/>
+                    debouncedExternalCoachIdQueryString = externalCoachIdQueryString;
+                }, 500)} bind:value={externalCoachIdQueryString}/>
+            </label>
+            <label class="label">
+                <span class="label-text">Coach First Name</span>
+                <input class="input" oninput={_.debounce(() => {
+                    debouncedCoachFirstNameQueryString = coachFirstNameQueryString;
+                }, 500)} bind:value={coachFirstNameQueryString}/>
+            </label>
+            <label class="label">
+                <span class="label-text">Coach Last Name</span>
+                <input class="input" oninput={_.debounce(() => {
+                    debouncedCoachLastNameQueryString = coachLastNameQueryString;
+                }, 500)} bind:value={coachLastNameQueryString}/>
             </label>
         </Collapsible.Content>
     </Collapsible>
@@ -84,26 +100,33 @@
             {:else}
                 {#each coaches as coach}
                 {@const { externalCoachId, firstName, lastName, email, phone } = coach}
-                {@const name = `${firstName} ${lastName}`}
-                {@const nameSplit = (debouncedQuery?.trim()?.length ?? 0) > 0 ? name.split(debouncedQuery ?? '') : [name]}
-                {@const externalCoachlIdSplit = (debouncedQuery?.trim()?.length ?? 0) > 0 ? externalCoachId?.split(debouncedQuery ?? '') ?? [] : [externalCoachId]}
+                {@const firstNameSplit = (debouncedCoachFirstNameQueryString?.trim()?.length ?? 0) > 0 ? firstName.split(debouncedCoachFirstNameQueryString ?? '') : [firstName]}
+                {@const lastNameSplit = (debouncedCoachLastNameQueryString?.trim()?.length ?? 0) > 0 ? lastName.split(debouncedCoachLastNameQueryString ?? '') : [lastName]}
+                {@const externalCoachlIdSplit = (debouncedExternalCoachIdQueryString?.trim()?.length ?? 0) > 0 ? externalCoachId?.split(debouncedExternalCoachIdQueryString ?? '') ?? [] : [externalCoachId]}
                 <tr>
                     <td>
                         <div class="flex flex-row">
                             {#each externalCoachlIdSplit as part, i}
                                 <span class="whitespace-pre">{part}</span>
                                 {#if i < externalCoachlIdSplit.length - 1}
-                                    <span class="bg-blue-500 whitespace-pre">{debouncedQuery}</span>
+                                    <span class="bg-blue-500 whitespace-pre">{debouncedExternalCoachIdQueryString}</span>
                                 {/if}
                             {/each}
                         </div>
                     </td>
                     <td>
                         <div class="flex flex-row">
-                            {#each nameSplit as part, i}
+                            {#each firstNameSplit as part, i}
                                 <span class="whitespace-pre">{part}</span>
-                                {#if i < nameSplit.length - 1}
-                                    <span class="bg-blue-500 whitespace-pre">{debouncedQuery}</span>
+                                {#if i < firstNameSplit.length - 1}
+                                    <span class="bg-blue-500 whitespace-pre">{debouncedCoachFirstNameQueryString}</span>
+                                {/if}
+                            {/each}
+                            &nbsp;
+                            {#each lastNameSplit as part, i}
+                                <span class="whitespace-pre">{part}</span>
+                                {#if i < lastNameSplit.length - 1}
+                                    <span class="bg-blue-500 whitespace-pre">{debouncedCoachLastNameQueryString}</span>
                                 {/if}
                             {/each}
                         </div>
