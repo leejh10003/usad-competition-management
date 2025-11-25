@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   db:
     image: cockroachdb/cockroach:latest-v23.2
@@ -6,7 +6,7 @@ services:
     command: start-single-node --insecure
     ports:
       - "26257:26257" # PostgreSQL 포트
-      - "8082:8080"   # CockroachDB 관리자 UI 포트
+      - "8082:8080" # CockroachDB 관리자 UI 포트
     volumes:
       - cockroach_data:/cockroach/cockroach-data
 volumes:
