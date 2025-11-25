@@ -35,6 +35,9 @@ importers:
       pdfjs-dist:
         specifier: 5.4.149
         version: 5.4.149
+      romans:
+        specifier: ^3.1.0
+        version: 3.1.0
       usad-scheme:
         specifier: workspace:usad-scheme
         version: link:../../packages/scheme
@@ -4860,6 +4863,9 @@ packages:
     resolution: {integrity: sha512-MHngMYwGJVi6Fmnk6ISmnk7JAHRNF0UkuucA0CUW3N3a4KnONPEZz+vUanQP/ZC/iY1Qkf3bwPWzyY84wEks1g==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
+
+  romans@3.1.0:
+    resolution: {integrity: sha512-URNEK8THW0suBPXUhwtHIK0CkKrtochZ8LhMPTbFoMKLtx46ImFVU+k/OaR2hdcWU/IiUeDpsKfAMKN45+79EQ==}
 
   router@2.2.0:
     resolution: {integrity: sha512-nLTrUKm2UyiL7rlhapu/Zl45FwNgkZGaCpZbIHajDYgwlJCOzLSk+cIPAnsEqV955GjILJnKbdQC1nVPz+gAYQ==}
@@ -10283,6 +10289,8 @@ snapshots:
       '@rollup/rollup-win32-x64-gnu': 4.53.2
       '@rollup/rollup-win32-x64-msvc': 4.53.2
       fsevents: 2.3.3
+
+  romans@3.1.0: {}
 
   router@2.2.0:
     dependencies:

@@ -7,6 +7,7 @@
     import { schoolQuerySchema, schoolResponse } from 'usad-scheme';
     import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon } from '@lucide/svelte';
     import z from 'zod'
+    import romans from 'romans';
     type SchoolResponseItem = z.infer<typeof schoolResponse>['school'];
     var isLoading = $state<boolean>(true);
     var isFirstLoaded = $state<boolean>(true);
