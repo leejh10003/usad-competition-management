@@ -85,6 +85,8 @@
 				{/each}
 			</Navigation.Content>
 		</Navigation>
-		{@render children()}
+		<div class="w-full h-full overflow-scroll">
+			{@render children()}
+		</div>
 	</div>
 </div>
