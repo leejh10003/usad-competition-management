@@ -7,6 +7,7 @@
 	import { teamQuerySchema, teamResponseItemSchema } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon } from '@lucide/svelte';
 	import z from 'zod';
+	import { romanize } from 'romans';
 	type TeamResponseItem = z.infer<typeof teamResponseItemSchema>;
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
@@ -23,7 +24,8 @@
 		teams = _.range(0, 10).map((e) => ({
 			id: `asdf${e}`,
 			externalTeamId: 'asdf',
-			schoolId: 'asdf'
+			schoolId: 'asdf',
+			division: e % 5 + 1
 		}) as TeamResponseItem);
 		isLoading = false;
 	}
@@ -51,6 +53,7 @@
 			<tr>
 				<td>ID #</td>
 				<td>School ID #</td>
+				<td>Division</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -63,17 +66,18 @@
 				{/each}
 			{:else}
 				{#each teams as team (team.id)}
-					{@const { schoolId, externalTeamId } = team}
+					{@const { schoolId, externalTeamId, division } = team}
 					<tr>
 						<td>{externalTeamId}</td>
 						<td>{schoolId}</td>
+						<td>{division ? romanize(division) : '-'}</td>
 					</tr>
 				{/each}
 			{/if}
 		</tbody>
 		<tfoot>
 			<tr>
-				<td colspan="1">Total</td>
+				<td colspan="2">Total</td>
 				{#if isFirstLoaded}
 					<td colspan="1">{offset + 1} - {offset + currentCount}/{total} Elements</td>
 				{:else}

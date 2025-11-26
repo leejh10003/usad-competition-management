@@ -9,7 +9,7 @@
 	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon } from '@lucide/svelte';
 	import z from 'zod';
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
-	import romans from 'romans';
+	import romans, { romanize } from 'romans';
 	type SchoolResponseItem = z.infer<typeof schoolResponse>['school'];
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
@@ -38,8 +38,9 @@
 			externalSchoolId: '10',
 			principalEmail: 'random@domain.com',
 			phone: '(123)456-7890',
-			principalName: 'Lorem Ipsum'
-		}));
+			principalName: 'Lorem Ipsum',
+			division: e % 5 + 1
+		}) as SchoolResponseItem);
 		isLoading = false;
 	}
 	$effect(() => {
@@ -99,6 +100,7 @@
 				<td>School Address</td>
 				<td>School Phone #</td>
 				<td>School Principal</td>
+				<td>Division</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -123,7 +125,8 @@
 						streetAddress,
 						city,
 						state,
-						zipCode
+						zipCode,
+						division
 					} = school}
 					{@const nameSplit = splitStringForQueryHighlight(name, debouncedSchoolNameQueryString)}
 					{@const externalSchoolIdSplit = splitStringForQueryHighlight(
@@ -153,13 +156,16 @@
 							>{principalName} (email:
 							<a href={`mailto:${principalEmail}`}>{principalEmail}</a>)</td
 						>
+						<td>
+							{division ? romanize(division) : '-'}
+						</td>
 					</tr>
 				{/each}
 			{/if}
 		</tbody>
 		<tfoot>
 			<tr>
-				<td colspan="4">Total</td>
+				<td colspan="5">Total</td>
 				{#if isFirstLoaded}
 					<td colspan="1">{offset + 1} - {offset + currentCount}/{total} Elements</td>
 				{:else}
