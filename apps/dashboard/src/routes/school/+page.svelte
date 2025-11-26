@@ -130,7 +130,7 @@
 					} = school}
 					{@const nameSplit = splitStringForQueryHighlight(name, debouncedSchoolNameQueryString)}
 					{@const externalSchoolIdSplit = splitStringForQueryHighlight(
-						name,
+						externalSchoolId,
 						debouncedExternalSchoolIdQueryString
 					)}
 					<tr>
