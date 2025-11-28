@@ -37,8 +37,10 @@ model School {
 
   emailDomain String? @unique @map("email_domain")
   division Int?
+  competitionId String @map("competition_id") @db.Uuid
 
   // Relations
+  competition Competition @relation("CompetitionOfSchool", fields: [competitionId], references: [id])
   coaches  Coach[] @relation("CoachesOfSchool")
   teams    Team[]
   students Student[]
@@ -47,6 +49,7 @@ model School {
   @@index([state, city])
   @@index([division])
   @@index([name])
+  @@index([competitionId])
   
   @@map("schools")
 }
@@ -156,6 +159,8 @@ model Student {
 
   schoolId String? @map("school_id") @db.Uuid
   school   School? @relation(fields: [schoolId], references: [id])
+  competitionId String? @map("competition_id") @db.Uuid
+  competition Competition? @relation("CompetitionOfStudent", fields: [competitionId], references: [id])
   
   eventCheckIns EventCheckIn[] @relation("StudentOfEventCheckIn")
 
@@ -167,19 +172,38 @@ model Student {
   @@index([id, externalStudentId, schoolId, signature])
   @@index([id, externalStudentId, teamId, signature])
   @@index([id, externalStudentId, signature])
+  @@index([competitionId])
 
   @@map("students")
+}
+
+model Competition {
+  id       String   @id @default(uuid()) @db.Uuid
+  name     String
+  startsAt DateTime @map("starts_at") @db.Timestamptz(3)
+  endsAt   DateTime @map("ends_at") @db.Timestamptz(3)
+  events   Event[] @relation("CompetitionOfEvent")
+  schools  School[] @relation("CompetitionOfSchool")
+  students Student[] @relation("CompetitionOfStudent")
+  @@index([startsAt])
+  @@index([endsAt])
+  @@index([name])
+  @@map("competitions")
 }
 
 model Event {
   id       String   @id @default(uuid()) @db.Uuid
   name     String
   startsAt DateTime @map("starts_at") @db.Timestamptz(3)
+  endsAt   DateTime @map("ends_at") @db.Timestamptz(3)
+  competitionId String @map("competition_id") @db.Uuid
+  competition Competition @relation("CompetitionOfEvent", fields: [competitionId], references: [id])
   
   eventCheckIn EventCheckIn[] @relation("EventOfEventCheckIn")
 
   // --- Indexes ---
   @@index([startsAt])
+  @@index([competitionId])
 
   @@map("events")
 }
