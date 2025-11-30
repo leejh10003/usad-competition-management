@@ -10,6 +10,59 @@ enum Division {
   V // Varsity
 }
 
+enum State {
+  AL
+  AK
+  AZ
+  AR
+  CA
+  CO
+  CT
+  DE
+  FL
+  GA
+  HI
+  ID
+  IL
+  IN
+  IA
+  KS
+  KY
+  LA
+  ME
+  MD
+  MA
+  MI
+  MN
+  MS
+  MO
+  MT
+  NE
+  NV
+  NH
+  NJ
+  NM
+  NY
+  NC
+  ND
+  OH
+  OK
+  OR
+  PA
+  RI
+  SC
+  SD
+  TN
+  TX
+  UT
+  VT
+  VA
+  WA
+  WV
+  WI
+  WY
+}
+
 // ----------------------------------------
 // Main Data Models
 // ----------------------------------------
@@ -25,7 +78,7 @@ model School {
   // Address & Contact Info
   streetAddress  String? @map("street_address")
   city           String?
-  state          String?
+  state          State?
   zipCode        String? @map("zip_code")
   phone          String?
   principalName  String? @map("principal_name")
@@ -143,7 +196,7 @@ model Student {
   // Address Info (Preserved from your previous schema)
   streetAddress  String? @map("street_address")
   city           String?
-  state          String?
+  state          State?
   zipCode        String? @map("zip_code")
 
   // Guardian Info
@@ -183,11 +236,13 @@ model Competition {
   startsAt DateTime @map("starts_at") @db.Timestamptz(3)
   endsAt   DateTime @map("ends_at") @db.Timestamptz(3)
   events   Event[] @relation("CompetitionOfEvent")
+  state    State?
   schools  School[] @relation("CompetitionOfSchool")
   students Student[] @relation("CompetitionOfStudent")
   @@index([startsAt])
   @@index([endsAt])
   @@index([name])
+  @@index([state])
   @@map("competitions")
 }
 

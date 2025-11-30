@@ -3,4 +3,5 @@ export const schoolSelectFieldsSchema = {
   name: true,
   startsAt: true,
   endsAt: true,
+  state: true,
 };

@@ -1,8 +1,8 @@
 import { z } from "@hono/zod-openapi";
-import { basicRequiredInfos } from "./baseTypes";
+import { basicOptionalInfos, basicRequiredInfos } from "./baseTypes";
 
 
-export const competitionInsertItem = basicRequiredInfos;
+export const competitionInsertItem = basicRequiredInfos.extend(basicOptionalInfos.shape);
 export const competitionInsertSchema = z.object({
   competition: competitionInsertItem,
 });
