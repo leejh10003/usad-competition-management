@@ -110,3 +110,14 @@ export {
 } from "./event-check-in";
 
 export { fileUploadingFormSchema, fileUploadingResponseSchema } from "./file";
+
+export {
+  competitionInsertItem,
+  competitionInsertSchema,
+  competitionResponseItemSchema,
+  competitionsInsertSchema,
+  competitionUpdateSchema,
+  competitionsUpdateSchema,
+  competitionResponse,
+  competitionsResponse
+} from './competition';

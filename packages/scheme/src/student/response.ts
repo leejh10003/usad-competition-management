@@ -1,5 +1,5 @@
 import { z } from "@hono/zod-openapi";
-import { division } from "../constants";
+import { division, stateDivisionEnums } from "../constants";
 import { basicSuccess } from "../baseTypes";
 
 export const studentResponseItemSchema = z.object({
@@ -13,7 +13,7 @@ export const studentResponseItemSchema = z.object({
   schoolId: z.uuid().nullable(),
   streetAddress: z.string().nullable(),
   city: z.string().nullable(),
-  state: z.string().nullable(),
+  state: stateDivisionEnums.nullable(),
   zipCode: z.string().nullable(),
   guardianFirstName: z.string().nullable(),
   guardianLastName: z.string().nullable(),

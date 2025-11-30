@@ -7,7 +7,7 @@ export const requiredInfosOptional = z.object({
 });
 export const competitionUpdateSchema = z.object({
   id: z.uuid(),
-  school: requiredInfosOptional,
+  competition: requiredInfosOptional,
 });
 export const competitionsUpdateSchema = z.object({
   competitions: z.array(competitionUpdateSchema),

@@ -6,10 +6,10 @@ export const competitionResponseItemSchema = basicRequiredInfos
   .extend({
     id: z.uuid(),
   });
-export const schoolResponse = basicSuccess.extend({
+export const competitionResponse = basicSuccess.extend({
   competition: competitionResponseItemSchema,
 });
-export const schoolsResponse = basicSuccess.extend({
+export const competitionsResponse = basicSuccess.extend({
   competitions: z.array(competitionResponseItemSchema),
   count: z.int(),
 });
