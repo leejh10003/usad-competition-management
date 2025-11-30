@@ -42,28 +42,16 @@ students.openapi(
   },
   async (c) => {
     try {
-      const { offset, limit, firstName, lastName, division } =
+      const condition =
         c.req.valid("query");
-      console.log(`Fetching students with offset ${offset} and limit ${limit}`);
+      const { skip, take, where } = condition;
+      console.log(`Fetching students with offset ${skip} and limit ${take}`);
       const prisma = c.get("prisma");
-      const condition: Exclude<Parameters<typeof prisma['student']['findMany']>[0], undefined>['where'] = {
-        firstName: {
-          contains: firstName,
-        },
-        lastName: {
-          contains: lastName,
-        },
-        division: {
-          in: division.length > 0 ? division : undefined,
-        },
-      };
       const result = await prisma.student.findMany({
-        take: limit,
-        skip: offset,
-        where: condition,
+        ...condition,
         select: studentSelectFieldsSchema,
       });
-      const count = await prisma.student.count({where: condition})
+      const count = await prisma.student.count({where});
       return c.json({ success: true, students: result, count }, 200);
     } catch (e) {
       if (e instanceof Error) {
