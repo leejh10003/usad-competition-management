@@ -12,7 +12,8 @@
 		UserCheckIcon,
 		IdCardLanyardIcon,
 		UsersIcon,
-		UserIcon
+		UserIcon,
+		AwardIcon
 	} from '@lucide/svelte';
 	import { AppBar, Navigation } from '@skeletonlabs/skeleton-svelte';
 
@@ -34,8 +35,9 @@
 		{
 			groupName: 'Events',
 			items: [
+				{ icon: AwardIcon, title: 'Competition', path: 'competition' },
 				{ icon: CalendarIcon, title: 'Event', path: 'event' },
-				{ icon: UserCheckIcon, title: 'Check in', path: 'event-check-in' }
+				{ icon: UserCheckIcon, title: 'Check in', path: 'event-check-in' },
 			]
 		}
 	];
