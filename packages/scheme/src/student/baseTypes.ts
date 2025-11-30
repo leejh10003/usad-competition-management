@@ -1,5 +1,5 @@
 import { z } from "@hono/zod-openapi";
-import { stateDivisionEnums } from "../constants";
+import { stateEnums } from "../constants";
 
 export const optionalInfosCommon = z.object({
   externalStudentId: z.string().nullable().optional(),
@@ -17,7 +17,7 @@ export const insertStudentWithSchoolId = z.object({
 export const insertStudentWithIndividualAddress = z.object({
   streetAddress: z.string().nullable().optional(),
   city: z.string().nullable().optional(),
-  state: stateDivisionEnums.optional(),
+  state: stateEnums.optional(),
   zipCode: z.string().nullable().optional(),
   guardianFirstName: z.string().nullable().optional(),
   guardianLastName: z.string().nullable().optional(),

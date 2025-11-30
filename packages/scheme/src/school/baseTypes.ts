@@ -1,12 +1,12 @@
 import { z } from "@hono/zod-openapi";
 import { coachesInsertSchema } from "../coach";
-import { schoolDivisionEnums, stateDivisionEnums } from "../constants";
+import { schoolDivisionEnums, stateEnums } from "../constants";
 
 export const optionalBasicInfos = z.object({
   externalSchoolId: z.string().nullable().optional(),
   streetAddress: z.string().nullable().optional(),
   city: z.string().nullable().optional(),
-  state: stateDivisionEnums.nullable().optional(),
+  state: stateEnums.nullable().optional(),
   zipCode: z.string().nullable().optional(),
   phone: z.string().nullable().optional(),
   principalName: z.string().nullable().optional(),

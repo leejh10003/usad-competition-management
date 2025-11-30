@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { division } from 'usad-scheme';
+	import { division, stateEnums } from 'usad-scheme';
 	import type z from 'zod';
 	import _ from 'lodash';
 	import StateDropdown from '$lib/components/states.svelte';
@@ -15,10 +15,11 @@
 	import { FileUpload } from '@skeletonlabs/skeleton-svelte';
 	import { workerRequest } from '$lib/api';
 	import type { FileUploadState } from '$lib/enums/file';
+	import { storage } from '$lib/utils/store';
 
 	var streetAddress = $state<string>();
 	var city = $state<string>();
-	var stateInput = $state<string>();
+	var stateInput = $state<z.infer<typeof stateEnums> | null>(storage.state);
 	var zipCode = $state<string>();
 	var gpa = $state<number>();
 	var group = $state<z.infer<typeof division>>();
@@ -99,7 +100,7 @@
 						>&nbsp;&nbsp;Check the state is valid or not</span
 					></span
 				>
-				<StateDropdown placeholder="State..." bind:state={stateInput} />
+				<StateDropdown disabled placeholder="State..." bind:state={stateInput} />
 			</label>
 			<label class="label">
 				<span class="label-text"
@@ -339,7 +340,7 @@
 				<button
 					type="button"
 					class="btn preset-outlined-surface-300-700"
-					onclick={() => goto(resolve('/'))}>Back</button
+					onclick={() => goto(resolve('/kind'))}>Back</button
 				>
 				<button type="button" class="btn preset-filled-primary-500" onclick={() => onSubmit()}
 					>Submit</button

@@ -1,24 +1,23 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import z from 'zod';
+    import StateDropdown from '$lib/components/states.svelte';
+    import type { StorageStore } from '$lib/utils/store';
+    import { storage } from '$lib/utils/store';
+    var store = $state<StorageStore>(storage);
 </script>
 
 <div class="flex grow flex-col">
 	<div class="m-auto flex flex-col items-center text-center">
-		<h1 class="h1 font-semibold">Register a Team</h1>
+		<h1 class="h1 font-semibold">From which state are you from?</h1>
 		<br />
+        <StateDropdown placeholder="Select State..." bind:state={store.state} />
+        <br />
 		<button
+            disabled={!store.state}
 			type="button"
 			class="btn preset-filled-primary-500 btn-lg"
-			onclick={() => goto(resolve('/school'))}>Team</button
-		>
-		<br />
-		<h1 class="h1 font-semibold">Register as an Individual</h1>
-		<br />
-		<button
-			type="button"
-			class="btn preset-filled-primary-500 btn-lg"
-			onclick={() => goto(resolve('/individual'))}>Individual</button
-		>
+			onclick={() => goto(resolve('/kind'))}>Next</button>
 	</div>
 </div>

@@ -16,7 +16,7 @@ const teamDivisionEnums = z.enum({
   4: 4,
   5: 5,
 });
-const stateDivisionEnums = z.enum({
+const stateEnums = z.enum({
   'Alabama': 'AL',
   'Alaska': 'AK',
   'Arizona': 'AZ',
@@ -68,4 +68,4 @@ const stateDivisionEnums = z.enum({
   'Wisconsin': 'WI',
   'Wyoming': 'WY' 
 })
-export { division, divisionEnums, schoolDivisionEnums, teamDivisionEnums, stateDivisionEnums };
+export { division, divisionEnums, schoolDivisionEnums, teamDivisionEnums, stateEnums };
