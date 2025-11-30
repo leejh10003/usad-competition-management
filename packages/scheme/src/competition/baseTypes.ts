@@ -1,7 +1,7 @@
 import { z } from "@hono/zod-openapi";
-export const requiredInfos = z.object({
+
+export const basicRequiredInfos = z.object({
   name: z.string(),
   startsAt: z.date(),
   endsAt: z.date(),
-  competitionId: z.uuid(),
 });

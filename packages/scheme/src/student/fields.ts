@@ -17,4 +17,5 @@ export const studentSelectFieldsSchema = {
   guardianPhone: true,
   guardianEmail: true,
   attachmentOnRegistering: true,
+  competitionId: true,
 };

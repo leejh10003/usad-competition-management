@@ -6,10 +6,6 @@ export const optionalInfosCommon = z.object({
   gpa: z.float32().nullable().optional(),
   teamId: z.uuid().nullable().optional(),
   signature: z.string().nullable().optional(),
-  guardianFirstName: z.string().nullable().optional(),
-  guardianLastName: z.string().nullable().optional(),
-  guardianPhone: z.string().nullable().optional(),
-  guardianEmail: z.string().nullable().optional(),
   attachmentOnRegistering: z.string().nullable().optional(),
 });
 
@@ -22,6 +18,11 @@ export const insertStudentWithIndividualAddress = z.object({
   city: z.string().nullable().optional(),
   state: z.string().nullable().optional(),
   zipCode: z.string().nullable().optional(),
+  guardianFirstName: z.string().nullable().optional(),
+  guardianLastName: z.string().nullable().optional(),
+  guardianPhone: z.string().nullable().optional(),
+  guardianEmail: z.string().nullable().optional(),
+  competitionId: z.uuid().nullable().optional(),
 });
 
 export const optionalInfos = optionalInfosCommon.and(

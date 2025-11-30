@@ -23,4 +23,5 @@ export const optionalInfos = optionalBasicInfos.extend(
 export const basicRequiredInfos = z.object({
   name: z.string(),
   isVirtual: z.boolean(),
+  competitionId: z.uuid()
 });
