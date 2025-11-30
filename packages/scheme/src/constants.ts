@@ -67,5 +67,6 @@ const stateEnums = z.enum({
   'West Virginia': 'WV',
   'Wisconsin': 'WI',
   'Wyoming': 'WY' 
-})
-export { division, divisionEnums, schoolDivisionEnums, teamDivisionEnums, stateEnums };
+});
+const sortEnums = z.enum(["asc", "desc"]);
+export { division, divisionEnums, schoolDivisionEnums, teamDivisionEnums, stateEnums, sortEnums };
