@@ -25,7 +25,9 @@
 		events = _.range(0, 10).map((e) => ({
 			name: 'Midwest US Science High School',
 			startsAt: new Date(),
-			id: `${e}`
+			endsAt: new Date(),
+			id: `${e}`,
+			competitionId: ''
 		}));
 		isLoading = false;
 	}
