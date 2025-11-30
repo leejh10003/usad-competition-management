@@ -71,6 +71,7 @@
 			{:else}
 				{#each competitions as event (event.id)}
 					{@const { name, startsAt } = event}
+                    {@const editor: {editor: Editor | undefined} = { editor: undefined } }
 					<tr>
 						<td>{name}</td>
 						<td
@@ -97,12 +98,16 @@
 												</Dialog.CloseTrigger>
 											</header>
 											<Dialog.Description>
+                                                
 												{#each mailAddresses as address, i (i)}
                                                     <p>{i + 1}</p>
                                                 {/each}
-                                                <Editor />
+                                                <Editor bind:this={editor.editor}/>
 											</Dialog.Description>
 											<footer class="flex justify-end gap-2">
+                                                <Dialog.CloseTrigger onclick={async () => {
+                                                    console.log(editor.editor?.quill.getSemanticHTML())
+                                                }} class="btn preset-filled-primary-50-950">Send</Dialog.CloseTrigger>
 												<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
 											</footer>
 										</Dialog.Content>

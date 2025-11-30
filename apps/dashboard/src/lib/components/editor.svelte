@@ -1,30 +1,27 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-    import Quill from "quill";
+    import type Quill from "quill";
+    import type { QuillOptions } from "quill";
+    const props = $props<{ }>();
     let editor: HTMLDivElement;
-    export let toolbarOptions = [
-		[{ header: 1 }, { header: 2 }, "blockquote", "link", "image", "video"],
-		["bold", "italic", "underline", "strike"],
-		[{ list: "ordered" }, { list: "ordered" }],
-		[{ align: [] }],
-		["clean"]
-	];
+    let options: QuillOptions = {
+        modules: {
+            toolbar: [
+                [{ header: 1 }, { header: 2 }, "blockquote", "link", "image", "video"],
+                ["bold", "italic", "underline", "strike"],
+                [{ list: "ordered" }, { list: "ordered" }],
+                [{ align: [] }],
+                ["clean"]
+            ]
+        },
+        theme: "snow",
+        placeholder: "Write your story..."
+    };
     let quill: Quill;
+    export {quill} ;
     onMount(async () => {
-        try {
-            const {default: Quill} = await import("quill");
-            console.log(Quill);
-            quill = new Quill(editor, {
-                modules: {
-                    toolbar: toolbarOptions
-                },
-                theme: "snow",
-                placeholder: "Write your story..."
-            });
-            console.log("Quill editor initialized", quill);
-        } catch (error) {
-            console.error("Error loading Quill editor:", error);
-        }
+        const {default: Quill} = await import("quill");
+        quill = new Quill(editor, options);
     });
 </script>
 <style>
