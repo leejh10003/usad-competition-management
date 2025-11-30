@@ -24,7 +24,11 @@
 	async function fetch(searchParams: z.infer<typeof studentQuerySchema>) {
 		isLoading = true;
 		//TODO: server fetch
-		students = await workerRequest.getStudent();
+		const {result, count} = await workerRequest.getStudent({
+			take: 10
+		});
+		students = result;
+		total = count;
 		isLoading = false;
 	}
 	$effect(() => {
