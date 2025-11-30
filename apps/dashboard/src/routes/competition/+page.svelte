@@ -9,6 +9,7 @@
 	import { ArrowLeftIcon, ArrowRightIcon, MailIcon, XIcon } from '@lucide/svelte';
 	import moment from 'moment-timezone';
 	import z from 'zod';
+    import Editor from '$lib/components/editor.svelte';
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
@@ -19,7 +20,7 @@
 	var currentCount = $state<number>(0);
 	var competitions = $state<CompetitionResponseItem[]>([]);
 	var timezone = moment.tz.guess();
-    var mailAddresses = $state<string[]>();
+    var mailAddresses = $state<string[]>(['', '', '']);
     const animation =
 		'transition transition-discrete opacity-0 translate-y-[100px] starting:data-[state=open]:opacity-0 starting:data-[state=open]:translate-y-[100px] data-[state=open]:opacity-100 data-[state=open]:translate-y-0';
 	async function fetch(/*searchParams: z.infer<typeof schoolQuerySchema>*/) {
@@ -96,9 +97,10 @@
 												</Dialog.CloseTrigger>
 											</header>
 											<Dialog.Description>
-												{#each mailAddresses as address, i (address)}
+												{#each mailAddresses as address, i (i)}
                                                     <p>{i + 1}</p>
                                                 {/each}
+                                                <Editor />
 											</Dialog.Description>
 											<footer class="flex justify-end gap-2">
 												<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
