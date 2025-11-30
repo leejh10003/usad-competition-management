@@ -12,6 +12,7 @@ import { eventCheckIns } from "./routes/event-check-in";
 import { files } from "./routes/files";
 import { competitions } from "./routes/competitions";
 import { cors } from "hono/cors";
+import { test } from "./routes/test";
 //import { PrismaClientUnknownRequestError, PrismaClientValidationError, PrismaClientKnownRequestError, PrismaClientInitializationError } from '@prisma/client/runtime/library';
 
 const app = new OpenAPIHono<Env>({});
@@ -106,9 +107,7 @@ api.route("/events", events);
 api.route("/event-check-ins", eventCheckIns);
 api.route("/files", files);
 api.route("/competitions", competitions);
-api.get("/test", async (c) => {
-  return c.json({ success: true });
-});
+api.route("/test", test);
 
 //api.route('/', students);
 

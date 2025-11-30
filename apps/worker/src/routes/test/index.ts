@@ -2,9 +2,9 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { apiQueryParamTestSchema } from "usad-scheme";
 import { basicSuccess } from "usad-scheme/src/baseTypes";
 
-const testAPI = new OpenAPIHono();
+const test = new OpenAPIHono();
 
-testAPI.openapi({
+test.openapi({
     path: '',
     method: 'get',
     request: {
@@ -26,4 +26,4 @@ testAPI.openapi({
     return c.json({ success: true }, 200);
 });
 
-export { testAPI }
+export { test }
