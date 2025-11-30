@@ -15,3 +15,4 @@ export * from './coach';
 export * from './school';
 export * from './student';
 export * from './team';
+export * from './competition';
