@@ -22,7 +22,11 @@ test.openapi({
     },
 }, async (c) => {
     const { sort } = c.req.valid('query');
-    console.log(sort);
+    sort?.forEach((value) => {
+        for (const [k, v] of Object.entries(value)) {
+            console.log('Sort key: ', k, 'Sort value:', v);
+        }
+    });
     return c.json({ success: true }, 200);
 });
 
