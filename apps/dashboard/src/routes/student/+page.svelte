@@ -13,8 +13,8 @@
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
 	var limit = $state<number>(10);
-	var pagination = $state<number>(0);
-	var offset = $derived.by(() => pagination * limit);
+	var currentPage = $state<number>(1);
+	var offset = $derived.by(() => (currentPage - 1) * limit);
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
 	var students = $state<StudentResponseItem[]>([]);
@@ -25,10 +25,12 @@
 		isLoading = true;
 		//TODO: server fetch
 		const {result, count} = await workerRequest.getStudent({
-			take: 10
+			take: limit,
+			skip: offset
 		});
 		students = result;
 		total = count;
+		currentCount = result.length;
 		isLoading = false;
 	}
 	$effect(() => {
@@ -65,6 +67,7 @@
 			{#if isLoading}
 				{#each _.range(0, limit, 1) as n (n)}
 					<tr>
+						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
@@ -143,13 +146,13 @@
 			</tr>
 		</tfoot>
 	</table>
-	<Pagination count={total} pageSize={limit} page={pagination}>
-		<Pagination.PrevTrigger><ArrowLeftIcon class="size-4" /></Pagination.PrevTrigger>
+	<Pagination count={total} pageSize={limit} page={currentPage}>
+		<Pagination.PrevTrigger onclick={() => currentPage--}><ArrowLeftIcon class="size-4" /></Pagination.PrevTrigger>
 		<Pagination.Context>
 			{#snippet children(pagination)}
 				{#each pagination().pages as page, index (page)}
 					{#if page.type === 'page'}
-						<Pagination.Item {...page}>
+						<Pagination.Item onclick={(v) => {currentPage = page.value}} {...page}>
 							{page.value}
 						</Pagination.Item>
 					{:else}
@@ -158,6 +161,6 @@
 				{/each}
 			{/snippet}
 		</Pagination.Context>
-		<Pagination.NextTrigger><ArrowRightIcon class="size-4" /></Pagination.NextTrigger>
+		<Pagination.NextTrigger onclick={() => {currentPage++}}><ArrowRightIcon class="size-4" /></Pagination.NextTrigger>
 	</Pagination>
 </div>
