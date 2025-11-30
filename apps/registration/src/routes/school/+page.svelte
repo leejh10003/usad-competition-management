@@ -25,7 +25,8 @@
 		teams: [generateTeam()],
 		coachTeamMappings: [],
 		coaches: [],
-		primaryCoachIndex: -1
+		primaryCoachIndex: -1,
+		competitionId: '',
 	});
 	var teamCoachMapping: { [teamId: number]: string[] } = $state({ 0: [] });
 	const collection = $derived.by(() => {
