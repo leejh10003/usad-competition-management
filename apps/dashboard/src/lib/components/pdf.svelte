@@ -6,6 +6,7 @@
 	import { ArrowLeftIcon, ArrowRightIcon } from '@lucide/svelte';
 	// Import the worker if you're not using a CDN for it
 	// import * as pdfWorker from 'pdfjs-dist/build/pdf.worker.mjs';
+	import 'pdfjs-dist/build/pdf.worker.min.mjs';
 
 	const { data } = $props<{ data: Parameters<(typeof pdfjs)['getDocument']>[0] }>();
 	type LoadState = 'error' | 'loaded' | 'loading';
@@ -17,9 +18,6 @@
 	let loading = $state<LoadState>('loading');
 
 	onMount(async () => {
-		// Set the worker source for pdf.js
-		// If using a CDN, replace with the CDN URL
-		pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`;
 
 		try {
 			const loadingTask = pdfjs.getDocument(data);
