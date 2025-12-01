@@ -18,8 +18,9 @@
 	const query = $derived.by(() => page.url.searchParams);
 	const getLimit = $derived.by(() => {
 		const limit = query.get('limit');
-		return limit ? parseInt(limit) : 10;
-	})
+		const parsed = parseInt(limit ?? 'NaN');
+		return isNaN(parsed) ? 10 : parseInt(limit ?? 'NaN');
+	});
 	function setLimit(input: number) {
 		const route = page.url.pathname;
 		const params = _currentParam();

@@ -18,20 +18,29 @@
 	function _currentParam() {
 		const limit = query.get('limit');
 		const currentPage = query.get('currentPage');
+		const schoolNameQueryString = query.get('schoolNameQueryString');
+		const externalSchoolIdQueryString = query.get('externalSchoolIdQueryString');
 		const params = new URLSearchParams();
 		try {
-			params.set('limit', parseInt(decodeURI(limit!)).toString());
+			params.set('limit', _.parseInt(decodeURI(limit!)).toString());
 		} catch (e) {}
 		if (currentPage && decodeURI(currentPage as string).trim().length > 0) {
 			params.set('currentPage', decodeURI(currentPage as string));
+		}
+		if (schoolNameQueryString && decodeURI(schoolNameQueryString as string).trim().length > 0) {
+			params.set('schoolNameQueryString', decodeURI(schoolNameQueryString as string));
+		}
+		if (externalSchoolIdQueryString && decodeURI(externalSchoolIdQueryString as string).trim().length > 0) {
+			params.set('externalSchoolIdQueryString', decodeURI(externalSchoolIdQueryString as string));
 		}
 		return params;
 	}
 	const query = $derived.by(() => page.url.searchParams);
 	const getLimit = $derived.by(() => {
 		const limit = query.get('limit');
-		return limit ? parseInt(limit) : 10;
-	})
+		const parsed = parseInt(limit ?? 'NaN');
+		return isNaN(parsed) ? 10 : parseInt(limit ?? 'NaN');
+	});
 	function setLimit(input: number) {
 		const route = page.url.pathname;
 		const params = _currentParam();
@@ -251,7 +260,7 @@
 			{#snippet children(pagination)}
 				{#each pagination().pages as page, index (page)}
 					{#if page.type === 'page'}
-						<Pagination.Item  onclick={() => setCurrentPage(page.value)} {...page}>
+						<Pagination.Item onclick={() => setCurrentPage(page.value)} {...page}>
 							{page.value}
 						</Pagination.Item>
 					{:else}

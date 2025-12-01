@@ -47,38 +47,17 @@ coaches.openapi(
   },
   async (c) => {
     const prisma = c.get("prisma");
-    const { externalCoachId, lastName, firstName, schoolId, limit, offset } =
+    const { skip, take, where, orderBy } =
       c.req.valid("query");
-    const condition: Exclude<Parameters<typeof prisma['coach']['findMany']>[0], undefined>['where'] = {
-        externalCoachId: externalCoachId
-          ? {
-              contains: externalCoachId,
-            }
-          : undefined,
-        lastName: lastName
-          ? {
-              contains: lastName,
-            }
-          : undefined,
-        firstName: firstName
-          ? {
-              contains: firstName,
-            }
-          : undefined,
-        schoolId: schoolId
-          ? {
-              equals: schoolId,
-            }
-          : undefined,
-      };
     const result = await prisma.coach.findMany({
       select: coachSelectFieldsSchema,
-      where: condition,
-      take: limit,
-      skip: offset,
+      where,
+      take,
+      skip,
+      orderBy,
     });
     const count = await prisma.coach.count({
-      where: condition
+      where
     })
     return c.json({ success: true, coaches: result, count }, 200);
   }

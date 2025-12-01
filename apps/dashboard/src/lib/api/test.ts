@@ -9,7 +9,8 @@ import {
 	coachResponseSchema,
 	coachTeamMappings,
 	studentQuerySchema,
-    schoolQuerySchema
+    schoolQuerySchema,
+    coachQuerySchema
 } from 'usad-scheme';
 import z from 'zod';
 
@@ -966,30 +967,58 @@ class WorkerRequest {
 			.skip(data?.skip ?? 0)
 			.take(data?.take ?? 10)
 			.toArray();
-		const count = this.students.where(({ id }) => !!id).count();
+		const count = this.students.count();
 		await this._mockDelay();
 		return {
 			result,
 			count
 		};
 	}
+    async getCoach(input: z.infer<typeof coachQuerySchema>){
+        const test = ({firstName, lastName, externalCoachId}: CoachResponseItem) => {
+            let result = true;
+            if (input.where?.firstName && typeof input.where.firstName !== undefined && typeof input.where.firstName !== 'string' && typeof input.where.firstName.contains === 'string') {
+                result = result && firstName?.toLowerCase().includes(input.where.firstName.contains.toLowerCase())
+            }
+            if (input.where?.lastName && typeof input.where.lastName !== undefined && typeof input.where.lastName !== 'string' && typeof input.where.lastName.contains === 'string') {
+                result = result && lastName?.toLowerCase().includes(input.where.lastName.contains.toLowerCase())
+            }
+            if (input.where?.externalCoachId && typeof input.where.externalCoachId !== undefined && typeof input.where.externalCoachId !== 'string' && typeof input.where.externalCoachId.contains === 'string') {
+                result = result && (externalCoachId?.toLowerCase()?.includes(input.where.externalCoachId.contains.toLowerCase()) ?? false)
+            }
+            return result;
+        };
+        const result = this.coaches
+			.select((e) => e)
+			.skip(input?.skip ?? 0)
+            .where(test)
+			.take(input?.take ?? 10)
+			.toArray();
+		const count = this.coaches.where(test).count();
+		await this._mockDelay();
+		return {
+			result,
+			count
+		};
+    }
     async getSchool(input: z.infer<typeof schoolQuerySchema>) {
+        const test = ({name, externalSchoolId}: SchoolItemType) => {
+            let result = true;
+            if (input.where?.name && typeof input.where.name !== undefined && typeof input.where.name !== 'string' && typeof input.where.name.contains === 'string') {
+                result = result && name?.toLowerCase().includes(input.where.name.contains.toLowerCase())
+            }
+            if (input.where?.externalSchoolId && typeof input.where.externalSchoolId !== undefined && typeof input.where.externalSchoolId !== 'string' && typeof input.where.externalSchoolId.contains === 'string') {
+                result = result && (externalSchoolId?.toLowerCase()?.includes(input.where.externalSchoolId.contains.toLowerCase()) ?? false)
+            }
+            return result;
+        };
         const result = this.schools
 			.select((e) => e)
 			.skip(input?.skip ?? 0)
-            .where(({name, externalSchoolId}) => {
-                let result = true;
-                if (input.where?.name && typeof input.where.name !== undefined && typeof input.where.name !== 'string' && typeof input.where.name.contains === 'string') {
-                    result = result && name.includes(input.where.name.contains)
-                }
-                if (input.where?.externalSchoolId && typeof input.where.externalSchoolId !== undefined && typeof input.where.externalSchoolId !== 'string' && typeof input.where.externalSchoolId.contains === 'string') {
-                    result = result && (externalSchoolId?.includes(input.where.externalSchoolId.contains) ?? false)
-                }
-                return result;
-            })
+            .where(test)
 			.take(input?.take ?? 10)
 			.toArray();
-		const count = this.schools.where(({ id }) => !!id).count();
+		const count = this.schools.where(test).count();
 		await this._mockDelay();
 		return {
 			result,

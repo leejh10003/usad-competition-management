@@ -8,34 +8,127 @@
 	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon } from '@lucide/svelte';
 	import z from 'zod';
 	import { splitStringForQueryHighlight } from '$lib/utils/string';
+	import { resolve } from '$app/paths';
+	import { workerRequest } from '$lib/api/test';
 	type CoachResponseItem = z.infer<typeof coachResponseSchema>['coach'];
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
-	var limit = $state<number>(10);
-	var pagination = $state<number>(0);
-	var offset = $derived.by(() => pagination * limit);
+	function _currentParam() {
+		const limit = query.get('limit');
+		const currentPage = query.get('currentPage');
+		const externalCoachIdQueryString = query.get('externalCoachIdQueryString');
+		const coachFirstNameQueryString = query.get('coachFirstNameQueryString');
+		const coachLastNameQueryString = query.get('coachLastNameQueryString');
+		const params = new URLSearchParams();
+		try {
+			params.set('limit', _.parseInt(decodeURI(limit!)).toString());
+		} catch (e) {}
+		if (currentPage && decodeURI(currentPage as string).trim().length > 0) {
+			params.set('currentPage', decodeURI(currentPage as string));
+		}
+		if (externalCoachIdQueryString && decodeURI(externalCoachIdQueryString as string).trim().length > 0) {
+			params.set('externalCoachIdQueryString', decodeURI(externalCoachIdQueryString as string));
+		}
+		if (coachFirstNameQueryString && decodeURI(coachFirstNameQueryString as string).trim().length > 0) {
+			params.set('coachFirstNameQueryString', decodeURI(coachFirstNameQueryString as string));
+		}
+		if (coachLastNameQueryString && decodeURI(coachLastNameQueryString as string).trim().length > 0) {
+			params.set('coachLastNameQueryString', decodeURI(coachLastNameQueryString as string));
+		}
+		return params;
+	}
+	const getLimit = $derived.by(() => {
+		const limit = query.get('limit');
+		const parsed = parseInt(limit ?? 'NaN');
+		return isNaN(parsed) ? 10 : parseInt(limit ?? 'NaN');
+	})
+	function setLimit(input: number) {
+		const route = page.url.pathname;
+		const params = _currentParam();
+		params.set('limit', input.toString());
+		const going = `/${route.replace(/^\//g, '')}${params.size > 0 ? `?${params.toString()}` : ''}` as Parameters<typeof resolve>[0];
+		goto(resolve(going))
+	}
+	const getCurrentPage = $derived.by(() => {
+		const currentPage = query.get('currentPage');
+		return currentPage ? parseInt(currentPage) : 1;
+	})
+	function setCurrentPage(input: number) {
+		const route = page.url.pathname;
+		const params = _currentParam();
+		params.set('currentPage', input.toString());
+		const going = `/${route.replace(/^\//g, '')}${params.size > 0 ? `?${params.toString()}` : ''}` as Parameters<typeof resolve>[0];
+		goto(resolve(going))
+	}
+	const offset = $derived.by(() => (getCurrentPage - 1) * getLimit);
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
 	var coaches = $state<CoachResponseItem[]>([]);
-	var externalCoachIdQueryString = $state<string>();
-	var debouncedExternalCoachIdQueryString = $state<string>();
-	var coachFirstNameQueryString = $state<string>();
-	var debouncedCoachFirstNameQueryString = $state<string>();
-	var coachLastNameQueryString = $state<string>();
-	var debouncedCoachLastNameQueryString = $state<string>();
+	const query = $derived.by(() => page.url.searchParams);
+	const getExternalCoachIdQueryString = $derived(query.get('externalCoachIdQueryString') ?? undefined)
+	function setExternalCoachIdQueryString(input: string | undefined) {
+		const route = page.url.pathname;
+		const params = _currentParam();
+		if (!input || input.trim().length < 1) {
+			params.delete('externalCoachIdQueryString');
+		} else {
+			params.set('externalCoachIdQueryString', input);
+		}
+		const going = `/${route.replace(/^\//g, '')}${params.size > 0 ? `?${params.toString()}` : ''}` as Parameters<typeof resolve>[0];
+		goto(resolve(going));
+	}
+	const getCoachFirstNameQueryString = $derived(query.get('coachFirstNameQueryString') ?? undefined)
+	function setCoachFirstNameQueryString(input: string | undefined){
+		const route = page.url.pathname;
+		const params = _currentParam();
+		if (!input || input.trim().length < 1) {
+			params.delete('coachFirstNameQueryString');
+		} else {
+			params.set('coachFirstNameQueryString', input);
+		}
+		const going = `/${route.replace(/^\//g, '')}${params.size > 0 ? `?${params.toString()}` : ''}` as Parameters<typeof resolve>[0];
+		goto(resolve(going));
+	}
+	const getCoachLastNameQueryString = $derived(query.get('coachLastNameQueryString') ?? undefined)
+	function setCoachLastNameQueryString(input: string | undefined){
+		const route = page.url.pathname;
+		const params = _currentParam();
+		if (!input || input.trim().length < 1) {
+			params.delete('coachLastNameQueryString');
+		} else {
+			params.set('coachLastNameQueryString', input);
+		}
+		const going = `/${route.replace(/^\//g, '')}${params.size > 0 ? `?${params.toString()}` : ''}` as Parameters<typeof resolve>[0];
+		goto(resolve(going));
+	}
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	async function fetch(searchParams: z.infer<typeof coachQuerySchema>) {
 		isLoading = true;
 		//TODO: server fetch
-		coaches = _.range(0, 10).map((e) => ({
-			id: `${e}`,
-			firstName: 'Lorem',
-			lastName: 'Ipsum',
-			email: 'test@mail.com',
-			phone: '(123)456-7890',
-			schoolId: '',
-			externalCoachId: '101'
-		}));
+		const {result, count} = await workerRequest.getCoach({
+			take: getLimit,
+			skip: offset,
+			where: getCoachFirstNameQueryString || getCoachLastNameQueryString || getExternalCoachIdQueryString ? {
+				...(getCoachFirstNameQueryString ? {
+					firstName: {
+						contains: getCoachFirstNameQueryString
+					}
+				} : {}),
+				...(getCoachLastNameQueryString ? {
+					lastName: {
+						contains: getCoachLastNameQueryString
+					}
+				} : {}),
+				...(getExternalCoachIdQueryString ? {
+					externalCoachId: {
+						contains: getExternalCoachIdQueryString
+					}
+				} : {})
+			} : undefined
+		});
+		coaches = result;
+		total = count;
+		currentCount = result.length;
 		isLoading = false;
 	}
 	$effect(() => {
@@ -69,30 +162,39 @@
 				<span class="label-text">Coach ID</span>
 				<input
 					class="input"
-					oninput={_.debounce(() => {
-						debouncedExternalCoachIdQueryString = externalCoachIdQueryString;
-					}, 500)}
-					bind:value={externalCoachIdQueryString}
+					onchange={(v) => setExternalCoachIdQueryString(v.currentTarget.value)}
+					value={getExternalCoachIdQueryString}
 				/>
 			</label>
 			<label class="label">
 				<span class="label-text">Coach First Name</span>
 				<input
 					class="input"
-					oninput={_.debounce(() => {
-						debouncedCoachFirstNameQueryString = coachFirstNameQueryString;
-					}, 500)}
-					bind:value={coachFirstNameQueryString}
+					onchange={(v) => setCoachFirstNameQueryString(v.currentTarget.value)}
+					value={getCoachFirstNameQueryString}
 				/>
 			</label>
 			<label class="label">
 				<span class="label-text">Coach Last Name</span>
 				<input
 					class="input"
-					oninput={_.debounce(() => {
-						debouncedCoachLastNameQueryString = coachLastNameQueryString;
-					}, 500)}
-					bind:value={coachLastNameQueryString}
+					onchange={(v) => setCoachLastNameQueryString(v.currentTarget.value)}
+					value={getCoachLastNameQueryString}
+				/>
+			</label>
+			<label class="label">
+				<span class="label-text">Coaches Per Page</span>
+				<input
+					class="input"
+					type="number"
+					onchange={(e) => {
+						if (_.isNumber(e.currentTarget.value)) {
+							setLimit(e.currentTarget.value);
+						} else {
+							setLimit(parseInt(e.currentTarget.value));
+						}
+					}}
+					value={getLimit}
 				/>
 			</label>
 		</Collapsible.Content>
@@ -108,7 +210,7 @@
 		</thead>
 		<tbody>
 			{#if isLoading}
-				{#each _.range(0, limit, 1) as n (n)}
+				{#each _.range(0, getLimit, 1) as n (n)}
 					<tr>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
@@ -120,15 +222,15 @@
 					{@const { externalCoachId, firstName, lastName, email, phone } = coach}
 					{@const firstNameSplit = splitStringForQueryHighlight(
 						firstName,
-						debouncedCoachFirstNameQueryString
+						getCoachFirstNameQueryString
 					)}
 					{@const lastNameSplit = splitStringForQueryHighlight(
 						lastName,
-						debouncedCoachLastNameQueryString
+						getCoachLastNameQueryString
 					)}
 					{@const externalCoachlIdSplit = splitStringForQueryHighlight(
 						externalCoachId,
-						debouncedExternalCoachIdQueryString
+						getExternalCoachIdQueryString
 					)}
 					<tr>
 						<td>
@@ -169,13 +271,13 @@
 			</tr>
 		</tfoot>
 	</table>
-	<Pagination count={total} pageSize={limit} page={pagination}>
-		<Pagination.PrevTrigger><ArrowLeftIcon class="size-4" /></Pagination.PrevTrigger>
+	<Pagination count={total} pageSize={getLimit} page={getCurrentPage}>
+		<Pagination.PrevTrigger onclick={() => setCurrentPage(getCurrentPage - 1)}><ArrowLeftIcon class="size-4" /></Pagination.PrevTrigger>
 		<Pagination.Context>
 			{#snippet children(pagination)}
 				{#each pagination().pages as page, index (page)}
 					{#if page.type === 'page'}
-						<Pagination.Item {...page}>
+						<Pagination.Item onclick={() => setCurrentPage(page.value)} {...page}>
 							{page.value}
 						</Pagination.Item>
 					{:else}
@@ -184,6 +286,6 @@
 				{/each}
 			{/snippet}
 		</Pagination.Context>
-		<Pagination.NextTrigger><ArrowRightIcon class="size-4" /></Pagination.NextTrigger>
+		<Pagination.NextTrigger onclick={() => setCurrentPage(getCurrentPage + 1)}><ArrowRightIcon class="size-4" /></Pagination.NextTrigger>
 	</Pagination>
 </div>
