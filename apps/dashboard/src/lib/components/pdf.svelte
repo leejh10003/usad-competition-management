@@ -4,8 +4,6 @@
 	import { disableNonNumeric } from '$lib/utils/validation';
 	import { Pagination } from '@skeletonlabs/skeleton-svelte';
 	import { ArrowLeftIcon, ArrowRightIcon } from '@lucide/svelte';
-	// Import the worker if you're not using a CDN for it
-	// import * as pdfWorker from 'pdfjs-dist/build/pdf.worker.mjs';
 	import 'pdfjs-dist/build/pdf.worker.min.mjs';
 
 	const { data } = $props<{ data: Parameters<(typeof pdfjs)['getDocument']>[0] }>();
