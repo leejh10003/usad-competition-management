@@ -1,4 +1,5 @@
 import Enumerable from 'linq';
+import _ from 'lodash';
 import {
 	schoolResponse,
 	competitionResponseItemSchema,
@@ -6,8 +7,8 @@ import {
 	studentResponseSchema,
 	eventResponseItemSchema,
 	coachResponseSchema,
-    coachTeamMappings,
-    studentQuerySchema
+	coachTeamMappings,
+	studentQuerySchema
 } from 'usad-scheme';
 import z from 'zod';
 
@@ -19,103 +20,916 @@ type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
 type CoachResponseItem = z.infer<typeof coachResponseSchema>['coach'];
 type CoachTeamMappintItem = z.infer<typeof coachTeamMappings>;
 class WorkerRequest {
-    readonly coachTeamMappings: Enumerable.IEnumerable<CoachTeamMappintItem> = Enumerable.from<CoachTeamMappintItem>([
-        { coachId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'},
-        { coachId: 'aacee28b-6040-4ba7-b2a1-cee3f2068c2a', teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'},
-        { coachId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4'},
-        { coachId: '2e577ebb-3ed4-4a5d-b96f-38aba22472e1', teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4'},
-        { coachId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31'},
-        { coachId: '3e70e81f-f5e1-4212-ba37-1c38e50bb866', teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31'},
-        { coachId: 'c3611b9f-b416-48af-9347-95c48ed060a8', teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8'},
-        { coachId: '1cf17dd3-77c8-493b-93d7-1d26d289a416', teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8'},
-        { coachId: '21c95b7f-47d0-487b-99c1-bf93ee719081', teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081'},
-        { coachId: '1e0c58f4-12bf-48a2-959d-f806f5d07104', teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081'},
-        { coachId: '01651989-32f4-49a9-962d-742f47b3b0cb', teamId: '01651989-32f4-49a9-962d-742f47b3b0cb'},
-        { coachId: 'bf2e8b11-c9c7-4eab-9923-7245e47565fd', teamId: '01651989-32f4-49a9-962d-742f47b3b0cb'},
-    ]);
-	readonly schools: Enumerable.IEnumerable<SchoolItemType> = Enumerable.from<SchoolItemType>([
-        { id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', primaryCoachId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', name: 'Midwest US Science High School', externalSchoolId: '10', state: 'IL', isVirtual: false, competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de' },
-        { id: '20bd6771-a683-4b0e-b37d-eed53ff799d4', primaryCoachId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', name: 'Eastside Preparatory Academy', externalSchoolId: '11', state: 'NY', isVirtual: false, competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de' },
-        { id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', primaryCoachId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', name: 'Westview Charter School', externalSchoolId: '12', state: 'CA', isVirtual: false, competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de' },
-        { id: 'c3611b9f-b416-48af-9347-95c48ed060a8', primaryCoachId: 'c3611b9f-b416-48af-9347-95c48ed060a8', name: 'Northern Technical Institute', externalSchoolId: '13', state: 'TX', isVirtual: false, competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de' },
-        { id: '21c95b7f-47d0-487b-99c1-bf93ee719081', primaryCoachId: '21c95b7f-47d0-487b-99c1-bf93ee719081', name: 'Southern Academy of Sciences', externalSchoolId: '14', state: 'FL', isVirtual: false, competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de' },
-        { id: '01651989-32f4-49a9-962d-742f47b3b0cb', primaryCoachId: '01651989-32f4-49a9-962d-742f47b3b0cb', name: 'Virtual Science Academy', externalSchoolId: '15', state: 'VA', isVirtual: true, competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de' },
-    ]);
-	readonly competitions: CompetitionResponseItem[] = [
-        { id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', name: 'Regional Science Competition', startsAt: new Date(), endsAt: new Date() },
-    ];
-	readonly teams: Enumerable.IEnumerable<TeamResponseItem> = Enumerable.from<TeamResponseItem>([
-        { id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', externalTeamId: '101', division: 1, objectiveScore: 85, subjectiveScore: 90 },
-        { id: '20bd6771-a683-4b0e-b37d-eed53ff799d4', schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', externalTeamId: '111', division: 2, objectiveScore: 88, subjectiveScore: 92 },
-        { id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', externalTeamId: '121', division: 1, objectiveScore: 90, subjectiveScore: 85 },
-        { id: 'c3611b9f-b416-48af-9347-95c48ed060a8', schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8', externalTeamId: '131', division: 2, objectiveScore: 87, subjectiveScore: 89 },
-        { id: '21c95b7f-47d0-487b-99c1-bf93ee719081', schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081', externalTeamId: '141', division: 1, objectiveScore: 92, subjectiveScore: 91 },
-        { id: '01651989-32f4-49a9-962d-742f47b3b0cb', schoolId: '01651989-32f4-49a9-962d-742f47b3b0cb', externalTeamId: '151', division: 2, objectiveScore: 80, subjectiveScore: 82 },
-    ]);
-	readonly students: Enumerable.IEnumerable<StudentResponseItem> = Enumerable.from<StudentResponseItem>([
-		{ id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1011', firstName: 'Lucille', lastName: 'Mock' },
-		{ id: 'aacee28b-6040-4ba7-b2a1-cee3f2068c2a', teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1012', firstName: 'Marissa', lastName: 'Guo' },
-		{ id: '49476cc2-048f-4d16-bf98-b9b87aa50077', teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1013', firstName: 'Shelby', lastName: 'Aust' },
-		{ id: '080bce17-748b-402e-b44b-e1629a3782af', teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'S', gpa: 3.4, externalStudentId: '1014', firstName: 'JT', lastName: 'Hare' },
-		{ id: '2cd17e6f-a3d4-4a2a-9bb5-e8da24d733c3', teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'S', gpa: 3.4, externalStudentId: '1015', firstName: 'Reyhan', lastName: 'Ramrakhyani' },
-		{ id: 'ff465620-e097-4f80-8da6-ab846ee0938e', teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'S', gpa: 3.4, externalStudentId: '1016', firstName: 'Lia', lastName: 'Ha' },
-		{ id: '825d4d26-405a-48b7-87a3-1093323d9b24', teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'V', gpa: 2.8, externalStudentId: '1017', firstName: 'Nathan', lastName: 'Frost' },
-		{ id: '6b1ceadc-d7a1-457d-8e89-6cf99dd320ff', teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'V', gpa: 2.8, externalStudentId: '1018', firstName: 'Gavin', lastName: 'Fox' },
-		{ id: 'de63cd76-05e1-4633-a81b-dcb635fbab4f', teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'V', gpa: 2.8, externalStudentId: '1019', firstName: 'Yuliya', lastName: 'Gorbunova' },
-		{ id: '20bd6771-a683-4b0e-b37d-eed53ff799d4', teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1111', firstName: 'Luke', lastName: "O'Brien" },
-		{ id: '2e577ebb-3ed4-4a5d-b96f-38aba22472e1', teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1112', firstName: 'Caleb', lastName: 'Olson' },
-		{ id: '292b4a8f-b675-4459-9761-1c729b6e364a', teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1113', firstName: 'Kylie', lastName: 'Weaver' },
-		{ id: '51998bc9-c126-4ead-90c4-4551a0abf76b', teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'S', gpa: 3.4, externalStudentId: '1114', firstName: 'Rowan', lastName: 'LeFevre' },
-		{ id: '16b4468a-5f27-4b17-98cf-9b94524b425d', teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'S', gpa: 3.4, externalStudentId: '1115', firstName: 'Austin', lastName: 'Strong' },
-		{ id: '9d18ea73-5e14-453c-9f5a-02489cd8299e', teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'S', gpa: 3.4, externalStudentId: '1116', firstName: 'Heidi', lastName: 'Curtis' },
-		{ id: '76264e0b-e6d9-4d92-ab3d-9bdf67aa3e54', teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'V', gpa: 2.8, externalStudentId: '1117', firstName: 'Gabriel', lastName: 'Gois' },
-		{ id: '7c5591ff-2b19-4e05-98d8-22f88524dd88', teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'V', gpa: 2.8, externalStudentId: '1118', firstName: 'Maddy', lastName: 'Inman' },
-		{ id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1211', firstName: 'Aariyaka', lastName: 'Jain' },
-		{ id: '3e70e81f-f5e1-4212-ba37-1c38e50bb866', teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1212', firstName: 'Riley', lastName: 'Delorey' },
-		{ id: '11a4fa9b-3820-4c1e-8196-053f60b72d68', teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1213', firstName: 'Ethan', lastName: 'Chaing' },
-		{ id: '72739130-5a04-47c3-b0bd-76147de59a5d', teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'S', gpa: 3.4, externalStudentId: '1214', firstName: 'Ocean', lastName: 'Hauke' },
-		{ id: '75e36127-d814-4340-a3bd-91f8ae890f6e', teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'S', gpa: 3.4, externalStudentId: '1215', firstName: 'Conor', lastName: 'Long' },
-		{ id: 'c3611b9f-b416-48af-9347-95c48ed060a8', teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8', schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1311', firstName: 'Raya', lastName: 'Waldron' },
-		{ id: '1cf17dd3-77c8-493b-93d7-1d26d289a416', teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8', schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1312', firstName: 'Dylan', lastName: 'Portugal' },
-		{ id: '9a75d5b3-2df2-4939-9626-23bbdeb117d9', teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8', schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1313', firstName: 'Gregory', lastName: 'DeFauw' },
-		{ id: '5bc3db05-28e8-4516-82af-09f2fcb1b29b', teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8', schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'S', gpa: 3.4, externalStudentId: '1314', firstName: 'Tyler', lastName: 'Bettner' },
-		{ id: '8588bd34-d0cc-420b-b599-92c7edbbcb95', teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8', schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'S', gpa: 3.4, externalStudentId: '1315', firstName: 'AJ', lastName: 'Morris' },
-		{ id: '21c95b7f-47d0-487b-99c1-bf93ee719081', teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081', schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1411', firstName: 'Ishaan', lastName: 'Deshpande' },
-		{ id: 'bf2e8b11-c9c7-4eab-9923-7245e47565fd', teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081', schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1412', firstName: 'Charles', lastName: 'Watts' },
-		{ id: '8cfde76f-be5d-4262-806b-a0d5ef7c55cc', teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081', schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1413', firstName: 'Frederick', lastName: 'Sh' },
-		{ id: '01651989-32f4-49a9-962d-742f47b3b0cb', teamId: '01651989-32f4-49a9-962d-742f47b3b0cb', schoolId: '01651989-32f4-49a9-962d-742f47b3b0cb', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1511', firstName: 'Thomas', lastName: 'Bender' },
-		{ id: '1e0c58f4-12bf-48a2-959d-f806f5d07104', teamId: '01651989-32f4-49a9-962d-742f47b3b0cb', schoolId: '01651989-32f4-49a9-962d-742f47b3b0cb', streetAddress: null, city: null, state: null, zipCode: null, guardianLastName: null, guardianFirstName: null, guardianPhone: null, guardianEmail: null, attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf', division: 'H', gpa: 3.9, externalStudentId: '1512', firstName: 'Ryan', lastName: 'Waldro' }
+	readonly coachTeamMappings = Enumerable.from<CoachTeamMappintItem>([
+		{
+			coachId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+		},
+		{
+			coachId: 'aacee28b-6040-4ba7-b2a1-cee3f2068c2a',
+			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+		},
+		{
+			coachId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4'
+		},
+		{
+			coachId: '2e577ebb-3ed4-4a5d-b96f-38aba22472e1',
+			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4'
+		},
+		{
+			coachId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31'
+		},
+		{
+			coachId: '3e70e81f-f5e1-4212-ba37-1c38e50bb866',
+			teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31'
+		},
+		{
+			coachId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8'
+		},
+		{
+			coachId: '1cf17dd3-77c8-493b-93d7-1d26d289a416',
+			teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8'
+		},
+		{
+			coachId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081'
+		},
+		{
+			coachId: '1e0c58f4-12bf-48a2-959d-f806f5d07104',
+			teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081'
+		},
+		{
+			coachId: '01651989-32f4-49a9-962d-742f47b3b0cb',
+			teamId: '01651989-32f4-49a9-962d-742f47b3b0cb'
+		},
+		{
+			coachId: 'bf2e8b11-c9c7-4eab-9923-7245e47565fd',
+			teamId: '01651989-32f4-49a9-962d-742f47b3b0cb'
+		}
 	]);
-	readonly events: Enumerable.IEnumerable<EventResponseItem> = Enumerable.from<EventResponseItem>([
-        { endsAt: new Date(), id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', name: 'Physics', startsAt: new Date(), competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de' },
-    ]);
-	readonly coaches: Enumerable.IEnumerable<CoachResponseItem> = Enumerable.from<CoachResponseItem>([
-        { externalCoachId: '1011', email: 'john.doe@gmail.com', firstName: 'John', id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', lastName: 'Doe', phone: '5551234567', schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de' },
-        { externalCoachId: '1012', email: 'jane.doe@gmail.com', firstName: 'Jane', id: 'aacee28b-6040-4ba7-b2a1-cee3f2068c2a', lastName: 'Doe', phone: '5554974267', schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de' },
-        { externalCoachId: '1111', email: 'tores.que@gmail.com', firstName: 'Tores', id: '20bd6771-a683-4b0e-b37d-eed53ff799d4', lastName: 'Que', phone: '5559876543', schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4' },
-        { externalCoachId: '1112', email: 'mike.rionel@gmail.com', firstName: 'Mike', id: '2e577ebb-3ed4-4a5d-b96f-38aba22472e1', lastName: 'Rionel', phone: '5555647382', schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4' },
-        { externalCoachId: '1211', email: 'turos.qubic@gmail.com', firstName: 'Turos', id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31', lastName: 'Qubic', phone: '5550192837', schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31' },
-        { externalCoachId: '1212', email: 'male.tonal@gmail.com', firstName: 'Male', id: '3e70e81f-f5e1-4212-ba37-1c38e50bb866', lastName: 'Tonal', phone: '5555647382', schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31' },
-        { externalCoachId: '1311', email: 'female.tonal@gmail.com', firstName: 'Female', id: 'c3611b9f-b416-48af-9347-95c48ed060a8', lastName: 'Tonal', phone: '5550192837', schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8' },
-        { externalCoachId: '1312', email: 'ace.tracy@gmail.com', firstName: 'Ace', id: '1cf17dd3-77c8-493b-93d7-1d26d289a416', lastName: 'Tracy', phone: '5555647382', schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8' },
-        { externalCoachId: '1411', email: 'tomas.trudy@gmail.com', firstName: 'Tomas', id: '21c95b7f-47d0-487b-99c1-bf93ee719081', lastName: 'Trudy', phone: '5550192837', schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081' },
-        { externalCoachId: '1412', email: 'dick.grason@gmail.com', firstName: 'Dick', id: '1e0c58f4-12bf-48a2-959d-f806f5d07104', lastName: 'Grason', phone: '5552472670', schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081' },
-        { externalCoachId: '1511', email: 'mark.guman@gmail.com', firstName: 'Mark', id: '01651989-32f4-49a9-962d-742f47b3b0cb', lastName: 'Guman', phone: '5553519422', schoolId: '01651989-32f4-49a9-962d-742f47b3b0cb'},
-        { externalCoachId: '1512', email: 'tim.cook@gmail.com', firstName: 'Tim', id: 'bf2e8b11-c9c7-4eab-9923-7245e47565fd', lastName: 'Cook', phone: '3627252128', schoolId: '01651989-32f4-49a9-962d-742f47b3b0cb'}
-    ]);
-    async _mockDelay() {
-        return new Promise((resolve) => setTimeout(() => resolve(undefined), 1500))
-    }
-    async getStudent(input: z.infer<typeof studentQuerySchema>){
-        const { data, success } = z.safeParse(studentQuerySchema, input);
-        const result = this.students.where(({id}) => !!id).select((e) => e).skip(data?.skip ?? 0).take(data?.take ?? 10).toArray();
-        const count = this.students.where(({id}) => !!id).count();
-        await this._mockDelay();
-        return {
-            result,
-            count
-        };
-    }
+	readonly schools = Enumerable.from<SchoolItemType>([
+		{
+			id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			primaryCoachId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			name: 'Midwest US Science High School',
+			externalSchoolId: '10',
+			state: 'IL',
+			isVirtual: false,
+			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+		},
+		{
+			id: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			primaryCoachId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			name: 'Eastside Preparatory Academy',
+			externalSchoolId: '11',
+			state: 'NY',
+			isVirtual: false,
+			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+		},
+		{
+			id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			primaryCoachId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			name: 'Westview Charter School',
+			externalSchoolId: '12',
+			state: 'CA',
+			isVirtual: false,
+			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+		},
+		{
+			id: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			primaryCoachId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			name: 'Northern Technical Institute',
+			externalSchoolId: '13',
+			state: 'TX',
+			isVirtual: false,
+			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+		},
+		{
+			id: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			primaryCoachId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			name: 'Southern Academy of Sciences',
+			externalSchoolId: '14',
+			state: 'FL',
+			isVirtual: false,
+			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+		},
+		{
+			id: '01651989-32f4-49a9-962d-742f47b3b0cb',
+			primaryCoachId: '01651989-32f4-49a9-962d-742f47b3b0cb',
+			name: 'Virtual Science Academy',
+			externalSchoolId: '15',
+			state: 'VA',
+			isVirtual: true,
+			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+		}
+	]);
+	readonly competitions = Enumerable.from([
+		{
+			id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			name: 'Regional Science Competition',
+			startsAt: new Date(),
+			endsAt: new Date()
+		}
+	]);
+	readonly teams = Enumerable.from<TeamResponseItem>([
+		{
+			id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			externalTeamId: '101',
+			division: 1,
+			objectiveScore: 85,
+			subjectiveScore: 90
+		},
+		{
+			id: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			externalTeamId: '111',
+			division: 2,
+			objectiveScore: 88,
+			subjectiveScore: 92
+		},
+		{
+			id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			externalTeamId: '121',
+			division: 1,
+			objectiveScore: 90,
+			subjectiveScore: 85
+		},
+		{
+			id: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			externalTeamId: '131',
+			division: 2,
+			objectiveScore: 87,
+			subjectiveScore: 89
+		},
+		{
+			id: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			externalTeamId: '141',
+			division: 1,
+			objectiveScore: 92,
+			subjectiveScore: 91
+		},
+		{
+			id: '01651989-32f4-49a9-962d-742f47b3b0cb',
+			schoolId: '01651989-32f4-49a9-962d-742f47b3b0cb',
+			externalTeamId: '151',
+			division: 2,
+			objectiveScore: 80,
+			subjectiveScore: 82
+		}
+	]);
+	readonly students = Enumerable.from<StudentResponseItem>([
+		{
+			id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1011',
+			firstName: 'Lucille',
+			lastName: 'Mock'
+		},
+		{
+			id: 'aacee28b-6040-4ba7-b2a1-cee3f2068c2a',
+			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1012',
+			firstName: 'Marissa',
+			lastName: 'Guo'
+		},
+		{
+			id: '49476cc2-048f-4d16-bf98-b9b87aa50077',
+			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1013',
+			firstName: 'Shelby',
+			lastName: 'Aust'
+		},
+		{
+			id: '080bce17-748b-402e-b44b-e1629a3782af',
+			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'S',
+			gpa: 3.4,
+			externalStudentId: '1014',
+			firstName: 'JT',
+			lastName: 'Hare'
+		},
+		{
+			id: '2cd17e6f-a3d4-4a2a-9bb5-e8da24d733c3',
+			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'S',
+			gpa: 3.4,
+			externalStudentId: '1015',
+			firstName: 'Reyhan',
+			lastName: 'Ramrakhyani'
+		},
+		{
+			id: 'ff465620-e097-4f80-8da6-ab846ee0938e',
+			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'S',
+			gpa: 3.4,
+			externalStudentId: '1016',
+			firstName: 'Lia',
+			lastName: 'Ha'
+		},
+		{
+			id: '825d4d26-405a-48b7-87a3-1093323d9b24',
+			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'V',
+			gpa: 2.8,
+			externalStudentId: '1017',
+			firstName: 'Nathan',
+			lastName: 'Frost'
+		},
+		{
+			id: '6b1ceadc-d7a1-457d-8e89-6cf99dd320ff',
+			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'V',
+			gpa: 2.8,
+			externalStudentId: '1018',
+			firstName: 'Gavin',
+			lastName: 'Fox'
+		},
+		{
+			id: 'de63cd76-05e1-4633-a81b-dcb635fbab4f',
+			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'V',
+			gpa: 2.8,
+			externalStudentId: '1019',
+			firstName: 'Yuliya',
+			lastName: 'Gorbunova'
+		},
+		{
+			id: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1111',
+			firstName: 'Luke',
+			lastName: "O'Brien"
+		},
+		{
+			id: '2e577ebb-3ed4-4a5d-b96f-38aba22472e1',
+			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1112',
+			firstName: 'Caleb',
+			lastName: 'Olson'
+		},
+		{
+			id: '292b4a8f-b675-4459-9761-1c729b6e364a',
+			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1113',
+			firstName: 'Kylie',
+			lastName: 'Weaver'
+		},
+		{
+			id: '51998bc9-c126-4ead-90c4-4551a0abf76b',
+			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'S',
+			gpa: 3.4,
+			externalStudentId: '1114',
+			firstName: 'Rowan',
+			lastName: 'LeFevre'
+		},
+		{
+			id: '16b4468a-5f27-4b17-98cf-9b94524b425d',
+			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'S',
+			gpa: 3.4,
+			externalStudentId: '1115',
+			firstName: 'Austin',
+			lastName: 'Strong'
+		},
+		{
+			id: '9d18ea73-5e14-453c-9f5a-02489cd8299e',
+			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'S',
+			gpa: 3.4,
+			externalStudentId: '1116',
+			firstName: 'Heidi',
+			lastName: 'Curtis'
+		},
+		{
+			id: '76264e0b-e6d9-4d92-ab3d-9bdf67aa3e54',
+			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'V',
+			gpa: 2.8,
+			externalStudentId: '1117',
+			firstName: 'Gabriel',
+			lastName: 'Gois'
+		},
+		{
+			id: '7c5591ff-2b19-4e05-98d8-22f88524dd88',
+			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'V',
+			gpa: 2.8,
+			externalStudentId: '1118',
+			firstName: 'Maddy',
+			lastName: 'Inman'
+		},
+		{
+			id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1211',
+			firstName: 'Aariyaka',
+			lastName: 'Jain'
+		},
+		{
+			id: '3e70e81f-f5e1-4212-ba37-1c38e50bb866',
+			teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1212',
+			firstName: 'Riley',
+			lastName: 'Delorey'
+		},
+		{
+			id: '11a4fa9b-3820-4c1e-8196-053f60b72d68',
+			teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1213',
+			firstName: 'Ethan',
+			lastName: 'Chaing'
+		},
+		{
+			id: '72739130-5a04-47c3-b0bd-76147de59a5d',
+			teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'S',
+			gpa: 3.4,
+			externalStudentId: '1214',
+			firstName: 'Ocean',
+			lastName: 'Hauke'
+		},
+		{
+			id: '75e36127-d814-4340-a3bd-91f8ae890f6e',
+			teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'S',
+			gpa: 3.4,
+			externalStudentId: '1215',
+			firstName: 'Conor',
+			lastName: 'Long'
+		},
+		{
+			id: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1311',
+			firstName: 'Raya',
+			lastName: 'Waldron'
+		},
+		{
+			id: '1cf17dd3-77c8-493b-93d7-1d26d289a416',
+			teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1312',
+			firstName: 'Dylan',
+			lastName: 'Portugal'
+		},
+		{
+			id: '9a75d5b3-2df2-4939-9626-23bbdeb117d9',
+			teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1313',
+			firstName: 'Gregory',
+			lastName: 'DeFauw'
+		},
+		{
+			id: '5bc3db05-28e8-4516-82af-09f2fcb1b29b',
+			teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'S',
+			gpa: 3.4,
+			externalStudentId: '1314',
+			firstName: 'Tyler',
+			lastName: 'Bettner'
+		},
+		{
+			id: '8588bd34-d0cc-420b-b599-92c7edbbcb95',
+			teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'S',
+			gpa: 3.4,
+			externalStudentId: '1315',
+			firstName: 'AJ',
+			lastName: 'Morris'
+		},
+		{
+			id: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1411',
+			firstName: 'Ishaan',
+			lastName: 'Deshpande'
+		},
+		{
+			id: 'bf2e8b11-c9c7-4eab-9923-7245e47565fd',
+			teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1412',
+			firstName: 'Charles',
+			lastName: 'Watts'
+		},
+		{
+			id: '8cfde76f-be5d-4262-806b-a0d5ef7c55cc',
+			teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1413',
+			firstName: 'Frederick',
+			lastName: 'Sh'
+		},
+		{
+			id: '01651989-32f4-49a9-962d-742f47b3b0cb',
+			teamId: '01651989-32f4-49a9-962d-742f47b3b0cb',
+			schoolId: '01651989-32f4-49a9-962d-742f47b3b0cb',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1511',
+			firstName: 'Thomas',
+			lastName: 'Bender'
+		},
+		{
+			id: '1e0c58f4-12bf-48a2-959d-f806f5d07104',
+			teamId: '01651989-32f4-49a9-962d-742f47b3b0cb',
+			schoolId: '01651989-32f4-49a9-962d-742f47b3b0cb',
+			streetAddress: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			guardianLastName: null,
+			guardianFirstName: null,
+			guardianPhone: null,
+			guardianEmail: null,
+			attachmentOnRegistering: 'https://api.printnode.com/static/test/pdf/a4_500_pages.pdf',
+			division: 'H',
+			gpa: 3.9,
+			externalStudentId: '1512',
+			firstName: 'Ryan',
+			lastName: 'Waldro'
+		}
+	]);
+	readonly events = Enumerable.from<EventResponseItem>([
+		{
+			endsAt: new Date(),
+			id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			name: 'Physics',
+			startsAt: new Date(),
+			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+		}
+	]);
+	readonly coaches = Enumerable.from<CoachResponseItem>([
+		{
+			externalCoachId: '1011',
+			email: 'john.doe@gmail.com',
+			firstName: 'John',
+			id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			lastName: 'Doe',
+			phone: '5551234567',
+			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+		},
+		{
+			externalCoachId: '1012',
+			email: 'jane.doe@gmail.com',
+			firstName: 'Jane',
+			id: 'aacee28b-6040-4ba7-b2a1-cee3f2068c2a',
+			lastName: 'Doe',
+			phone: '5554974267',
+			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+		},
+		{
+			externalCoachId: '1111',
+			email: 'tores.que@gmail.com',
+			firstName: 'Tores',
+			id: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			lastName: 'Que',
+			phone: '5559876543',
+			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4'
+		},
+		{
+			externalCoachId: '1112',
+			email: 'mike.rionel@gmail.com',
+			firstName: 'Mike',
+			id: '2e577ebb-3ed4-4a5d-b96f-38aba22472e1',
+			lastName: 'Rionel',
+			phone: '5555647382',
+			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4'
+		},
+		{
+			externalCoachId: '1211',
+			email: 'turos.qubic@gmail.com',
+			firstName: 'Turos',
+			id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			lastName: 'Qubic',
+			phone: '5550192837',
+			schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31'
+		},
+		{
+			externalCoachId: '1212',
+			email: 'male.tonal@gmail.com',
+			firstName: 'Male',
+			id: '3e70e81f-f5e1-4212-ba37-1c38e50bb866',
+			lastName: 'Tonal',
+			phone: '5555647382',
+			schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31'
+		},
+		{
+			externalCoachId: '1311',
+			email: 'female.tonal@gmail.com',
+			firstName: 'Female',
+			id: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			lastName: 'Tonal',
+			phone: '5550192837',
+			schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8'
+		},
+		{
+			externalCoachId: '1312',
+			email: 'ace.tracy@gmail.com',
+			firstName: 'Ace',
+			id: '1cf17dd3-77c8-493b-93d7-1d26d289a416',
+			lastName: 'Tracy',
+			phone: '5555647382',
+			schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8'
+		},
+		{
+			externalCoachId: '1411',
+			email: 'tomas.trudy@gmail.com',
+			firstName: 'Tomas',
+			id: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			lastName: 'Trudy',
+			phone: '5550192837',
+			schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081'
+		},
+		{
+			externalCoachId: '1412',
+			email: 'dick.grason@gmail.com',
+			firstName: 'Dick',
+			id: '1e0c58f4-12bf-48a2-959d-f806f5d07104',
+			lastName: 'Grason',
+			phone: '5552472670',
+			schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081'
+		},
+		{
+			externalCoachId: '1511',
+			email: 'mark.guman@gmail.com',
+			firstName: 'Mark',
+			id: '01651989-32f4-49a9-962d-742f47b3b0cb',
+			lastName: 'Guman',
+			phone: '5553519422',
+			schoolId: '01651989-32f4-49a9-962d-742f47b3b0cb'
+		},
+		{
+			externalCoachId: '1512',
+			email: 'tim.cook@gmail.com',
+			firstName: 'Tim',
+			id: 'bf2e8b11-c9c7-4eab-9923-7245e47565fd',
+			lastName: 'Cook',
+			phone: '3627252128',
+			schoolId: '01651989-32f4-49a9-962d-742f47b3b0cb'
+		}
+	]);
+	async _mockDelay() {
+		return new Promise((resolve) => setTimeout(() => resolve(undefined), 1500));
+	}
+	async getStudent(input: z.infer<typeof studentQuerySchema>) {
+		const { data, success } = z.safeParse(studentQuerySchema, input);
+		const result = this.students
+			.select((e) => e)
+			.skip(data?.skip ?? 0)
+			.take(data?.take ?? 10)
+			.toArray();
+		const count = this.students.where(({ id }) => !!id).count();
+		await this._mockDelay();
+		return {
+			result,
+			count
+		};
+	}
 }
 
 const workerRequest = new WorkerRequest();
