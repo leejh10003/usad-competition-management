@@ -8,7 +8,8 @@ import {
 	eventResponseItemSchema,
 	coachResponseSchema,
 	coachTeamMappings,
-	studentQuerySchema
+	studentQuerySchema,
+    schoolQuerySchema
 } from 'usad-scheme';
 import z from 'zod';
 
@@ -78,7 +79,14 @@ class WorkerRequest {
 			externalSchoolId: '10',
 			state: 'IL',
 			isVirtual: false,
-			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+            streetAddress: '4821 Oak Meadow Ln',
+            city: 'Austin',
+            zipCode: '78745',
+            phone: '5125550182',
+            principalName: 'Liam Carter',
+            principalEmail: 'carter.liam@gmail.com',
+            division: 1,
 		},
 		{
 			id: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
@@ -87,7 +95,14 @@ class WorkerRequest {
 			externalSchoolId: '11',
 			state: 'NY',
 			isVirtual: false,
-			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+            streetAddress: '1092 Sunnyvale Dr',
+            city: 'San Jose',
+            zipCode: '95129',
+            phone: '4085550147',
+            principalName: 'Emma Brooks',
+            principalEmail: 'brooks.emma@gmail.com',
+            division: 2,
 		},
 		{
 			id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
@@ -96,7 +111,14 @@ class WorkerRequest {
 			externalSchoolId: '12',
 			state: 'CA',
 			isVirtual: false,
-			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+            streetAddress: '8822 Lakeview Blvd',
+            city: 'Seattle',
+            zipCode: '98109',
+            phone: '2065550193',
+            principalName: 'Noah Foster',
+            principalEmail: 'foster.noah@gmail.com',
+            division: 3,
 		},
 		{
 			id: 'c3611b9f-b416-48af-9347-95c48ed060a8',
@@ -105,7 +127,14 @@ class WorkerRequest {
 			externalSchoolId: '13',
 			state: 'TX',
 			isVirtual: false,
-			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+            streetAddress: '3012 Broadway Ext',
+            city: 'Nashville',
+            zipCode: '37203',
+            phone: '6155550125',
+            principalName: 'Olivia Price',
+            principalEmail: 'price.olivia@gmail.com',
+            division: 4,
 		},
 		{
 			id: '21c95b7f-47d0-487b-99c1-bf93ee719081',
@@ -114,7 +143,14 @@ class WorkerRequest {
 			externalSchoolId: '14',
 			state: 'FL',
 			isVirtual: false,
-			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+            streetAddress: '5501 River Road',
+            city: 'Chicago',
+            zipCode: '60611',
+            phone: '3125550166',
+            principalName: 'Mason Butler',
+            principalEmail: 'butler.mason@gmail.com',
+            division: 5,
 		},
 		{
 			id: '01651989-32f4-49a9-962d-742f47b3b0cb',
@@ -123,7 +159,14 @@ class WorkerRequest {
 			externalSchoolId: '15',
 			state: 'VA',
 			isVirtual: true,
-			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+            streetAddress: '7702 Pine Street',
+            city: 'Atlanta',
+            zipCode: '30308',
+            phone: '4045550109',
+            principalName: 'Sophia Simmons',
+            principalEmail: 'simmons.sophia@gmail.com',
+            division: 1,
 		}
 	]);
 	readonly competitions = Enumerable.from([
@@ -930,6 +973,29 @@ class WorkerRequest {
 			count
 		};
 	}
+    async getSchool(input: z.infer<typeof schoolQuerySchema>) {
+        const result = this.schools
+			.select((e) => e)
+			.skip(input?.skip ?? 0)
+            .where(({name, externalSchoolId}) => {
+                let result = true;
+                if (input.where?.name && typeof input.where.name !== undefined && typeof input.where.name !== 'string' && typeof input.where.name.contains === 'string') {
+                    result = result && name.includes(input.where.name.contains)
+                }
+                if (input.where?.externalSchoolId && typeof input.where.externalSchoolId !== undefined && typeof input.where.externalSchoolId !== 'string' && typeof input.where.externalSchoolId.contains === 'string') {
+                    result = result && (externalSchoolId?.includes(input.where.externalSchoolId.contains) ?? false)
+                }
+                return result;
+            })
+			.take(input?.take ?? 10)
+			.toArray();
+		const count = this.schools.where(({ id }) => !!id).count();
+		await this._mockDelay();
+		return {
+			result,
+			count
+		};
+    }
 }
 
 const workerRequest = new WorkerRequest();

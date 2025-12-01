@@ -10,37 +10,97 @@
 	import z from 'zod';
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import romans, { romanize } from 'romans';
+	import { resolve } from '$app/paths';
+	import { workerRequest } from '$lib/api/test';
 	type SchoolResponseItem = z.infer<typeof schoolResponse>['school'];
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
-	var limit = $state<number>(10);
-	var pagination = $state<number>(0);
-	var offset = $derived.by(() => pagination * limit);
+	function _currentParam() {
+		const limit = query.get('limit');
+		const currentPage = query.get('currentPage');
+		const params = new URLSearchParams();
+		try {
+			params.set('limit', parseInt(decodeURI(limit!)).toString());
+		} catch (e) {}
+		if (currentPage && decodeURI(currentPage as string).trim().length > 0) {
+			params.set('currentPage', decodeURI(currentPage as string));
+		}
+		return params;
+	}
+	const query = $derived.by(() => page.url.searchParams);
+	const getLimit = $derived.by(() => {
+		const limit = query.get('limit');
+		return limit ? parseInt(limit) : 10;
+	})
+	function setLimit(input: number) {
+		const route = page.url.pathname;
+		const params = _currentParam();
+		params.set('limit', input.toString());
+		const going = `/${route.replace(/^\//g, '')}${params.size > 0 ? `?${params.toString()}` : ''}` as Parameters<typeof resolve>[0];
+		goto(resolve(going))
+	}
+	const getCurrentPage = $derived.by(() => {
+		const currentPage = query.get('currentPage');
+		return currentPage ? parseInt(currentPage) : 1;
+	})
+	function setCurrentPage(input: number) {
+		const route = page.url.pathname;
+		const params = _currentParam();
+		params.set('currentPage', input.toString());
+		const going = `/${route.replace(/^\//g, '')}${params.size > 0 ? `?${params.toString()}` : ''}` as Parameters<typeof resolve>[0];
+		goto(resolve(going))
+	}
+	const offset = $derived.by(() => (getCurrentPage - 1) * getLimit);
+	const getSchoolNameQueryString = $derived(query.get('schoolNameQueryString') ?? undefined);
+	function setSchoolNameQueryString(input: string | undefined) {
+		const route = page.url.pathname;
+		const params = _currentParam();
+		if (!input || input.trim().length < 1) {
+			params.delete('schoolNameQueryString');
+		} else {
+			params.set('schoolNameQueryString', input);
+		}
+		const going = `/${route.replace(/^\//g, '')}${params.size > 0 ? `?${params.toString()}` : ''}` as Parameters<typeof resolve>[0];
+		goto(resolve(going));
+	}
+	const getExternalSchoolIdQueryString = $derived(query.get('externalSchoolIdQueryString') ?? undefined);
+	function setExternalSchoolIdQueryString(input: string | undefined) {
+		const route = page.url.pathname;
+		const params = _currentParam();
+		if (!input || input.trim().length < 1) {
+			params.delete('externalSchoolIdQueryString');
+		} else {
+			params.set('externalSchoolIdQueryString', input);
+		}
+		const going = `/${route.replace(/^\//g, '')}${params.size > 0 ? `?${params.toString()}` : ''}` as Parameters<typeof resolve>[0];
+		goto(resolve(going));
+	}
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
 	var schools = $state<SchoolResponseItem[]>([]);
-	var schoolNameQueryString = $state<string>();
-	var debouncedSchoolNameQueryString = $state<string>();
-	var externalSchoolIdQueryString = $state<string>();
-	var debouncedExternalSchoolIdQueryString = $state<string>();
 		//eslint-disable-next-line @typescript-eslint/no-unused-vars
-	async function fetch(searchParams: z.infer<typeof schoolQuerySchema>) {
+	async function fetch() {
 		isLoading = true;
 		//TODO: server fetch
-		schools = _.range(0, 10).map((e) => ({
-			isVirtual: false,
-			name: 'Midwest US Science High School',
-			streetAddress: '47 W 13th St',
-			city: 'New York',
-			state: 'NY',
-			zipCode: '10011',
-			id: `${e}`,
-			externalSchoolId: '10',
-			principalEmail: 'random@domain.com',
-			phone: '(123)456-7890',
-			principalName: 'Lorem Ipsum',
-			division: e % 5 + 1
-		}) as SchoolResponseItem);
+		const {result, count} = await workerRequest.getSchool({
+			take: getLimit,
+			skip: offset,
+			where: getSchoolNameQueryString || getExternalSchoolIdQueryString ? {
+				...(getSchoolNameQueryString ? {
+					name: {
+						contains: getSchoolNameQueryString
+					}
+				} : {}),
+				...(getExternalSchoolIdQueryString ? {
+					externalSchoolId: {
+						contains: getExternalSchoolIdQueryString
+					}
+				} : {})
+			} : undefined
+		});
+		schools = result;
+		total = count;
+		currentCount = result.length;
 		isLoading = false;
 	}
 	$effect(() => {
@@ -48,7 +108,7 @@
 			Object.fromEntries(page.url.searchParams.entries())
 		);
 		if (searchParams.success) {
-			fetch(searchParams.data);
+			fetch();
 		} else {
 			//TODO:
 		}
@@ -74,20 +134,31 @@
 				<span class="label-text">School Name</span>
 				<input
 					class="input"
-					oninput={_.debounce(() => {
-						debouncedSchoolNameQueryString = schoolNameQueryString;
-					}, 500)}
-					bind:value={schoolNameQueryString}
+					onchange={(v) => setSchoolNameQueryString(v.currentTarget.value)}
+					value={getSchoolNameQueryString}
 				/>
 			</label>
 			<label class="label">
 				<span class="label-text">School Id</span>
 				<input
 					class="input"
-					oninput={_.debounce(() => {
-						debouncedExternalSchoolIdQueryString = externalSchoolIdQueryString;
-					}, 500)}
-					bind:value={externalSchoolIdQueryString}
+					oninput={(v) => setExternalSchoolIdQueryString(v.currentTarget.value)}
+					value={getExternalSchoolIdQueryString}
+				/>
+			</label>
+			<label class="label">
+				<span class="label-text">Schools Per Page</span>
+				<input
+					class="input"
+					type="number"
+					onchange={(e) => {
+						if (_.isNumber(e.currentTarget.value)) {
+							setLimit(e.currentTarget.value);
+						} else {
+							setLimit(parseInt(e.currentTarget.value));
+						}
+					}}
+					value={getLimit}
 				/>
 			</label>
 		</Collapsible.Content>
@@ -105,7 +176,7 @@
 		</thead>
 		<tbody>
 			{#if isLoading}
-				{#each _.range(0, limit, 1) as n (n)}
+				{#each _.range(0, getLimit, 1) as n (n)}
 					<tr>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
@@ -128,10 +199,10 @@
 						zipCode,
 						division
 					} = school}
-					{@const nameSplit = splitStringForQueryHighlight(name, debouncedSchoolNameQueryString)}
+					{@const nameSplit = splitStringForQueryHighlight(name, getSchoolNameQueryString)}
 					{@const externalSchoolIdSplit = splitStringForQueryHighlight(
 						externalSchoolId,
-						debouncedExternalSchoolIdQueryString
+						getExternalSchoolIdQueryString
 					)}
 					<tr>
 						<td>
@@ -174,13 +245,13 @@
 			</tr>
 		</tfoot>
 	</table>
-	<Pagination count={total} pageSize={limit} page={pagination}>
-		<Pagination.PrevTrigger><ArrowLeftIcon class="size-4" /></Pagination.PrevTrigger>
+	<Pagination count={total} pageSize={getLimit} page={getCurrentPage}>
+		<Pagination.PrevTrigger onclick={() => setCurrentPage(getCurrentPage - 1)}><ArrowLeftIcon class="size-4" /></Pagination.PrevTrigger>
 		<Pagination.Context>
 			{#snippet children(pagination)}
 				{#each pagination().pages as page, index (page)}
 					{#if page.type === 'page'}
-						<Pagination.Item {...page}>
+						<Pagination.Item  onclick={() => setCurrentPage(page.value)} {...page}>
 							{page.value}
 						</Pagination.Item>
 					{:else}
@@ -189,6 +260,6 @@
 				{/each}
 			{/snippet}
 		</Pagination.Context>
-		<Pagination.NextTrigger><ArrowRightIcon class="size-4" /></Pagination.NextTrigger>
+		<Pagination.NextTrigger onclick={() => setCurrentPage(getCurrentPage + 1)}><ArrowRightIcon class="size-4" /></Pagination.NextTrigger>
 	</Pagination>
 </div>

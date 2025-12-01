@@ -61,34 +61,17 @@ schools.openapi(
   },
   async (c) => {
     const prisma = c.get("prisma");
-    const { externalSchoolId, name, isVirtual, limit, offset } =
+    const { where, take, skip, orderBy } =
       c.req.valid("query");
-    const condition: Exclude<Parameters<typeof prisma['school']['findMany']>[0], undefined>['where'] = {
-        externalSchoolId: externalSchoolId
-          ? {
-              equals: externalSchoolId,
-            }
-          : undefined,
-        name: name
-          ? {
-              contains: name,
-            }
-          : undefined,
-        isVirtual:
-          isVirtual !== undefined
-            ? {
-                equals: isVirtual,
-              }
-            : undefined,
-      };
     const schools = (await prisma.school.findMany({
       select: schoolSelectFieldsSchema,
-      skip: offset,
-      take: limit,
-      where: condition,
+      skip,
+      take,
+      where,
+      orderBy,
     })) as z.infer<typeof schoolsResponse>['schools'];
     const count = await prisma.school.count({
-      where: condition
+      where
     })
     return c.json({ success: true, schools, count }, 200);
   }
