@@ -39,27 +39,16 @@ teams.openapi(
   },
   async (c) => {
     const prisma = c.get("prisma");
-    const { offset, limit, id, externalTeamId } = c.req.valid("query");
-    const condition: Exclude<Parameters<typeof prisma['team']['findMany']>[0], undefined>['where'] = {
-      id: id
-        ? {
-            equals: id,
-          }
-        : undefined,
-      externalTeamId: externalTeamId
-        ? {
-            contains: externalTeamId,
-          }
-        : undefined,
-    };
+    const { take, skip, where, orderBy } = c.req.valid("query");
     const result = await prisma.team.findMany({
       select: teamSelectFieldsSchema,
-      where: condition,
-      skip: offset,
-      take: limit,
+      where,
+      skip,
+      take,
+      orderBy
     }) as z.infer<typeof teamsResponseSchema>['teams'];
     const count = await prisma.team.count({
-      where: condition
+      where
     })
     return c.json({ success: true, teams: result, count });
   }

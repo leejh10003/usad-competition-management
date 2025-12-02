@@ -10,7 +10,8 @@ import {
 	coachTeamMappings,
 	studentQuerySchema,
     schoolQuerySchema,
-    coachQuerySchema
+    coachQuerySchema,
+	teamQuerySchema
 } from 'usad-scheme';
 import z from 'zod';
 
@@ -959,6 +960,20 @@ class WorkerRequest {
 	]);
 	async _mockDelay() {
 		return new Promise((resolve) => setTimeout(() => resolve(undefined), 1500));
+	}
+	async getTeam(input: z.infer<typeof teamQuerySchema>){
+		const { data, success } = z.safeParse(studentQuerySchema, input);
+		const result = this.teams
+			.select((e) => e)
+			.skip(data?.skip ?? 0)
+			.take(data?.take ?? 10)
+			.toArray();
+		const count = this.teams.count();
+		await this._mockDelay();
+		return {
+			result,
+			count
+		};
 	}
 	async getStudent(input: z.infer<typeof studentQuerySchema>) {
 		const { data, success } = z.safeParse(studentQuerySchema, input);
