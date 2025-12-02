@@ -10,5 +10,4 @@ generator client {
 
 datasource db {
   provider = "cockroachdb" // Provider for PostgreSQL-compatible databases.
-  url      = env("DATABASE_URL")
 }

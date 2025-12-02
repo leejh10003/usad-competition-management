@@ -1,11 +1,11 @@
-import { PrismaConfig } from "prisma";
+import { defineConfig, env } from "prisma/config";
 
-export default {
-  experimental: {
-    adapter: true,
-  },
+export default defineConfig({
   schema: "./src/prisma/schema.prisma",
   migrations: {
     path: "./migrations/cockroachdb",
   },
-} satisfies PrismaConfig;
+  datasource: {
+    url: process.env.DATABASE_URL!
+  }
+});

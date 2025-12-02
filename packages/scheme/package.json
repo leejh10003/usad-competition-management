@@ -13,7 +13,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.10.0",
   "devDependencies": {
-    "@prisma/client": "^6.19.0",
+    "@prisma/client": "^7.0.1",
     "esbuild": "^0.25.10",
     "eslint": "^9.39.1",
     "prettier": "^3.6.2",
