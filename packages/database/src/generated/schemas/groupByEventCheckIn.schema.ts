@@ -1,0 +1,13 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { EventCheckInWhereInputObjectSchema as EventCheckInWhereInputObjectSchema } from './objects/EventCheckInWhereInput.schema';
+import { EventCheckInOrderByWithAggregationInputObjectSchema as EventCheckInOrderByWithAggregationInputObjectSchema } from './objects/EventCheckInOrderByWithAggregationInput.schema';
+import { EventCheckInScalarWhereWithAggregatesInputObjectSchema as EventCheckInScalarWhereWithAggregatesInputObjectSchema } from './objects/EventCheckInScalarWhereWithAggregatesInput.schema';
+import { EventCheckInScalarFieldEnumSchema } from './enums/EventCheckInScalarFieldEnum.schema';
+import { EventCheckInCountAggregateInputObjectSchema as EventCheckInCountAggregateInputObjectSchema } from './objects/EventCheckInCountAggregateInput.schema';
+import { EventCheckInMinAggregateInputObjectSchema as EventCheckInMinAggregateInputObjectSchema } from './objects/EventCheckInMinAggregateInput.schema';
+import { EventCheckInMaxAggregateInputObjectSchema as EventCheckInMaxAggregateInputObjectSchema } from './objects/EventCheckInMaxAggregateInput.schema';
+
+export const EventCheckInGroupBySchema: z.ZodType<Prisma.EventCheckInGroupByArgs> = z.object({ where: EventCheckInWhereInputObjectSchema.optional(), orderBy: z.union([EventCheckInOrderByWithAggregationInputObjectSchema, EventCheckInOrderByWithAggregationInputObjectSchema.array()]).optional(), having: EventCheckInScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(EventCheckInScalarFieldEnumSchema), _count: z.union([ z.literal(true), EventCheckInCountAggregateInputObjectSchema ]).optional(), _min: EventCheckInMinAggregateInputObjectSchema.optional(), _max: EventCheckInMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.EventCheckInGroupByArgs>;
+
+export const EventCheckInGroupByZodSchema = z.object({ where: EventCheckInWhereInputObjectSchema.optional(), orderBy: z.union([EventCheckInOrderByWithAggregationInputObjectSchema, EventCheckInOrderByWithAggregationInputObjectSchema.array()]).optional(), having: EventCheckInScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(EventCheckInScalarFieldEnumSchema), _count: z.union([ z.literal(true), EventCheckInCountAggregateInputObjectSchema ]).optional(), _min: EventCheckInMinAggregateInputObjectSchema.optional(), _max: EventCheckInMaxAggregateInputObjectSchema.optional() }).strict();

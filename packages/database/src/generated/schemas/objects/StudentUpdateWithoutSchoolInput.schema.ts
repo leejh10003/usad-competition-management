@@ -1,0 +1,37 @@
+import * as z from 'zod';
+import type { Prisma } from '@prisma/client';
+import { StringFieldUpdateOperationsInputObjectSchema as StringFieldUpdateOperationsInputObjectSchema } from './StringFieldUpdateOperationsInput.schema';
+import { NullableStringFieldUpdateOperationsInputObjectSchema as NullableStringFieldUpdateOperationsInputObjectSchema } from './NullableStringFieldUpdateOperationsInput.schema';
+import { DivisionSchema } from '../enums/Division.schema';
+import { EnumDivisionFieldUpdateOperationsInputObjectSchema as EnumDivisionFieldUpdateOperationsInputObjectSchema } from './EnumDivisionFieldUpdateOperationsInput.schema';
+import { NullableFloatFieldUpdateOperationsInputObjectSchema as NullableFloatFieldUpdateOperationsInputObjectSchema } from './NullableFloatFieldUpdateOperationsInput.schema';
+import { StateSchema } from '../enums/State.schema';
+import { NullableEnumStateFieldUpdateOperationsInputObjectSchema as NullableEnumStateFieldUpdateOperationsInputObjectSchema } from './NullableEnumStateFieldUpdateOperationsInput.schema';
+import { TeamUpdateOneWithoutStudentsNestedInputObjectSchema as TeamUpdateOneWithoutStudentsNestedInputObjectSchema } from './TeamUpdateOneWithoutStudentsNestedInput.schema';
+import { CompetitionUpdateOneWithoutStudentsNestedInputObjectSchema as CompetitionUpdateOneWithoutStudentsNestedInputObjectSchema } from './CompetitionUpdateOneWithoutStudentsNestedInput.schema';
+import { EventCheckInUpdateManyWithoutStudentNestedInputObjectSchema as EventCheckInUpdateManyWithoutStudentNestedInputObjectSchema } from './EventCheckInUpdateManyWithoutStudentNestedInput.schema'
+
+const makeSchema = () => z.object({
+  id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  externalStudentId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  division: z.union([DivisionSchema, z.lazy(() => EnumDivisionFieldUpdateOperationsInputObjectSchema)]).optional(),
+  gpa: z.union([z.number(), z.lazy(() => NullableFloatFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  firstName: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  lastName: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  usadPin: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  signature: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  attachmentOnRegistering: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  streetAddress: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  city: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  state: z.union([StateSchema, z.lazy(() => NullableEnumStateFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  zipCode: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  guardianFirstName: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  guardianLastName: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  guardianPhone: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  guardianEmail: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  team: z.lazy(() => TeamUpdateOneWithoutStudentsNestedInputObjectSchema).optional(),
+  competition: z.lazy(() => CompetitionUpdateOneWithoutStudentsNestedInputObjectSchema).optional(),
+  eventCheckIns: z.lazy(() => EventCheckInUpdateManyWithoutStudentNestedInputObjectSchema).optional()
+}).strict();
+export const StudentUpdateWithoutSchoolInputObjectSchema: z.ZodType<Prisma.StudentUpdateWithoutSchoolInput> = makeSchema() as unknown as z.ZodType<Prisma.StudentUpdateWithoutSchoolInput>;
+export const StudentUpdateWithoutSchoolInputObjectZodSchema = makeSchema();

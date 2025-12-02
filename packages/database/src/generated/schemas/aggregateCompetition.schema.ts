@@ -1,0 +1,12 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { CompetitionOrderByWithRelationInputObjectSchema as CompetitionOrderByWithRelationInputObjectSchema } from './objects/CompetitionOrderByWithRelationInput.schema';
+import { CompetitionWhereInputObjectSchema as CompetitionWhereInputObjectSchema } from './objects/CompetitionWhereInput.schema';
+import { CompetitionWhereUniqueInputObjectSchema as CompetitionWhereUniqueInputObjectSchema } from './objects/CompetitionWhereUniqueInput.schema';
+import { CompetitionCountAggregateInputObjectSchema as CompetitionCountAggregateInputObjectSchema } from './objects/CompetitionCountAggregateInput.schema';
+import { CompetitionMinAggregateInputObjectSchema as CompetitionMinAggregateInputObjectSchema } from './objects/CompetitionMinAggregateInput.schema';
+import { CompetitionMaxAggregateInputObjectSchema as CompetitionMaxAggregateInputObjectSchema } from './objects/CompetitionMaxAggregateInput.schema';
+
+export const CompetitionAggregateSchema: z.ZodType<Prisma.CompetitionAggregateArgs> = z.object({ orderBy: z.union([CompetitionOrderByWithRelationInputObjectSchema, CompetitionOrderByWithRelationInputObjectSchema.array()]).optional(), where: CompetitionWhereInputObjectSchema.optional(), cursor: CompetitionWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), CompetitionCountAggregateInputObjectSchema ]).optional(), _min: CompetitionMinAggregateInputObjectSchema.optional(), _max: CompetitionMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.CompetitionAggregateArgs>;
+
+export const CompetitionAggregateZodSchema = z.object({ orderBy: z.union([CompetitionOrderByWithRelationInputObjectSchema, CompetitionOrderByWithRelationInputObjectSchema.array()]).optional(), where: CompetitionWhereInputObjectSchema.optional(), cursor: CompetitionWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), CompetitionCountAggregateInputObjectSchema ]).optional(), _min: CompetitionMinAggregateInputObjectSchema.optional(), _max: CompetitionMaxAggregateInputObjectSchema.optional() }).strict();

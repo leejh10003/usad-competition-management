@@ -1,0 +1,10 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { TeamCoachRelationshipOrderByWithRelationInputObjectSchema as TeamCoachRelationshipOrderByWithRelationInputObjectSchema } from './objects/TeamCoachRelationshipOrderByWithRelationInput.schema';
+import { TeamCoachRelationshipWhereInputObjectSchema as TeamCoachRelationshipWhereInputObjectSchema } from './objects/TeamCoachRelationshipWhereInput.schema';
+import { TeamCoachRelationshipWhereUniqueInputObjectSchema as TeamCoachRelationshipWhereUniqueInputObjectSchema } from './objects/TeamCoachRelationshipWhereUniqueInput.schema';
+import { TeamCoachRelationshipCountAggregateInputObjectSchema as TeamCoachRelationshipCountAggregateInputObjectSchema } from './objects/TeamCoachRelationshipCountAggregateInput.schema';
+
+export const TeamCoachRelationshipCountSchema: z.ZodType<Prisma.TeamCoachRelationshipCountArgs> = z.object({ orderBy: z.union([TeamCoachRelationshipOrderByWithRelationInputObjectSchema, TeamCoachRelationshipOrderByWithRelationInputObjectSchema.array()]).optional(), where: TeamCoachRelationshipWhereInputObjectSchema.optional(), cursor: TeamCoachRelationshipWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), TeamCoachRelationshipCountAggregateInputObjectSchema ]).optional() }).strict() as unknown as z.ZodType<Prisma.TeamCoachRelationshipCountArgs>;
+
+export const TeamCoachRelationshipCountZodSchema = z.object({ orderBy: z.union([TeamCoachRelationshipOrderByWithRelationInputObjectSchema, TeamCoachRelationshipOrderByWithRelationInputObjectSchema.array()]).optional(), where: TeamCoachRelationshipWhereInputObjectSchema.optional(), cursor: TeamCoachRelationshipWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), TeamCoachRelationshipCountAggregateInputObjectSchema ]).optional() }).strict();

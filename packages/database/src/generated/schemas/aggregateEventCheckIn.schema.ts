@@ -1,0 +1,12 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { EventCheckInOrderByWithRelationInputObjectSchema as EventCheckInOrderByWithRelationInputObjectSchema } from './objects/EventCheckInOrderByWithRelationInput.schema';
+import { EventCheckInWhereInputObjectSchema as EventCheckInWhereInputObjectSchema } from './objects/EventCheckInWhereInput.schema';
+import { EventCheckInWhereUniqueInputObjectSchema as EventCheckInWhereUniqueInputObjectSchema } from './objects/EventCheckInWhereUniqueInput.schema';
+import { EventCheckInCountAggregateInputObjectSchema as EventCheckInCountAggregateInputObjectSchema } from './objects/EventCheckInCountAggregateInput.schema';
+import { EventCheckInMinAggregateInputObjectSchema as EventCheckInMinAggregateInputObjectSchema } from './objects/EventCheckInMinAggregateInput.schema';
+import { EventCheckInMaxAggregateInputObjectSchema as EventCheckInMaxAggregateInputObjectSchema } from './objects/EventCheckInMaxAggregateInput.schema';
+
+export const EventCheckInAggregateSchema: z.ZodType<Prisma.EventCheckInAggregateArgs> = z.object({ orderBy: z.union([EventCheckInOrderByWithRelationInputObjectSchema, EventCheckInOrderByWithRelationInputObjectSchema.array()]).optional(), where: EventCheckInWhereInputObjectSchema.optional(), cursor: EventCheckInWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), EventCheckInCountAggregateInputObjectSchema ]).optional(), _min: EventCheckInMinAggregateInputObjectSchema.optional(), _max: EventCheckInMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.EventCheckInAggregateArgs>;
+
+export const EventCheckInAggregateZodSchema = z.object({ orderBy: z.union([EventCheckInOrderByWithRelationInputObjectSchema, EventCheckInOrderByWithRelationInputObjectSchema.array()]).optional(), where: EventCheckInWhereInputObjectSchema.optional(), cursor: EventCheckInWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), _count: z.union([ z.literal(true), EventCheckInCountAggregateInputObjectSchema ]).optional(), _min: EventCheckInMinAggregateInputObjectSchema.optional(), _max: EventCheckInMaxAggregateInputObjectSchema.optional() }).strict();

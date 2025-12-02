@@ -1,0 +1,13 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { CompetitionWhereInputObjectSchema as CompetitionWhereInputObjectSchema } from './objects/CompetitionWhereInput.schema';
+import { CompetitionOrderByWithAggregationInputObjectSchema as CompetitionOrderByWithAggregationInputObjectSchema } from './objects/CompetitionOrderByWithAggregationInput.schema';
+import { CompetitionScalarWhereWithAggregatesInputObjectSchema as CompetitionScalarWhereWithAggregatesInputObjectSchema } from './objects/CompetitionScalarWhereWithAggregatesInput.schema';
+import { CompetitionScalarFieldEnumSchema } from './enums/CompetitionScalarFieldEnum.schema';
+import { CompetitionCountAggregateInputObjectSchema as CompetitionCountAggregateInputObjectSchema } from './objects/CompetitionCountAggregateInput.schema';
+import { CompetitionMinAggregateInputObjectSchema as CompetitionMinAggregateInputObjectSchema } from './objects/CompetitionMinAggregateInput.schema';
+import { CompetitionMaxAggregateInputObjectSchema as CompetitionMaxAggregateInputObjectSchema } from './objects/CompetitionMaxAggregateInput.schema';
+
+export const CompetitionGroupBySchema: z.ZodType<Prisma.CompetitionGroupByArgs> = z.object({ where: CompetitionWhereInputObjectSchema.optional(), orderBy: z.union([CompetitionOrderByWithAggregationInputObjectSchema, CompetitionOrderByWithAggregationInputObjectSchema.array()]).optional(), having: CompetitionScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(CompetitionScalarFieldEnumSchema), _count: z.union([ z.literal(true), CompetitionCountAggregateInputObjectSchema ]).optional(), _min: CompetitionMinAggregateInputObjectSchema.optional(), _max: CompetitionMaxAggregateInputObjectSchema.optional() }).strict() as unknown as z.ZodType<Prisma.CompetitionGroupByArgs>;
+
+export const CompetitionGroupByZodSchema = z.object({ where: CompetitionWhereInputObjectSchema.optional(), orderBy: z.union([CompetitionOrderByWithAggregationInputObjectSchema, CompetitionOrderByWithAggregationInputObjectSchema.array()]).optional(), having: CompetitionScalarWhereWithAggregatesInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), by: z.array(CompetitionScalarFieldEnumSchema), _count: z.union([ z.literal(true), CompetitionCountAggregateInputObjectSchema ]).optional(), _min: CompetitionMinAggregateInputObjectSchema.optional(), _max: CompetitionMaxAggregateInputObjectSchema.optional() }).strict();

@@ -123,5 +123,6 @@ export {
 } from './competition';
 
 export {
-  apiQueryParamTestSchema
+  apiQueryParamTestSchema,
+  testZodSchema
 } from './test';

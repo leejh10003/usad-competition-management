@@ -1,5 +1,5 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { apiQueryParamTestSchema } from "usad-scheme";
+import { apiQueryParamTestSchema, testZodSchema } from "usad-scheme";
 import { basicSuccess } from "usad-scheme/src/baseTypes";
 
 const test = new OpenAPIHono();
@@ -27,6 +27,28 @@ test.openapi({
             console.log('Sort key: ', k, 'Sort value:', v);
         }
     });
+    return c.json({ success: true }, 200);
+});
+
+test.openapi({
+    path: 'zod',
+    method: 'get',
+    request: {
+        query: testZodSchema
+    },
+    responses: {
+        200: {
+            content: {
+                'application/json': {
+                    schema: basicSuccess
+                }
+            },
+            description: 'Test API is working',
+        }
+    },
+}, async (c) => {
+    const { test } = c.req.valid('query');
+    console.log(test?.school);
     return c.json({ success: true }, 200);
 });
 
