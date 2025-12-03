@@ -1,14 +1,23 @@
 import z from "zod";
 import { sortEnums } from "../constants";
-import { CoachWhereInputObjectSchema } from "database/src/generated/schemas/objects/CoachWhereInput.schema"
+import { CoachWhereInputObjectSchema } from "database/src/generated/schemas/objects/CoachWhereInput.schema";
+import { coerceCheckSchema } from "../util";
 
 const apiQueryParamTestSchema = z.object({
-    sort: z.coerce.string().optional().transform((v) => v ? JSON.parse(v) as {[k: string]: z.infer<typeof sortEnums>}[] : undefined)
+  sort: z.coerce
+    .string()
+    .optional()
+    .transform((v) =>
+      v
+        ? (JSON.parse(v) as { [k: string]: z.infer<typeof sortEnums> }[])
+        : undefined
+    ),
 });
 const testZodSchema = z.object({
-    test: z.coerce.string().optional().transform((arg) => {
-        const {data, success} = z.safeDecode(CoachWhereInputObjectSchema, JSON.parse(arg ?? '{}'));
-        return success ? data : undefined;
-    }).optional()
-})
+  test: z
+    .union([z.coerce.string(), z.object()])
+    .optional()
+    .transform((arg) => coerceCheckSchema(CoachWhereInputObjectSchema, arg))
+    .optional(),
+});
 export { apiQueryParamTestSchema, testZodSchema };
