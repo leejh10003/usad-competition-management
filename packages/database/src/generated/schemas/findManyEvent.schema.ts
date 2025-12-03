@@ -15,6 +15,7 @@ export const EventFindManySelectSchema: z.ZodType<Prisma.EventSelect> = z.object
     startsAt: z.boolean().optional(),
     endsAt: z.boolean().optional(),
     competitionId: z.boolean().optional(),
+    mutationIndex: z.boolean().optional(),
     competition: z.boolean().optional(),
     eventCheckIn: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -26,6 +27,7 @@ export const EventFindManySelectZodSchema = z.object({
     startsAt: z.boolean().optional(),
     endsAt: z.boolean().optional(),
     competitionId: z.boolean().optional(),
+    mutationIndex: z.boolean().optional(),
     competition: z.boolean().optional(),
     eventCheckIn: z.boolean().optional(),
     _count: z.boolean().optional()

@@ -17,7 +17,8 @@ const makeSchema = () => z.object({
   primaryCoachId: z.string().optional().nullable(),
   emailDomain: z.string().optional().nullable(),
   division: z.number().int().optional().nullable(),
-  competitionId: z.string()
+  competitionId: z.string(),
+  mutationIndex: z.number().int()
 }).strict();
 export const SchoolCreateManyInputObjectSchema: z.ZodType<Prisma.SchoolCreateManyInput> = makeSchema() as unknown as z.ZodType<Prisma.SchoolCreateManyInput>;
 export const SchoolCreateManyInputObjectZodSchema = makeSchema();

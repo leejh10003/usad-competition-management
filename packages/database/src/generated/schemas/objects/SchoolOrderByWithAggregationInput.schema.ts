@@ -24,6 +24,7 @@ const makeSchema = () => z.object({
   emailDomain: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   division: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   competitionId: SortOrderSchema.optional(),
+  mutationIndex: SortOrderSchema.optional(),
   _count: z.lazy(() => SchoolCountOrderByAggregateInputObjectSchema).optional(),
   _avg: z.lazy(() => SchoolAvgOrderByAggregateInputObjectSchema).optional(),
   _max: z.lazy(() => SchoolMaxOrderByAggregateInputObjectSchema).optional(),

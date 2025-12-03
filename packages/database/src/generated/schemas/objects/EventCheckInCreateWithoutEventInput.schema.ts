@@ -4,6 +4,7 @@ import { StudentCreateNestedOneWithoutEventCheckInsInputObjectSchema as StudentC
 
 const makeSchema = () => z.object({
   checkedInAt: z.coerce.date().optional().nullable(),
+  mutationIndex: z.number().int(),
   student: z.lazy(() => StudentCreateNestedOneWithoutEventCheckInsInputObjectSchema)
 }).strict();
 export const EventCheckInCreateWithoutEventInputObjectSchema: z.ZodType<Prisma.EventCheckInCreateWithoutEventInput> = makeSchema() as unknown as z.ZodType<Prisma.EventCheckInCreateWithoutEventInput>;

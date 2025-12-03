@@ -9,6 +9,7 @@ const makeSchema = () => z.object({
   studentId: SortOrderSchema.optional(),
   eventId: SortOrderSchema.optional(),
   checkedInAt: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  mutationIndex: SortOrderSchema.optional(),
   student: z.lazy(() => StudentOrderByWithRelationInputObjectSchema).optional(),
   event: z.lazy(() => EventOrderByWithRelationInputObjectSchema).optional()
 }).strict();

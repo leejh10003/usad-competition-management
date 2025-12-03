@@ -13,6 +13,7 @@ const makeSchema = () => z.object({
   signature: z.string().optional().nullable(),
   objectiveScore: z.number().optional().nullable(),
   subjectiveScore: z.number().optional().nullable(),
+  mutationIndex: z.number().int(),
   primarySchool: z.lazy(() => SchoolUncheckedCreateNestedOneWithoutPrimaryCoachInputObjectSchema).optional(),
   teamRelationship: z.lazy(() => TeamCoachRelationshipUncheckedCreateNestedManyWithoutCoachInputObjectSchema).optional()
 }).strict();

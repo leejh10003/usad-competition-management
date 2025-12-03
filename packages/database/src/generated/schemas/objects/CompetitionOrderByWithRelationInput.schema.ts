@@ -12,6 +12,7 @@ const makeSchema = () => z.object({
   startsAt: SortOrderSchema.optional(),
   endsAt: SortOrderSchema.optional(),
   state: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  mutationIndex: SortOrderSchema.optional(),
   events: z.lazy(() => EventOrderByRelationAggregateInputObjectSchema).optional(),
   schools: z.lazy(() => SchoolOrderByRelationAggregateInputObjectSchema).optional(),
   students: z.lazy(() => StudentOrderByRelationAggregateInputObjectSchema).optional()

@@ -10,6 +10,7 @@ export const CoachInputSchema = z.object({
     signature: z.string().optional().nullable(),
     objectiveScore: z.number().optional().nullable(),
     subjectiveScore: z.number().optional().nullable(),
+    mutationIndex: z.number().int(),
     schoolId: z.string(),
     school: z.unknown(),
     primarySchool: z.unknown().optional().nullable(),

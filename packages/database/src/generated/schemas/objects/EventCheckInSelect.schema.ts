@@ -8,7 +8,8 @@ const makeSchema = () => z.object({
   student: z.union([z.boolean(), z.lazy(() => StudentArgsObjectSchema)]).optional(),
   eventId: z.boolean().optional(),
   event: z.union([z.boolean(), z.lazy(() => EventArgsObjectSchema)]).optional(),
-  checkedInAt: z.boolean().optional()
+  checkedInAt: z.boolean().optional(),
+  mutationIndex: z.boolean().optional()
 }).strict();
 export const EventCheckInSelectObjectSchema: z.ZodType<Prisma.EventCheckInSelect> = makeSchema() as unknown as z.ZodType<Prisma.EventCheckInSelect>;
 export const EventCheckInSelectObjectZodSchema = makeSchema();

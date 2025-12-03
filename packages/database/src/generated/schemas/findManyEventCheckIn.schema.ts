@@ -14,7 +14,8 @@ export const EventCheckInFindManySelectSchema: z.ZodType<Prisma.EventCheckInSele
     student: z.boolean().optional(),
     eventId: z.boolean().optional(),
     event: z.boolean().optional(),
-    checkedInAt: z.boolean().optional()
+    checkedInAt: z.boolean().optional(),
+    mutationIndex: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.EventCheckInSelect>;
 
 export const EventCheckInFindManySelectZodSchema = z.object({
@@ -22,7 +23,8 @@ export const EventCheckInFindManySelectZodSchema = z.object({
     student: z.boolean().optional(),
     eventId: z.boolean().optional(),
     event: z.boolean().optional(),
-    checkedInAt: z.boolean().optional()
+    checkedInAt: z.boolean().optional(),
+    mutationIndex: z.boolean().optional()
   }).strict();
 
 export const EventCheckInFindManySchema: z.ZodType<Prisma.EventCheckInFindManyArgs> = z.object({ select: EventCheckInFindManySelectSchema.optional(), include: z.lazy(() => EventCheckInIncludeObjectSchema.optional()), orderBy: z.union([EventCheckInOrderByWithRelationInputObjectSchema, EventCheckInOrderByWithRelationInputObjectSchema.array()]).optional(), where: EventCheckInWhereInputObjectSchema.optional(), cursor: EventCheckInWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([EventCheckInScalarFieldEnumSchema, EventCheckInScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.EventCheckInFindManyArgs>;

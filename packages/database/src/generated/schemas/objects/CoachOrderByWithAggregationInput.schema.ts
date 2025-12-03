@@ -18,6 +18,7 @@ const makeSchema = () => z.object({
   signature: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   objectiveScore: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   subjectiveScore: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  mutationIndex: SortOrderSchema.optional(),
   schoolId: SortOrderSchema.optional(),
   _count: z.lazy(() => CoachCountOrderByAggregateInputObjectSchema).optional(),
   _avg: z.lazy(() => CoachAvgOrderByAggregateInputObjectSchema).optional(),

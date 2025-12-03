@@ -18,6 +18,7 @@ export const SchoolInputSchema = z.object({
     emailDomain: z.string().optional().nullable(),
     division: z.number().int().optional().nullable(),
     competitionId: z.string(),
+    mutationIndex: z.number().int(),
     competition: z.unknown(),
     coaches: z.array(z.unknown()),
     teams: z.array(z.unknown()),

@@ -6,6 +6,7 @@ import { BoolFieldUpdateOperationsInputObjectSchema as BoolFieldUpdateOperations
 import { StateSchema } from '../enums/State.schema';
 import { NullableEnumStateFieldUpdateOperationsInputObjectSchema as NullableEnumStateFieldUpdateOperationsInputObjectSchema } from './NullableEnumStateFieldUpdateOperationsInput.schema';
 import { NullableIntFieldUpdateOperationsInputObjectSchema as NullableIntFieldUpdateOperationsInputObjectSchema } from './NullableIntFieldUpdateOperationsInput.schema';
+import { IntFieldUpdateOperationsInputObjectSchema as IntFieldUpdateOperationsInputObjectSchema } from './IntFieldUpdateOperationsInput.schema';
 import { CoachUncheckedUpdateManyWithoutSchoolNestedInputObjectSchema as CoachUncheckedUpdateManyWithoutSchoolNestedInputObjectSchema } from './CoachUncheckedUpdateManyWithoutSchoolNestedInput.schema';
 import { TeamUncheckedUpdateManyWithoutSchoolNestedInputObjectSchema as TeamUncheckedUpdateManyWithoutSchoolNestedInputObjectSchema } from './TeamUncheckedUpdateManyWithoutSchoolNestedInput.schema'
 
@@ -25,6 +26,7 @@ const makeSchema = () => z.object({
   emailDomain: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   division: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   competitionId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
+  mutationIndex: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional(),
   coaches: z.lazy(() => CoachUncheckedUpdateManyWithoutSchoolNestedInputObjectSchema).optional(),
   teams: z.lazy(() => TeamUncheckedUpdateManyWithoutSchoolNestedInputObjectSchema).optional()
 }).strict();

@@ -14,7 +14,8 @@ export const EventCheckInFindFirstOrThrowSelectSchema: z.ZodType<Prisma.EventChe
     student: z.boolean().optional(),
     eventId: z.boolean().optional(),
     event: z.boolean().optional(),
-    checkedInAt: z.boolean().optional()
+    checkedInAt: z.boolean().optional(),
+    mutationIndex: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.EventCheckInSelect>;
 
 export const EventCheckInFindFirstOrThrowSelectZodSchema = z.object({
@@ -22,7 +23,8 @@ export const EventCheckInFindFirstOrThrowSelectZodSchema = z.object({
     student: z.boolean().optional(),
     eventId: z.boolean().optional(),
     event: z.boolean().optional(),
-    checkedInAt: z.boolean().optional()
+    checkedInAt: z.boolean().optional(),
+    mutationIndex: z.boolean().optional()
   }).strict();
 
 export const EventCheckInFindFirstOrThrowSchema: z.ZodType<Prisma.EventCheckInFindFirstOrThrowArgs> = z.object({ select: EventCheckInFindFirstOrThrowSelectSchema.optional(), include: z.lazy(() => EventCheckInIncludeObjectSchema.optional()), orderBy: z.union([EventCheckInOrderByWithRelationInputObjectSchema, EventCheckInOrderByWithRelationInputObjectSchema.array()]).optional(), where: EventCheckInWhereInputObjectSchema.optional(), cursor: EventCheckInWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), distinct: z.union([EventCheckInScalarFieldEnumSchema, EventCheckInScalarFieldEnumSchema.array()]).optional() }).strict() as unknown as z.ZodType<Prisma.EventCheckInFindFirstOrThrowArgs>;

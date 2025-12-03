@@ -91,6 +91,7 @@ model School {
   emailDomain String? @unique @map("email_domain")
   division Int?
   competitionId String @map("competition_id") @db.Uuid
+  mutationIndex Int @map("mutation_index")
 
   // Relations
   competition Competition @relation("CompetitionOfSchool", fields: [competitionId], references: [id])
@@ -117,6 +118,7 @@ model Team {
   division Int?
   objectiveScore  Float?  @map("objective_score")
   subjectiveScore Float?  @map("subjective_score")
+  mutationIndex Int @map("mutation_index")
 
   // Explicit M:N Relationship via Join Table
   coachesRelationship TeamCoachRelationship[] @relation("TeamRelationshipToCoach")
@@ -160,6 +162,7 @@ model Coach {
 
   objectiveScore  Float?  @map("objective_score")
   subjectiveScore Float?  @map("subjective_score")
+  mutationIndex Int @map("mutation_index")
 
   // Relations
   schoolId String @map("school_id") @db.Uuid
@@ -205,6 +208,7 @@ model Student {
   guardianLastName  String? @map("guardian_last_name")
   guardianPhone     String? @map("guardian_phone")
   guardianEmail     String? @map("guardian_email")
+  mutationIndex Int @map("mutation_index")
 
   // Relations
   teamId String? @map("team_id") @db.Uuid
@@ -239,6 +243,7 @@ model Competition {
   state    State?
   schools  School[] @relation("CompetitionOfSchool")
   students Student[] @relation("CompetitionOfStudent")
+  mutationIndex Int @map("mutation_index")
   @@index([startsAt])
   @@index([endsAt])
   @@index([name])
@@ -252,6 +257,7 @@ model Event {
   startsAt DateTime @map("starts_at") @db.Timestamptz(3)
   endsAt   DateTime @map("ends_at") @db.Timestamptz(3)
   competitionId String @map("competition_id") @db.Uuid
+  mutationIndex Int @map("mutation_index")
   competition Competition @relation("CompetitionOfEvent", fields: [competitionId], references: [id])
   
   eventCheckIn EventCheckIn[] @relation("EventOfEventCheckIn")
@@ -272,6 +278,7 @@ model EventCheckIn {
   
   // Timestamp when the student checked in (Null if just assigned but not present)
   checkedInAt DateTime? @map("cheked_in_at") @db.Timestamptz(3)
+  mutationIndex Int @map("mutation_index")
 
   @@id([studentId, eventId])
 

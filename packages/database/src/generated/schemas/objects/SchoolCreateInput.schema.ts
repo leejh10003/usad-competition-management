@@ -21,6 +21,7 @@ const makeSchema = () => z.object({
   principalEmail: z.string().optional().nullable(),
   emailDomain: z.string().optional().nullable(),
   division: z.number().int().optional().nullable(),
+  mutationIndex: z.number().int(),
   primaryCoach: z.lazy(() => CoachCreateNestedOneWithoutPrimarySchoolInputObjectSchema).optional(),
   competition: z.lazy(() => CompetitionCreateNestedOneWithoutSchoolsInputObjectSchema),
   coaches: z.lazy(() => CoachCreateNestedManyWithoutSchoolInputObjectSchema).optional(),

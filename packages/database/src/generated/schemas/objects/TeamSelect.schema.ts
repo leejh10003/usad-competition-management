@@ -13,6 +13,7 @@ const makeSchema = () => z.object({
   division: z.boolean().optional(),
   objectiveScore: z.boolean().optional(),
   subjectiveScore: z.boolean().optional(),
+  mutationIndex: z.boolean().optional(),
   coachesRelationship: z.union([z.boolean(), z.lazy(() => TeamCoachRelationshipFindManySchema)]).optional(),
   students: z.union([z.boolean(), z.lazy(() => StudentFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => TeamCountOutputTypeArgsObjectSchema)]).optional()

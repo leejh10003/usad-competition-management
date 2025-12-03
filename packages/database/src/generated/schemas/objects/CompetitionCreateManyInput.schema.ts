@@ -7,7 +7,8 @@ const makeSchema = () => z.object({
   name: z.string(),
   startsAt: z.coerce.date(),
   endsAt: z.coerce.date(),
-  state: StateSchema.optional().nullable()
+  state: StateSchema.optional().nullable(),
+  mutationIndex: z.number().int()
 }).strict();
 export const CompetitionCreateManyInputObjectSchema: z.ZodType<Prisma.CompetitionCreateManyInput> = makeSchema() as unknown as z.ZodType<Prisma.CompetitionCreateManyInput>;
 export const CompetitionCreateManyInputObjectZodSchema = makeSchema();

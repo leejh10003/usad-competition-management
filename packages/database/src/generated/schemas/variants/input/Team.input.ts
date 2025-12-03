@@ -8,6 +8,7 @@ export const TeamInputSchema = z.object({
     division: z.number().int().optional().nullable(),
     objectiveScore: z.number().optional().nullable(),
     subjectiveScore: z.number().optional().nullable(),
+    mutationIndex: z.number().int(),
     coachesRelationship: z.array(z.unknown()),
     students: z.array(z.unknown())
 }).strict();

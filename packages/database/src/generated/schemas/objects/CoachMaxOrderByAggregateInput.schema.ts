@@ -12,6 +12,7 @@ const makeSchema = () => z.object({
   signature: SortOrderSchema.optional(),
   objectiveScore: SortOrderSchema.optional(),
   subjectiveScore: SortOrderSchema.optional(),
+  mutationIndex: SortOrderSchema.optional(),
   schoolId: SortOrderSchema.optional()
 }).strict();
 export const CoachMaxOrderByAggregateInputObjectSchema: z.ZodType<Prisma.CoachMaxOrderByAggregateInput> = makeSchema() as unknown as z.ZodType<Prisma.CoachMaxOrderByAggregateInput>;

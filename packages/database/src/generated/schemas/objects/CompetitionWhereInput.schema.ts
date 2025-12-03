@@ -5,6 +5,7 @@ import { StringFilterObjectSchema as StringFilterObjectSchema } from './StringFi
 import { DateTimeFilterObjectSchema as DateTimeFilterObjectSchema } from './DateTimeFilter.schema';
 import { EnumStateNullableFilterObjectSchema as EnumStateNullableFilterObjectSchema } from './EnumStateNullableFilter.schema';
 import { StateSchema } from '../enums/State.schema';
+import { IntFilterObjectSchema as IntFilterObjectSchema } from './IntFilter.schema';
 import { EventListRelationFilterObjectSchema as EventListRelationFilterObjectSchema } from './EventListRelationFilter.schema';
 import { SchoolListRelationFilterObjectSchema as SchoolListRelationFilterObjectSchema } from './SchoolListRelationFilter.schema';
 import { StudentListRelationFilterObjectSchema as StudentListRelationFilterObjectSchema } from './StudentListRelationFilter.schema'
@@ -18,6 +19,7 @@ const competitionwhereinputSchema = z.object({
   startsAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   endsAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   state: z.union([z.lazy(() => EnumStateNullableFilterObjectSchema), StateSchema]).optional().nullable(),
+  mutationIndex: z.union([z.lazy(() => IntFilterObjectSchema), z.number().int()]).optional(),
   events: z.lazy(() => EventListRelationFilterObjectSchema).optional(),
   schools: z.lazy(() => SchoolListRelationFilterObjectSchema).optional(),
   students: z.lazy(() => StudentListRelationFilterObjectSchema).optional()

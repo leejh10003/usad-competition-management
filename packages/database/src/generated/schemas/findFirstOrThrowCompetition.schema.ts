@@ -18,6 +18,7 @@ export const CompetitionFindFirstOrThrowSelectSchema: z.ZodType<Prisma.Competiti
     state: z.boolean().optional(),
     schools: z.boolean().optional(),
     students: z.boolean().optional(),
+    mutationIndex: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.CompetitionSelect>;
 
@@ -30,6 +31,7 @@ export const CompetitionFindFirstOrThrowSelectZodSchema = z.object({
     state: z.boolean().optional(),
     schools: z.boolean().optional(),
     students: z.boolean().optional(),
+    mutationIndex: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
 

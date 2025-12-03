@@ -2,6 +2,7 @@ import * as z from 'zod';
 import type { Prisma } from '@prisma/client';
 import { StringFieldUpdateOperationsInputObjectSchema as StringFieldUpdateOperationsInputObjectSchema } from './StringFieldUpdateOperationsInput.schema';
 import { DateTimeFieldUpdateOperationsInputObjectSchema as DateTimeFieldUpdateOperationsInputObjectSchema } from './DateTimeFieldUpdateOperationsInput.schema';
+import { IntFieldUpdateOperationsInputObjectSchema as IntFieldUpdateOperationsInputObjectSchema } from './IntFieldUpdateOperationsInput.schema';
 import { CompetitionUpdateOneRequiredWithoutEventsNestedInputObjectSchema as CompetitionUpdateOneRequiredWithoutEventsNestedInputObjectSchema } from './CompetitionUpdateOneRequiredWithoutEventsNestedInput.schema';
 import { EventCheckInUpdateManyWithoutEventNestedInputObjectSchema as EventCheckInUpdateManyWithoutEventNestedInputObjectSchema } from './EventCheckInUpdateManyWithoutEventNestedInput.schema'
 
@@ -10,6 +11,7 @@ const makeSchema = () => z.object({
   name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
   startsAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   endsAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+  mutationIndex: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional(),
   competition: z.lazy(() => CompetitionUpdateOneRequiredWithoutEventsNestedInputObjectSchema).optional(),
   eventCheckIn: z.lazy(() => EventCheckInUpdateManyWithoutEventNestedInputObjectSchema).optional()
 }).strict();

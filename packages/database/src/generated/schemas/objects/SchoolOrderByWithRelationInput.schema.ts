@@ -24,6 +24,7 @@ const makeSchema = () => z.object({
   emailDomain: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   division: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   competitionId: SortOrderSchema.optional(),
+  mutationIndex: SortOrderSchema.optional(),
   primaryCoach: z.lazy(() => CoachOrderByWithRelationInputObjectSchema).optional(),
   competition: z.lazy(() => CompetitionOrderByWithRelationInputObjectSchema).optional(),
   coaches: z.lazy(() => CoachOrderByRelationAggregateInputObjectSchema).optional(),

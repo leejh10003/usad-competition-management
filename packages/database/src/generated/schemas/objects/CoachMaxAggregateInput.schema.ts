@@ -12,6 +12,7 @@ const makeSchema = () => z.object({
   signature: z.literal(true).optional(),
   objectiveScore: z.literal(true).optional(),
   subjectiveScore: z.literal(true).optional(),
+  mutationIndex: z.literal(true).optional(),
   schoolId: z.literal(true).optional()
 }).strict();
 export const CoachMaxAggregateInputObjectSchema: z.ZodType<Prisma.CoachMaxAggregateInputType> = makeSchema() as unknown as z.ZodType<Prisma.CoachMaxAggregateInputType>;

@@ -5,6 +5,7 @@ import { EventCreateNestedOneWithoutEventCheckInInputObjectSchema as EventCreate
 
 const makeSchema = () => z.object({
   checkedInAt: z.coerce.date().optional().nullable(),
+  mutationIndex: z.number().int(),
   student: z.lazy(() => StudentCreateNestedOneWithoutEventCheckInsInputObjectSchema),
   event: z.lazy(() => EventCreateNestedOneWithoutEventCheckInInputObjectSchema)
 }).strict();

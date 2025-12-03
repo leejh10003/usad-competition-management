@@ -16,16 +16,19 @@ export const SchoolAggregateResultSchema = z.object({  _count: z.object({
     emailDomain: z.number(),
     division: z.number(),
     competitionId: z.number(),
+    mutationIndex: z.number(),
     competition: z.number(),
     coaches: z.number(),
     teams: z.number(),
     students: z.number()
   }).optional(),
   _sum: z.object({
-    division: z.number().nullable()
+    division: z.number().nullable(),
+    mutationIndex: z.number().nullable()
   }).nullable().optional(),
   _avg: z.object({
-    division: z.number().nullable()
+    division: z.number().nullable(),
+    mutationIndex: z.number().nullable()
   }).nullable().optional(),
   _min: z.object({
     id: z.string().nullable(),
@@ -40,7 +43,8 @@ export const SchoolAggregateResultSchema = z.object({  _count: z.object({
     primaryCoachId: z.string().nullable(),
     emailDomain: z.string().nullable(),
     division: z.number().int().nullable(),
-    competitionId: z.string().nullable()
+    competitionId: z.string().nullable(),
+    mutationIndex: z.number().int().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
@@ -55,5 +59,6 @@ export const SchoolAggregateResultSchema = z.object({  _count: z.object({
     primaryCoachId: z.string().nullable(),
     emailDomain: z.string().nullable(),
     division: z.number().int().nullable(),
-    competitionId: z.string().nullable()
+    competitionId: z.string().nullable(),
+    mutationIndex: z.number().int().nullable()
   }).nullable().optional()});

@@ -8,7 +8,8 @@ export const CompetitionFindManyResultSchema = z.object({
   events: z.array(z.unknown()),
   state: z.unknown().optional(),
   schools: z.array(z.unknown()),
-  students: z.array(z.unknown())
+  students: z.array(z.unknown()),
+  mutationIndex: z.number().int()
 })),
   pagination: z.object({
   page: z.number().int().min(1),

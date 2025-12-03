@@ -24,6 +24,7 @@ const makeSchema = () => z.object({
   guardianLastName: z.boolean().optional(),
   guardianPhone: z.boolean().optional(),
   guardianEmail: z.boolean().optional(),
+  mutationIndex: z.boolean().optional(),
   teamId: z.boolean().optional(),
   team: z.union([z.boolean(), z.lazy(() => TeamArgsObjectSchema)]).optional(),
   schoolId: z.boolean().optional(),

@@ -9,6 +9,7 @@ const makeSchema = () => z.object({
   division: z.number().int().optional().nullable(),
   objectiveScore: z.number().optional().nullable(),
   subjectiveScore: z.number().optional().nullable(),
+  mutationIndex: z.number().int(),
   students: z.lazy(() => StudentUncheckedCreateNestedManyWithoutTeamInputObjectSchema).optional()
 }).strict();
 export const TeamUncheckedCreateWithoutCoachesRelationshipInputObjectSchema: z.ZodType<Prisma.TeamUncheckedCreateWithoutCoachesRelationshipInput> = makeSchema() as unknown as z.ZodType<Prisma.TeamUncheckedCreateWithoutCoachesRelationshipInput>;

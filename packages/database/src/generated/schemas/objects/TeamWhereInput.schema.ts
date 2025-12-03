@@ -4,6 +4,7 @@ import { UuidFilterObjectSchema as UuidFilterObjectSchema } from './UuidFilter.s
 import { StringNullableFilterObjectSchema as StringNullableFilterObjectSchema } from './StringNullableFilter.schema';
 import { IntNullableFilterObjectSchema as IntNullableFilterObjectSchema } from './IntNullableFilter.schema';
 import { FloatNullableFilterObjectSchema as FloatNullableFilterObjectSchema } from './FloatNullableFilter.schema';
+import { IntFilterObjectSchema as IntFilterObjectSchema } from './IntFilter.schema';
 import { SchoolScalarRelationFilterObjectSchema as SchoolScalarRelationFilterObjectSchema } from './SchoolScalarRelationFilter.schema';
 import { SchoolWhereInputObjectSchema as SchoolWhereInputObjectSchema } from './SchoolWhereInput.schema';
 import { TeamCoachRelationshipListRelationFilterObjectSchema as TeamCoachRelationshipListRelationFilterObjectSchema } from './TeamCoachRelationshipListRelationFilter.schema';
@@ -19,6 +20,7 @@ const teamwhereinputSchema = z.object({
   division: z.union([z.lazy(() => IntNullableFilterObjectSchema), z.number().int()]).optional().nullable(),
   objectiveScore: z.union([z.lazy(() => FloatNullableFilterObjectSchema), z.number()]).optional().nullable(),
   subjectiveScore: z.union([z.lazy(() => FloatNullableFilterObjectSchema), z.number()]).optional().nullable(),
+  mutationIndex: z.union([z.lazy(() => IntFilterObjectSchema), z.number().int()]).optional(),
   school: z.union([z.lazy(() => SchoolScalarRelationFilterObjectSchema), z.lazy(() => SchoolWhereInputObjectSchema)]).optional(),
   coachesRelationship: z.lazy(() => TeamCoachRelationshipListRelationFilterObjectSchema).optional(),
   students: z.lazy(() => StudentListRelationFilterObjectSchema).optional()

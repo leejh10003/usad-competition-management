@@ -8,6 +8,7 @@ const makeSchema = () => z.object({
   startsAt: z.literal(true).optional(),
   endsAt: z.literal(true).optional(),
   competitionId: z.literal(true).optional(),
+  mutationIndex: z.literal(true).optional(),
   _all: z.literal(true).optional()
 }).strict();
 export const EventCountAggregateInputObjectSchema: z.ZodType<Prisma.EventCountAggregateInputType> = makeSchema() as unknown as z.ZodType<Prisma.EventCountAggregateInputType>;

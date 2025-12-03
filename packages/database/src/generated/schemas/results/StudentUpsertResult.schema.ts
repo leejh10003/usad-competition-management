@@ -17,6 +17,7 @@ export const StudentUpsertResultSchema = z.object({
   guardianLastName: z.string().optional(),
   guardianPhone: z.string().optional(),
   guardianEmail: z.string().optional(),
+  mutationIndex: z.number().int(),
   teamId: z.string().optional(),
   team: z.unknown().optional(),
   schoolId: z.string().optional(),

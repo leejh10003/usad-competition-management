@@ -8,7 +8,8 @@ const makeSchema = () => z.object({
   schoolId: SortOrderSchema.optional(),
   division: SortOrderSchema.optional(),
   objectiveScore: SortOrderSchema.optional(),
-  subjectiveScore: SortOrderSchema.optional()
+  subjectiveScore: SortOrderSchema.optional(),
+  mutationIndex: SortOrderSchema.optional()
 }).strict();
 export const TeamMinOrderByAggregateInputObjectSchema: z.ZodType<Prisma.TeamMinOrderByAggregateInput> = makeSchema() as unknown as z.ZodType<Prisma.TeamMinOrderByAggregateInput>;
 export const TeamMinOrderByAggregateInputObjectZodSchema = makeSchema();

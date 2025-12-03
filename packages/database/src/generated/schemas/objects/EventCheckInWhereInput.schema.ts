@@ -2,6 +2,7 @@ import * as z from 'zod';
 import type { Prisma } from '@prisma/client';
 import { UuidFilterObjectSchema as UuidFilterObjectSchema } from './UuidFilter.schema';
 import { DateTimeNullableFilterObjectSchema as DateTimeNullableFilterObjectSchema } from './DateTimeNullableFilter.schema';
+import { IntFilterObjectSchema as IntFilterObjectSchema } from './IntFilter.schema';
 import { StudentScalarRelationFilterObjectSchema as StudentScalarRelationFilterObjectSchema } from './StudentScalarRelationFilter.schema';
 import { StudentWhereInputObjectSchema as StudentWhereInputObjectSchema } from './StudentWhereInput.schema';
 import { EventScalarRelationFilterObjectSchema as EventScalarRelationFilterObjectSchema } from './EventScalarRelationFilter.schema';
@@ -14,6 +15,7 @@ const eventcheckinwhereinputSchema = z.object({
   studentId: z.union([z.lazy(() => UuidFilterObjectSchema), z.string()]).optional(),
   eventId: z.union([z.lazy(() => UuidFilterObjectSchema), z.string()]).optional(),
   checkedInAt: z.union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()]).optional().nullable(),
+  mutationIndex: z.union([z.lazy(() => IntFilterObjectSchema), z.number().int()]).optional(),
   student: z.union([z.lazy(() => StudentScalarRelationFilterObjectSchema), z.lazy(() => StudentWhereInputObjectSchema)]).optional(),
   event: z.union([z.lazy(() => EventScalarRelationFilterObjectSchema), z.lazy(() => EventWhereInputObjectSchema)]).optional()
 }).strict();

@@ -6,6 +6,7 @@ import { BoolFieldUpdateOperationsInputObjectSchema as BoolFieldUpdateOperations
 import { StateSchema } from '../enums/State.schema';
 import { NullableEnumStateFieldUpdateOperationsInputObjectSchema as NullableEnumStateFieldUpdateOperationsInputObjectSchema } from './NullableEnumStateFieldUpdateOperationsInput.schema';
 import { NullableIntFieldUpdateOperationsInputObjectSchema as NullableIntFieldUpdateOperationsInputObjectSchema } from './NullableIntFieldUpdateOperationsInput.schema';
+import { IntFieldUpdateOperationsInputObjectSchema as IntFieldUpdateOperationsInputObjectSchema } from './IntFieldUpdateOperationsInput.schema';
 import { CoachUncheckedUpdateManyWithoutSchoolNestedInputObjectSchema as CoachUncheckedUpdateManyWithoutSchoolNestedInputObjectSchema } from './CoachUncheckedUpdateManyWithoutSchoolNestedInput.schema';
 import { TeamUncheckedUpdateManyWithoutSchoolNestedInputObjectSchema as TeamUncheckedUpdateManyWithoutSchoolNestedInputObjectSchema } from './TeamUncheckedUpdateManyWithoutSchoolNestedInput.schema';
 import { StudentUncheckedUpdateManyWithoutSchoolNestedInputObjectSchema as StudentUncheckedUpdateManyWithoutSchoolNestedInputObjectSchema } from './StudentUncheckedUpdateManyWithoutSchoolNestedInput.schema'
@@ -25,6 +26,7 @@ const makeSchema = () => z.object({
   primaryCoachId: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   emailDomain: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   division: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  mutationIndex: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional(),
   coaches: z.lazy(() => CoachUncheckedUpdateManyWithoutSchoolNestedInputObjectSchema).optional(),
   teams: z.lazy(() => TeamUncheckedUpdateManyWithoutSchoolNestedInputObjectSchema).optional(),
   students: z.lazy(() => StudentUncheckedUpdateManyWithoutSchoolNestedInputObjectSchema).optional()

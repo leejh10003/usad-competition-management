@@ -17,7 +17,8 @@ const makeSchema = () => z.object({
   primaryCoachId: SortOrderSchema.optional(),
   emailDomain: SortOrderSchema.optional(),
   division: SortOrderSchema.optional(),
-  competitionId: SortOrderSchema.optional()
+  competitionId: SortOrderSchema.optional(),
+  mutationIndex: SortOrderSchema.optional()
 }).strict();
 export const SchoolCountOrderByAggregateInputObjectSchema: z.ZodType<Prisma.SchoolCountOrderByAggregateInput> = makeSchema() as unknown as z.ZodType<Prisma.SchoolCountOrderByAggregateInput>;
 export const SchoolCountOrderByAggregateInputObjectZodSchema = makeSchema();

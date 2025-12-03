@@ -7,6 +7,7 @@ import { EnumDivisionFieldUpdateOperationsInputObjectSchema as EnumDivisionField
 import { NullableFloatFieldUpdateOperationsInputObjectSchema as NullableFloatFieldUpdateOperationsInputObjectSchema } from './NullableFloatFieldUpdateOperationsInput.schema';
 import { StateSchema } from '../enums/State.schema';
 import { NullableEnumStateFieldUpdateOperationsInputObjectSchema as NullableEnumStateFieldUpdateOperationsInputObjectSchema } from './NullableEnumStateFieldUpdateOperationsInput.schema';
+import { IntFieldUpdateOperationsInputObjectSchema as IntFieldUpdateOperationsInputObjectSchema } from './IntFieldUpdateOperationsInput.schema';
 import { TeamUpdateOneWithoutStudentsNestedInputObjectSchema as TeamUpdateOneWithoutStudentsNestedInputObjectSchema } from './TeamUpdateOneWithoutStudentsNestedInput.schema';
 import { SchoolUpdateOneWithoutStudentsNestedInputObjectSchema as SchoolUpdateOneWithoutStudentsNestedInputObjectSchema } from './SchoolUpdateOneWithoutStudentsNestedInput.schema';
 import { CompetitionUpdateOneWithoutStudentsNestedInputObjectSchema as CompetitionUpdateOneWithoutStudentsNestedInputObjectSchema } from './CompetitionUpdateOneWithoutStudentsNestedInput.schema';
@@ -30,6 +31,7 @@ const makeSchema = () => z.object({
   guardianLastName: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   guardianPhone: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   guardianEmail: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  mutationIndex: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional(),
   team: z.lazy(() => TeamUpdateOneWithoutStudentsNestedInputObjectSchema).optional(),
   school: z.lazy(() => SchoolUpdateOneWithoutStudentsNestedInputObjectSchema).optional(),
   competition: z.lazy(() => CompetitionUpdateOneWithoutStudentsNestedInputObjectSchema).optional(),

@@ -20,6 +20,7 @@ export const StudentInputSchema = z.object({
     guardianLastName: z.string().optional().nullable(),
     guardianPhone: z.string().optional().nullable(),
     guardianEmail: z.string().optional().nullable(),
+    mutationIndex: z.number().int(),
     teamId: z.string().optional().nullable(),
     team: z.unknown().optional().nullable(),
     schoolId: z.string().optional().nullable(),

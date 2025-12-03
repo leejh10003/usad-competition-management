@@ -18,6 +18,7 @@ const makeSchema = () => z.object({
   emailDomain: z.literal(true).optional(),
   division: z.literal(true).optional(),
   competitionId: z.literal(true).optional(),
+  mutationIndex: z.literal(true).optional(),
   _all: z.literal(true).optional()
 }).strict();
 export const SchoolCountAggregateInputObjectSchema: z.ZodType<Prisma.SchoolCountAggregateInputType> = makeSchema() as unknown as z.ZodType<Prisma.SchoolCountAggregateInputType>;

@@ -17,7 +17,8 @@ const makeSchema = () => z.object({
   primaryCoachId: z.literal(true).optional(),
   emailDomain: z.literal(true).optional(),
   division: z.literal(true).optional(),
-  competitionId: z.literal(true).optional()
+  competitionId: z.literal(true).optional(),
+  mutationIndex: z.literal(true).optional()
 }).strict();
 export const SchoolMaxAggregateInputObjectSchema: z.ZodType<Prisma.SchoolMaxAggregateInputType> = makeSchema() as unknown as z.ZodType<Prisma.SchoolMaxAggregateInputType>;
 export const SchoolMaxAggregateInputObjectZodSchema = makeSchema();

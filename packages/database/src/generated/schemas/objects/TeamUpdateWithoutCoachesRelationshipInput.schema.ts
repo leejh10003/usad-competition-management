@@ -4,6 +4,7 @@ import { StringFieldUpdateOperationsInputObjectSchema as StringFieldUpdateOperat
 import { NullableStringFieldUpdateOperationsInputObjectSchema as NullableStringFieldUpdateOperationsInputObjectSchema } from './NullableStringFieldUpdateOperationsInput.schema';
 import { NullableIntFieldUpdateOperationsInputObjectSchema as NullableIntFieldUpdateOperationsInputObjectSchema } from './NullableIntFieldUpdateOperationsInput.schema';
 import { NullableFloatFieldUpdateOperationsInputObjectSchema as NullableFloatFieldUpdateOperationsInputObjectSchema } from './NullableFloatFieldUpdateOperationsInput.schema';
+import { IntFieldUpdateOperationsInputObjectSchema as IntFieldUpdateOperationsInputObjectSchema } from './IntFieldUpdateOperationsInput.schema';
 import { SchoolUpdateOneRequiredWithoutTeamsNestedInputObjectSchema as SchoolUpdateOneRequiredWithoutTeamsNestedInputObjectSchema } from './SchoolUpdateOneRequiredWithoutTeamsNestedInput.schema';
 import { StudentUpdateManyWithoutTeamNestedInputObjectSchema as StudentUpdateManyWithoutTeamNestedInputObjectSchema } from './StudentUpdateManyWithoutTeamNestedInput.schema'
 
@@ -13,6 +14,7 @@ const makeSchema = () => z.object({
   division: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   objectiveScore: z.union([z.number(), z.lazy(() => NullableFloatFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   subjectiveScore: z.union([z.number(), z.lazy(() => NullableFloatFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  mutationIndex: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional(),
   school: z.lazy(() => SchoolUpdateOneRequiredWithoutTeamsNestedInputObjectSchema).optional(),
   students: z.lazy(() => StudentUpdateManyWithoutTeamNestedInputObjectSchema).optional()
 }).strict();

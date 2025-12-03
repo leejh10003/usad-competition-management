@@ -10,6 +10,7 @@ const makeSchema = () => z.object({
   startsAt: z.boolean().optional(),
   endsAt: z.boolean().optional(),
   competitionId: z.boolean().optional(),
+  mutationIndex: z.boolean().optional(),
   competition: z.union([z.boolean(), z.lazy(() => CompetitionArgsObjectSchema)]).optional(),
   eventCheckIn: z.union([z.boolean(), z.lazy(() => EventCheckInFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => EventCountOutputTypeArgsObjectSchema)]).optional()

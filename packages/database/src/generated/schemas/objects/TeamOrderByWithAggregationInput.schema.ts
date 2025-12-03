@@ -15,6 +15,7 @@ const makeSchema = () => z.object({
   division: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   objectiveScore: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   subjectiveScore: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  mutationIndex: SortOrderSchema.optional(),
   _count: z.lazy(() => TeamCountOrderByAggregateInputObjectSchema).optional(),
   _avg: z.lazy(() => TeamAvgOrderByAggregateInputObjectSchema).optional(),
   _max: z.lazy(() => TeamMaxOrderByAggregateInputObjectSchema).optional(),

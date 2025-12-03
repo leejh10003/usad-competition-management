@@ -10,6 +10,7 @@ const makeSchema = () => z.object({
   startsAt: SortOrderSchema.optional(),
   endsAt: SortOrderSchema.optional(),
   competitionId: SortOrderSchema.optional(),
+  mutationIndex: SortOrderSchema.optional(),
   competition: z.lazy(() => CompetitionOrderByWithRelationInputObjectSchema).optional(),
   eventCheckIn: z.lazy(() => EventCheckInOrderByRelationAggregateInputObjectSchema).optional()
 }).strict();

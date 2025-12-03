@@ -9,7 +9,8 @@ export const CompetitionResultSchema = z.object({
     events: z.array(z.unknown()),
     state: StateSchema.nullable(),
     schools: z.array(z.unknown()),
-    students: z.array(z.unknown())
+    students: z.array(z.unknown()),
+    mutationIndex: z.number().int()
 }).strict();
 
 export type CompetitionResultType = z.infer<typeof CompetitionResultSchema>;

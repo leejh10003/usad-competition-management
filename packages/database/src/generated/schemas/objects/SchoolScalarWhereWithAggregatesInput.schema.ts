@@ -7,7 +7,8 @@ import { BoolWithAggregatesFilterObjectSchema as BoolWithAggregatesFilterObjectS
 import { EnumStateNullableWithAggregatesFilterObjectSchema as EnumStateNullableWithAggregatesFilterObjectSchema } from './EnumStateNullableWithAggregatesFilter.schema';
 import { StateSchema } from '../enums/State.schema';
 import { UuidNullableWithAggregatesFilterObjectSchema as UuidNullableWithAggregatesFilterObjectSchema } from './UuidNullableWithAggregatesFilter.schema';
-import { IntNullableWithAggregatesFilterObjectSchema as IntNullableWithAggregatesFilterObjectSchema } from './IntNullableWithAggregatesFilter.schema'
+import { IntNullableWithAggregatesFilterObjectSchema as IntNullableWithAggregatesFilterObjectSchema } from './IntNullableWithAggregatesFilter.schema';
+import { IntWithAggregatesFilterObjectSchema as IntWithAggregatesFilterObjectSchema } from './IntWithAggregatesFilter.schema'
 
 const schoolscalarwherewithaggregatesinputSchema = z.object({
   AND: z.union([z.lazy(() => SchoolScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => SchoolScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
@@ -27,7 +28,8 @@ const schoolscalarwherewithaggregatesinputSchema = z.object({
   primaryCoachId: z.union([z.lazy(() => UuidNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
   emailDomain: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
   division: z.union([z.lazy(() => IntNullableWithAggregatesFilterObjectSchema), z.number().int()]).optional().nullable(),
-  competitionId: z.union([z.lazy(() => UuidWithAggregatesFilterObjectSchema), z.string()]).optional()
+  competitionId: z.union([z.lazy(() => UuidWithAggregatesFilterObjectSchema), z.string()]).optional(),
+  mutationIndex: z.union([z.lazy(() => IntWithAggregatesFilterObjectSchema), z.number().int()]).optional()
 }).strict();
 export const SchoolScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.SchoolScalarWhereWithAggregatesInput> = schoolscalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.SchoolScalarWhereWithAggregatesInput>;
 export const SchoolScalarWhereWithAggregatesInputObjectZodSchema = schoolscalarwherewithaggregatesinputSchema;

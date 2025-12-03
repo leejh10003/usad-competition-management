@@ -6,6 +6,7 @@ import { BoolFieldUpdateOperationsInputObjectSchema as BoolFieldUpdateOperations
 import { StateSchema } from '../enums/State.schema';
 import { NullableEnumStateFieldUpdateOperationsInputObjectSchema as NullableEnumStateFieldUpdateOperationsInputObjectSchema } from './NullableEnumStateFieldUpdateOperationsInput.schema';
 import { NullableIntFieldUpdateOperationsInputObjectSchema as NullableIntFieldUpdateOperationsInputObjectSchema } from './NullableIntFieldUpdateOperationsInput.schema';
+import { IntFieldUpdateOperationsInputObjectSchema as IntFieldUpdateOperationsInputObjectSchema } from './IntFieldUpdateOperationsInput.schema';
 import { CoachUpdateOneWithoutPrimarySchoolNestedInputObjectSchema as CoachUpdateOneWithoutPrimarySchoolNestedInputObjectSchema } from './CoachUpdateOneWithoutPrimarySchoolNestedInput.schema';
 import { CompetitionUpdateOneRequiredWithoutSchoolsNestedInputObjectSchema as CompetitionUpdateOneRequiredWithoutSchoolsNestedInputObjectSchema } from './CompetitionUpdateOneRequiredWithoutSchoolsNestedInput.schema';
 import { CoachUpdateManyWithoutSchoolNestedInputObjectSchema as CoachUpdateManyWithoutSchoolNestedInputObjectSchema } from './CoachUpdateManyWithoutSchoolNestedInput.schema';
@@ -25,6 +26,7 @@ const makeSchema = () => z.object({
   principalEmail: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   emailDomain: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   division: z.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  mutationIndex: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional(),
   primaryCoach: z.lazy(() => CoachUpdateOneWithoutPrimarySchoolNestedInputObjectSchema).optional(),
   competition: z.lazy(() => CompetitionUpdateOneRequiredWithoutSchoolsNestedInputObjectSchema).optional(),
   coaches: z.lazy(() => CoachUpdateManyWithoutSchoolNestedInputObjectSchema).optional(),

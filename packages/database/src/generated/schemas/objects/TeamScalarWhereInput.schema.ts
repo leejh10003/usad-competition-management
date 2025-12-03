@@ -3,7 +3,8 @@ import type { Prisma } from '@prisma/client';
 import { UuidFilterObjectSchema as UuidFilterObjectSchema } from './UuidFilter.schema';
 import { StringNullableFilterObjectSchema as StringNullableFilterObjectSchema } from './StringNullableFilter.schema';
 import { IntNullableFilterObjectSchema as IntNullableFilterObjectSchema } from './IntNullableFilter.schema';
-import { FloatNullableFilterObjectSchema as FloatNullableFilterObjectSchema } from './FloatNullableFilter.schema'
+import { FloatNullableFilterObjectSchema as FloatNullableFilterObjectSchema } from './FloatNullableFilter.schema';
+import { IntFilterObjectSchema as IntFilterObjectSchema } from './IntFilter.schema'
 
 const teamscalarwhereinputSchema = z.object({
   AND: z.union([z.lazy(() => TeamScalarWhereInputObjectSchema), z.lazy(() => TeamScalarWhereInputObjectSchema).array()]).optional(),
@@ -14,7 +15,8 @@ const teamscalarwhereinputSchema = z.object({
   schoolId: z.union([z.lazy(() => UuidFilterObjectSchema), z.string()]).optional(),
   division: z.union([z.lazy(() => IntNullableFilterObjectSchema), z.number().int()]).optional().nullable(),
   objectiveScore: z.union([z.lazy(() => FloatNullableFilterObjectSchema), z.number()]).optional().nullable(),
-  subjectiveScore: z.union([z.lazy(() => FloatNullableFilterObjectSchema), z.number()]).optional().nullable()
+  subjectiveScore: z.union([z.lazy(() => FloatNullableFilterObjectSchema), z.number()]).optional().nullable(),
+  mutationIndex: z.union([z.lazy(() => IntFilterObjectSchema), z.number().int()]).optional()
 }).strict();
 export const TeamScalarWhereInputObjectSchema: z.ZodType<Prisma.TeamScalarWhereInput> = teamscalarwhereinputSchema as unknown as z.ZodType<Prisma.TeamScalarWhereInput>;
 export const TeamScalarWhereInputObjectZodSchema = teamscalarwhereinputSchema;

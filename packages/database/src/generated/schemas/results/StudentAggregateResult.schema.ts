@@ -17,6 +17,7 @@ export const StudentAggregateResultSchema = z.object({  _count: z.object({
     guardianLastName: z.number(),
     guardianPhone: z.number(),
     guardianEmail: z.number(),
+    mutationIndex: z.number(),
     teamId: z.number(),
     team: z.number(),
     schoolId: z.number(),
@@ -26,10 +27,12 @@ export const StudentAggregateResultSchema = z.object({  _count: z.object({
     eventCheckIns: z.number()
   }).optional(),
   _sum: z.object({
-    gpa: z.number().nullable()
+    gpa: z.number().nullable(),
+    mutationIndex: z.number().nullable()
   }).nullable().optional(),
   _avg: z.object({
-    gpa: z.number().nullable()
+    gpa: z.number().nullable(),
+    mutationIndex: z.number().nullable()
   }).nullable().optional(),
   _min: z.object({
     id: z.string().nullable(),
@@ -47,6 +50,7 @@ export const StudentAggregateResultSchema = z.object({  _count: z.object({
     guardianLastName: z.string().nullable(),
     guardianPhone: z.string().nullable(),
     guardianEmail: z.string().nullable(),
+    mutationIndex: z.number().int().nullable(),
     teamId: z.string().nullable(),
     schoolId: z.string().nullable(),
     competitionId: z.string().nullable()
@@ -67,6 +71,7 @@ export const StudentAggregateResultSchema = z.object({  _count: z.object({
     guardianLastName: z.string().nullable(),
     guardianPhone: z.string().nullable(),
     guardianEmail: z.string().nullable(),
+    mutationIndex: z.number().int().nullable(),
     teamId: z.string().nullable(),
     schoolId: z.string().nullable(),
     competitionId: z.string().nullable()

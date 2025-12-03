@@ -8,7 +8,8 @@ const makeSchema = () => z.object({
   schoolId: z.string(),
   division: z.number().int().optional().nullable(),
   objectiveScore: z.number().optional().nullable(),
-  subjectiveScore: z.number().optional().nullable()
+  subjectiveScore: z.number().optional().nullable(),
+  mutationIndex: z.number().int()
 }).strict();
 export const TeamCreateManyInputObjectSchema: z.ZodType<Prisma.TeamCreateManyInput> = makeSchema() as unknown as z.ZodType<Prisma.TeamCreateManyInput>;
 export const TeamCreateManyInputObjectZodSchema = makeSchema();

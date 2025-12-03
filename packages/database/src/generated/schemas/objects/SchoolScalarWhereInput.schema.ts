@@ -7,7 +7,8 @@ import { BoolFilterObjectSchema as BoolFilterObjectSchema } from './BoolFilter.s
 import { EnumStateNullableFilterObjectSchema as EnumStateNullableFilterObjectSchema } from './EnumStateNullableFilter.schema';
 import { StateSchema } from '../enums/State.schema';
 import { UuidNullableFilterObjectSchema as UuidNullableFilterObjectSchema } from './UuidNullableFilter.schema';
-import { IntNullableFilterObjectSchema as IntNullableFilterObjectSchema } from './IntNullableFilter.schema'
+import { IntNullableFilterObjectSchema as IntNullableFilterObjectSchema } from './IntNullableFilter.schema';
+import { IntFilterObjectSchema as IntFilterObjectSchema } from './IntFilter.schema'
 
 const schoolscalarwhereinputSchema = z.object({
   AND: z.union([z.lazy(() => SchoolScalarWhereInputObjectSchema), z.lazy(() => SchoolScalarWhereInputObjectSchema).array()]).optional(),
@@ -27,7 +28,8 @@ const schoolscalarwhereinputSchema = z.object({
   primaryCoachId: z.union([z.lazy(() => UuidNullableFilterObjectSchema), z.string()]).optional().nullable(),
   emailDomain: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   division: z.union([z.lazy(() => IntNullableFilterObjectSchema), z.number().int()]).optional().nullable(),
-  competitionId: z.union([z.lazy(() => UuidFilterObjectSchema), z.string()]).optional()
+  competitionId: z.union([z.lazy(() => UuidFilterObjectSchema), z.string()]).optional(),
+  mutationIndex: z.union([z.lazy(() => IntFilterObjectSchema), z.number().int()]).optional()
 }).strict();
 export const SchoolScalarWhereInputObjectSchema: z.ZodType<Prisma.SchoolScalarWhereInput> = schoolscalarwhereinputSchema as unknown as z.ZodType<Prisma.SchoolScalarWhereInput>;
 export const SchoolScalarWhereInputObjectZodSchema = schoolscalarwhereinputSchema;

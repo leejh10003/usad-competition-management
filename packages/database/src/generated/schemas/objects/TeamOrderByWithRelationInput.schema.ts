@@ -13,6 +13,7 @@ const makeSchema = () => z.object({
   division: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   objectiveScore: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   subjectiveScore: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  mutationIndex: SortOrderSchema.optional(),
   school: z.lazy(() => SchoolOrderByWithRelationInputObjectSchema).optional(),
   coachesRelationship: z.lazy(() => TeamCoachRelationshipOrderByRelationAggregateInputObjectSchema).optional(),
   students: z.lazy(() => StudentOrderByRelationAggregateInputObjectSchema).optional()

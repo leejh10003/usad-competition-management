@@ -3,7 +3,8 @@ import type { Prisma } from '@prisma/client';
 import { UuidFilterObjectSchema as UuidFilterObjectSchema } from './UuidFilter.schema';
 import { StringNullableFilterObjectSchema as StringNullableFilterObjectSchema } from './StringNullableFilter.schema';
 import { StringFilterObjectSchema as StringFilterObjectSchema } from './StringFilter.schema';
-import { FloatNullableFilterObjectSchema as FloatNullableFilterObjectSchema } from './FloatNullableFilter.schema'
+import { FloatNullableFilterObjectSchema as FloatNullableFilterObjectSchema } from './FloatNullableFilter.schema';
+import { IntFilterObjectSchema as IntFilterObjectSchema } from './IntFilter.schema'
 
 const coachscalarwhereinputSchema = z.object({
   AND: z.union([z.lazy(() => CoachScalarWhereInputObjectSchema), z.lazy(() => CoachScalarWhereInputObjectSchema).array()]).optional(),
@@ -18,6 +19,7 @@ const coachscalarwhereinputSchema = z.object({
   signature: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   objectiveScore: z.union([z.lazy(() => FloatNullableFilterObjectSchema), z.number()]).optional().nullable(),
   subjectiveScore: z.union([z.lazy(() => FloatNullableFilterObjectSchema), z.number()]).optional().nullable(),
+  mutationIndex: z.union([z.lazy(() => IntFilterObjectSchema), z.number().int()]).optional(),
   schoolId: z.union([z.lazy(() => UuidFilterObjectSchema), z.string()]).optional()
 }).strict();
 export const CoachScalarWhereInputObjectSchema: z.ZodType<Prisma.CoachScalarWhereInput> = coachscalarwhereinputSchema as unknown as z.ZodType<Prisma.CoachScalarWhereInput>;

@@ -22,6 +22,7 @@ const makeSchema = () => z.object({
   guardianLastName: z.string().optional().nullable(),
   guardianPhone: z.string().optional().nullable(),
   guardianEmail: z.string().optional().nullable(),
+  mutationIndex: z.number().int(),
   teamId: z.string().optional().nullable(),
   competitionId: z.string().optional().nullable(),
   eventCheckIns: z.lazy(() => EventCheckInUncheckedCreateNestedManyWithoutStudentInputObjectSchema).optional()

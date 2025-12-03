@@ -9,6 +9,7 @@ export const CoachGroupByResultSchema = z.array(z.object({
   signature: z.string(),
   objectiveScore: z.number(),
   subjectiveScore: z.number(),
+  mutationIndex: z.number().int(),
   schoolId: z.string(),
   _count: z.object({
     id: z.number(),
@@ -20,6 +21,7 @@ export const CoachGroupByResultSchema = z.array(z.object({
     signature: z.number(),
     objectiveScore: z.number(),
     subjectiveScore: z.number(),
+    mutationIndex: z.number(),
     schoolId: z.number(),
     school: z.number(),
     primarySchool: z.number(),
@@ -27,11 +29,13 @@ export const CoachGroupByResultSchema = z.array(z.object({
   }).optional(),
   _sum: z.object({
     objectiveScore: z.number().nullable(),
-    subjectiveScore: z.number().nullable()
+    subjectiveScore: z.number().nullable(),
+    mutationIndex: z.number().nullable()
   }).nullable().optional(),
   _avg: z.object({
     objectiveScore: z.number().nullable(),
-    subjectiveScore: z.number().nullable()
+    subjectiveScore: z.number().nullable(),
+    mutationIndex: z.number().nullable()
   }).nullable().optional(),
   _min: z.object({
     id: z.string().nullable(),
@@ -43,6 +47,7 @@ export const CoachGroupByResultSchema = z.array(z.object({
     signature: z.string().nullable(),
     objectiveScore: z.number().nullable(),
     subjectiveScore: z.number().nullable(),
+    mutationIndex: z.number().int().nullable(),
     schoolId: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
@@ -55,6 +60,7 @@ export const CoachGroupByResultSchema = z.array(z.object({
     signature: z.string().nullable(),
     objectiveScore: z.number().nullable(),
     subjectiveScore: z.number().nullable(),
+    mutationIndex: z.number().int().nullable(),
     schoolId: z.string().nullable()
   }).nullable().optional()
 }));

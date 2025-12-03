@@ -17,6 +17,7 @@ export const TeamFindManySelectSchema: z.ZodType<Prisma.TeamSelect> = z.object({
     division: z.boolean().optional(),
     objectiveScore: z.boolean().optional(),
     subjectiveScore: z.boolean().optional(),
+    mutationIndex: z.boolean().optional(),
     coachesRelationship: z.boolean().optional(),
     students: z.boolean().optional(),
     _count: z.boolean().optional()
@@ -30,6 +31,7 @@ export const TeamFindManySelectZodSchema = z.object({
     division: z.boolean().optional(),
     objectiveScore: z.boolean().optional(),
     subjectiveScore: z.boolean().optional(),
+    mutationIndex: z.boolean().optional(),
     coachesRelationship: z.boolean().optional(),
     students: z.boolean().optional(),
     _count: z.boolean().optional()

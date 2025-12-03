@@ -20,6 +20,7 @@ const makeSchema = () => z.object({
   primaryCoachId: z.string().optional().nullable(),
   emailDomain: z.string().optional().nullable(),
   division: z.number().int().optional().nullable(),
+  mutationIndex: z.number().int(),
   coaches: z.lazy(() => CoachUncheckedCreateNestedManyWithoutSchoolInputObjectSchema).optional(),
   teams: z.lazy(() => TeamUncheckedCreateNestedManyWithoutSchoolInputObjectSchema).optional(),
   students: z.lazy(() => StudentUncheckedCreateNestedManyWithoutSchoolInputObjectSchema).optional()

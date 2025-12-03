@@ -15,6 +15,7 @@ const makeSchema = () => z.object({
   signature: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   objectiveScore: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   subjectiveScore: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  mutationIndex: SortOrderSchema.optional(),
   schoolId: SortOrderSchema.optional(),
   school: z.lazy(() => SchoolOrderByWithRelationInputObjectSchema).optional(),
   primarySchool: z.lazy(() => SchoolOrderByWithRelationInputObjectSchema).optional(),

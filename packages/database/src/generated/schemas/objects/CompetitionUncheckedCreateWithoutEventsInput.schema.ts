@@ -10,6 +10,7 @@ const makeSchema = () => z.object({
   startsAt: z.coerce.date(),
   endsAt: z.coerce.date(),
   state: StateSchema.optional().nullable(),
+  mutationIndex: z.number().int(),
   schools: z.lazy(() => SchoolUncheckedCreateNestedManyWithoutCompetitionInputObjectSchema).optional(),
   students: z.lazy(() => StudentUncheckedCreateNestedManyWithoutCompetitionInputObjectSchema).optional()
 }).strict();

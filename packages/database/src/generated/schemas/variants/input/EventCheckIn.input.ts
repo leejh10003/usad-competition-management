@@ -5,7 +5,8 @@ export const EventCheckInInputSchema = z.object({
     student: z.unknown(),
     eventId: z.string(),
     event: z.unknown(),
-    checkedInAt: z.date().optional().nullable()
+    checkedInAt: z.date().optional().nullable(),
+    mutationIndex: z.number().int()
 }).strict();
 
 export type EventCheckInInputType = z.infer<typeof EventCheckInInputSchema>;

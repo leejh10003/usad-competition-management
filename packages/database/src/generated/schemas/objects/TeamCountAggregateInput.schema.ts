@@ -9,6 +9,7 @@ const makeSchema = () => z.object({
   division: z.literal(true).optional(),
   objectiveScore: z.literal(true).optional(),
   subjectiveScore: z.literal(true).optional(),
+  mutationIndex: z.literal(true).optional(),
   _all: z.literal(true).optional()
 }).strict();
 export const TeamCountAggregateInputObjectSchema: z.ZodType<Prisma.TeamCountAggregateInputType> = makeSchema() as unknown as z.ZodType<Prisma.TeamCountAggregateInputType>;

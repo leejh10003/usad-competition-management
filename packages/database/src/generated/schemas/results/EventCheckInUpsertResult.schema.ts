@@ -4,5 +4,6 @@ export const EventCheckInUpsertResultSchema = z.object({
   student: z.unknown(),
   eventId: z.string(),
   event: z.unknown(),
-  checkedInAt: z.date().optional()
+  checkedInAt: z.date().optional(),
+  mutationIndex: z.number().int()
 });

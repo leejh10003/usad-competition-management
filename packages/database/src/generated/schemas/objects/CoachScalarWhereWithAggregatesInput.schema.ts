@@ -3,7 +3,8 @@ import type { Prisma } from '@prisma/client';
 import { UuidWithAggregatesFilterObjectSchema as UuidWithAggregatesFilterObjectSchema } from './UuidWithAggregatesFilter.schema';
 import { StringNullableWithAggregatesFilterObjectSchema as StringNullableWithAggregatesFilterObjectSchema } from './StringNullableWithAggregatesFilter.schema';
 import { StringWithAggregatesFilterObjectSchema as StringWithAggregatesFilterObjectSchema } from './StringWithAggregatesFilter.schema';
-import { FloatNullableWithAggregatesFilterObjectSchema as FloatNullableWithAggregatesFilterObjectSchema } from './FloatNullableWithAggregatesFilter.schema'
+import { FloatNullableWithAggregatesFilterObjectSchema as FloatNullableWithAggregatesFilterObjectSchema } from './FloatNullableWithAggregatesFilter.schema';
+import { IntWithAggregatesFilterObjectSchema as IntWithAggregatesFilterObjectSchema } from './IntWithAggregatesFilter.schema'
 
 const coachscalarwherewithaggregatesinputSchema = z.object({
   AND: z.union([z.lazy(() => CoachScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => CoachScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
@@ -18,6 +19,7 @@ const coachscalarwherewithaggregatesinputSchema = z.object({
   signature: z.union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
   objectiveScore: z.union([z.lazy(() => FloatNullableWithAggregatesFilterObjectSchema), z.number()]).optional().nullable(),
   subjectiveScore: z.union([z.lazy(() => FloatNullableWithAggregatesFilterObjectSchema), z.number()]).optional().nullable(),
+  mutationIndex: z.union([z.lazy(() => IntWithAggregatesFilterObjectSchema), z.number().int()]).optional(),
   schoolId: z.union([z.lazy(() => UuidWithAggregatesFilterObjectSchema), z.string()]).optional()
 }).strict();
 export const CoachScalarWhereWithAggregatesInputObjectSchema: z.ZodType<Prisma.CoachScalarWhereWithAggregatesInput> = coachscalarwherewithaggregatesinputSchema as unknown as z.ZodType<Prisma.CoachScalarWhereWithAggregatesInput>;

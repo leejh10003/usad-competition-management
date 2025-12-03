@@ -12,6 +12,7 @@ const makeSchema = () => z.object({
   signature: z.literal(true).optional(),
   objectiveScore: z.literal(true).optional(),
   subjectiveScore: z.literal(true).optional(),
+  mutationIndex: z.literal(true).optional(),
   schoolId: z.literal(true).optional()
 }).strict();
 export const CoachMinAggregateInputObjectSchema: z.ZodType<Prisma.CoachMinAggregateInputType> = makeSchema() as unknown as z.ZodType<Prisma.CoachMinAggregateInputType>;

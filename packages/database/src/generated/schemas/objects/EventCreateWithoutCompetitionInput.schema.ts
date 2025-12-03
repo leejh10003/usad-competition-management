@@ -7,6 +7,7 @@ const makeSchema = () => z.object({
   name: z.string(),
   startsAt: z.coerce.date(),
   endsAt: z.coerce.date(),
+  mutationIndex: z.number().int(),
   eventCheckIn: z.lazy(() => EventCheckInCreateNestedManyWithoutEventInputObjectSchema).optional()
 }).strict();
 export const EventCreateWithoutCompetitionInputObjectSchema: z.ZodType<Prisma.EventCreateWithoutCompetitionInput> = makeSchema() as unknown as z.ZodType<Prisma.EventCreateWithoutCompetitionInput>;

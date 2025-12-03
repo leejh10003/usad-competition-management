@@ -24,6 +24,7 @@ const makeSchema = () => z.object({
   emailDomain: z.boolean().optional(),
   division: z.boolean().optional(),
   competitionId: z.boolean().optional(),
+  mutationIndex: z.boolean().optional(),
   competition: z.union([z.boolean(), z.lazy(() => CompetitionArgsObjectSchema)]).optional(),
   coaches: z.union([z.boolean(), z.lazy(() => CoachFindManySchema)]).optional(),
   teams: z.union([z.boolean(), z.lazy(() => TeamFindManySchema)]).optional(),

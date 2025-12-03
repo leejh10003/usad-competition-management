@@ -8,6 +8,7 @@ import { EnumStateNullableFilterObjectSchema as EnumStateNullableFilterObjectSch
 import { StateSchema } from '../enums/State.schema';
 import { UuidNullableFilterObjectSchema as UuidNullableFilterObjectSchema } from './UuidNullableFilter.schema';
 import { IntNullableFilterObjectSchema as IntNullableFilterObjectSchema } from './IntNullableFilter.schema';
+import { IntFilterObjectSchema as IntFilterObjectSchema } from './IntFilter.schema';
 import { CoachNullableScalarRelationFilterObjectSchema as CoachNullableScalarRelationFilterObjectSchema } from './CoachNullableScalarRelationFilter.schema';
 import { CoachWhereInputObjectSchema as CoachWhereInputObjectSchema } from './CoachWhereInput.schema';
 import { CompetitionScalarRelationFilterObjectSchema as CompetitionScalarRelationFilterObjectSchema } from './CompetitionScalarRelationFilter.schema';
@@ -35,6 +36,7 @@ const schoolwhereinputSchema = z.object({
   emailDomain: z.union([z.lazy(() => StringNullableFilterObjectSchema), z.string()]).optional().nullable(),
   division: z.union([z.lazy(() => IntNullableFilterObjectSchema), z.number().int()]).optional().nullable(),
   competitionId: z.union([z.lazy(() => UuidFilterObjectSchema), z.string()]).optional(),
+  mutationIndex: z.union([z.lazy(() => IntFilterObjectSchema), z.number().int()]).optional(),
   primaryCoach: z.union([z.lazy(() => CoachNullableScalarRelationFilterObjectSchema), z.lazy(() => CoachWhereInputObjectSchema)]).optional(),
   competition: z.union([z.lazy(() => CompetitionScalarRelationFilterObjectSchema), z.lazy(() => CompetitionWhereInputObjectSchema)]).optional(),
   coaches: z.lazy(() => CoachListRelationFilterObjectSchema).optional(),

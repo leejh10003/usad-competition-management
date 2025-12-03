@@ -20,6 +20,7 @@ const makeSchema = () => z.object({
   guardianLastName: SortOrderSchema.optional(),
   guardianPhone: SortOrderSchema.optional(),
   guardianEmail: SortOrderSchema.optional(),
+  mutationIndex: SortOrderSchema.optional(),
   teamId: SortOrderSchema.optional(),
   schoolId: SortOrderSchema.optional(),
   competitionId: SortOrderSchema.optional()
