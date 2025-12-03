@@ -48,7 +48,7 @@ test.openapi({
     },
 }, async (c) => {
     const { test } = c.req.valid('query');
-    console.log(test?.school);
+    console.log(test);
     return c.json({ success: true }, 200);
 });
 
