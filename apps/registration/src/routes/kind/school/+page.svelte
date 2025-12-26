@@ -11,7 +11,7 @@
 	import Enumerable from 'linq';
 	import StateDropdown from '$lib/components/states.svelte';
 	import { validateZipCode, onScoreChange, disableNonNumeric } from '$lib/utils/validation';
-	import { storage } from '$lib/utils/store';
+	import { storage } from '$lib/utils/store.svelte';
 	type SchoolType = Omit<z.infer<typeof schoolInsertSchema>['school'], 'isVirtual' | 'emailDomain'>;
 	type Division = z.infer<typeof division>;
 	var school = $state<SchoolType>({
@@ -122,7 +122,7 @@
 			</label>
 			<label class="label grid">
 				<span class="label-text">School State</span>
-				<StateDropdown disabled placeholder="School State..." bind:state={school.state} />
+				<StateDropdown disabled placeholder="School State..." />
 				<!--<input class="input" type="text" placeholder="School state..." bind:value={school.state}/>-->
 			</label>
 			<label class="label grid">

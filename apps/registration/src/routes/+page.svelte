@@ -3,19 +3,17 @@
 	import { resolve } from '$app/paths';
 	import z from 'zod';
     import StateDropdown from '$lib/components/states.svelte';
-    import type { StorageStore } from '$lib/utils/store';
-    import { storage } from '$lib/utils/store';
-    var store = $state<StorageStore>(storage);
+    import { storage } from '$lib/utils/store.svelte';
 </script>
 
 <div class="flex grow flex-col">
 	<div class="m-auto flex flex-col items-center text-center">
 		<h1 class="h1 font-semibold">From which state are you from?</h1>
 		<br />
-        <StateDropdown placeholder="Select State..." bind:state={store.state} />
+        <StateDropdown placeholder="Select State..." />
         <br />
 		<button
-            disabled={!store.state}
+            disabled={!storage.state}
 			type="button"
 			class="btn preset-filled-primary-500 btn-lg"
 			onclick={() => goto(resolve('/kind'))}>Next</button>

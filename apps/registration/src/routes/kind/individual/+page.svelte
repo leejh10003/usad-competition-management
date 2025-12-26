@@ -15,11 +15,10 @@
 	import { FileUpload } from '@skeletonlabs/skeleton-svelte';
 	import { workerRequest } from '$lib/api';
 	import type { FileUploadState } from '$lib/enums/file';
-	import { storage } from '$lib/utils/store';
+	import { storage } from '$lib/utils/store.svelte';
 
 	var streetAddress = $state<string>();
 	var city = $state<string>();
-	var stateInput = $state<z.infer<typeof stateEnums> | null>(storage.state);
 	var zipCode = $state<string>();
 	var gpa = $state<number>();
 	var group = $state<z.infer<typeof division>>();
@@ -51,7 +50,7 @@
 	function onSubmit() {
 		streetAddressInvalid = (streetAddress?.trim()?.length ?? 0) < 1;
 		cityInvalid = (city?.trim()?.length ?? 0) < 1;
-		stateInputInvalid = (stateInput?.trim()?.length ?? 0) < 1;
+		stateInputInvalid = (storage.state?.trim()?.length ?? 0) < 1;
 		zipCodeInvalid =
 			(zipCode?.trim()?.length ?? 0) !== 5 || (zipCode?.match(/^\d/g)?.length ?? 0) < 1;
 		gpaInvalid = (gpa ?? 0) < 0 || (gpa ?? 0) > 4.5;
@@ -100,7 +99,7 @@
 						>&nbsp;&nbsp;Check the state is valid or not</span
 					></span
 				>
-				<StateDropdown disabled placeholder="State..." bind:state={stateInput} />
+				<StateDropdown disabled placeholder="State..." />
 			</label>
 			<label class="label">
 				<span class="label-text"
