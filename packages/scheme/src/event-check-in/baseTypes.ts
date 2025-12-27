@@ -4,4 +4,5 @@ export const eventCheckedInItem = z.object({
   studentId: z.uuid(),
   eventId: z.uuid(),
   checkedInAt: z.date().nullable(),
+  mutationIndex: z.int(),
 });

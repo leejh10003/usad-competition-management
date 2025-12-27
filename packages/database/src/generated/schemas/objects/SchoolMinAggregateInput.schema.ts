@@ -14,6 +14,8 @@ const makeSchema = () => z.object({
   phone: z.literal(true).optional(),
   principalName: z.literal(true).optional(),
   principalEmail: z.literal(true).optional(),
+  objectiveScore: z.literal(true).optional(),
+  subjectiveScore: z.literal(true).optional(),
   primaryCoachId: z.literal(true).optional(),
   emailDomain: z.literal(true).optional(),
   division: z.literal(true).optional(),

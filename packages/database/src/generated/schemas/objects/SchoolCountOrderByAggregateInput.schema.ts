@@ -14,6 +14,8 @@ const makeSchema = () => z.object({
   phone: SortOrderSchema.optional(),
   principalName: SortOrderSchema.optional(),
   principalEmail: SortOrderSchema.optional(),
+  objectiveScore: SortOrderSchema.optional(),
+  subjectiveScore: SortOrderSchema.optional(),
   primaryCoachId: SortOrderSchema.optional(),
   emailDomain: SortOrderSchema.optional(),
   division: SortOrderSchema.optional(),

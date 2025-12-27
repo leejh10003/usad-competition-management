@@ -1,6 +1,6 @@
 import * as z from 'zod';
 import type { Prisma } from '@prisma/client';
-import { StateSchema } from '../enums/State.schema';
+import { CompetitionAvailableStateCreateNestedManyWithoutCompetitionInputObjectSchema as CompetitionAvailableStateCreateNestedManyWithoutCompetitionInputObjectSchema } from './CompetitionAvailableStateCreateNestedManyWithoutCompetitionInput.schema';
 import { SchoolCreateNestedManyWithoutCompetitionInputObjectSchema as SchoolCreateNestedManyWithoutCompetitionInputObjectSchema } from './SchoolCreateNestedManyWithoutCompetitionInput.schema';
 import { StudentCreateNestedManyWithoutCompetitionInputObjectSchema as StudentCreateNestedManyWithoutCompetitionInputObjectSchema } from './StudentCreateNestedManyWithoutCompetitionInput.schema'
 
@@ -9,8 +9,8 @@ const makeSchema = () => z.object({
   name: z.string(),
   startsAt: z.coerce.date(),
   endsAt: z.coerce.date(),
-  state: StateSchema.optional().nullable(),
   mutationIndex: z.number().int(),
+  competitionAvailableStates: z.lazy(() => CompetitionAvailableStateCreateNestedManyWithoutCompetitionInputObjectSchema).optional(),
   schools: z.lazy(() => SchoolCreateNestedManyWithoutCompetitionInputObjectSchema).optional(),
   students: z.lazy(() => StudentCreateNestedManyWithoutCompetitionInputObjectSchema).optional()
 }).strict();

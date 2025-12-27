@@ -119,7 +119,8 @@ export {
   competitionUpdateSchema,
   competitionsUpdateSchema,
   competitionResponse,
-  competitionsResponse
+  competitionsResponse,
+  competitionsFieldsSchema
 } from './competition';
 
 export {

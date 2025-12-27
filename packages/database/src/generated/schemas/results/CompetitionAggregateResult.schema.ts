@@ -5,7 +5,7 @@ export const CompetitionAggregateResultSchema = z.object({  _count: z.object({
     startsAt: z.number(),
     endsAt: z.number(),
     events: z.number(),
-    state: z.number(),
+    competitionAvailableStates: z.number(),
     schools: z.number(),
     students: z.number(),
     mutationIndex: z.number()

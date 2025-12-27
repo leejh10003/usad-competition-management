@@ -16,4 +16,5 @@ export const schoolSelectFieldsSchema = {
   objectiveScore: true,
   subjectiveScore: true,
   competitionId: true,
+  mutationIndex: true,
 };

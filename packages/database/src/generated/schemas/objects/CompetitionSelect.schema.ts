@@ -1,6 +1,7 @@
 import * as z from 'zod';
 import type { Prisma } from '@prisma/client';
 import { EventFindManySchema as EventFindManySchema } from '../findManyEvent.schema';
+import { CompetitionAvailableStateFindManySchema as CompetitionAvailableStateFindManySchema } from '../findManyCompetitionAvailableState.schema';
 import { SchoolFindManySchema as SchoolFindManySchema } from '../findManySchool.schema';
 import { StudentFindManySchema as StudentFindManySchema } from '../findManyStudent.schema';
 import { CompetitionCountOutputTypeArgsObjectSchema as CompetitionCountOutputTypeArgsObjectSchema } from './CompetitionCountOutputTypeArgs.schema'
@@ -11,7 +12,7 @@ const makeSchema = () => z.object({
   startsAt: z.boolean().optional(),
   endsAt: z.boolean().optional(),
   events: z.union([z.boolean(), z.lazy(() => EventFindManySchema)]).optional(),
-  state: z.boolean().optional(),
+  competitionAvailableStates: z.union([z.boolean(), z.lazy(() => CompetitionAvailableStateFindManySchema)]).optional(),
   schools: z.union([z.boolean(), z.lazy(() => SchoolFindManySchema)]).optional(),
   students: z.union([z.boolean(), z.lazy(() => StudentFindManySchema)]).optional(),
   mutationIndex: z.boolean().optional(),

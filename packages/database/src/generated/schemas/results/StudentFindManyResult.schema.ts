@@ -19,6 +19,8 @@ export const StudentFindManyResultSchema = z.object({
   guardianPhone: z.string().optional(),
   guardianEmail: z.string().optional(),
   mutationIndex: z.number().int(),
+  objectiveScore: z.number().optional(),
+  subjectiveScore: z.number().optional(),
   teamId: z.string().optional(),
   team: z.unknown().optional(),
   schoolId: z.string().optional(),

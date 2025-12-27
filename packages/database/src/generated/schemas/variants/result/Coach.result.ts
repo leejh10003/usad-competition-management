@@ -8,8 +8,6 @@ export const CoachResultSchema = z.object({
     email: z.string(),
     phone: z.string().nullable(),
     signature: z.string().nullable(),
-    objectiveScore: z.number().nullable(),
-    subjectiveScore: z.number().nullable(),
     mutationIndex: z.number().int(),
     schoolId: z.string(),
     school: z.unknown(),

@@ -12,8 +12,6 @@ const makeSchema = () => z.object({
   email: z.boolean().optional(),
   phone: z.boolean().optional(),
   signature: z.boolean().optional(),
-  objectiveScore: z.boolean().optional(),
-  subjectiveScore: z.boolean().optional(),
   mutationIndex: z.boolean().optional(),
   schoolId: z.boolean().optional(),
   school: z.union([z.boolean(), z.lazy(() => SchoolArgsObjectSchema)]).optional(),

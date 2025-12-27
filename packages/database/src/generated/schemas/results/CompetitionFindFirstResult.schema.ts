@@ -5,7 +5,7 @@ export const CompetitionFindFirstResultSchema = z.nullable(z.object({
   startsAt: z.date(),
   endsAt: z.date(),
   events: z.array(z.unknown()),
-  state: z.unknown().optional(),
+  competitionAvailableStates: z.array(z.unknown()),
   schools: z.array(z.unknown()),
   students: z.array(z.unknown()),
   mutationIndex: z.number().int()

@@ -1,0 +1,10 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { CompetitionAvailableStateOrderByWithRelationInputObjectSchema as CompetitionAvailableStateOrderByWithRelationInputObjectSchema } from './objects/CompetitionAvailableStateOrderByWithRelationInput.schema';
+import { CompetitionAvailableStateWhereInputObjectSchema as CompetitionAvailableStateWhereInputObjectSchema } from './objects/CompetitionAvailableStateWhereInput.schema';
+import { CompetitionAvailableStateWhereUniqueInputObjectSchema as CompetitionAvailableStateWhereUniqueInputObjectSchema } from './objects/CompetitionAvailableStateWhereUniqueInput.schema';
+import { CompetitionAvailableStateCountAggregateInputObjectSchema as CompetitionAvailableStateCountAggregateInputObjectSchema } from './objects/CompetitionAvailableStateCountAggregateInput.schema';
+
+export const CompetitionAvailableStateCountSchema: z.ZodType<Prisma.CompetitionAvailableStateCountArgs> = z.object({ orderBy: z.union([CompetitionAvailableStateOrderByWithRelationInputObjectSchema, CompetitionAvailableStateOrderByWithRelationInputObjectSchema.array()]).optional(), where: CompetitionAvailableStateWhereInputObjectSchema.optional(), cursor: CompetitionAvailableStateWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), CompetitionAvailableStateCountAggregateInputObjectSchema ]).optional() }).strict() as unknown as z.ZodType<Prisma.CompetitionAvailableStateCountArgs>;
+
+export const CompetitionAvailableStateCountZodSchema = z.object({ orderBy: z.union([CompetitionAvailableStateOrderByWithRelationInputObjectSchema, CompetitionAvailableStateOrderByWithRelationInputObjectSchema.array()]).optional(), where: CompetitionAvailableStateWhereInputObjectSchema.optional(), cursor: CompetitionAvailableStateWhereUniqueInputObjectSchema.optional(), take: z.number().optional(), skip: z.number().optional(), select: z.union([ z.literal(true), CompetitionAvailableStateCountAggregateInputObjectSchema ]).optional() }).strict();

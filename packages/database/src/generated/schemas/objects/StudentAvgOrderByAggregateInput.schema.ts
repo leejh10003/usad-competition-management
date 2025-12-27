@@ -4,7 +4,9 @@ import { SortOrderSchema } from '../enums/SortOrder.schema'
 
 const makeSchema = () => z.object({
   gpa: SortOrderSchema.optional(),
-  mutationIndex: SortOrderSchema.optional()
+  mutationIndex: SortOrderSchema.optional(),
+  objectiveScore: SortOrderSchema.optional(),
+  subjectiveScore: SortOrderSchema.optional()
 }).strict();
 export const StudentAvgOrderByAggregateInputObjectSchema: z.ZodType<Prisma.StudentAvgOrderByAggregateInput> = makeSchema() as unknown as z.ZodType<Prisma.StudentAvgOrderByAggregateInput>;
 export const StudentAvgOrderByAggregateInputObjectZodSchema = makeSchema();

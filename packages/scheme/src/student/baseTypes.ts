@@ -8,6 +8,8 @@ export const optionalInfosCommon = z.object({
   teamId: z.uuid().nullable().optional(),
   signature: z.string().nullable().optional(),
   attachmentOnRegistering: z.string().nullable().optional(),
+  objectiveScore: z.float32().nullable().optional(),
+  subjectiveScore: z.float32().nullable().optional(),
 });
 
 export const insertStudentWithSchoolId = z.object({

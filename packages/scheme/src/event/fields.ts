@@ -4,4 +4,5 @@ export const eventSelectFieldsSchema = {
   startsAt: true,
   endsAt: true,
   competitionId: true,
+  mutationIndex: true,
 };

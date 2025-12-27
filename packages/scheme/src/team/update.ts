@@ -7,7 +7,9 @@ export const schoolRelationshipByIdUpdate = z.object({
 
 export const teamUpdateItemSchema = optionalInfos.extend(
   schoolRelationshipByIdUpdate.def.shape,
-);
+).extend({
+  mutationIndex: z.int()
+});
 
 export const teamUpdateSchema = z.object({
   id: z.uuid(),

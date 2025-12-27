@@ -1,5 +1,4 @@
 import * as z from 'zod';
-import { StateSchema } from '../../enums/State.schema';
 // prettier-ignore
 export const CompetitionInputSchema = z.object({
     id: z.string(),
@@ -7,7 +6,7 @@ export const CompetitionInputSchema = z.object({
     startsAt: z.date(),
     endsAt: z.date(),
     events: z.array(z.unknown()),
-    state: StateSchema.optional().nullable(),
+    competitionAvailableStates: z.array(z.unknown()),
     schools: z.array(z.unknown()),
     students: z.array(z.unknown()),
     mutationIndex: z.number().int()

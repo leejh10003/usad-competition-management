@@ -87,6 +87,9 @@ model School {
   phone          String?
   principalName  String? @map("principal_name")
   principalEmail String? @map("principal_email")
+  objectiveScore  Float?  @map("objective_score")
+  subjectiveScore Float?  @map("subjective_score")
+
 
   // Primary Coach (1:1)
   primaryCoachId String? @unique @map("primary_coach_id") @db.Uuid
@@ -164,8 +167,6 @@ model Coach {
   // R2 Object Key (Check-in signature)
   signature String?
 
-  objectiveScore  Float?  @map("objective_score")
-  subjectiveScore Float?  @map("subjective_score")
   mutationIndex Int @map("mutation_index")
 
   // Relations
@@ -213,6 +214,8 @@ model Student {
   guardianPhone     String? @map("guardian_phone")
   guardianEmail     String? @map("guardian_email")
   mutationIndex Int @map("mutation_index")
+  objectiveScore  Float?  @map("objective_score")
+  subjectiveScore Float?  @map("subjective_score")
 
   // Relations
   teamId String? @map("team_id") @db.Uuid

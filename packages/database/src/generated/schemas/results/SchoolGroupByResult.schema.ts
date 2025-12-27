@@ -10,6 +10,8 @@ export const SchoolGroupByResultSchema = z.array(z.object({
   phone: z.string(),
   principalName: z.string(),
   principalEmail: z.string(),
+  objectiveScore: z.number(),
+  subjectiveScore: z.number(),
   primaryCoachId: z.string(),
   emailDomain: z.string(),
   division: z.number().int(),
@@ -27,6 +29,8 @@ export const SchoolGroupByResultSchema = z.array(z.object({
     phone: z.number(),
     principalName: z.number(),
     principalEmail: z.number(),
+    objectiveScore: z.number(),
+    subjectiveScore: z.number(),
     primaryCoachId: z.number(),
     primaryCoach: z.number(),
     emailDomain: z.number(),
@@ -39,10 +43,14 @@ export const SchoolGroupByResultSchema = z.array(z.object({
     students: z.number()
   }).optional(),
   _sum: z.object({
+    objectiveScore: z.number().nullable(),
+    subjectiveScore: z.number().nullable(),
     division: z.number().nullable(),
     mutationIndex: z.number().nullable()
   }).nullable().optional(),
   _avg: z.object({
+    objectiveScore: z.number().nullable(),
+    subjectiveScore: z.number().nullable(),
     division: z.number().nullable(),
     mutationIndex: z.number().nullable()
   }).nullable().optional(),
@@ -56,6 +64,8 @@ export const SchoolGroupByResultSchema = z.array(z.object({
     phone: z.string().nullable(),
     principalName: z.string().nullable(),
     principalEmail: z.string().nullable(),
+    objectiveScore: z.number().nullable(),
+    subjectiveScore: z.number().nullable(),
     primaryCoachId: z.string().nullable(),
     emailDomain: z.string().nullable(),
     division: z.number().int().nullable(),
@@ -72,6 +82,8 @@ export const SchoolGroupByResultSchema = z.array(z.object({
     phone: z.string().nullable(),
     principalName: z.string().nullable(),
     principalEmail: z.string().nullable(),
+    objectiveScore: z.number().nullable(),
+    subjectiveScore: z.number().nullable(),
     primaryCoachId: z.string().nullable(),
     emailDomain: z.string().nullable(),
     division: z.number().int().nullable(),

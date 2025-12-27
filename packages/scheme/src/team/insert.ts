@@ -1,10 +1,11 @@
 import { z } from "@hono/zod-openapi";
-import { optionalInfos, schoolRelationshipById } from "./baseTypes";
+import { optionalInfos, requiredBasicInfos, schoolRelationshipById } from "./baseTypes";
 import { studentsNestedInsertSchema } from "../student";
 
 export const teamInsertItem = schoolRelationshipById
   .extend(optionalInfos.def.shape)
-  .extend(studentsNestedInsertSchema.def.shape);
+  .extend(studentsNestedInsertSchema.def.shape)
+  .extend(requiredBasicInfos.def.shape);
 export const teamInsertSchema = z.object({
   team: teamInsertItem,
 });

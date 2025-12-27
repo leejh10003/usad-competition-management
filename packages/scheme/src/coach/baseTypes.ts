@@ -12,4 +12,7 @@ export const optionalInfos = z.object({
   externalCoachId: z.string().nullable().optional(),
   phone: z.string().nullable().optional(),
   signature: z.string().nullable().optional(),
+  objectiveScore: z.float32().nullable().optional(),
+  subjectiveScore: z.float32().nullable().optional(),
+  mutationIndex: z.float32().nullable().optional(),
 });

@@ -25,6 +25,8 @@ const makeSchema = () => z.object({
   guardianPhone: z.string().optional().nullable(),
   guardianEmail: z.string().optional().nullable(),
   mutationIndex: z.number().int(),
+  objectiveScore: z.number().optional().nullable(),
+  subjectiveScore: z.number().optional().nullable(),
   team: z.lazy(() => TeamCreateNestedOneWithoutStudentsInputObjectSchema).optional(),
   school: z.lazy(() => SchoolCreateNestedOneWithoutStudentsInputObjectSchema).optional(),
   competition: z.lazy(() => CompetitionCreateNestedOneWithoutStudentsInputObjectSchema).optional()

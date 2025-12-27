@@ -11,6 +11,8 @@ export const SchoolFindFirstResultSchema = z.nullable(z.object({
   phone: z.string().optional(),
   principalName: z.string().optional(),
   principalEmail: z.string().optional(),
+  objectiveScore: z.number().optional(),
+  subjectiveScore: z.number().optional(),
   primaryCoachId: z.string().optional(),
   primaryCoach: z.unknown().optional(),
   emailDomain: z.string().optional(),

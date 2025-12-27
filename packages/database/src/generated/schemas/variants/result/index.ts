@@ -9,5 +9,6 @@ export { TeamCoachRelationshipResultSchema } from './TeamCoachRelationship.resul
 export { CoachResultSchema } from './Coach.result';
 export { StudentResultSchema } from './Student.result';
 export { CompetitionResultSchema } from './Competition.result';
+export { CompetitionAvailableStateResultSchema } from './CompetitionAvailableState.result';
 export { EventResultSchema } from './Event.result';
 export { EventCheckInResultSchema } from './EventCheckIn.result';

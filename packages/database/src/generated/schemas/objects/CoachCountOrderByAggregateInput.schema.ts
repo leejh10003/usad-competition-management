@@ -10,8 +10,6 @@ const makeSchema = () => z.object({
   email: SortOrderSchema.optional(),
   phone: SortOrderSchema.optional(),
   signature: SortOrderSchema.optional(),
-  objectiveScore: SortOrderSchema.optional(),
-  subjectiveScore: SortOrderSchema.optional(),
   mutationIndex: SortOrderSchema.optional(),
   schoolId: SortOrderSchema.optional()
 }).strict();

@@ -3,6 +3,8 @@ import type { Prisma } from '@prisma/client';
 import { SortOrderSchema } from '../enums/SortOrder.schema'
 
 const makeSchema = () => z.object({
+  objectiveScore: SortOrderSchema.optional(),
+  subjectiveScore: SortOrderSchema.optional(),
   division: SortOrderSchema.optional(),
   mutationIndex: SortOrderSchema.optional()
 }).strict();

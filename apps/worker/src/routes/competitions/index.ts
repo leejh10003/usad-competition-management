@@ -1,4 +1,6 @@
 import {
+  competitionsFieldsSchema,
+  competitionsInsertSchema,
   competitionsResponse,
   competitionsUpdateSchema,
   eventSelectFieldsSchema,
@@ -86,7 +88,7 @@ competitions.openapi(
       body: {
         content: {
           "application/json": {
-            schema: competitionsUpdateSchema,
+            schema: competitionsInsertSchema,
           },
         },
       },
@@ -105,17 +107,11 @@ competitions.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { competitions } = c.req.valid("json");
-    const result = await prisma.$transaction((tx) => {
-      return Promise.all(
-        competitions.map(async ({ competition, id }) => {
-          return await tx.event.update({
-            where: { id },
-            data: competition,
-            select: eventSelectFieldsSchema,
-          });
-        })
-      );
-    });
+    const result = (await prisma.competition.createManyAndReturn({
+      data: competitions,
+      select: competitionsFieldsSchema
+    })).sort((a, b) => a.mutationIndex - b.mutationIndex);
+
     return c.json(
       { success: true, competitions: result, count: result.length },
       200

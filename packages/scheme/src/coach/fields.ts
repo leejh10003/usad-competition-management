@@ -7,4 +7,5 @@ export const coachSelectFieldsSchema = {
   email: true,
   phone: true,
   signature: true,
+  mutationIndex: true,
 };

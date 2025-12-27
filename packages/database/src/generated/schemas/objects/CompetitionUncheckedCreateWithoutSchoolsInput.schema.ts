@@ -1,7 +1,7 @@
 import * as z from 'zod';
 import type { Prisma } from '@prisma/client';
-import { StateSchema } from '../enums/State.schema';
 import { EventUncheckedCreateNestedManyWithoutCompetitionInputObjectSchema as EventUncheckedCreateNestedManyWithoutCompetitionInputObjectSchema } from './EventUncheckedCreateNestedManyWithoutCompetitionInput.schema';
+import { CompetitionAvailableStateUncheckedCreateNestedManyWithoutCompetitionInputObjectSchema as CompetitionAvailableStateUncheckedCreateNestedManyWithoutCompetitionInputObjectSchema } from './CompetitionAvailableStateUncheckedCreateNestedManyWithoutCompetitionInput.schema';
 import { StudentUncheckedCreateNestedManyWithoutCompetitionInputObjectSchema as StudentUncheckedCreateNestedManyWithoutCompetitionInputObjectSchema } from './StudentUncheckedCreateNestedManyWithoutCompetitionInput.schema'
 
 const makeSchema = () => z.object({
@@ -9,9 +9,9 @@ const makeSchema = () => z.object({
   name: z.string(),
   startsAt: z.coerce.date(),
   endsAt: z.coerce.date(),
-  state: StateSchema.optional().nullable(),
   mutationIndex: z.number().int(),
   events: z.lazy(() => EventUncheckedCreateNestedManyWithoutCompetitionInputObjectSchema).optional(),
+  competitionAvailableStates: z.lazy(() => CompetitionAvailableStateUncheckedCreateNestedManyWithoutCompetitionInputObjectSchema).optional(),
   students: z.lazy(() => StudentUncheckedCreateNestedManyWithoutCompetitionInputObjectSchema).optional()
 }).strict();
 export const CompetitionUncheckedCreateWithoutSchoolsInputObjectSchema: z.ZodType<Prisma.CompetitionUncheckedCreateWithoutSchoolsInput> = makeSchema() as unknown as z.ZodType<Prisma.CompetitionUncheckedCreateWithoutSchoolsInput>;

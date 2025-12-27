@@ -4,4 +4,5 @@ export const requiredInfos = z.object({
   startsAt: z.date(),
   endsAt: z.date(),
   competitionId: z.uuid(),
+  mutationIndex: z.int()
 });

@@ -13,6 +13,8 @@ export const SchoolInputSchema = z.object({
     phone: z.string().optional().nullable(),
     principalName: z.string().optional().nullable(),
     principalEmail: z.string().optional().nullable(),
+    objectiveScore: z.number().optional().nullable(),
+    subjectiveScore: z.number().optional().nullable(),
     primaryCoachId: z.string().optional().nullable(),
     primaryCoach: z.unknown().optional().nullable(),
     emailDomain: z.string().optional().nullable(),

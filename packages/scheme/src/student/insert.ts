@@ -6,6 +6,7 @@ const basicStudentInsert = z.object({
   lastName: z.string(),
   firstName: z.string(),
   division,
+  mutationIndex: z.int()
 });
 
 export const studentInsertItem = basicStudentInsert.and(optionalInfos);

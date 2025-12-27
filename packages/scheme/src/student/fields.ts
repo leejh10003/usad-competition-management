@@ -18,4 +18,6 @@ export const studentSelectFieldsSchema = {
   guardianEmail: true,
   attachmentOnRegistering: true,
   competitionId: true,
+  objectiveScore: true,
+  subjectiveScore: true,
 };

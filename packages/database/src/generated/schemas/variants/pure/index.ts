@@ -9,5 +9,6 @@ export { TeamCoachRelationshipModelSchema } from './TeamCoachRelationship.pure';
 export { CoachModelSchema } from './Coach.pure';
 export { StudentModelSchema } from './Student.pure';
 export { CompetitionModelSchema } from './Competition.pure';
+export { CompetitionAvailableStateModelSchema } from './CompetitionAvailableState.pure';
 export { EventModelSchema } from './Event.pure';
 export { EventCheckInModelSchema } from './EventCheckIn.pure';

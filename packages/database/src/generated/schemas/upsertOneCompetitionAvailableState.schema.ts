@@ -1,0 +1,13 @@
+import type { Prisma } from '@prisma/client';
+import * as z from 'zod';
+import { CompetitionAvailableStateSelectObjectSchema as CompetitionAvailableStateSelectObjectSchema } from './objects/CompetitionAvailableStateSelect.schema';
+import { CompetitionAvailableStateIncludeObjectSchema as CompetitionAvailableStateIncludeObjectSchema } from './objects/CompetitionAvailableStateInclude.schema';
+import { CompetitionAvailableStateWhereUniqueInputObjectSchema as CompetitionAvailableStateWhereUniqueInputObjectSchema } from './objects/CompetitionAvailableStateWhereUniqueInput.schema';
+import { CompetitionAvailableStateCreateInputObjectSchema as CompetitionAvailableStateCreateInputObjectSchema } from './objects/CompetitionAvailableStateCreateInput.schema';
+import { CompetitionAvailableStateUncheckedCreateInputObjectSchema as CompetitionAvailableStateUncheckedCreateInputObjectSchema } from './objects/CompetitionAvailableStateUncheckedCreateInput.schema';
+import { CompetitionAvailableStateUpdateInputObjectSchema as CompetitionAvailableStateUpdateInputObjectSchema } from './objects/CompetitionAvailableStateUpdateInput.schema';
+import { CompetitionAvailableStateUncheckedUpdateInputObjectSchema as CompetitionAvailableStateUncheckedUpdateInputObjectSchema } from './objects/CompetitionAvailableStateUncheckedUpdateInput.schema';
+
+export const CompetitionAvailableStateUpsertOneSchema: z.ZodType<Prisma.CompetitionAvailableStateUpsertArgs> = z.object({ select: CompetitionAvailableStateSelectObjectSchema.optional(), include: CompetitionAvailableStateIncludeObjectSchema.optional(), where: CompetitionAvailableStateWhereUniqueInputObjectSchema, create: z.union([ CompetitionAvailableStateCreateInputObjectSchema, CompetitionAvailableStateUncheckedCreateInputObjectSchema ]), update: z.union([ CompetitionAvailableStateUpdateInputObjectSchema, CompetitionAvailableStateUncheckedUpdateInputObjectSchema ]) }).strict() as unknown as z.ZodType<Prisma.CompetitionAvailableStateUpsertArgs>;
+
+export const CompetitionAvailableStateUpsertOneZodSchema = z.object({ select: CompetitionAvailableStateSelectObjectSchema.optional(), include: CompetitionAvailableStateIncludeObjectSchema.optional(), where: CompetitionAvailableStateWhereUniqueInputObjectSchema, create: z.union([ CompetitionAvailableStateCreateInputObjectSchema, CompetitionAvailableStateUncheckedCreateInputObjectSchema ]), update: z.union([ CompetitionAvailableStateUpdateInputObjectSchema, CompetitionAvailableStateUncheckedUpdateInputObjectSchema ]) }).strict();

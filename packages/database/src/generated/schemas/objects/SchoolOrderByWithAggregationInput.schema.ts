@@ -20,6 +20,8 @@ const makeSchema = () => z.object({
   phone: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   principalName: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   principalEmail: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  objectiveScore: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  subjectiveScore: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   primaryCoachId: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   emailDomain: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   division: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),

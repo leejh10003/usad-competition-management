@@ -13,6 +13,8 @@ export const SchoolResultSchema = z.object({
     phone: z.string().nullable(),
     principalName: z.string().nullable(),
     principalEmail: z.string().nullable(),
+    objectiveScore: z.number().nullable(),
+    subjectiveScore: z.number().nullable(),
     primaryCoachId: z.string().nullable(),
     primaryCoach: z.unknown().nullable(),
     emailDomain: z.string().nullable(),

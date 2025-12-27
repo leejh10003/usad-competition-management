@@ -13,8 +13,6 @@ const makeSchema = () => z.object({
   email: SortOrderSchema.optional(),
   phone: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   signature: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
-  objectiveScore: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
-  subjectiveScore: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   mutationIndex: SortOrderSchema.optional(),
   schoolId: SortOrderSchema.optional(),
   school: z.lazy(() => SchoolOrderByWithRelationInputObjectSchema).optional(),

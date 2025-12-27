@@ -1,7 +1,8 @@
-export const schoolSelectFieldsSchema = {
+export const competitionsFieldsSchema = {
   id: true,
   name: true,
   startsAt: true,
   endsAt: true,
-  state: true,
+  events: true,
+  mutationIndex: true,
 };

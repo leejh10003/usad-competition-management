@@ -5,6 +5,10 @@ export const schoolRelationshipById = z.object({
   schoolId: z.uuid(),
 });
 
+export const requiredBasicInfos = z.object({
+  mutationIndex: z.int(),
+});
+
 export const optionalInfos = z.object({
   externalTeamId: z.string().nullable().optional(),
   division: teamDivisionEnums.nullable().optional(),

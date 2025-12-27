@@ -27,7 +27,9 @@ const makeSchema = () => z.object({
   guardianLastName: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   guardianPhone: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   guardianEmail: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  mutationIndex: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional()
+  mutationIndex: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional(),
+  objectiveScore: z.union([z.number(), z.lazy(() => NullableFloatFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  subjectiveScore: z.union([z.number(), z.lazy(() => NullableFloatFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
 }).strict();
 export const StudentUpdateManyMutationInputObjectSchema: z.ZodType<Prisma.StudentUpdateManyMutationInput> = makeSchema() as unknown as z.ZodType<Prisma.StudentUpdateManyMutationInput>;
 export const StudentUpdateManyMutationInputObjectZodSchema = makeSchema();

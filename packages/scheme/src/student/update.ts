@@ -7,6 +7,7 @@ const basicStudentUpdate = z.object({
   firstName: z.string().optional(),
   externalStudentId: z.string().optional(),
   division: division.optional(),
+  mutationIndex: z.int(),
 });
 
 export const studentUpdateItem = basicStudentUpdate.or(insertStudentWithSchoolId).or(insertStudentWithIndividualAddress).or(optionalInfosCommon);

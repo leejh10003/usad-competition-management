@@ -21,6 +21,8 @@ const makeSchema = () => z.object({
   guardianPhone: z.literal(true).optional(),
   guardianEmail: z.literal(true).optional(),
   mutationIndex: z.literal(true).optional(),
+  objectiveScore: z.literal(true).optional(),
+  subjectiveScore: z.literal(true).optional(),
   teamId: z.literal(true).optional(),
   schoolId: z.literal(true).optional(),
   competitionId: z.literal(true).optional(),

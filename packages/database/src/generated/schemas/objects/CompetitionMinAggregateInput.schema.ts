@@ -7,7 +7,6 @@ const makeSchema = () => z.object({
   name: z.literal(true).optional(),
   startsAt: z.literal(true).optional(),
   endsAt: z.literal(true).optional(),
-  state: z.literal(true).optional(),
   mutationIndex: z.literal(true).optional()
 }).strict();
 export const CompetitionMinAggregateInputObjectSchema: z.ZodType<Prisma.CompetitionMinAggregateInputType> = makeSchema() as unknown as z.ZodType<Prisma.CompetitionMinAggregateInputType>;

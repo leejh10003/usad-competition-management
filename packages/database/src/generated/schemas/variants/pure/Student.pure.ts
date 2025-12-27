@@ -21,6 +21,8 @@ export const StudentModelSchema = z.object({
     guardianPhone: z.string().nullable(),
     guardianEmail: z.string().nullable(),
     mutationIndex: z.number().int(),
+    objectiveScore: z.number().nullable(),
+    subjectiveScore: z.number().nullable(),
     teamId: z.string().nullable(),
     team: z.unknown().nullable(),
     schoolId: z.string().nullable(),

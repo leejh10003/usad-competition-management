@@ -17,6 +17,8 @@ const makeSchema = () => z.object({
   phone: z.string().optional().nullable(),
   principalName: z.string().optional().nullable(),
   principalEmail: z.string().optional().nullable(),
+  objectiveScore: z.number().optional().nullable(),
+  subjectiveScore: z.number().optional().nullable(),
   emailDomain: z.string().optional().nullable(),
   division: z.number().int().optional().nullable(),
   competitionId: z.string(),

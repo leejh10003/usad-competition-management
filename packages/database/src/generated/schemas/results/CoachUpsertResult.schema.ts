@@ -7,8 +7,6 @@ export const CoachUpsertResultSchema = z.object({
   email: z.string(),
   phone: z.string().optional(),
   signature: z.string().optional(),
-  objectiveScore: z.number().optional(),
-  subjectiveScore: z.number().optional(),
   mutationIndex: z.number().int(),
   schoolId: z.string(),
   school: z.unknown(),
