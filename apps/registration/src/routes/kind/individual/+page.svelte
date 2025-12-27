@@ -3,6 +3,7 @@
 	import { resolve } from '$app/paths';
 	import { division, stateEnums } from 'usad-scheme';
 	import type z from 'zod';
+	import { imask } from '@imask/svelte';
 	import _ from 'lodash';
 	import StateDropdown from '$lib/components/states.svelte';
 	import {
@@ -17,6 +18,10 @@
 	import type { FileUploadState } from '$lib/enums/file';
 	import { storage } from '$lib/utils/store.svelte';
 
+	const maskOptions = {
+		mask: Number,
+		thousandsSeperator: ','
+	};
 	var streetAddress = $state<string>();
 	var city = $state<string>();
 	var zipCode = $state<string>();
@@ -32,7 +37,7 @@
 	var fileState = $state<FileUploadState>('none');
 	var objectiveScore = $state<number>();
 	var subjectiveScore = $state<number>();
-	var totalScore = $derived((objectiveScore ?? 0) + (subjectiveScore ?? 0));
+	var totalScore = $derived(((objectiveScore ?? 0) + (subjectiveScore ?? 0)).toLocaleString());
 	var streetAddressInvalid = $state(false);
 	var cityInvalid = $state(false);
 	var stateInputInvalid = $state(false);
@@ -69,8 +74,38 @@
 
 <div class="w-full h-full justify-center items-center content-center">
 	<form class="space-y-4 p-4 max-w-md m-auto">
+		<h1 class="h1 text-center">Individual</h1>
 		<fieldset class="space-y-4">
 			<!-- Input -->
+
+			<label class="label">
+				<span class="label-text"
+					>First Name<span class={`text-red-500 ${firstNameInvalid ? 'visible' : 'hidden'}`}
+						>&nbsp;&nbsp;First name is invalid</span
+					></span
+				>
+				<input
+					required
+					class="input flex-5"
+					type="text"
+					placeholder="First name..."
+					bind:value={firstName}
+				/>
+			</label>
+			<label class="label">
+				<span class="label-text"
+					>Last Name<span class={`text-red-500 ${lastNameInvalid ? 'visible' : 'hidden'}`}
+						>&nbsp;&nbsp;Check the zipcode format</span
+					></span
+				>
+				<input
+					required
+					class="input flex-5"
+					type="text"
+					placeholder="Last name..."
+					bind:value={lastName}
+				/>
+			</label>
 			<label class="label">
 				<span class="label-text"
 					>Street address<span class={`text-red-500 ${streetAddressInvalid ? 'visible' : 'hidden'}`}
@@ -116,35 +151,6 @@
 					bind:value={zipCode}
 				/>
 			</label>
-
-			<label class="label">
-				<span class="label-text"
-					>First Name<span class={`text-red-500 ${firstNameInvalid ? 'visible' : 'hidden'}`}
-						>&nbsp;&nbsp;First name is invalid</span
-					></span
-				>
-				<input
-					required
-					class="input flex-5"
-					type="text"
-					placeholder="First name..."
-					bind:value={firstName}
-				/>
-			</label>
-			<label class="label">
-				<span class="label-text"
-					>Last Name<span class={`text-red-500 ${lastNameInvalid ? 'visible' : 'hidden'}`}
-						>&nbsp;&nbsp;Check the zipcode format</span
-					></span
-				>
-				<input
-					required
-					class="input flex-5"
-					type="text"
-					placeholder="Last name..."
-					bind:value={lastName}
-				/>
-			</label>
 			<label class="label">
 				<span class="label-text"
 					>GPA<span class={`text-red-500 ${gpaInvalid ? 'visible' : 'hidden'}`}
@@ -172,9 +178,9 @@
 				>
 				<select required class="select" bind:value={group}>
 					<option disabled selected value> -- Select an option -- </option>
-					<option value="H">Honors</option>
-					<option value="S">Scholastic</option>
-					<option value="V">Varsity</option>
+					<option value="H">Honors (3.80 - 4.00)</option>
+					<option value="S">Scholastic (3.20 - 3.799)</option>
+					<option value="V">Varsity (0.00 - 3.199)</option>
 				</select>
 			</label>
 			<label class="label">
@@ -187,12 +193,20 @@
 				<input
 					required
 					class="input"
-					onkeypress={disableNonNumeric}
-					onchange={(e) => onScoreChange(e as unknown as InputEvent, { score: objectiveScore })}
-					type="number"
-					step="0.1"
+					use:imask={{
+						mask: Number,
+						thousandsSeparator: ',',
+						scale: 2,
+						radix: '.',
+						padFractionalZeros: true,
+						normalizeZeros: true,
+						lazy: false,
+					}}
+					onaccept={({detail: maskRef}) => {
+						objectiveScore = parseFloat(maskRef.value.replaceAll(',', ''));
+					}}
+					value={objectiveScore}
 					placeholder="Objective Score..."
-					bind:value={objectiveScore}
 				/>
 			</label>
 			<label class="label">
@@ -205,12 +219,20 @@
 				<input
 					required
 					class="input"
-					onkeypress={disableNonNumeric}
-					onchange={(e) => onScoreChange(e as unknown as InputEvent, { score: subjectiveScore })}
-					type="number"
-					step="0.1"
+					use:imask={{
+						mask: Number,
+						thousandsSeparator: ',',
+						scale: 2,
+						radix: '.',
+						padFractionalZeros: true,
+						normalizeZeros: true,
+						lazy: false,
+					}}
+					onaccept={({detail: maskRef}) => {
+						subjectiveScore = parseFloat(maskRef.value.replaceAll(',', ''));
+					}}
+					value={subjectiveScore}
 					placeholder="Subjective Score..."
-					bind:value={subjectiveScore}
 				/>
 			</label>
 			<label class="label">
@@ -218,8 +240,6 @@
 				<input
 					disabled
 					class="input"
-					type="number"
-					step="0.1"
 					placeholder="Total Score..."
 					bind:value={totalScore}
 				/>

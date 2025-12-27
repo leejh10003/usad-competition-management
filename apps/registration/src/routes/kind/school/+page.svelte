@@ -12,6 +12,7 @@
 	import StateDropdown from '$lib/components/states.svelte';
 	import { validateZipCode, onScoreChange, disableNonNumeric } from '$lib/utils/validation';
 	import { storage } from '$lib/utils/store.svelte';
+	import { imask } from '@imask/svelte';
 	type SchoolType = Omit<z.infer<typeof schoolInsertSchema>['school'], 'isVirtual' | 'emailDomain'>;
 	type Division = z.infer<typeof division>;
 	var school = $state<SchoolType>({
@@ -102,23 +103,24 @@
 
 <div class="w-full h-full">
 	<form class="space-y-8 p-4 flex flex-col">
+		<h1 class="h1 text-center">Team</h1>
 		<div class="grid space-y-2">
 			<label class="label grid">
-				<span class="label-text">School name</span>
-				<input class="input" type="text" placeholder="School name..." bind:value={school.name} />
+				<span class="label-text">School Name</span>
+				<input class="input" type="text" placeholder="School Name..." bind:value={school.name} />
 			</label>
 			<label class="label grid">
-				<span class="label-text">School street address</span>
+				<span class="label-text">School Street Address</span>
 				<input
 					class="input"
 					type="text"
-					placeholder="School street address..."
+					placeholder="School Street Address..."
 					bind:value={school.streetAddress}
 				/>
 			</label>
 			<label class="label grid">
-				<span class="label-text">School city</span>
-				<input class="input" type="text" placeholder="School city..." bind:value={school.city} />
+				<span class="label-text">School City</span>
+				<input class="input" type="text" placeholder="School City..." bind:value={school.city} />
 			</label>
 			<label class="label grid">
 				<span class="label-text">School State</span>
@@ -126,44 +128,44 @@
 				<!--<input class="input" type="text" placeholder="School state..." bind:value={school.state}/>-->
 			</label>
 			<label class="label grid">
-				<span class="label-text">School zip code</span>
+				<span class="label-text">School Zip Code</span>
 				<input
 					class="input"
 					type="text"
 					maxlength="5"
 					pattern="[0-9]*"
 					onkeypress={(e) => validateZipCode(e as unknown as KeyboardEvent)}
-					placeholder="Zip code..."
+					placeholder="Zip Code..."
 					bind:value={school.zipCode}
 				/>
 			</label>
 			<label class="label grid">
 				<span class="label-text"
-					>School phone number (Numbers only, do not use ‘-’, format ##########)</span
+					>School Phone Number (Numbers only, do not use ‘-’, format ##########)</span
 				>
 				<input
 					class="input"
 					type="text"
-					placeholder="Phone number..."
+					placeholder="Phone Number..."
 					pattern="[0-9]*"
 					bind:value={school.phone}
 				/>
 			</label>
 			<label class="label grid">
-				<span class="label-text">School principal name</span>
+				<span class="label-text">School Principal Name</span>
 				<input
 					class="input"
 					type="text"
-					placeholder="Principal name..."
+					placeholder="Principal Name..."
 					bind:value={school.principalName}
 				/>
 			</label>
 			<label class="label grid">
-				<span class="label-text">School principal email</span>
+				<span class="label-text">School Principal Email</span>
 				<input
 					class="input"
 					type="text"
-					placeholder="Principal email..."
+					placeholder="Principal Email..."
 					bind:value={school.principalEmail}
 				/>
 			</label>
@@ -186,35 +188,6 @@
 		</div>
 		<h2 class="h2">Teams</h2>
 		{#each school.teams as team, i (i)}
-			<div class="flex flex-row space-x-1.5 items-center">
-				<input
-					class="input flex-3"
-					onkeypress={disableNonNumeric}
-					onchange={(e) =>
-						onScoreChange(e as unknown as InputEvent, { score: team.objectiveScore })}
-					type="number"
-					inputmode="numeric"
-					pattern="[0-9.]*"
-					step="0.1"
-					placeholder="Objective Score..."
-					bind:value={team.objectiveScore}
-				/>
-				<input
-					class="input flex-3"
-					onkeypress={disableNonNumeric}
-					onchange={(e) =>
-						onScoreChange(e as unknown as InputEvent, { score: team.subjectiveScore })}
-					type="number"
-					inputmode="numeric"
-					pattern="[0-9.]*"
-					step="0.1"
-					placeholder="Subjective Score..."
-					bind:value={team.subjectiveScore}
-				/>
-				<div class="flex-1 text-end">
-					Total score: {(team.objectiveScore ?? 0) + (team.subjectiveScore ?? 0)}
-				</div>
-			</div>
 			{@const honors = team.students.filter(({ division }) => division === 'H')}
 			{@const scholastic = team.students.filter(({ division }) => division === 'S')}
 			{@const varsity = team.students.filter(({ division }) => division === 'V')}
@@ -243,6 +216,45 @@
 						{/each}
 					</Listbox.Content>
 				</Listbox>
+				<div class="flex flex-row space-x-1.5 items-center">
+					<input
+						class="input flex-3"
+						use:imask={{
+							mask: Number,
+							thousandsSeparator: ',',
+							scale: 2,
+							radix: '.',
+							padFractionalZeros: true,
+							normalizeZeros: true,
+							lazy: false,
+						}}
+						onaccept={({detail: maskRef}) => {
+							team.objectiveScore = parseFloat(maskRef.value.replaceAll(',', ''));
+						}}
+						value={team.objectiveScore}
+						placeholder="Objective Score..."
+					/>
+					<input
+						class="input flex-3"
+						use:imask={{
+							mask: Number,
+							thousandsSeparator: ',',
+							scale: 2,
+							radix: '.',
+							padFractionalZeros: true,
+							normalizeZeros: true,
+							lazy: false,
+						}}
+						onaccept={({detail: maskRef}) => {
+							team.subjectiveScore = parseFloat(maskRef.value.replaceAll(',', ''));
+						}}
+						value={team.subjectiveScore}
+						placeholder="Subjective Score..."
+					/>
+					<div class="flex-1 text-end">
+						Total score: {((team.objectiveScore ?? 0) + (team.subjectiveScore ?? 0)).toLocaleString()}
+					</div>
+				</div>
 				<h4 class="h4">Honors</h4>
 				{/*eslint-disable-next-line @typescript-eslint/no-unused-vars*/ null}
 				{#each honors as _, j (j)}
