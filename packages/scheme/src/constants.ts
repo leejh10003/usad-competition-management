@@ -66,7 +66,11 @@ const stateEnums = z.enum({
   'Washington': 'WA',
   'West Virginia': 'WV',
   'Wisconsin': 'WI',
-  'Wyoming': 'WY' 
+  'Wyoming': 'WY',
+  'Armed Forces America': 'AA',
+  'Armed Forces Europe': 'AE',
+  'Armed Forces Pacific': 'AP',
+  'District of Columbia': 'DC',
 });
 const sortEnums = z.enum(["asc", "desc"]);
 export { division, divisionEnums, schoolDivisionEnums, teamDivisionEnums, stateEnums, sortEnums };

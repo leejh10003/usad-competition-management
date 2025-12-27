@@ -20,4 +20,5 @@ export const studentSelectFieldsSchema = {
   competitionId: true,
   objectiveScore: true,
   subjectiveScore: true,
+  mutationIndex: true,
 };

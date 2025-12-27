@@ -14,5 +14,5 @@ export const competitionUpdateSchema = z.object({
   competition: requiredInfosOptional,
 });
 export const competitionsUpdateSchema = z.object({
-  competitions: z.array(requiredInfosOptional),
+  competitions: z.array(competitionUpdateSchema),
 });
