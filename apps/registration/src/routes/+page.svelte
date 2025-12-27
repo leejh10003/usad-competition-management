@@ -8,7 +8,7 @@
 
 <div class="flex grow flex-col">
 	<div class="m-auto flex flex-col items-center text-center">
-		<h1 class="h1 font-semibold">From which state are you from?</h1>
+		<h1 class="h1 font-semibold">Select a State</h1>
 		<br />
         <StateDropdown placeholder="Select State..." />
         <br />

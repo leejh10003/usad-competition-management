@@ -4,6 +4,8 @@
 </script>
 
 <div class="flex grow flex-col">
+	<div class="flex-1"></div>
+	<div class="flex flex-row">
 	<div class="m-auto flex flex-col items-center text-center">
 		<h1 class="h1 font-semibold">Register a Team</h1>
 		<br />
@@ -12,7 +14,8 @@
 			class="btn preset-filled-primary-500 btn-lg"
 			onclick={() => goto(resolve('/kind/school'))}>Team</button
 		>
-		<br />
+	</div>
+	<div class="m-auto flex flex-col items-center text-center">
 		<h1 class="h1 font-semibold">Register as an Individual</h1>
 		<br />
 		<button
@@ -20,13 +23,15 @@
 			class="btn preset-filled-primary-500 btn-lg"
 			onclick={() => goto(resolve('/kind/individual'))}>Individual</button
 		>
-		<br />
-		<h1 class="h1 font-semibold">Go back to choose state</h1>
-		<br />
+	</div>
+	</div>
+	<div class="h-24"></div>
+	<div class="flex flex-col items-center text-center">
 		<button
 			type="button"
 			class="btn preset-filled-primary-500 btn-lg"
 			onclick={() => goto(resolve('/'))}>Back</button
 		>
 	</div>
+	<div class="flex-1"></div>
 </div>
