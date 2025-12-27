@@ -11,13 +11,17 @@ enum Division {
 }
 
 enum State {
+  AA
+  AE
   AL
   AK
+  AP
   AZ
   AR
   CA
   CO
   CT
+  DC
   DE
   FL
   GA
@@ -240,15 +244,22 @@ model Competition {
   startsAt DateTime @map("starts_at") @db.Timestamptz(3)
   endsAt   DateTime @map("ends_at") @db.Timestamptz(3)
   events   Event[] @relation("CompetitionOfEvent")
-  state    State?
+  competitionAvailableStates CompetitionAvailableState[] @relation("CompetitionOfCompetitionAvailableState")
   schools  School[] @relation("CompetitionOfSchool")
   students Student[] @relation("CompetitionOfStudent")
   mutationIndex Int @map("mutation_index")
   @@index([startsAt])
   @@index([endsAt])
   @@index([name])
-  @@index([state])
   @@map("competitions")
+}
+
+model CompetitionAvailableState {
+  competitionId String @map("Competition") @db.Uuid
+  state         State
+  competition   Competition @relation("CompetitionOfCompetitionAvailableState", fields: [competitionId], references: [id])
+  @@id([competitionId, state])
+  @@map ("competition_available_states")
 }
 
 model Event {

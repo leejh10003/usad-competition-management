@@ -1,0 +1,5 @@
+-- AlterEnum
+ALTER TYPE "State" ADD VALUE 'AA';
+ALTER TYPE "State" ADD VALUE 'AE';
+ALTER TYPE "State" ADD VALUE 'AP';
+ALTER TYPE "State" ADD VALUE 'DC';
