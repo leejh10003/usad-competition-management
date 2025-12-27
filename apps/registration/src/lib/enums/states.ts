@@ -6,6 +6,7 @@ const states = [
 	{ original: 'California', shorthand: 'CA' },
 	{ original: 'Colorado', shorthand: 'CO' },
 	{ original: 'Connecticut', shorthand: 'CT' },
+	{ original: 'District of Columbia', shorthand: 'DC'},
 	{ original: 'Delaware', shorthand: 'DE' },
 	{ original: 'Florida', shorthand: 'FL' },
 	{ original: 'Georgia', shorthand: 'GA' },
@@ -48,7 +49,10 @@ const states = [
 	{ original: 'Washington', shorthand: 'WA' },
 	{ original: 'West Virginia', shorthand: 'WV' },
 	{ original: 'Wisconsin', shorthand: 'WI' },
-	{ original: 'Wyoming', shorthand: 'WY' }
+	{ original: 'Wyoming', shorthand: 'WY' },
+	{ original: 'Armed Forces America', shorthand: 'AA'},
+	{ original: 'Armed Forces Europe', shorthand: 'AE'},
+	{ original: 'Armed Forces Pacific', shorthand: 'AP'},
 ];
 
 export { states };
