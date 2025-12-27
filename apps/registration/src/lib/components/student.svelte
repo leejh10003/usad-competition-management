@@ -36,7 +36,10 @@
 		max="4.5"
 		bind:value={student.gpa}
 	/>
-	<FileUpload class="w-fit h-min" onFileAccept={console.log}>
+	<FileUpload
+		maxFiles={1}
+		accept={['application/pdf']}
+		class="w-fit h-min" onFileAccept={console.log}>
 		<FileUpload.Trigger class="btn-sm btn-icon"><FileIcon /></FileUpload.Trigger>
 		<FileUpload.HiddenInput />
 	</FileUpload>
