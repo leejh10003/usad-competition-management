@@ -1,55 +1,33 @@
 import { z } from "@hono/zod-openapi";
-import {
-  teamInsertSchema,
-  teamResponseItemSchema,
-  teamSelectFieldsSchema,
-  teamsInsertSchema,
-} from "usad-scheme";
-import _ from "lodash";
-import { TransactionSessionType, TransactionContextType } from "./index";
-import { insertStudents } from "./student";
-import { teamInsertItem, teamNestedInsertItem, teamsNestedInsertSchema } from "usad-scheme/src/team";
+import { insertStudents, TransactionSessionType } from ".";
+import { teamSelectFieldsSchema, teamsInsertSchema } from 'usad-scheme';
+import { omit } from 'lodash';
+type TeamInsertItem = z.infer<typeof teamsInsertSchema>['teams'][number]
 
-function guranteeRelationship(team: z.infer<typeof teamInsertItem> | z.infer<typeof teamNestedInsertItem>, context: TransactionContextType){
-  if (!_.get(team as z.infer<typeof teamInsertItem>, 'schoolId') && !context.schoolId) {
-    throw new Error("Relationships needed for team is not provided");
-  }
-  const schoolId = (team as z.infer<typeof teamInsertItem>).schoolId ?? context.schoolId!;
-  return {
-    ..._.omit(team, "students"),
-    schoolId
-  }
-}
-
-export async function insertTeam(
-  teamInput: z.infer<typeof teamInsertSchema> | { team: z.infer<typeof teamNestedInsertItem>},
-  tx: TransactionSessionType,
-  context: TransactionContextType
-): Promise<z.infer<typeof teamResponseItemSchema>> {
-  const team = await tx.team.create({
-    data: guranteeRelationship(teamInput.team, context),
+export async function insertTeams(tx: TransactionSessionType, teams: TeamInsertItem[]){
+  const insertTeams = teams.map((team, i) => omit({
+    ...team,
+    mutationIndex: i
+  }, 'students'));
+  const teamsInserted = (await tx.team.createManyAndReturn({
+    data: insertTeams,
     select: teamSelectFieldsSchema,
-  }) as z.infer<typeof teamResponseItemSchema>;
-  const teamId = team.id;
-  if (!context.schoolId) {
-    context.schoolId = team.schoolId;
-  }
-  const newContext = _.cloneDeep(context);
-  newContext.teamId = teamId;
-  if (teamInput.team.students) {
-    await insertStudents({ students: teamInput.team.students }, tx, newContext);
-  }
-  return team;
-}
-
-export async function insertTeams(
-  teamsInput: z.infer<typeof teamsInsertSchema> | z.infer<typeof teamsNestedInsertSchema>,
-  tx: TransactionSessionType,
-  context: TransactionContextType
-): Promise<Array<z.infer<typeof teamResponseItemSchema>>> {
-  return await Promise.all(
-    teamsInput.teams.map(
-      async (team) => await insertTeam({ team }, tx, context)
-    )
-  );
+  })).sort((a, b) => a.mutationIndex - b.mutationIndex);
+  const teamStudentsIndex: number[] = [0];
+  const studentsTeamIdAdded = teams.map((team, i) => {
+    teamStudentsIndex.push(teamStudentsIndex[i] + team.students.length);
+    return team.students.map((student) => ({
+      ...student,
+      teamId: teamsInserted[i].id
+    }))
+  }).reduce((prev, current) => [...prev, ...current], []).map((s, i) => ({
+    ...s,
+    mutationIndex: i
+  }));
+  const studentsCreated = await insertStudents(tx, studentsTeamIdAdded);
+  const returnTeams = teamsInserted.map((t, i) => ({
+    ...t,
+    students: studentsCreated.slice(teamStudentsIndex[i], teamStudentsIndex[i+1])
+  }));
+  return returnTeams;
 }
