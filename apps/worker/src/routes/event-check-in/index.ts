@@ -59,16 +59,10 @@ eventCheckIns.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { events } = c.req.valid("json");
-    const result = await prisma.$transaction((tx) =>
-      Promise.all(
-        events.map((event) =>
-          tx.eventCheckIn.create({
-            data: event,
-            select: eventCheckInSelectFieldsSchema,
-          })
-        )
-      )
-    );
+    const result = (await prisma.eventCheckIn.createManyAndReturn({
+      data: events,
+      select: eventCheckInSelectFieldsSchema
+    })).sort((a, b) => a.mutationIndex - b.mutationIndex);
     return c.json({ success: true, eventCheckIns: result!, count: result.length }, 200);
   }
 );

@@ -6,9 +6,10 @@ import {
   teamQuerySchema,
   teamsUpdateSchema,
   teamUpdateSchema,
+  studentSelectFieldsSchema,
 } from "usad-scheme";
 import { id } from "./:id";
-import { insertTeams } from "../../mutation";
+import {omit} from 'lodash';
 const teams = new OpenAPIHono();
 export function updateTeam(team: z.infer<typeof teamUpdateSchema>["team"]) {
   return {
@@ -80,9 +81,24 @@ teams.openapi(
   async (c) => {
     const { teams } = c.req.valid("json");
     const prisma = c.get("prisma");
-    const result = await prisma.$transaction(
-      async (tx) => await insertTeams({ teams }, tx, {})
-    );
+    const result = await prisma.$transaction(async (tx) => {
+      const transactionResult = (await tx.team.createManyAndReturn({
+        data: teams.map((team) => omit(team, 'students')),
+        select: teamSelectFieldsSchema
+      })).sort((a, b) => a.mutationIndex - b.mutationIndex) as (z.infer<typeof teamsResponseSchema>['teams'][number])[];
+      const studentsConverted = teams.map((e, i) => e.students.map((s) => ({
+        ...s,
+        teamId: transactionResult[i].id
+      }))).reduce((prev, current) => [...prev, ...current], []).map((e, i) => ({
+        ...e,
+        mutationIndex: i
+      }))
+      await tx.student.createManyAndReturn({
+        data: studentsConverted,
+        select: studentSelectFieldsSchema,
+      });
+      return transactionResult;
+    });
     return c.json({ success: true, teams: result, count: result.length }, 200);
   }
 );

@@ -8,7 +8,6 @@ import {
   coachesResponseSchema,
 } from "usad-scheme";
 import { id } from "./:id";
-import { insertCoaches } from "../../mutation";
 
 // --- 🧑‍🏫 코치 (Coaches) 관련 엔드포인트 ---
 const coaches = new OpenAPIHono();
@@ -133,9 +132,10 @@ coaches.openapi(
   async (c) => {
     const { coaches } = c.req.valid("json");
     const prisma = c.get("prisma");
-    const result = await prisma.$transaction(
-      async (tx) => await insertCoaches({ coaches }, tx)
-    );
+    const result = (await prisma.coach.createManyAndReturn({
+      data: coaches,
+      select: coachSelectFieldsSchema,
+    })).sort((a, b) => a.mutationIndex - b.mutationIndex);
     return c.json({ success: true, coaches: result, count: result.length }, 200);
   }
 );

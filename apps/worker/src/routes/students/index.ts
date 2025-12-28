@@ -10,7 +10,6 @@ import {
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { id } from "./:id";
 import _ from "lodash";
-import { insertStudents } from "../../mutation";
 const students = new OpenAPIHono();
 students.openapi(
   {
@@ -92,9 +91,10 @@ students.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { students } = c.req.valid("json");
-    const result = await prisma.$transaction(
-      async (tx) => await insertStudents({ students }, tx, {})
-    );
+    const result = (await prisma.student.createManyAndReturn({
+      data: students,
+      select: studentSelectFieldsSchema,
+    })).sort((a, b) => a.mutationIndex - b.mutationIndex);
     return c.json({ success: true, students: result }, 200);
   }
 );

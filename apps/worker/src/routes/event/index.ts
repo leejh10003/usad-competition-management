@@ -116,16 +116,10 @@ events.openapi(
       data: events,
       select: eventSelectFieldsSchema,
     });*/
-    const result = await prisma.$transaction((tx) =>
-      Promise.all(
-        events.map((event) =>
-          tx.event.create({
-            data: event,
-            select: eventSelectFieldsSchema,
-          })
-        )
-      )
-    );
+    const result = (await prisma.event.createManyAndReturn({
+      data: events,
+      select: eventSelectFieldsSchema
+    })).sort((a, b) => a.mutationIndex - b.mutationIndex);
     return c.json({ success: true, events: result, count: result.length }, 200);
   }
 );
