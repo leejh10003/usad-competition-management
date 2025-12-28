@@ -1,4 +1,5 @@
 import {
+  competitionQuerySchema,
   competitionsFieldsSchema,
   competitionsInsertSchema,
   competitionsResponse,
@@ -14,6 +15,9 @@ competitions.openapi(
   {
     method: "get",
     path: "",
+    request: {
+      query: competitionQuerySchema
+    },
     responses: {
       200: {
         content: {
@@ -27,8 +31,13 @@ competitions.openapi(
   },
   async (c) => {
     const prisma = c.get("prisma");
+    const { take, orderBy, where, skip } = c.req.valid('query');
     const result = await prisma.competition.findMany({
       select: competitionsFieldsSchema,
+      take,
+      orderBy,
+      where,
+      skip,
     }); //TODO: Change to competition
     const count = await prisma.event.count(); //TODO: Change to competition
     return c.json({ success: true, competitions: result, count }, 200); //TODO: Add offset, limit

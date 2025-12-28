@@ -3,6 +3,7 @@ import { eventCheckIn } from "./:id";
 import {
   eventCheckedInsInsert,
   eventCheckedInsResponseSchema,
+  eventCheckInQuerySchema,
   eventCheckInSelectFieldsSchema,
 } from "usad-scheme";
 
@@ -12,6 +13,9 @@ eventCheckIns.openapi(
   {
     method: "get",
     path: "",
+    request: {
+      query: eventCheckInQuerySchema
+    },
     responses: {
       200: {
         content: {
@@ -25,8 +29,13 @@ eventCheckIns.openapi(
   },
   async (c) => {
     const prisma = c.get("prisma");
+    const { take, skip, where, orderBy } = c.req.valid('query');
     const result = await prisma.eventCheckIn.findMany({
       select: eventCheckInSelectFieldsSchema,
+      take,
+      skip,
+      where,
+      orderBy,
     });
     const count = await prisma.eventCheckIn.count(); //TODO
     return c.json({ success: true, eventCheckIns: result, count }, 200);

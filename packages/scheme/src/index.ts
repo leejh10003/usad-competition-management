@@ -98,6 +98,7 @@ export {
   eventUpdateItemSchema,
   eventUpdateSchema,
   eventsUpdateSchema,
+  eventQuerySchema,
 } from "./event";
 
 export {
@@ -107,6 +108,7 @@ export {
   eventCheckedInsResponseSchema,
   eventCheckedInInsert,
   eventCheckedInsInsert,
+  eventCheckInQuerySchema,
 } from "./event-check-in";
 
 export { fileUploadingFormSchema, fileUploadingResponseSchema } from "./file";
@@ -120,7 +122,8 @@ export {
   competitionsUpdateSchema,
   competitionResponse,
   competitionsResponse,
-  competitionsFieldsSchema
+  competitionsFieldsSchema,
+  competitionQuerySchema,
 } from './competition';
 
 export {

@@ -104,9 +104,9 @@ schools.openapi(
     const prisma = c.get("prisma");
     const { schools } = c.req.valid("json");
     const result = await prisma.$transaction(
-      async (tx) => await insertSchools({ schools }, tx)
+      async (tx) => await insertSchools(tx, schools)
     );
-    return c.json({ success: true, schools: result, count: result.length }, 200);
+    return c.json({ success: true, schools: result, count: result.length } as z.infer<typeof schoolsResponse>, 200);
   }
 );
 schools.openapi(

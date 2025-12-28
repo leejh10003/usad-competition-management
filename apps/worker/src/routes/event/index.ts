@@ -6,6 +6,7 @@ import {
   eventsResponseSchema,
   eventsUpdateSchema,
   eventSelectFieldsSchema,
+  eventQuerySchema,
 } from "usad-scheme";
 import { eventsItem } from "./:id";
 
@@ -21,6 +22,9 @@ events.openapi(
   {
     method: "get",
     path: "",
+    request: {
+      query: eventQuerySchema,
+    },
     responses: {
       200: {
         content: {
@@ -34,8 +38,13 @@ events.openapi(
   },
   async (c) => {
     const prisma = c.get("prisma");
+    const { take, skip, where, orderBy } = c.req.valid("query");
     const result = await prisma.event.findMany({
       select: eventSelectFieldsSchema,
+      take,
+      skip,
+      where,
+      orderBy,
     });
     const count = await prisma.event.count(); //TODO
     return c.json({ success: true, events: result, count }, 200); //TODO: Add offset, limit
@@ -82,7 +91,10 @@ events.openapi(
         )
       )
     );
-    return c.json({ success: true, events: result!, count: result.length }, 200);
+    return c.json(
+      { success: true, events: result!, count: result.length },
+      200
+    );
   }
 );
 events.openapi(
@@ -116,10 +128,12 @@ events.openapi(
       data: events,
       select: eventSelectFieldsSchema,
     });*/
-    const result = (await prisma.event.createManyAndReturn({
-      data: events,
-      select: eventSelectFieldsSchema
-    })).sort((a, b) => a.mutationIndex - b.mutationIndex);
+    const result = (
+      await prisma.event.createManyAndReturn({
+        data: events,
+        select: eventSelectFieldsSchema,
+      })
+    ).sort((a, b) => a.mutationIndex - b.mutationIndex);
     return c.json({ success: true, events: result, count: result.length }, 200);
   }
 );
