@@ -26,47 +26,47 @@ class WorkerRequest {
 	readonly coachTeamMappings = Enumerable.from<CoachTeamMappintItem>([
 		{
 			coachId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
-			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
 		},
 		{
 			coachId: 'aacee28b-6040-4ba7-b2a1-cee3f2068c2a',
-			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
 		},
 		{
 			coachId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
-			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4'
+			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
 		},
 		{
 			coachId: '2e577ebb-3ed4-4a5d-b96f-38aba22472e1',
-			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4'
+			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
 		},
 		{
 			coachId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
-			teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31'
+			teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
 		},
 		{
 			coachId: '3e70e81f-f5e1-4212-ba37-1c38e50bb866',
-			teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31'
+			teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
 		},
 		{
 			coachId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
-			teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8'
+			teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
 		},
 		{
 			coachId: '1cf17dd3-77c8-493b-93d7-1d26d289a416',
-			teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8'
+			teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
 		},
 		{
 			coachId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
-			teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081'
+			teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
 		},
 		{
 			coachId: '1e0c58f4-12bf-48a2-959d-f806f5d07104',
-			teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081'
+			teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
 		},
 		{
 			coachId: '01651989-32f4-49a9-962d-742f47b3b0cb',
-			teamId: '01651989-32f4-49a9-962d-742f47b3b0cb'
+			teamId: '01651989-32f4-49a9-962d-742f47b3b0cb',
 		},
 		{
 			coachId: 'bf2e8b11-c9c7-4eab-9923-7245e47565fd',
@@ -89,6 +89,7 @@ class WorkerRequest {
             principalName: 'Liam Carter',
             principalEmail: 'carter.liam@gmail.com',
             division: 1,
+			mutationIndex: 0,
 		},
 		{
 			id: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
@@ -105,6 +106,7 @@ class WorkerRequest {
             principalName: 'Emma Brooks',
             principalEmail: 'brooks.emma@gmail.com',
             division: 2,
+			mutationIndex: 1,
 		},
 		{
 			id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
@@ -121,6 +123,7 @@ class WorkerRequest {
             principalName: 'Noah Foster',
             principalEmail: 'foster.noah@gmail.com',
             division: 3,
+			mutationIndex: 2,
 		},
 		{
 			id: 'c3611b9f-b416-48af-9347-95c48ed060a8',
@@ -137,6 +140,7 @@ class WorkerRequest {
             principalName: 'Olivia Price',
             principalEmail: 'price.olivia@gmail.com',
             division: 4,
+			mutationIndex: 3,
 		},
 		{
 			id: '21c95b7f-47d0-487b-99c1-bf93ee719081',
@@ -153,6 +157,7 @@ class WorkerRequest {
             principalName: 'Mason Butler',
             principalEmail: 'butler.mason@gmail.com',
             division: 5,
+			mutationIndex: 4,
 		},
 		{
 			id: '01651989-32f4-49a9-962d-742f47b3b0cb',
@@ -169,6 +174,7 @@ class WorkerRequest {
             principalName: 'Sophia Simmons',
             principalEmail: 'simmons.sophia@gmail.com',
             division: 1,
+			mutationIndex: 5,
 		}
 	]);
 	readonly competitions = Enumerable.from([
@@ -186,7 +192,7 @@ class WorkerRequest {
 			externalTeamId: '101',
 			division: 1,
 			objectiveScore: 85,
-			subjectiveScore: 90
+			subjectiveScore: 90,
 		},
 		{
 			id: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
@@ -194,7 +200,7 @@ class WorkerRequest {
 			externalTeamId: '111',
 			division: 2,
 			objectiveScore: 88,
-			subjectiveScore: 92
+			subjectiveScore: 92,
 		},
 		{
 			id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
@@ -202,7 +208,7 @@ class WorkerRequest {
 			externalTeamId: '121',
 			division: 1,
 			objectiveScore: 90,
-			subjectiveScore: 85
+			subjectiveScore: 85,
 		},
 		{
 			id: 'c3611b9f-b416-48af-9347-95c48ed060a8',
@@ -210,7 +216,7 @@ class WorkerRequest {
 			externalTeamId: '131',
 			division: 2,
 			objectiveScore: 87,
-			subjectiveScore: 89
+			subjectiveScore: 89,
 		},
 		{
 			id: '21c95b7f-47d0-487b-99c1-bf93ee719081',
@@ -218,7 +224,7 @@ class WorkerRequest {
 			externalTeamId: '141',
 			division: 1,
 			objectiveScore: 92,
-			subjectiveScore: 91
+			subjectiveScore: 91,
 		},
 		{
 			id: '01651989-32f4-49a9-962d-742f47b3b0cb',
@@ -247,7 +253,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1011',
 			firstName: 'Lucille',
-			lastName: 'Mock'
+			lastName: 'Mock',
+			mutationIndex: 0,
 		},
 		{
 			id: 'aacee28b-6040-4ba7-b2a1-cee3f2068c2a',
@@ -266,7 +273,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1012',
 			firstName: 'Marissa',
-			lastName: 'Guo'
+			lastName: 'Guo',
+			mutationIndex: 1,
 		},
 		{
 			id: '49476cc2-048f-4d16-bf98-b9b87aa50077',
@@ -285,7 +293,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1013',
 			firstName: 'Shelby',
-			lastName: 'Aust'
+			lastName: 'Aust',
+			mutationIndex: 2,
 		},
 		{
 			id: '080bce17-748b-402e-b44b-e1629a3782af',
@@ -304,7 +313,8 @@ class WorkerRequest {
 			gpa: 3.4,
 			externalStudentId: '1014',
 			firstName: 'JT',
-			lastName: 'Hare'
+			lastName: 'Hare',
+			mutationIndex: 3,
 		},
 		{
 			id: '2cd17e6f-a3d4-4a2a-9bb5-e8da24d733c3',
@@ -323,7 +333,8 @@ class WorkerRequest {
 			gpa: 3.4,
 			externalStudentId: '1015',
 			firstName: 'Reyhan',
-			lastName: 'Ramrakhyani'
+			lastName: 'Ramrakhyani',
+			mutationIndex: 4,
 		},
 		{
 			id: 'ff465620-e097-4f80-8da6-ab846ee0938e',
@@ -342,7 +353,8 @@ class WorkerRequest {
 			gpa: 3.4,
 			externalStudentId: '1016',
 			firstName: 'Lia',
-			lastName: 'Ha'
+			lastName: 'Ha',
+			mutationIndex: 5,
 		},
 		{
 			id: '825d4d26-405a-48b7-87a3-1093323d9b24',
@@ -361,7 +373,8 @@ class WorkerRequest {
 			gpa: 2.8,
 			externalStudentId: '1017',
 			firstName: 'Nathan',
-			lastName: 'Frost'
+			lastName: 'Frost',
+			mutationIndex: 6,
 		},
 		{
 			id: '6b1ceadc-d7a1-457d-8e89-6cf99dd320ff',
@@ -380,7 +393,8 @@ class WorkerRequest {
 			gpa: 2.8,
 			externalStudentId: '1018',
 			firstName: 'Gavin',
-			lastName: 'Fox'
+			lastName: 'Fox',
+			mutationIndex: 7,
 		},
 		{
 			id: 'de63cd76-05e1-4633-a81b-dcb635fbab4f',
@@ -399,7 +413,8 @@ class WorkerRequest {
 			gpa: 2.8,
 			externalStudentId: '1019',
 			firstName: 'Yuliya',
-			lastName: 'Gorbunova'
+			lastName: 'Gorbunova',
+			mutationIndex: 8,
 		},
 		{
 			id: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
@@ -418,7 +433,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1111',
 			firstName: 'Luke',
-			lastName: "O'Brien"
+			lastName: "O'Brien",
+			mutationIndex: 9,
 		},
 		{
 			id: '2e577ebb-3ed4-4a5d-b96f-38aba22472e1',
@@ -437,7 +453,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1112',
 			firstName: 'Caleb',
-			lastName: 'Olson'
+			lastName: 'Olson',
+			mutationIndex: 10,
 		},
 		{
 			id: '292b4a8f-b675-4459-9761-1c729b6e364a',
@@ -456,7 +473,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1113',
 			firstName: 'Kylie',
-			lastName: 'Weaver'
+			lastName: 'Weaver',
+			mutationIndex: 11,
 		},
 		{
 			id: '51998bc9-c126-4ead-90c4-4551a0abf76b',
@@ -475,7 +493,8 @@ class WorkerRequest {
 			gpa: 3.4,
 			externalStudentId: '1114',
 			firstName: 'Rowan',
-			lastName: 'LeFevre'
+			lastName: 'LeFevre',
+			mutationIndex: 12,
 		},
 		{
 			id: '16b4468a-5f27-4b17-98cf-9b94524b425d',
@@ -494,7 +513,8 @@ class WorkerRequest {
 			gpa: 3.4,
 			externalStudentId: '1115',
 			firstName: 'Austin',
-			lastName: 'Strong'
+			lastName: 'Strong',
+			mutationIndex: 13,
 		},
 		{
 			id: '9d18ea73-5e14-453c-9f5a-02489cd8299e',
@@ -513,7 +533,8 @@ class WorkerRequest {
 			gpa: 3.4,
 			externalStudentId: '1116',
 			firstName: 'Heidi',
-			lastName: 'Curtis'
+			lastName: 'Curtis',
+			mutationIndex: 14,
 		},
 		{
 			id: '76264e0b-e6d9-4d92-ab3d-9bdf67aa3e54',
@@ -532,7 +553,8 @@ class WorkerRequest {
 			gpa: 2.8,
 			externalStudentId: '1117',
 			firstName: 'Gabriel',
-			lastName: 'Gois'
+			lastName: 'Gois',
+			mutationIndex: 15,
 		},
 		{
 			id: '7c5591ff-2b19-4e05-98d8-22f88524dd88',
@@ -551,7 +573,8 @@ class WorkerRequest {
 			gpa: 2.8,
 			externalStudentId: '1118',
 			firstName: 'Maddy',
-			lastName: 'Inman'
+			lastName: 'Inman',
+			mutationIndex: 16,
 		},
 		{
 			id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
@@ -570,7 +593,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1211',
 			firstName: 'Aariyaka',
-			lastName: 'Jain'
+			lastName: 'Jain',
+			mutationIndex: 17,
 		},
 		{
 			id: '3e70e81f-f5e1-4212-ba37-1c38e50bb866',
@@ -589,7 +613,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1212',
 			firstName: 'Riley',
-			lastName: 'Delorey'
+			lastName: 'Delorey',
+			mutationIndex: 18,
 		},
 		{
 			id: '11a4fa9b-3820-4c1e-8196-053f60b72d68',
@@ -608,7 +633,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1213',
 			firstName: 'Ethan',
-			lastName: 'Chaing'
+			lastName: 'Chaing',
+			mutationIndex: 19,
 		},
 		{
 			id: '72739130-5a04-47c3-b0bd-76147de59a5d',
@@ -627,7 +653,8 @@ class WorkerRequest {
 			gpa: 3.4,
 			externalStudentId: '1214',
 			firstName: 'Ocean',
-			lastName: 'Hauke'
+			lastName: 'Hauke',
+			mutationIndex: 20,
 		},
 		{
 			id: '75e36127-d814-4340-a3bd-91f8ae890f6e',
@@ -646,7 +673,8 @@ class WorkerRequest {
 			gpa: 3.4,
 			externalStudentId: '1215',
 			firstName: 'Conor',
-			lastName: 'Long'
+			lastName: 'Long',
+			mutationIndex: 21,
 		},
 		{
 			id: 'c3611b9f-b416-48af-9347-95c48ed060a8',
@@ -665,7 +693,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1311',
 			firstName: 'Raya',
-			lastName: 'Waldron'
+			lastName: 'Waldron',
+			mutationIndex: 22,
 		},
 		{
 			id: '1cf17dd3-77c8-493b-93d7-1d26d289a416',
@@ -684,7 +713,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1312',
 			firstName: 'Dylan',
-			lastName: 'Portugal'
+			lastName: 'Portugal',
+			mutationIndex: 23,
 		},
 		{
 			id: '9a75d5b3-2df2-4939-9626-23bbdeb117d9',
@@ -703,7 +733,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1313',
 			firstName: 'Gregory',
-			lastName: 'DeFauw'
+			lastName: 'DeFauw',
+			mutationIndex: 24,
 		},
 		{
 			id: '5bc3db05-28e8-4516-82af-09f2fcb1b29b',
@@ -722,7 +753,8 @@ class WorkerRequest {
 			gpa: 3.4,
 			externalStudentId: '1314',
 			firstName: 'Tyler',
-			lastName: 'Bettner'
+			lastName: 'Bettner',
+			mutationIndex: 25,
 		},
 		{
 			id: '8588bd34-d0cc-420b-b599-92c7edbbcb95',
@@ -741,7 +773,8 @@ class WorkerRequest {
 			gpa: 3.4,
 			externalStudentId: '1315',
 			firstName: 'AJ',
-			lastName: 'Morris'
+			lastName: 'Morris',
+			mutationIndex: 26,
 		},
 		{
 			id: '21c95b7f-47d0-487b-99c1-bf93ee719081',
@@ -760,7 +793,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1411',
 			firstName: 'Ishaan',
-			lastName: 'Deshpande'
+			lastName: 'Deshpande',
+			mutationIndex: 27,
 		},
 		{
 			id: 'bf2e8b11-c9c7-4eab-9923-7245e47565fd',
@@ -779,7 +813,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1412',
 			firstName: 'Charles',
-			lastName: 'Watts'
+			lastName: 'Watts',
+			mutationIndex: 28,
 		},
 		{
 			id: '8cfde76f-be5d-4262-806b-a0d5ef7c55cc',
@@ -798,7 +833,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1413',
 			firstName: 'Frederick',
-			lastName: 'Sh'
+			lastName: 'Sh',
+			mutationIndex: 29,
 		},
 		{
 			id: '01651989-32f4-49a9-962d-742f47b3b0cb',
@@ -817,7 +853,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1511',
 			firstName: 'Thomas',
-			lastName: 'Bender'
+			lastName: 'Bender',
+			mutationIndex: 30,
 		},
 		{
 			id: '1e0c58f4-12bf-48a2-959d-f806f5d07104',
@@ -836,7 +873,8 @@ class WorkerRequest {
 			gpa: 3.9,
 			externalStudentId: '1512',
 			firstName: 'Ryan',
-			lastName: 'Waldro'
+			lastName: 'Waldro',
+			mutationIndex: 31,
 		}
 	]);
 	readonly events = Enumerable.from<EventResponseItem>([
@@ -845,7 +883,8 @@ class WorkerRequest {
 			id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
 			name: 'Physics',
 			startsAt: new Date(),
-			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			mutationIndex: 32,
 		}
 	]);
 	readonly coaches = Enumerable.from<CoachResponseItem>([
@@ -856,7 +895,8 @@ class WorkerRequest {
 			id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
 			lastName: 'Doe',
 			phone: '5551234567',
-			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			mutationIndex: 33,
 		},
 		{
 			externalCoachId: '1012',
@@ -865,7 +905,8 @@ class WorkerRequest {
 			id: 'aacee28b-6040-4ba7-b2a1-cee3f2068c2a',
 			lastName: 'Doe',
 			phone: '5554974267',
-			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
+			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			mutationIndex: 34,
 		},
 		{
 			externalCoachId: '1111',
@@ -874,7 +915,8 @@ class WorkerRequest {
 			id: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
 			lastName: 'Que',
 			phone: '5559876543',
-			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4'
+			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			mutationIndex: 35,
 		},
 		{
 			externalCoachId: '1112',
@@ -883,7 +925,8 @@ class WorkerRequest {
 			id: '2e577ebb-3ed4-4a5d-b96f-38aba22472e1',
 			lastName: 'Rionel',
 			phone: '5555647382',
-			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4'
+			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			mutationIndex: 36,
 		},
 		{
 			externalCoachId: '1211',
@@ -892,7 +935,8 @@ class WorkerRequest {
 			id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
 			lastName: 'Qubic',
 			phone: '5550192837',
-			schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31'
+			schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			mutationIndex: 37,
 		},
 		{
 			externalCoachId: '1212',
@@ -901,7 +945,8 @@ class WorkerRequest {
 			id: '3e70e81f-f5e1-4212-ba37-1c38e50bb866',
 			lastName: 'Tonal',
 			phone: '5555647382',
-			schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31'
+			schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			mutationIndex: 38,
 		},
 		{
 			externalCoachId: '1311',
@@ -910,7 +955,8 @@ class WorkerRequest {
 			id: 'c3611b9f-b416-48af-9347-95c48ed060a8',
 			lastName: 'Tonal',
 			phone: '5550192837',
-			schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8'
+			schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			mutationIndex: 39,
 		},
 		{
 			externalCoachId: '1312',
@@ -919,7 +965,8 @@ class WorkerRequest {
 			id: '1cf17dd3-77c8-493b-93d7-1d26d289a416',
 			lastName: 'Tracy',
 			phone: '5555647382',
-			schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8'
+			schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			mutationIndex: 40,
 		},
 		{
 			externalCoachId: '1411',
@@ -928,7 +975,8 @@ class WorkerRequest {
 			id: '21c95b7f-47d0-487b-99c1-bf93ee719081',
 			lastName: 'Trudy',
 			phone: '5550192837',
-			schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081'
+			schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			mutationIndex: 41,
 		},
 		{
 			externalCoachId: '1412',
@@ -937,7 +985,8 @@ class WorkerRequest {
 			id: '1e0c58f4-12bf-48a2-959d-f806f5d07104',
 			lastName: 'Grason',
 			phone: '5552472670',
-			schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081'
+			schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			mutationIndex: 42,
 		},
 		{
 			externalCoachId: '1511',
@@ -946,7 +995,8 @@ class WorkerRequest {
 			id: '01651989-32f4-49a9-962d-742f47b3b0cb',
 			lastName: 'Guman',
 			phone: '5553519422',
-			schoolId: '01651989-32f4-49a9-962d-742f47b3b0cb'
+			schoolId: '01651989-32f4-49a9-962d-742f47b3b0cb',
+			mutationIndex: 43,
 		},
 		{
 			externalCoachId: '1512',
@@ -955,7 +1005,8 @@ class WorkerRequest {
 			id: 'bf2e8b11-c9c7-4eab-9923-7245e47565fd',
 			lastName: 'Cook',
 			phone: '3627252128',
-			schoolId: '01651989-32f4-49a9-962d-742f47b3b0cb'
+			schoolId: '01651989-32f4-49a9-962d-742f47b3b0cb',
+			mutationIndex: 44,
 		}
 	]);
 	async _mockDelay() {
