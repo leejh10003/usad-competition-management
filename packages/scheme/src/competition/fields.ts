@@ -5,4 +5,5 @@ export const competitionsFieldsSchema = {
   endsAt: true,
   events: true,
   mutationIndex: true,
+  competitionAvailableStates: true,
 };

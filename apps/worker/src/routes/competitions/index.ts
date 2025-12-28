@@ -3,10 +3,10 @@ import {
   competitionsInsertSchema,
   competitionsResponse,
   competitionsUpdateSchema,
-  eventSelectFieldsSchema,
 } from "usad-scheme";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { id } from "./:id";
+import { omit } from "lodash";
 
 const competitions = new OpenAPIHono();
 
@@ -27,8 +27,8 @@ competitions.openapi(
   },
   async (c) => {
     const prisma = c.get("prisma");
-    const result = await prisma.event.findMany({
-      select: eventSelectFieldsSchema,
+    const result = await prisma.competition.findMany({
+      select: competitionsFieldsSchema,
     }); //TODO: Change to competition
     const count = await prisma.event.count(); //TODO: Change to competition
     return c.json({ success: true, competitions: result, count }, 200); //TODO: Add offset, limit
@@ -65,11 +65,25 @@ competitions.openapi(
     const result = await prisma.$transaction((tx) => {
       return Promise.all(
         competitions.map(async ({ id, competition }) => {
-          return await tx.event.update({
+          const result = await tx.competition.update({
             where: { id },
-            data: competition,
-            select: eventSelectFieldsSchema,
+            data: {
+              ...omit(competition, 'competitionAvailableStates'),
+              ...(competition.competitionAvailableStates ? {competitionAvailableStates: {
+                ...(competition.competitionAvailableStates.create ? {create: competition.competitionAvailableStates.create.map((state) => ({
+                  state
+                })),} : {}),
+                ...(competition.competitionAvailableStates.delete ? {delete: competition.competitionAvailableStates.delete.map((state) => ({
+                  competitionId_state: {
+                    competitionId: id,
+                    state,
+                  },
+                })),} : {}),
+              }} : {})
+            },
+            select: competitionsFieldsSchema,
           });
+          return result;
         })
       );
     });
