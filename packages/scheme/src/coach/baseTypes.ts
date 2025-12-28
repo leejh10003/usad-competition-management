@@ -4,6 +4,7 @@ export const requiredBasicInfos = z.object({
   firstName: z.string(),
   lastName: z.string(),
   email: z.string(),
+  mutationIndex: z.int(),
 });
 export const schoolIdSchema = z.object({
   schoolId: z.uuid(),
@@ -14,5 +15,4 @@ export const optionalInfos = z.object({
   signature: z.string().nullable().optional(),
   objectiveScore: z.float32().nullable().optional(),
   subjectiveScore: z.float32().nullable().optional(),
-  mutationIndex: z.float32().nullable().optional(),
 });
