@@ -6,7 +6,7 @@
 	import { Dialog, Pagination, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _ from 'lodash';
 	import { competitionQuerySchema, competitionResponseItemSchema, stateEnums } from 'usad-scheme';
-	import { ArrowLeftIcon, ArrowRightIcon, MailIcon, XIcon } from '@lucide/svelte';
+	import { ArrowLeftIcon, ArrowRightIcon, MailIcon, XIcon, Pencil, Trash } from '@lucide/svelte';
 	import moment from 'moment-timezone';
 	import z from 'zod';
     import Editor from '$lib/components/editor.svelte';
@@ -171,6 +171,38 @@
 										</Dialog.Content>
 									</Dialog.Positioner>
 								</Portal>
+							</Dialog>
+							<Dialog>
+								<Dialog.Trigger onclick={() => console.log('Edit clicked')} class="btn preset-filled"><Pencil />Edit</Dialog.Trigger>
+								<Portal>
+									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+									<Dialog.Positioner
+										class="fixed inset-0 z-50 flex items-center justify-center p-4">
+										<Dialog.Content
+											class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {animation}"
+										>
+											<header class="flex items-center justify-between">
+												<Dialog.Title class="text-lg font-bold">Edit Competition: {name}</Dialog.Title>
+												<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+													<XIcon class="size-4" />
+												</Dialog.CloseTrigger>
+											</header>
+											<Dialog.Description>
+												<label class="label">
+													<span class="label-text">Competition Name</span>
+													<input type="text" class="input w-full" bind:value={competition.name} />
+												</label>
+											</Dialog.Description>
+											<footer class="flex justify-end gap-2">
+												<Dialog.CloseTrigger class="btn preset-filled-primary-50-950">Save</Dialog.CloseTrigger>
+												<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+											</footer>
+										</Dialog.Content>
+									</Dialog.Positioner>
+								</Portal>
+							</Dialog>
+							<Dialog>
+								<Dialog.Trigger class="btn preset-filled-danger-50-950"><Trash />Delete</Dialog.Trigger>
 							</Dialog>
 						</td>
 					</tr>
