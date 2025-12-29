@@ -5,11 +5,15 @@
 	import { page } from '$app/state';
 	import { Pagination } from '@skeletonlabs/skeleton-svelte';
 	import _ from 'lodash';
-	import { eventCheckedInItem } from 'usad-scheme';
+	import { eventCheckedInItem, eventCheckInQuerySchema, eventResponseItemSchema, studentResponseSchema } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon } from '@lucide/svelte';
 	import z from 'zod';
 	import moment from 'moment-timezone';
+	import { resolve } from '$app/paths';
+	import { workerRequest } from '$lib/api/test';
 	type EventCheckedInItem = z.infer<typeof eventCheckedInItem>;
+	type StudentResponseItem = z.infer<typeof studentResponseSchema>['student'];
+	type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
 	var limit = $state<number>(10);
@@ -18,30 +22,97 @@
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
 	var checkIns = $state<EventCheckedInItem[]>([]);
+	var students = $state<StudentResponseItem[]>([]);
+	var events = $state<EventResponseItem[]>([]);
+	var aggregated = $derived.by(() => {
+		return checkIns.map((checkIn) => {
+			const event = events.find((e) => e.id === checkIn.eventId);
+			const student = students.find((s) => s.id === checkIn.studentId);
+			return {
+				...checkIn,
+				eventName: event ? event.name : 'Unknown Event',
+				eventId: event ? event.id : 'Unknown Event',
+				studentName: student ? `${student.firstName} ${student.lastName}` : 'Unknown Student',
+				studentExternalId: student ? student.externalStudentId : 'Unknown Student',
+			};
+		});
+	});
 	var timezone = moment.tz.guess();
+	const query = $derived.by(() => page.url.searchParams);
+	function _currentParam() {
+		const limit = query.get('limit');
+		const currentPage = query.get('currentPage');
+		const params = new URLSearchParams();
+		try {
+			params.set('limit', _.parseInt(decodeURI(limit!)).toString());
+		} catch (e) {}
+		if (currentPage && decodeURI(currentPage as string).trim().length > 0) {
+			params.set('currentPage', decodeURI(currentPage as string));
+		}
+		return params;
+	}
+	const getLimit = $derived.by(() => {
+		const limit = query.get('limit');
+		const parsed = parseInt(limit ?? 'NaN');
+		return isNaN(parsed) ? 10 : parseInt(limit ?? 'NaN');
+	});
+	function setLimit(input: number) {
+		const route = page.url.pathname;
+		const params = _currentParam();
+		params.set('limit', input.toString());
+		const going = `/${route.replace(/^\//g, '')}${params.size > 0 ? `?${params.toString()}` : ''}` as Parameters<typeof resolve>[0];
+		goto(resolve(going))
+	}
+	const getCurrentPage = $derived.by(() => {
+		const currentPage = query.get('currentPage');
+		return currentPage ? parseInt(currentPage) : 1;
+	})
+	function setCurrentPage(input: number) {
+		const route = page.url.pathname;
+		const params = _currentParam();
+		params.set('currentPage', input.toString());
+		const going = `/${route.replace(/^\//g, '')}${params.size > 0 ? `?${params.toString()}` : ''}` as Parameters<typeof resolve>[0];
+		goto(resolve(going))
+	}
 	async function fetch(/*searchParams: z.infer<typeof schoolQuerySchema>*/) {
 		isLoading = true;
 		//TODO: server fetch
-		checkIns = _.range(0, 10).map((e) => ({
-			studentId: `${e}`,
-			eventId: `${e}`,
-			checkedInAt: new Date()
-		}));
+		const { result, count } = await workerRequest.getEventCheckIn({
+			take: getLimit,
+			skip: offset,
+		});
+		const { result: eventResult } = await workerRequest.getEvents({
+			where: {
+				id: {
+					in: result.map((e) => e.eventId)
+				}
+			},
+			take: getLimit
+		});
+		console.log("fetched");
+		const { result: studentResult } = await workerRequest.getStudent({
+			where: {
+				id: {
+					in: result.map((e) => e.studentId)
+				}
+			},
+			take: getLimit
+		});
+		checkIns = result;
+		events = eventResult;
+		students = studentResult;
+		total = count;
+		currentCount = result.length;
 		isLoading = false;
 	}
 	$effect(() => {
-		//let searchParams = schoolQuerySchema.safeParse(Object.fromEntries(page.url.searchParams.entries()));
-		//if (searchParams.success){
-		fetch(/*searchParams.data*/);
-		//} else {
-		//TODO:
-		//}
+		let searchParams = eventCheckInQuerySchema.safeParse(
+			Object.fromEntries(page.url.searchParams.entries())
+		);
+		if (searchParams.success) {
+			fetch();
+		}
 	});
-	/*function changeFilter() {
-		const searchParams = page.url.searchParams;
-		searchParams.set('test', 'true');
-		goto(`?${searchParams.toString()}`);
-	}*/
 </script>
 
 <div class="flex h-full w-full flex-col gap-y-3.5 p-8">
@@ -49,8 +120,8 @@
 	<table class="table">
 		<thead>
 			<tr>
-				<td>Event ID #</td>
-				<td>Student ID #</td>
+				<td>Event</td>
+				<td>Student</td>
 				<td>Checked In At</td>
 			</tr>
 		</thead>
@@ -61,15 +132,14 @@
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 					</tr>
 				{/each}
 			{:else}
-				{#each checkIns as checkIn (`${checkIn.eventId}-${checkIn.studentId}`)}
-					{@const { checkedInAt, studentId, eventId } = checkIn}
+				{#each aggregated as checkIn (`${checkIn.eventId}-${checkIn.studentId}`)}
+					{@const { checkedInAt, eventId, eventName, studentName, studentExternalId } = checkIn}
 					<tr>
-						<td>{eventId}</td>
-						<td>{studentId}</td>
+						<td>{eventName} ({eventId})</td>
+						<td>{studentName} ({studentExternalId})</td>
 						<td
 							>{!checkedInAt
 								? 'Not yet'

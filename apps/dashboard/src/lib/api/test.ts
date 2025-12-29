@@ -1082,7 +1082,7 @@ class WorkerRequest {
 		}
 	]);
 	async _mockDelay() {
-		return new Promise((resolve) => setTimeout(() => resolve(undefined), 1500));
+		return new Promise((resolve) => setTimeout(() => resolve(undefined), 500));
 	}
 	async getTeam(input: z.infer<typeof teamQuerySchema>) {
 		const { data, success } = z.safeParse(studentQuerySchema, input);
@@ -1099,11 +1099,52 @@ class WorkerRequest {
 		};
 	}
 	async getStudent(input: z.infer<typeof studentQuerySchema>) {
-		const { data, success } = z.safeParse(studentQuerySchema, input);
+		const test = ({ firstName, lastName, externalStudentId, id }: StudentResponseItem) => {
+			let result = true;
+			if (
+				input.where?.firstName &&
+				typeof input.where.firstName !== undefined &&
+				typeof input.where.firstName !== 'string' &&
+				typeof input.where.firstName.contains === 'string'
+			) {
+				result =
+					result && firstName?.toLowerCase().includes(input.where.firstName.contains.toLowerCase());
+			}
+			if (
+				input.where?.lastName &&
+				typeof input.where.lastName !== undefined &&
+				typeof input.where.lastName !== 'string' &&
+				typeof input.where.lastName.contains === 'string'
+			) {
+				result =
+					result && lastName?.toLowerCase().includes(input.where.lastName.contains.toLowerCase());
+			}
+			if (
+				input.where?.externalStudentId &&
+				typeof input.where.externalStudentId !== undefined &&
+				typeof input.where.externalStudentId !== 'string' &&
+				typeof input.where.externalStudentId.equals === 'string'
+			) {
+				result =
+					result && (externalStudentId?.toLowerCase().includes(input.where.externalStudentId.equals.toLowerCase()) ?? true);
+			}
+			if (
+				input.where?.id &&
+				typeof input.where.id !== undefined &&
+				typeof input.where.id !== 'string' &&
+				typeof input.where.id.in === 'object' &&
+				isArray(input.where.id.in)
+			) {
+				result =
+					result && (isArray(input.where.id.in) ? input.where.id.in.includes(id) : true);
+			}
+			return result;
+		};
 		const result = this.students
 			.select((e) => e)
-			.skip(data?.skip ?? 0)
-			.take(data?.take ?? 10)
+			.where(test)
+			.skip(input.skip ?? 0)
+			.take(input.take ?? 10)
 			.toArray();
 		const count = this.students.count();
 		await this._mockDelay();
@@ -1206,6 +1247,7 @@ class WorkerRequest {
 			startsAt,
 			endsAt,
 			competitionAvailableStates,
+			id
 		}: CompetitionResponseItem) => {
 			let result = true;
 			if (input.where) {
@@ -1252,6 +1294,13 @@ class WorkerRequest {
 					isArray(where.competitionAvailableStates.some?.state?.in)
 				) {
 					result = result && competitionAvailableStates.some(({state}) => (where.competitionAvailableStates!.some!.state! as {in: Array<z.infer<typeof stateEnums>>}).in.includes(state))
+				}
+				if (
+					typeof where.id === 'object' &&
+					typeof where.id.in === 'object' &&
+					isArray(where.id.in)
+				) {
+					result = result && where.id.in.includes(id);
 				}
 			}
 			return result;

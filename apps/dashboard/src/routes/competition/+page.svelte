@@ -13,7 +13,6 @@
 	import { resolve } from '$app/paths';
 	import { workerRequest } from '$lib/api/test';
 	import { states } from 'usad-enums';
-	import { competitionAvailableStates } from 'usad-scheme/src/competition';
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);

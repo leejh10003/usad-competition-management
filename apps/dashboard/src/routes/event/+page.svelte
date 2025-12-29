@@ -5,45 +5,96 @@
 	import { page } from '$app/state';
 	import { Pagination } from '@skeletonlabs/skeleton-svelte';
 	import _ from 'lodash';
-	import { eventResponseItemSchema } from 'usad-scheme';
+	import { eventQuerySchema, eventResponseItemSchema, competitionResponseItemSchema } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon } from '@lucide/svelte';
 	import moment from 'moment-timezone';
 	import z from 'zod';
+	import { resolve } from '$app/paths';
+	import { workerRequest } from '$lib/api/test';
 	type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
+	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
 	var limit = $state<number>(10);
 	var pagination = $state<number>(0);
-	var offset = $derived.by(() => pagination * limit);
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
 	var events = $state<EventResponseItem[]>([]);
+	var competitions = $state<CompetitionResponseItem[]>([]);
+	var aggregated = $derived.by(() => {
+		return events.map((event) => {
+			const competition = competitions.find((comp) => comp.id === event.competitionId);
+			return {
+				...event,
+				competitionName: competition ? competition.name : 'Unknown Competition'
+			};
+		});
+	});
 	var timezone = moment.tz.guess();
-	async function fetch(/*searchParams: z.infer<typeof schoolQuerySchema>*/) {
+	const query = $derived.by(() => page.url.searchParams);
+	function _currentParam() {
+		const limit = query.get('limit');
+		const currentPage = query.get('currentPage');
+		const params = new URLSearchParams();
+		try {
+			params.set('limit', _.parseInt(decodeURI(limit!)).toString());
+		} catch (e) {}
+		if (currentPage && decodeURI(currentPage as string).trim().length > 0) {
+			params.set('currentPage', decodeURI(currentPage as string));
+		}
+		return params;
+	}
+	const getLimit = $derived.by(() => {
+		const limit = query.get('limit');
+		const parsed = parseInt(limit ?? 'NaN');
+		return isNaN(parsed) ? 10 : parseInt(limit ?? 'NaN');
+	});
+	function setLimit(input: number) {
+		const route = page.url.pathname;
+		const params = _currentParam();
+		params.set('limit', input.toString());
+		const going = `/${route.replace(/^\//g, '')}${params.size > 0 ? `?${params.toString()}` : ''}` as Parameters<typeof resolve>[0];
+		goto(resolve(going))
+	}
+	const getCurrentPage = $derived.by(() => {
+		const currentPage = query.get('currentPage');
+		return currentPage ? parseInt(currentPage) : 1;
+	})
+	function setCurrentPage(input: number) {
+		const route = page.url.pathname;
+		const params = _currentParam();
+		params.set('currentPage', input.toString());
+		const going = `/${route.replace(/^\//g, '')}${params.size > 0 ? `?${params.toString()}` : ''}` as Parameters<typeof resolve>[0];
+		goto(resolve(going))
+	}
+	const offset = $derived.by(() => (getCurrentPage - 1) * getLimit);
+	async function fetch() {
 		isLoading = true;
-		//TODO: server fetch
-		events = _.range(0, 10).map((e) => ({
-			name: 'Midwest US Science High School',
-			startsAt: new Date(),
-			endsAt: new Date(),
-			id: `${e}`,
-			competitionId: ''
-		}));
+		const {result, count} = await workerRequest.getEvents({
+			take: getLimit,
+			skip: offset,
+		});
+		const { result: competitionResult } = await workerRequest.getCompetition({
+			where: {
+				id: {
+					in: result.map((e) => e.competitionId)
+				}
+			}
+		});
+		events = result;
+		competitions = competitionResult;
+		total = count;
+		currentCount = result.length;
 		isLoading = false;
 	}
 	$effect(() => {
-		//let searchParams = schoolQuerySchema.safeParse(Object.fromEntries(page.url.searchParams.entries()));
-		//if (searchParams.success){
-		fetch(/*searchParams.data*/);
-		//} else {
-		//    console.log('not using');
-		//}
-	});
-	/*function changeFilter() {
-		const searchParams = page.url.searchParams;
-		searchParams.set('test', 'true');
-		goto(`?${searchParams.toString()}`);
-	}*/
+		let searchParams = eventQuerySchema.safeParse(
+			Object.fromEntries(page.url.searchParams.entries())
+		);
+		if (searchParams.success) {
+			fetch();
+		}
+	})
 </script>
 
 <div class="flex h-full w-full flex-col gap-y-3.5 p-8">
@@ -53,6 +104,7 @@
 			<tr>
 				<td>Event Name</td>
 				<td>Event Date</td>
+				<td>Competition Name</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -61,11 +113,12 @@
 					<tr>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
+						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 					</tr>
 				{/each}
 			{:else}
-				{#each events as event (event.id)}
-					{@const { name, startsAt } = event}
+				{#each aggregated as event (event.id)}
+					{@const { name, startsAt, competitionName } = event}
 					<tr>
 						<td>{name}</td>
 						<td
@@ -74,15 +127,16 @@
 								.reverse()
 								.join(', ')}</td
 						>
+						<td>{competitionName}</td>
 					</tr>
 				{/each}
 			{/if}
 		</tbody>
 		<tfoot>
 			<tr>
-				<td colspan="1">Total</td>
+				<td colspan="2">Total</td>
 				{#if isFirstLoaded}
-					<td colspan="1">{offset + 1} - {offset + currentCount}/{total} Elements</td>
+					<td colspan="2">{offset + 1} - {offset + currentCount}/{total} Elements</td>
 				{:else}
 					<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 				{/if}
