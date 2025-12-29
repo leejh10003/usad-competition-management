@@ -14,7 +14,8 @@
 	import { workerRequest } from '$lib/api/test';
 	import { states } from 'usad-enums';
 	import SveltyPicker, { formatDate, parseDate } from 'svelty-picker';
-	import { en} from 'svelty-picker/i18n';
+	import { en } from 'svelty-picker/i18n';
+	import {timezoneFormatted, timezone} from '$lib/utils/time';
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	var isActionBlocked = $state<boolean>(true);
 	var isWholeLoading = $state<boolean>(true);
@@ -22,7 +23,6 @@
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
 	var competitions = $state<CompetitionResponseItem[]>([]);
-	var timezone = moment.tz.guess();
     var mailAddresses = $state<string[]>(['', '', '']);
     const animation =
 		'transition transition-discrete opacity-0 translate-y-[100px] starting:data-[state=open]:opacity-0 starting:data-[state=open]:translate-y-[100px] data-[state=open]:opacity-100 data-[state=open]:translate-y-0';
@@ -89,53 +89,77 @@
 		}
 	})
 </script>
+
 {#snippet competitionDetail(competitionId: string)}
-<Dialog.Description>
-	<label class="label">
-		<span class="label-text">Competition Name</span>
-		<input type="text" class="input w-full" bind:value={currentEdit!.name} />
-	</label>
-	<label class="label">
-		<span class="label-text">Competition Date</span>
-		<SveltyPicker
-			mode="datetime"
-			format="mm/dd/yyyy hh:ii:ss"
-			inputClasses="input w-full"
-			bind:value={
-				() => {
-					return formatDate(currentEdit!.startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
-				},
-				(v) => {
-					currentEdit!.startsAt = parseDate(v, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
-				}
-			}
-		/>
-		<div class="grid grid-flow-row grid-cols-12">
-		{#each states as state (state.shorthand)}
-			<label class="flex items-center space-x-2 col-span-4">
-				<input class="checkbox" type="checkbox" checked={!!currentEdit!.competitionAvailableStates.find(s => s.state === state.shorthand)} onchange={(e) => {
-					if (e.currentTarget.checked) {
-						currentEdit!.competitionAvailableStates.push({ state: state.shorthand as z.infer<typeof stateEnums>, competitionId: competitionId });
-					} else {
-						currentEdit!.competitionAvailableStates = currentEdit!.competitionAvailableStates.filter(s => s.state !== state.shorthand);
-					}
-				}}/>
-				<p>{state.original}</p>
-			</label>
-		{/each}
-		<label class="flex items-center space-x-2 col-span-4">
-			<input class="checkbox" type="checkbox" checked={currentEdit!.competitionAvailableStates.length === states.length} onchange={(e) => {
-				if (e.currentTarget.checked) {
-					currentEdit!.competitionAvailableStates.push(...states.map(s => ({ state: s.shorthand as z.infer<typeof stateEnums>, competitionId: competitionId })));
-				} else {
-					currentEdit!.competitionAvailableStates = [];
-				}
-			}}/>
-			<p>Toggle All</p>
+	<Dialog.Description>
+		<label class="label">
+			<span class="label-text">Competition Name</span>
+			<input type="text" class="input w-full" bind:value={currentEdit!.name} />
 		</label>
-		</div>
-	</label>
-</Dialog.Description>
+		<label class="label">
+			<span class="label-text">Competition Date</span>
+			<SveltyPicker
+				mode="datetime"
+				format="mm/dd/yyyy hh:ii:ss"
+				inputClasses="input w-full"
+				bind:value={
+					() => {
+						return formatDate(currentEdit!.startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
+					},
+					(v) => {
+						currentEdit!.startsAt = parseDate(v, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
+					}
+				}
+			/>
+			<div class="grid grid-flow-row grid-cols-12">
+				{#each states as state (state.shorthand)}
+					<label class="flex items-center space-x-2 col-span-4">
+						<input
+							class="checkbox"
+							type="checkbox"
+							checked={!!currentEdit!.competitionAvailableStates.find(
+								(s) => s.state === state.shorthand
+							)}
+							onchange={(e) => {
+								if (e.currentTarget.checked) {
+									currentEdit!.competitionAvailableStates.push({
+										state: state.shorthand as z.infer<typeof stateEnums>,
+										competitionId: competitionId
+									});
+								} else {
+									currentEdit!.competitionAvailableStates =
+										currentEdit!.competitionAvailableStates.filter(
+											(s) => s.state !== state.shorthand
+										);
+								}
+							}}
+						/>
+						<p>{state.original}</p>
+					</label>
+				{/each}
+				<label class="flex items-center space-x-2 col-span-4">
+					<input
+						class="checkbox"
+						type="checkbox"
+						checked={currentEdit!.competitionAvailableStates.length === states.length}
+						onchange={(e) => {
+							if (e.currentTarget.checked) {
+								currentEdit!.competitionAvailableStates.push(
+									...states.map((s) => ({
+										state: s.shorthand as z.infer<typeof stateEnums>,
+										competitionId: competitionId
+									}))
+								);
+							} else {
+								currentEdit!.competitionAvailableStates = [];
+							}
+						}}
+					/>
+					<p>Toggle All</p>
+				</label>
+			</div>
+		</label>
+	</Dialog.Description>
 {/snippet}
 <div class="flex h-full w-full flex-col gap-y-3.5 p-8">
 	<h1 class="h1 font-bold">Competition</h1>
@@ -148,39 +172,44 @@
 		</div>
 		<Collapsible.Content class="grid w-full grid-cols-3 gap-1">
 			<Dialog>
-				<Dialog.Trigger onclick={() => currentEdit = {
-					id: workerRequest.generateNewCompetitionId(),
-					name: '',
-					startsAt: new Date(),
-					competitionAvailableStates: [],
-					mutationIndex: 0,
-					endsAt: new Date(),
-				}} class="btn preset-filled w-min" disabled={isActionBlocked}><CalendarPlus2 /> Create Competition</Dialog.Trigger>
+				<Dialog.Trigger
+					onclick={() =>
+						(currentEdit = {
+							id: workerRequest.generateNewCompetitionId(),
+							name: '',
+							startsAt: new Date(),
+							competitionAvailableStates: [],
+							mutationIndex: 0,
+							endsAt: new Date()
+						})}
+					class="btn preset-filled w-min"
+					disabled={isActionBlocked}><CalendarPlus2 /> Create Competition</Dialog.Trigger
+				>
 				<Portal>
 					{#if currentEdit}
-					<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
-					<Dialog.Positioner
-						class="fixed inset-0 z-50 flex items-center justify-center p-4">
-						<Dialog.Content
-							class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {animation}"
-						>
-							<header class="flex items-center justify-between">
-								<Dialog.Title class="text-lg font-bold">Edit Competition: {name}</Dialog.Title>
-								<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
-									<XIcon class="size-4" />
-								</Dialog.CloseTrigger>
-							</header>
-							{@render competitionDetail(currentEdit.id)}
-							<footer class="flex justify-end gap-2">
-								<Dialog.CloseTrigger class="btn preset-filled-primary-50-950" onclick={async () => {
-									isActionBlocked = true;
-									await workerRequest.insertNewCompetition(currentEdit!);
-									await fetch();
-								}}>Save</Dialog.CloseTrigger>
-								<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
-							</footer>
-						</Dialog.Content>
-					</Dialog.Positioner>
+						<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+						<Dialog.Positioner class="fixed inset-0 z-50 flex items-center justify-center p-4">
+							<Dialog.Content class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {animation}">
+								<header class="flex items-center justify-between">
+									<Dialog.Title class="text-lg font-bold">Edit Competition: {name}</Dialog.Title>
+									<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+										<XIcon class="size-4" />
+									</Dialog.CloseTrigger>
+								</header>
+								{@render competitionDetail(currentEdit.id)}
+								<footer class="flex justify-end gap-2">
+									<Dialog.CloseTrigger
+										class="btn preset-filled-primary-50-950"
+										onclick={async () => {
+											isActionBlocked = true;
+											await workerRequest.insertNewCompetition(currentEdit!);
+											await fetch();
+										}}>Save</Dialog.CloseTrigger
+									>
+									<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+								</footer>
+							</Dialog.Content>
+						</Dialog.Positioner>
 					{/if}
 				</Portal>
 			</Dialog>
@@ -207,15 +236,12 @@
 				{/each}
 			{:else}
 				{#each competitions as competition (competition.id)}
-					{@const { name, startsAt } = competition}
+					{@const { name, startsAt, id } = competition}
 					{@const editor: {editor: Editor | undefined} = { editor: undefined } }
 					<tr>
 						<td>{name}</td>
 						<td
-							>{moment(startsAt, timezone).format('MM-DD-YYYY hh:mm:ss')} at timezone {timezone
-								.split('/')
-								.reverse()
-								.join(', ')}</td
+							>{moment(startsAt, timezone).format('MM-DD-YYYY hh:mm:ss')} at timezone {timezoneFormatted}</td
 						>
 						<td>
 							{competition.competitionAvailableStates.length > states.length / 2
@@ -232,7 +258,9 @@
 													.join(', ')}`
 											: ''
 									}`
-								: competition.competitionAvailableStates.map(({ state }) => states.find(s => s.shorthand === state)?.shorthand).join(', ')}
+								: competition.competitionAvailableStates
+										.map(({ state }) => states.find((s) => s.shorthand === state)?.shorthand)
+										.join(', ')}
 						</td>
 						<td>
 							<Dialog
@@ -240,7 +268,9 @@
 									console.log('open', open);
 								}}
 							>
-								<Dialog.Trigger class="btn preset-filled" disabled={isActionBlocked}><MailIcon />Send Mails</Dialog.Trigger>
+								<Dialog.Trigger class="btn preset-filled" disabled={isActionBlocked}
+									><MailIcon />Send Mails</Dialog.Trigger
+								>
 								<Portal>
 									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
 									<Dialog.Positioner
@@ -275,37 +305,85 @@
 								</Portal>
 							</Dialog>
 							<Dialog>
-								<Dialog.Trigger onclick={() => currentEdit = cloneDeep(competition)} class="btn preset-filled" disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger>
+								<Dialog.Trigger
+									onclick={() => (currentEdit = cloneDeep(competition))}
+									class="btn preset-filled"
+									disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger
+								>
 								<Portal>
 									{#if currentEdit}
-									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
-									<Dialog.Positioner
-										class="fixed inset-0 z-50 flex items-center justify-center p-4">
-										<Dialog.Content
-											class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {animation}"
+										<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+										<Dialog.Positioner
+											class="fixed inset-0 z-50 flex items-center justify-center p-4"
 										>
-											<header class="flex items-center justify-between">
-												<Dialog.Title class="text-lg font-bold">Edit Competition: {name}</Dialog.Title>
-												<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
-													<XIcon class="size-4" />
-												</Dialog.CloseTrigger>
-											</header>
-											{@render competitionDetail(currentEdit.id)}
-											<footer class="flex justify-end gap-2">
-												<Dialog.CloseTrigger class="btn preset-filled-primary-50-950" onclick={async () => {
-													isActionBlocked = true;
-													await workerRequest.updateCompetition([{where: {id: currentEdit!.id}, data: currentEdit!}]);
-													await fetch();
-												}}>Save</Dialog.CloseTrigger>
-												<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
-											</footer>
-										</Dialog.Content>
-									</Dialog.Positioner>
+											<Dialog.Content
+												class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {animation}"
+											>
+												<header class="flex items-center justify-between">
+													<Dialog.Title class="text-lg font-bold"
+														>Edit Competition: {name}</Dialog.Title
+													>
+													<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+														<XIcon class="size-4" />
+													</Dialog.CloseTrigger>
+												</header>
+												{@render competitionDetail(currentEdit.id)}
+												<footer class="flex justify-end gap-2">
+													<Dialog.CloseTrigger
+														class="btn preset-filled-primary-50-950"
+														onclick={async () => {
+															isActionBlocked = true;
+															await workerRequest.updateCompetition([
+																{ where: { id: currentEdit!.id }, data: currentEdit! }
+															]);
+															await fetch();
+														}}>Save</Dialog.CloseTrigger
+													>
+													<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+												</footer>
+											</Dialog.Content>
+										</Dialog.Positioner>
 									{/if}
 								</Portal>
 							</Dialog>
 							<Dialog>
-								<Dialog.Trigger class="btn preset-filled-danger-50-950" disabled={isActionBlocked}><Trash />Delete</Dialog.Trigger>
+								<Dialog.Trigger class="btn preset-filled-danger-50-950" disabled={isActionBlocked}
+									><Trash />Delete</Dialog.Trigger
+								>
+								<Portal>
+									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+									<Dialog.Positioner
+										class="fixed inset-0 z-50 flex items-center justify-center p-4"
+									>
+										<Dialog.Content
+											class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {animation}"
+										>
+											<header class="flex items-center justify-between">
+												<Dialog.Title class="text-lg font-bold"
+													>Delete Competition: {name}</Dialog.Title
+												>
+												<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+													<XIcon class="size-4" />
+												</Dialog.CloseTrigger>
+											</header>
+											<Dialog.Description>
+												Are you sure you want to delete competition {name}? This action cannot be
+												undone.
+											</Dialog.Description>
+											<footer class="flex justify-end gap-2">
+												<Dialog.CloseTrigger
+													class="btn preset-filled-danger-50-950"
+													onclick={async () => {
+														isActionBlocked = true;
+														await workerRequest.deleteCompetitions({ where: {id: {equals: id}} });
+														await fetch();
+													}}>Delete</Dialog.CloseTrigger
+												>
+												<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+											</footer>
+										</Dialog.Content>
+									</Dialog.Positioner>
+								</Portal>
 							</Dialog>
 						</td>
 					</tr>
