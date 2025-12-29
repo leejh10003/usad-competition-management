@@ -160,13 +160,15 @@
 			</tr>
 		</tfoot>
 	</table>
-	<Pagination count={total} pageSize={limit} page={pagination}>
-		<Pagination.PrevTrigger><ArrowLeftIcon class="size-4" /></Pagination.PrevTrigger>
+	<Pagination count={total} pageSize={getLimit} page={getCurrentPage}>
+		<Pagination.PrevTrigger onclick={() => setCurrentPage(getCurrentPage - 1)}
+			><ArrowLeftIcon class="size-4" /></Pagination.PrevTrigger
+		>
 		<Pagination.Context>
 			{#snippet children(pagination)}
 				{#each pagination().pages as page, index (page)}
 					{#if page.type === 'page'}
-						<Pagination.Item {...page}>
+						<Pagination.Item onclick={() => setCurrentPage(page.value)} {...page}>
 							{page.value}
 						</Pagination.Item>
 					{:else}
@@ -175,6 +177,8 @@
 				{/each}
 			{/snippet}
 		</Pagination.Context>
-		<Pagination.NextTrigger><ArrowRightIcon class="size-4" /></Pagination.NextTrigger>
+		<Pagination.NextTrigger onclick={() => setCurrentPage(getCurrentPage + 1)}
+			><ArrowRightIcon class="size-4" /></Pagination.NextTrigger
+		>
 	</Pagination>
 </div>
