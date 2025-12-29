@@ -5,17 +5,19 @@
 	import { page } from '$app/state';
 	import { Dialog, Pagination, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _ from 'lodash';
-	import { competitionResponseItemSchema } from 'usad-scheme';
+	import { competitionQuerySchema, competitionResponseItemSchema, stateEnums } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, MailIcon, XIcon } from '@lucide/svelte';
 	import moment from 'moment-timezone';
 	import z from 'zod';
     import Editor from '$lib/components/editor.svelte';
+	import { resolve } from '$app/paths';
+	import { workerRequest } from '$lib/api/test';
+	import { states } from 'usad-enums';
+	import { competitionAvailableStates } from 'usad-scheme/src/competition';
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
 	var limit = $state<number>(10);
-	var pagination = $state<number>(0);
-	var offset = $derived.by(() => pagination * limit);
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
 	var competitions = $state<CompetitionResponseItem[]>([]);
@@ -23,31 +25,62 @@
     var mailAddresses = $state<string[]>(['', '', '']);
     const animation =
 		'transition transition-discrete opacity-0 translate-y-[100px] starting:data-[state=open]:opacity-0 starting:data-[state=open]:translate-y-[100px] data-[state=open]:opacity-100 data-[state=open]:translate-y-0';
-	async function fetch(/*searchParams: z.infer<typeof schoolQuerySchema>*/) {
+	function _currentParam() {
+		const limit = query.get('limit');
+		const currentPage = query.get('currentPage');
+		const params = new URLSearchParams();
+		try {
+			params.set('limit', _.parseInt(decodeURI(limit!)).toString());
+		} catch (e) {}
+		if (currentPage && decodeURI(currentPage as string).trim().length > 0) {
+			params.set('currentPage', decodeURI(currentPage as string));
+		}
+		return params;
+	}
+	const query = $derived.by(() => page.url.searchParams);
+	const getLimit = $derived.by(() => {
+		const limit = query.get('limit');
+		const parsed = parseInt(limit ?? 'NaN');
+		return isNaN(parsed) ? 10 : parseInt(limit ?? 'NaN');
+	});
+	function setLimit(input: number) {
+		const route = page.url.pathname;
+		const params = _currentParam();
+		params.set('limit', input.toString());
+		const going = `/${route.replace(/^\//g, '')}${params.size > 0 ? `?${params.toString()}` : ''}` as Parameters<typeof resolve>[0];
+		goto(resolve(going))
+	}
+	const getCurrentPage = $derived.by(() => {
+		const currentPage = query.get('currentPage');
+		return currentPage ? parseInt(currentPage) : 1;
+	})
+	function setCurrentPage(input: number) {
+		const route = page.url.pathname;
+		const params = _currentParam();
+		params.set('currentPage', input.toString());
+		const going = `/${route.replace(/^\//g, '')}${params.size > 0 ? `?${params.toString()}` : ''}` as Parameters<typeof resolve>[0];
+		goto(resolve(going))
+	}
+	const offset = $derived.by(() => (getCurrentPage - 1) * getLimit);
+	async function fetch() {
 		isLoading = true;
-		//TODO: server fetch
-		competitions = _.range(0, 10).map((e) => ({
-			name: 'Midwest US Science High School',
-			startsAt: new Date(),
-			endsAt: new Date(),
-			id: `${e}`,
-			competitionId: ''
-		}));
+		const {result, count} = await workerRequest.getCompetition({
+			take: getLimit,
+			skip: offset,
+		});
+		competitions = result;
+		total = count;
+		currentCount = result.length;
 		isLoading = false;
 	}
 	$effect(() => {
-		//let searchParams = schoolQuerySchema.safeParse(Object.fromEntries(page.url.searchParams.entries()));
-		//if (searchParams.success){
-		fetch(/*searchParams.data*/);
-		//} else {
-		//    console.log('not using');
-		//}
-	});
-	/*function changeFilter() {
-		const searchParams = page.url.searchParams;
-		searchParams.set('test', 'true');
-		goto(`?${searchParams.toString()}`);
-	}*/
+		let searchParams = competitionQuerySchema.safeParse(
+			Object.fromEntries(page.url.searchParams.entries())
+		);
+		if (searchParams.success) {
+			fetch();
+		}
+	})
 </script>
 
 <div class="flex h-full w-full flex-col gap-y-3.5 p-8">
@@ -57,7 +90,8 @@
 			<tr>
 				<td>Competition Name</td>
 				<td>Competition Date</td>
-                <td>Send Mails</td>
+				<td>Competition Available States</td>
+				<td>Send Mails</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -66,12 +100,14 @@
 					<tr>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
+						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
+						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 					</tr>
 				{/each}
 			{:else}
-				{#each competitions as event (event.id)}
-					{@const { name, startsAt } = event}
-                    {@const editor: {editor: Editor | undefined} = { editor: undefined } }
+				{#each competitions as competition (competition.id)}
+					{@const { name, startsAt } = competition}
+					{@const editor: {editor: Editor | undefined} = { editor: undefined } }
 					<tr>
 						<td>{name}</td>
 						<td
@@ -80,8 +116,29 @@
 								.reverse()
 								.join(', ')}</td
 						>
-                        <td>
-                            <Dialog onOpenChange={({open}) => {console.log('open', open);}}>
+						<td>
+							{competition.competitionAvailableStates.length > states.length / 2
+								? `All${
+										competition.competitionAvailableStates.length < states.length
+											? ` except for ${states
+													.filter(
+														(s) =>
+															!competition.competitionAvailableStates
+																.map(({ state }) => state)
+																.includes(s.shorthand as z.infer<typeof stateEnums>)
+													)
+													.map((s) => s.original)
+													.join(', ')}}`
+											: ''
+									}`
+								: competition.competitionAvailableStates.join(', ')}
+						</td>
+						<td>
+							<Dialog
+								onOpenChange={({ open }) => {
+									console.log('open', open);
+								}}
+							>
 								<Dialog.Trigger class="btn-icon preset-filled"><MailIcon /></Dialog.Trigger>
 								<Portal>
 									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
@@ -98,30 +155,32 @@
 												</Dialog.CloseTrigger>
 											</header>
 											<Dialog.Description>
-                                                
 												{#each mailAddresses as address, i (i)}
-                                                    <p>{i + 1}</p>
-                                                {/each}
-                                                <Editor bind:this={editor.editor}/>
+													<p>{i + 1}</p>
+												{/each}
+												<Editor bind:this={editor.editor} />
 											</Dialog.Description>
 											<footer class="flex justify-end gap-2">
-                                                <Dialog.CloseTrigger onclick={async () => {
-                                                    console.log(editor.editor?.quill.getSemanticHTML())
-                                                }} class="btn preset-filled-primary-50-950">Send</Dialog.CloseTrigger>
+												<Dialog.CloseTrigger
+													onclick={async () => {
+														console.log(editor.editor?.quill.getSemanticHTML());
+													}}
+													class="btn preset-filled-primary-50-950">Send</Dialog.CloseTrigger
+												>
 												<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
 											</footer>
 										</Dialog.Content>
 									</Dialog.Positioner>
 								</Portal>
 							</Dialog>
-                        </td>
+						</td>
 					</tr>
 				{/each}
 			{/if}
 		</tbody>
 		<tfoot>
 			<tr>
-				<td colspan="2">Total</td>
+				<td colspan="3">Total</td>
 				{#if isFirstLoaded}
 					<td colspan="1">{offset + 1} - {offset + currentCount}/{total} Elements</td>
 				{:else}
@@ -130,13 +189,15 @@
 			</tr>
 		</tfoot>
 	</table>
-	<Pagination count={total} pageSize={limit} page={pagination}>
-		<Pagination.PrevTrigger><ArrowLeftIcon class="size-4" /></Pagination.PrevTrigger>
+	<Pagination count={total} pageSize={getLimit} page={getCurrentPage}>
+		<Pagination.PrevTrigger onclick={() => setCurrentPage(getCurrentPage - 1)}
+			><ArrowLeftIcon class="size-4" /></Pagination.PrevTrigger
+		>
 		<Pagination.Context>
 			{#snippet children(pagination)}
 				{#each pagination().pages as page, index (page)}
 					{#if page.type === 'page'}
-						<Pagination.Item {...page}>
+						<Pagination.Item onclick={() => setCurrentPage(page.value)} {...page}>
 							{page.value}
 						</Pagination.Item>
 					{:else}
@@ -145,6 +206,8 @@
 				{/each}
 			{/snippet}
 		</Pagination.Context>
-		<Pagination.NextTrigger><ArrowRightIcon class="size-4" /></Pagination.NextTrigger>
+		<Pagination.NextTrigger onclick={() => setCurrentPage(getCurrentPage + 1)}
+			><ArrowRightIcon class="size-4" /></Pagination.NextTrigger
+		>
 	</Pagination>
 </div>
