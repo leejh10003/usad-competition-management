@@ -238,7 +238,10 @@
 												</label>
 											</Dialog.Description>
 											<footer class="flex justify-end gap-2">
-												<Dialog.CloseTrigger class="btn preset-filled-primary-50-950">Save</Dialog.CloseTrigger>
+												<Dialog.CloseTrigger class="btn preset-filled-primary-50-950" onclick={async () => {
+													await workerRequest.updateCompetition([{where: {id: currentEdit!.id}, data: currentEdit!}]);
+													await fetch();
+												}}>Save</Dialog.CloseTrigger>
 												<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
 											</footer>
 										</Dialog.Content>

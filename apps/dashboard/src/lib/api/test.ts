@@ -1,5 +1,5 @@
 import Enumerable from 'linq';
-import _, { isArray } from 'lodash';
+import _, { assign, find, isArray } from 'lodash';
 import moment from 'moment';
 import {
 	schoolResponse,
@@ -1241,77 +1241,90 @@ class WorkerRequest {
 			count
 		};
 	}
-	async getCompetition(input: z.infer<typeof competitionQuerySchema>) {
-		const test = ({
-			name,
-			startsAt,
-			endsAt,
-			competitionAvailableStates,
-			id
-		}: CompetitionResponseItem) => {
-			let result = true;
-			if (input.where) {
-				const {where} = input;
-				if (
-					typeof where.name !== undefined &&
-					typeof where.name !== 'string' &&
-					typeof where.name?.contains === 'string'
-				) {
-					result = result && name.includes(where.name.contains);
+	async updateCompetition(inputs: {where: z.infer<typeof competitionQuerySchema>['where'], data: Partial<CompetitionResponseItem>}[]) {
+		await this._mockDelay();
+		this.competitions.forEach((c, i) => {
+			inputs.forEach((input) => {
+				if (this.testCompetition(c, {where: input.where})) {
+					for (const key in input.data) {
+						// @ts-ignore
+						c[key as keyof CompetitionResponseItem] = input.data[key as keyof CompetitionResponseItem];
+					}
 				}
-				if (
-					typeof where.startsAt ==='object' &&
-					'lte' in where.startsAt &&
-					moment.isDate(where.startsAt.lte)
-				) {
-					result = result && moment(startsAt).isSameOrBefore(moment(where.startsAt.lte!));
-				}
-				if (
-					typeof where.startsAt ==='object' &&
-					'gte' in where.startsAt &&
-					moment.isDate(where.startsAt.gte)
-				) {
-					result = result && moment(startsAt).isSameOrBefore(moment(where.startsAt.gte!));
-				}
-				if (
-					typeof where.endsAt ==='object' &&
-					'lte' in where.endsAt &&
-					moment.isDate(where.endsAt.lte)
-				) {
-					result = result && moment(endsAt).isSameOrBefore(moment(where.endsAt.lte!));
-				}
-				if (
-					typeof where.endsAt ==='object' &&
-					'gte' in where.endsAt &&
-					moment.isDate(where.endsAt.gte)
-				) {
-					result = result && moment(endsAt).isSameOrBefore(moment(where.endsAt.gte!));
-				}
-				if (
-					typeof where.competitionAvailableStates === 'object' &&
-					typeof where.competitionAvailableStates.some?.state === 'object' &&
-					typeof where.competitionAvailableStates.some!.state?.in === 'object' &&
-					isArray(where.competitionAvailableStates.some?.state?.in)
-				) {
-					result = result && competitionAvailableStates.some(({state}) => (where.competitionAvailableStates!.some!.state! as {in: Array<z.infer<typeof stateEnums>>}).in.includes(state))
-				}
-				if (
-					typeof where.id === 'object' &&
-					typeof where.id.in === 'object' &&
-					isArray(where.id.in)
-				) {
-					result = result && where.id.in.includes(id);
-				}
+			});
+		});
+	}
+	testCompetition({
+		name,
+		startsAt,
+		endsAt,
+		competitionAvailableStates,
+		id
+	}: CompetitionResponseItem, input: z.infer<typeof competitionQuerySchema>) {
+		let result = true;
+		if (input.where) {
+			const {where} = input;
+			if (
+				typeof where.name !== undefined &&
+				typeof where.name !== 'string' &&
+				typeof where.name?.contains === 'string'
+			) {
+				result = result && name.includes(where.name.contains);
 			}
-			return result;
-		};
+			if (
+				typeof where.startsAt ==='object' &&
+				'lte' in where.startsAt &&
+				moment.isDate(where.startsAt.lte)
+			) {
+				result = result && moment(startsAt).isSameOrBefore(moment(where.startsAt.lte!));
+			}
+			if (
+				typeof where.startsAt ==='object' &&
+				'gte' in where.startsAt &&
+				moment.isDate(where.startsAt.gte)
+			) {
+				result = result && moment(startsAt).isSameOrBefore(moment(where.startsAt.gte!));
+			}
+			if (
+				typeof where.endsAt ==='object' &&
+				'lte' in where.endsAt &&
+				moment.isDate(where.endsAt.lte)
+			) {
+				result = result && moment(endsAt).isSameOrBefore(moment(where.endsAt.lte!));
+			}
+			if (
+				typeof where.endsAt ==='object' &&
+				'gte' in where.endsAt &&
+				moment.isDate(where.endsAt.gte)
+			) {
+				result = result && moment(endsAt).isSameOrBefore(moment(where.endsAt.gte!));
+			}
+			if (
+				typeof where.competitionAvailableStates === 'object' &&
+				typeof where.competitionAvailableStates.some?.state === 'object' &&
+				typeof where.competitionAvailableStates.some!.state?.in === 'object' &&
+				isArray(where.competitionAvailableStates.some?.state?.in)
+			) {
+				result = result && competitionAvailableStates.some(({state}) => (where.competitionAvailableStates!.some!.state! as {in: Array<z.infer<typeof stateEnums>>}).in.includes(state))
+			}
+			if (
+				typeof where.id === 'object' &&
+				typeof where.id.in === 'object' &&
+				isArray(where.id.in)
+			) {
+				result = result && where.id.in.includes(id);
+			}
+		}
+		return result;
+	};
+	async getCompetition(input: z.infer<typeof competitionQuerySchema>) {
 		const result = this.competitions
 			.select((e) => e)
 			.skip(input?.skip ?? 0)
-			.where(test)
+			.where((c) => this.testCompetition(c, input))
 			.take(input?.take ?? 10)
 			.toArray();
-		const count = this.competitions.where(test).count();
+		const count = this.competitions.where((c) => this.testCompetition(c, input)).count();
 		await this._mockDelay();
 		return {
 			result,
