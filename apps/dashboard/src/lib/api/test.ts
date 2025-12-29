@@ -316,8 +316,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1011',
-			firstName: 'Lucille',
-			lastName: 'Mock',
+			firstName: 'James',
+			lastName: 'Miller',
 			mutationIndex: 0
 		},
 		{
@@ -336,8 +336,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1012',
-			firstName: 'Marissa',
-			lastName: 'Guo',
+			firstName: 'Olivia',
+			lastName: 'Smith',
 			mutationIndex: 1
 		},
 		{
@@ -356,8 +356,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1013',
-			firstName: 'Shelby',
-			lastName: 'Aust',
+			firstName: 'Liam',
+			lastName: 'Johnson',
 			mutationIndex: 2
 		},
 		{
@@ -376,8 +376,8 @@ class WorkerRequest {
 			division: 'S',
 			gpa: 3.4,
 			externalStudentId: '1014',
-			firstName: 'JT',
-			lastName: 'Hare',
+			firstName: 'Emma',
+			lastName: 'Williams',
 			mutationIndex: 3
 		},
 		{
@@ -396,8 +396,8 @@ class WorkerRequest {
 			division: 'S',
 			gpa: 3.4,
 			externalStudentId: '1015',
-			firstName: 'Reyhan',
-			lastName: 'Ramrakhyani',
+			firstName: 'Noah',
+			lastName: 'Brown',
 			mutationIndex: 4
 		},
 		{
@@ -416,8 +416,8 @@ class WorkerRequest {
 			division: 'S',
 			gpa: 3.4,
 			externalStudentId: '1016',
-			firstName: 'Lia',
-			lastName: 'Ha',
+			firstName: 'Ava',
+			lastName: 'Jones',
 			mutationIndex: 5
 		},
 		{
@@ -436,8 +436,8 @@ class WorkerRequest {
 			division: 'V',
 			gpa: 2.8,
 			externalStudentId: '1017',
-			firstName: 'Nathan',
-			lastName: 'Frost',
+			firstName: 'Oliver',
+			lastName: 'Garcia',
 			mutationIndex: 6
 		},
 		{
@@ -456,8 +456,8 @@ class WorkerRequest {
 			division: 'V',
 			gpa: 2.8,
 			externalStudentId: '1018',
-			firstName: 'Gavin',
-			lastName: 'Fox',
+			firstName: 'Sophia',
+			lastName: 'Miller',
 			mutationIndex: 7
 		},
 		{
@@ -476,8 +476,8 @@ class WorkerRequest {
 			division: 'V',
 			gpa: 2.8,
 			externalStudentId: '1019',
-			firstName: 'Yuliya',
-			lastName: 'Gorbunova',
+			firstName: 'Lucas',
+			lastName: 'Davis',
 			mutationIndex: 8
 		},
 		{
@@ -496,8 +496,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1111',
-			firstName: 'Luke',
-			lastName: "O'Brien",
+			firstName: 'Mia',
+			lastName: 'Rodriguez',
 			mutationIndex: 9
 		},
 		{
@@ -516,8 +516,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1112',
-			firstName: 'Caleb',
-			lastName: 'Olson',
+			firstName: 'Benjamin',
+			lastName: 'Martinez',
 			mutationIndex: 10
 		},
 		{
@@ -536,8 +536,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1113',
-			firstName: 'Kylie',
-			lastName: 'Weaver',
+			firstName: 'Charlotte',
+			lastName: 'Hernandez',
 			mutationIndex: 11
 		},
 		{
@@ -556,8 +556,8 @@ class WorkerRequest {
 			division: 'S',
 			gpa: 3.4,
 			externalStudentId: '1114',
-			firstName: 'Rowan',
-			lastName: 'LeFevre',
+			firstName: 'Ethan',
+			lastName: 'Lopez',
 			mutationIndex: 12
 		},
 		{
@@ -576,8 +576,8 @@ class WorkerRequest {
 			division: 'S',
 			gpa: 3.4,
 			externalStudentId: '1115',
-			firstName: 'Austin',
-			lastName: 'Strong',
+			firstName: 'Amelia',
+			lastName: 'Gonzalez',
 			mutationIndex: 13
 		},
 		{
@@ -596,8 +596,8 @@ class WorkerRequest {
 			division: 'S',
 			gpa: 3.4,
 			externalStudentId: '1116',
-			firstName: 'Heidi',
-			lastName: 'Curtis',
+			firstName: 'Alex',
+			lastName: 'Wilson',
 			mutationIndex: 14
 		},
 		{
@@ -616,8 +616,8 @@ class WorkerRequest {
 			division: 'V',
 			gpa: 2.8,
 			externalStudentId: '1117',
-			firstName: 'Gabriel',
-			lastName: 'Gois',
+			firstName: 'Isabella',
+			lastName: 'Anderson',
 			mutationIndex: 15
 		},
 		{
@@ -636,8 +636,8 @@ class WorkerRequest {
 			division: 'V',
 			gpa: 2.8,
 			externalStudentId: '1118',
-			firstName: 'Maddy',
-			lastName: 'Inman',
+			firstName: 'Henry',
+			lastName: 'Thomas',
 			mutationIndex: 16
 		},
 		{
@@ -656,8 +656,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1211',
-			firstName: 'Aariyaka',
-			lastName: 'Jain',
+			firstName: 'Harper',
+			lastName: 'Taylor',
 			mutationIndex: 17
 		},
 		{
@@ -676,8 +676,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1212',
-			firstName: 'Riley',
-			lastName: 'Delorey',
+			firstName: 'Sebastian',
+			lastName: 'Moore',
 			mutationIndex: 18
 		},
 		{
@@ -696,8 +696,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1213',
-			firstName: 'Ethan',
-			lastName: 'Chaing',
+			firstName: 'Evelyn',
+			lastName: 'Jackson',
 			mutationIndex: 19
 		},
 		{
@@ -716,8 +716,8 @@ class WorkerRequest {
 			division: 'S',
 			gpa: 3.4,
 			externalStudentId: '1214',
-			firstName: 'Ocean',
-			lastName: 'Hauke',
+			firstName: 'Jack',
+			lastName: 'Martin',
 			mutationIndex: 20
 		},
 		{
@@ -736,8 +736,8 @@ class WorkerRequest {
 			division: 'S',
 			gpa: 3.4,
 			externalStudentId: '1215',
-			firstName: 'Conor',
-			lastName: 'Long',
+			firstName: 'Abigail',
+			lastName: 'Lee',
 			mutationIndex: 21
 		},
 		{
@@ -756,8 +756,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1311',
-			firstName: 'Raya',
-			lastName: 'Waldron',
+			firstName: 'Daniel',
+			lastName: 'Perez',
 			mutationIndex: 22
 		},
 		{
@@ -776,8 +776,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1312',
-			firstName: 'Dylan',
-			lastName: 'Portugal',
+			firstName: 'Emily',
+			lastName: 'Thompson',
 			mutationIndex: 23
 		},
 		{
@@ -796,8 +796,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1313',
-			firstName: 'Gregory',
-			lastName: 'DeFauw',
+			firstName: 'William',
+			lastName: 'White',
 			mutationIndex: 24
 		},
 		{
@@ -816,8 +816,8 @@ class WorkerRequest {
 			division: 'S',
 			gpa: 3.4,
 			externalStudentId: '1314',
-			firstName: 'Tyler',
-			lastName: 'Bettner',
+			firstName: 'Elizabeth',
+			lastName: 'Harris',
 			mutationIndex: 25
 		},
 		{
@@ -836,8 +836,8 @@ class WorkerRequest {
 			division: 'S',
 			gpa: 3.4,
 			externalStudentId: '1315',
-			firstName: 'AJ',
-			lastName: 'Morris',
+			firstName: 'Michael',
+			lastName: 'Sanchez',
 			mutationIndex: 26
 		},
 		{
@@ -856,8 +856,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1411',
-			firstName: 'Ishaan',
-			lastName: 'Deshpande',
+			firstName: 'Sofia',
+			lastName: 'Clark',
 			mutationIndex: 27
 		},
 		{
@@ -876,8 +876,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1412',
-			firstName: 'Charles',
-			lastName: 'Watts',
+			firstName: 'Owen',
+			lastName: 'Ramirez',
 			mutationIndex: 28
 		},
 		{
@@ -896,8 +896,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1413',
-			firstName: 'Frederick',
-			lastName: 'Sh',
+			firstName: 'Avery',
+			lastName: 'Lewis',
 			mutationIndex: 29
 		},
 		{
@@ -916,8 +916,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1511',
-			firstName: 'Thomas',
-			lastName: 'Bender',
+			firstName: 'Samuel',
+			lastName: 'Robinson',
 			mutationIndex: 30
 		},
 		{
@@ -936,8 +936,8 @@ class WorkerRequest {
 			division: 'H',
 			gpa: 3.9,
 			externalStudentId: '1512',
-			firstName: 'Ryan',
-			lastName: 'Waldro',
+			firstName: 'Luna',
+			lastName: 'Walker',
 			mutationIndex: 31
 		}
 	]);
@@ -956,9 +956,9 @@ class WorkerRequest {
 			studentId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
 			eventId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
 			checkedInAt: new Date(),
-			mutationIndex: 10,
+			mutationIndex: 10
 		}
-	])
+	]);
 	coaches = Enumerable.from<CoachResponseItem>([
 		{
 			externalCoachId: '1011',
@@ -1126,7 +1126,11 @@ class WorkerRequest {
 				typeof input.where.externalStudentId.equals === 'string'
 			) {
 				result =
-					result && (externalStudentId?.toLowerCase().includes(input.where.externalStudentId.equals.toLowerCase()) ?? true);
+					result &&
+					(externalStudentId
+						?.toLowerCase()
+						.includes(input.where.externalStudentId.equals.toLowerCase()) ??
+						true);
 			}
 			if (
 				input.where?.id &&
@@ -1135,8 +1139,7 @@ class WorkerRequest {
 				typeof input.where.id.in === 'object' &&
 				isArray(input.where.id.in)
 			) {
-				result =
-					result && (isArray(input.where.id.in) ? input.where.id.in.includes(id) : true);
+				result = result && (isArray(input.where.id.in) ? input.where.id.in.includes(id) : true);
 			}
 			return result;
 		};
@@ -1241,24 +1244,33 @@ class WorkerRequest {
 			count
 		};
 	}
-	async updateCompetition(inputs: {where: z.infer<typeof competitionQuerySchema>['where'], data: Partial<CompetitionResponseItem>}[]) {
+	async updateCompetition(
+		inputs: {
+			where: z.infer<typeof competitionQuerySchema>['where'];
+			data: Partial<CompetitionResponseItem>;
+		}[]
+	) {
 		await this._mockDelay();
 		this.competitions.forEach((c, i) => {
 			inputs.forEach((input) => {
-				if (this.testCompetition(c, {where: input.where})) {
+				if (this.testCompetition(c, { where: input.where })) {
 					for (const key in input.data) {
 						// @ts-ignore
-						c[key as keyof CompetitionResponseItem] = input.data[key as keyof CompetitionResponseItem];
+						c[key as keyof CompetitionResponseItem] =
+							input.data[key as keyof CompetitionResponseItem];
 					}
 				}
 			});
 		});
 	}
 	async insertNewCompetition(competition: Omit<CompetitionResponseItem, 'id'>) {
-		this.competitions = Enumerable.from<CompetitionResponseItem>([...this.competitions.toArray(), {
-			...competition,
-			id: this.generateNewCompetitionId()
-		}]);
+		this.competitions = Enumerable.from<CompetitionResponseItem>([
+			...this.competitions.toArray(),
+			{
+				...competition,
+				id: this.generateNewCompetitionId()
+			}
+		]);
 		await this._mockDelay();
 	}
 	async deleteCompetitions(input: z.infer<typeof competitionQuerySchema>) {
@@ -1274,16 +1286,13 @@ class WorkerRequest {
 		} while (ids.includes(newId));
 		return newId;
 	}
-	testCompetition({
-		name,
-		startsAt,
-		endsAt,
-		competitionAvailableStates,
-		id
-	}: CompetitionResponseItem, input: z.infer<typeof competitionQuerySchema>) {
+	testCompetition(
+		{ name, startsAt, endsAt, competitionAvailableStates, id }: CompetitionResponseItem,
+		input: z.infer<typeof competitionQuerySchema>
+	) {
 		let result = true;
 		if (input.where) {
-			const {where} = input;
+			const { where } = input;
 			if (
 				typeof where.name !== undefined &&
 				typeof where.name !== 'string' &&
@@ -1292,28 +1301,28 @@ class WorkerRequest {
 				result = result && name.includes(where.name.contains);
 			}
 			if (
-				typeof where.startsAt ==='object' &&
+				typeof where.startsAt === 'object' &&
 				'lte' in where.startsAt &&
 				moment.isDate(where.startsAt.lte)
 			) {
 				result = result && moment(startsAt).isSameOrBefore(moment(where.startsAt.lte!));
 			}
 			if (
-				typeof where.startsAt ==='object' &&
+				typeof where.startsAt === 'object' &&
 				'gte' in where.startsAt &&
 				moment.isDate(where.startsAt.gte)
 			) {
 				result = result && moment(startsAt).isSameOrBefore(moment(where.startsAt.gte!));
 			}
 			if (
-				typeof where.endsAt ==='object' &&
+				typeof where.endsAt === 'object' &&
 				'lte' in where.endsAt &&
 				moment.isDate(where.endsAt.lte)
 			) {
 				result = result && moment(endsAt).isSameOrBefore(moment(where.endsAt.lte!));
 			}
 			if (
-				typeof where.endsAt ==='object' &&
+				typeof where.endsAt === 'object' &&
 				'gte' in where.endsAt &&
 				moment.isDate(where.endsAt.gte)
 			) {
@@ -1325,18 +1334,22 @@ class WorkerRequest {
 				typeof where.competitionAvailableStates.some!.state?.in === 'object' &&
 				isArray(where.competitionAvailableStates.some?.state?.in)
 			) {
-				result = result && competitionAvailableStates.some(({state}) => (where.competitionAvailableStates!.some!.state! as {in: Array<z.infer<typeof stateEnums>>}).in.includes(state))
+				result =
+					result &&
+					competitionAvailableStates.some(({ state }) =>
+						(
+							where.competitionAvailableStates!.some!.state! as {
+								in: Array<z.infer<typeof stateEnums>>;
+							}
+						).in.includes(state)
+					);
 			}
-			if (
-				typeof where.id === 'object' &&
-				typeof where.id.in === 'object' &&
-				isArray(where.id.in)
-			) {
+			if (typeof where.id === 'object' && typeof where.id.in === 'object' && isArray(where.id.in)) {
 				result = result && where.id.in.includes(id);
 			}
 		}
 		return result;
-	};
+	}
 	async getCompetition(input: z.infer<typeof competitionQuerySchema>) {
 		const result = this.competitions
 			.select((e) => e)
@@ -1352,15 +1365,10 @@ class WorkerRequest {
 		};
 	}
 	async getEvents(input: z.infer<typeof eventQuerySchema>) {
-		const test = ({
-			name,
-			startsAt,
-			endsAt,
-			competitionId,
-		}: EventResponseItem) => {
+		const test = ({ name, startsAt, endsAt, competitionId }: EventResponseItem) => {
 			let result = true;
 			if (input.where) {
-				const {where} = input;
+				const { where } = input;
 				if (
 					typeof where.name !== undefined &&
 					typeof where.name !== 'string' &&
@@ -1369,36 +1377,34 @@ class WorkerRequest {
 					result = result && name.includes(where.name.contains);
 				}
 				if (
-					typeof where.startsAt ==='object' &&
+					typeof where.startsAt === 'object' &&
 					'lte' in where.startsAt &&
 					moment.isDate(where.startsAt.lte)
 				) {
 					result = result && moment(startsAt).isSameOrBefore(moment(where.startsAt.lte!));
 				}
 				if (
-					typeof where.startsAt ==='object' &&
+					typeof where.startsAt === 'object' &&
 					'gte' in where.startsAt &&
 					moment.isDate(where.startsAt.gte)
 				) {
 					result = result && moment(startsAt).isSameOrBefore(moment(where.startsAt.gte!));
 				}
 				if (
-					typeof where.endsAt ==='object' &&
+					typeof where.endsAt === 'object' &&
 					'lte' in where.endsAt &&
 					moment.isDate(where.endsAt.lte)
 				) {
 					result = result && moment(endsAt).isSameOrBefore(moment(where.endsAt.lte!));
 				}
 				if (
-					typeof where.endsAt ==='object' &&
+					typeof where.endsAt === 'object' &&
 					'gte' in where.endsAt &&
 					moment.isDate(where.endsAt.gte)
 				) {
 					result = result && moment(endsAt).isSameOrBefore(moment(where.endsAt.gte!));
 				}
-				if (
-					typeof where.competitionId === 'object'
-				) {
+				if (typeof where.competitionId === 'object') {
 					if (typeof where.competitionId.equals === 'string') {
 						result = result && competitionId === where.competitionId.equals;
 					}
@@ -1420,11 +1426,7 @@ class WorkerRequest {
 		};
 	}
 	async getEventCheckIn(input: z.infer<typeof eventCheckInQuerySchema>) {
-		const test = ({
-			studentId,
-			eventId,
-			checkedInAt
-		}: EventCheckInItem) => {
+		const test = ({ studentId, eventId, checkedInAt }: EventCheckInItem) => {
 			let result = true;
 			if (input.where) {
 			}
