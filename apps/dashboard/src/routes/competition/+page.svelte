@@ -16,16 +16,16 @@
 	import SveltyPicker, { formatDate, parseDate } from 'svelty-picker';
 	import { en } from 'svelty-picker/i18n';
 	import {timezoneFormatted, timezone} from '$lib/utils/time';
+	import { dialogAppearAnimation } from '$lib/utils/animation';
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	var isActionBlocked = $state<boolean>(true);
 	var isWholeLoading = $state<boolean>(true);
+	var isFirstLoaded = $state<boolean>(false);
 	var limit = $state<number>(10);
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
 	var competitions = $state<CompetitionResponseItem[]>([]);
     var mailAddresses = $state<string[]>(['', '', '']);
-    const animation =
-		'transition transition-discrete opacity-0 translate-y-[100px] starting:data-[state=open]:opacity-0 starting:data-[state=open]:translate-y-[100px] data-[state=open]:opacity-100 data-[state=open]:translate-y-0';
 	function _currentParam() {
 		const limit = query.get('limit');
 		const currentPage = query.get('currentPage');
@@ -85,6 +85,9 @@
 				if (isWholeLoading) {
 					isWholeLoading = false;
 				}
+				if (!isFirstLoaded) {
+					isFirstLoaded = true;
+				}
 			});
 		}
 	})
@@ -100,14 +103,16 @@
 			<span class="label-text">Competition Date</span>
 			<SveltyPicker
 				mode="datetime"
+				isRange={true}
 				format="mm/dd/yyyy hh:ii:ss"
 				inputClasses="input w-full"
 				bind:value={
 					() => {
-						return formatDate(currentEdit!.startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
+						return [formatDate(currentEdit!.startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard'), formatDate(currentEdit!.endsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard')];
 					},
-					(v) => {
-						currentEdit!.startsAt = parseDate(v, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
+					([startsAt, endsAt]) => {
+						currentEdit!.startsAt = parseDate(startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
+						currentEdit!.endsAt = parseDate(endsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
 					}
 				}
 			/>
@@ -189,7 +194,7 @@
 					{#if currentEdit}
 						<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
 						<Dialog.Positioner class="fixed inset-0 z-50 flex items-center justify-center p-4">
-							<Dialog.Content class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {animation}">
+							<Dialog.Content class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}">
 								<header class="flex items-center justify-between">
 									<Dialog.Title class="text-lg font-bold">Edit Competition: {name}</Dialog.Title>
 									<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
@@ -277,7 +282,7 @@
 										class="fixed inset-0 z-50 flex items-center justify-center p-4"
 									>
 										<Dialog.Content
-											class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {animation}"
+											class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
 										>
 											<header class="flex items-center justify-between">
 												<Dialog.Title class="text-lg font-bold">Send mail</Dialog.Title>
@@ -317,7 +322,7 @@
 											class="fixed inset-0 z-50 flex items-center justify-center p-4"
 										>
 											<Dialog.Content
-												class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {animation}"
+												class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
 											>
 												<header class="flex items-center justify-between">
 													<Dialog.Title class="text-lg font-bold"
@@ -356,7 +361,7 @@
 										class="fixed inset-0 z-50 flex items-center justify-center p-4"
 									>
 										<Dialog.Content
-											class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {animation}"
+											class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
 										>
 											<header class="flex items-center justify-between">
 												<Dialog.Title class="text-lg font-bold"
@@ -393,7 +398,7 @@
 		<tfoot>
 			<tr>
 				<td colspan="3">Total</td>
-				{#if !isWholeLoading}
+				{#if isFirstLoaded}
 					<td colspan="1">{offset + 1} - {offset + currentCount}/{total} Elements</td>
 				{:else}
 					<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
