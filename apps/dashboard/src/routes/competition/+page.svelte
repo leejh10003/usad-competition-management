@@ -128,11 +128,11 @@
 																.map(({ state }) => state)
 																.includes(s.shorthand as z.infer<typeof stateEnums>)
 													)
-													.map((s) => s.original)
+													.map((s) => s.shorthand)
 													.join(', ')}`
 											: ''
 									}`
-								: competition.competitionAvailableStates.join(', ')}
+								: competition.competitionAvailableStates.map(({ state }) => states.find(s => s.shorthand === state)?.shorthand).join(', ')}
 						</td>
 						<td>
 							<Dialog
@@ -222,6 +222,16 @@
 															<p>{state.original}</p>
 														</label>
 													{/each}
+													<label class="flex items-center space-x-2 col-span-4">
+														<input class="checkbox" type="checkbox" checked={competition.competitionAvailableStates.length === states.length} onchange={(e) => {
+															if (e.currentTarget.checked) {
+																competition.competitionAvailableStates.push(...states.map(s => ({ state: s.shorthand as z.infer<typeof stateEnums>, competitionId: competition.id })));
+															} else {
+																competition.competitionAvailableStates = [];
+															}
+														}}/>
+														<p>Toggle All</p>
+													</label>
 													</div>
 												</label>
 											</Dialog.Description>
