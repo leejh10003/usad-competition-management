@@ -4,7 +4,7 @@
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { page } from '$app/state';
 	import { Dialog, Pagination, Portal } from '@skeletonlabs/skeleton-svelte';
-	import _ from 'lodash';
+	import _, { cloneDeep } from 'lodash';
 	import { competitionQuerySchema, competitionResponseItemSchema, stateEnums } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, MailIcon, XIcon, Pencil, Trash } from '@lucide/svelte';
 	import moment from 'moment-timezone';
@@ -38,6 +38,7 @@
 		}
 		return params;
 	}
+	let currentEdit = $state<CompetitionResponseItem | null>(null);
 	const query = $derived.by(() => page.url.searchParams);
 	const getLimit = $derived.by(() => {
 		const limit = query.get('limit');
@@ -175,8 +176,9 @@
 								</Portal>
 							</Dialog>
 							<Dialog>
-								<Dialog.Trigger onclick={() => console.log('Edit clicked')} class="btn preset-filled"><Pencil />Edit</Dialog.Trigger>
+								<Dialog.Trigger onclick={() => currentEdit = cloneDeep(competition)} class="btn preset-filled"><Pencil />Edit</Dialog.Trigger>
 								<Portal>
+									{#if currentEdit}
 									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
 									<Dialog.Positioner
 										class="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -192,7 +194,7 @@
 											<Dialog.Description>
 												<label class="label">
 													<span class="label-text">Competition Name</span>
-													<input type="text" class="input w-full" bind:value={competition.name} />
+													<input type="text" class="input w-full" bind:value={currentEdit!.name} />
 												</label>
 												<label class="label">
 													<span class="label-text">Competition Date</span>
@@ -205,29 +207,29 @@
 																return formatDate(startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
 															},
 															(v) => {
-																competition.startsAt = parseDate(v, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
+																currentEdit!.startsAt = parseDate(v, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
 															}
 														}
 													/>
 													<div class="grid grid-flow-row grid-cols-12">
 													{#each states as state (state.shorthand)}
 														<label class="flex items-center space-x-2 col-span-4">
-															<input class="checkbox" type="checkbox" checked={!!competition.competitionAvailableStates.find(s => s.state === state.shorthand)} onchange={(e) => {
+															<input class="checkbox" type="checkbox" checked={!!currentEdit!.competitionAvailableStates.find(s => s.state === state.shorthand)} onchange={(e) => {
 																if (e.currentTarget.checked) {
-																	competition.competitionAvailableStates.push({ state: state.shorthand as z.infer<typeof stateEnums>, competitionId: competition.id });
+																	currentEdit!.competitionAvailableStates.push({ state: state.shorthand as z.infer<typeof stateEnums>, competitionId: competition.id });
 																} else {
-																	competition.competitionAvailableStates = competition.competitionAvailableStates.filter(s => s.state !== state.shorthand);
+																	currentEdit!.competitionAvailableStates = currentEdit!.competitionAvailableStates.filter(s => s.state !== state.shorthand);
 																}
 															}}/>
 															<p>{state.original}</p>
 														</label>
 													{/each}
 													<label class="flex items-center space-x-2 col-span-4">
-														<input class="checkbox" type="checkbox" checked={competition.competitionAvailableStates.length === states.length} onchange={(e) => {
+														<input class="checkbox" type="checkbox" checked={currentEdit!.competitionAvailableStates.length === states.length} onchange={(e) => {
 															if (e.currentTarget.checked) {
-																competition.competitionAvailableStates.push(...states.map(s => ({ state: s.shorthand as z.infer<typeof stateEnums>, competitionId: competition.id })));
+																currentEdit!.competitionAvailableStates.push(...states.map(s => ({ state: s.shorthand as z.infer<typeof stateEnums>, competitionId: competition.id })));
 															} else {
-																competition.competitionAvailableStates = [];
+																currentEdit!.competitionAvailableStates = [];
 															}
 														}}/>
 														<p>Toggle All</p>
@@ -241,6 +243,7 @@
 											</footer>
 										</Dialog.Content>
 									</Dialog.Positioner>
+									{/if}
 								</Portal>
 							</Dialog>
 							<Dialog>
