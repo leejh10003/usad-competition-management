@@ -101,21 +101,26 @@
 		</label>
 		<label class="label">
 			<span class="label-text">Competition Date</span>
-			<SveltyPicker
-				mode="datetime"
-				isRange={true}
-				format="mm/dd/yyyy hh:ii:ss"
-				inputClasses="input w-full"
-				bind:value={
-					() => {
-						return [formatDate(currentEdit!.startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard'), formatDate(currentEdit!.endsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard')];
-					},
-					([startsAt, endsAt]) => {
-						currentEdit!.startsAt = parseDate(startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
-						currentEdit!.endsAt = parseDate(endsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
+			<p class="grid">
+				<SveltyPicker
+					mode="datetime"
+					isRange={true}
+					format="mm/dd/yyyy hh:ii:ss"
+					inputClasses="input w-full"
+					bind:value={
+						() => {
+							return [formatDate(currentEdit!.startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard'), formatDate(currentEdit!.endsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard')];
+						},
+						([startsAt, endsAt]) => {
+							currentEdit!.startsAt = parseDate(startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
+							currentEdit!.endsAt = parseDate(endsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
+						}
 					}
-				}
-			/>
+				/>
+			</p>
+		</label>
+		<label class="label">
+			<span class="label-text">Competition Available States</span>
 			<div class="grid grid-flow-row grid-cols-12">
 				{#each states as state (state.shorthand)}
 					<label class="flex items-center space-x-2 col-span-4">
