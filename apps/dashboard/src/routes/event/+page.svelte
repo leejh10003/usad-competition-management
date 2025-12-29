@@ -3,24 +3,30 @@
 	import { goto } from '$app/navigation';
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { page } from '$app/state';
-	import { Pagination } from '@skeletonlabs/skeleton-svelte';
+	import { Collapsible, Dialog, Pagination, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _ from 'lodash';
 	import { eventQuerySchema, eventResponseItemSchema, competitionResponseItemSchema } from 'usad-scheme';
-	import { ArrowLeftIcon, ArrowRightIcon } from '@lucide/svelte';
+	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, CalendarPlus2, XIcon } from '@lucide/svelte';
 	import moment from 'moment-timezone';
 	import z from 'zod';
 	import { resolve } from '$app/paths';
+	import SveltyPicker, { formatDate, parseDate } from 'svelty-picker';
+	import { en } from 'svelty-picker/i18n';
 	import { workerRequest } from '$lib/api/test';
+	import { dialogAppearAnimation } from '$lib/utils/animation';
+	import { timezoneFormatted } from '$lib/utils/time';
 	type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
-	var isLoading = $state<boolean>(true);
-	var isFirstLoaded = $state<boolean>(true);
+	var isActionBlocked = $state<boolean>(true);
+	var isWholeLoading = $state<boolean>(true);
+	var isFirstLoaded = $state<boolean>(false);
 	var limit = $state<number>(10);
 	var pagination = $state<number>(0);
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
 	var events = $state<EventResponseItem[]>([]);
 	var competitions = $state<CompetitionResponseItem[]>([]);
+	let currentEdit = $state<EventResponseItem | null>(null);
 	var aggregated = $derived.by(() => {
 		return events.map((event) => {
 			const competition = competitions.find((comp) => comp.id === event.competitionId);
@@ -69,7 +75,7 @@
 	}
 	const offset = $derived.by(() => (getCurrentPage - 1) * getLimit);
 	async function fetch() {
-		isLoading = true;
+		isActionBlocked = true;
 		const {result, count} = await workerRequest.getEvents({
 			take: getLimit,
 			skip: offset,
@@ -85,20 +91,106 @@
 		competitions = competitionResult;
 		total = count;
 		currentCount = result.length;
-		isLoading = false;
+		isActionBlocked = false;
 	}
 	$effect(() => {
 		let searchParams = eventQuerySchema.safeParse(
 			Object.fromEntries(page.url.searchParams.entries())
 		);
 		if (searchParams.success) {
-			fetch();
+			fetch().then(() => {
+				if (isWholeLoading) {
+					isWholeLoading = false;
+				}
+				if (!isFirstLoaded) {
+					isFirstLoaded = true;
+				}
+			});
 		}
 	})
 </script>
-
+{#snippet eventDetail(eventId: string)}
+	<Dialog.Description>
+		<label class="label">
+			<span class="label-text">Event Name</span>
+			<input type="text" class="input w-full" bind:value={currentEdit!.name} />
+		</label>
+		<label class="label">
+			<span class="label-text">Event Date</span>
+			<p class="grid">
+				<SveltyPicker
+					mode="datetime"
+					isRange={true}
+					format="mm/dd/yyyy hh:ii:ss"
+					inputClasses="input w-full"
+					bind:value={
+						() => {
+							return [formatDate(currentEdit!.startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard'), formatDate(currentEdit!.endsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard')];
+						},
+						([startsAt, endsAt]) => {
+							currentEdit!.startsAt = parseDate(startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
+							currentEdit!.endsAt = parseDate(endsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
+						}
+					}
+				/>
+			</p>
+		</label>
+	</Dialog.Description>
+{/snippet}
 <div class="flex h-full w-full flex-col gap-y-3.5 p-8">
 	<h1 class="h1 font-bold">Event</h1>
+	<Collapsible class="rounded-xs border border-primary-100 p-4">
+		<div class="flex w-full items-center justify-between">
+			<p class="font-bold">Actions</p>
+			<Collapsible.Trigger class="btn-icon hover:preset-tonal">
+				<ArrowUpDownIcon class="size-4" />
+			</Collapsible.Trigger>
+		</div>
+		<Collapsible.Content class="grid w-full grid-cols-3 gap-1">
+			<Dialog>
+				<Dialog.Trigger
+					onclick={() =>
+						(currentEdit = {
+							id: workerRequest.generateNewCompetitionId(), //TODO Change to generateNewEventId
+							name: '',
+							startsAt: new Date(),
+							competitionId: '',
+							mutationIndex: 0,
+							endsAt: new Date()
+						})}
+					class="btn preset-filled w-min"
+					disabled={isActionBlocked}><CalendarPlus2 /> Create Event</Dialog.Trigger
+				>
+				<Portal>
+					{#if currentEdit}
+						<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+						<Dialog.Positioner class="fixed inset-0 z-50 flex items-center justify-center p-4">
+							<Dialog.Content class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}">
+								<header class="flex items-center justify-between">
+									<Dialog.Title class="text-lg font-bold">Edit Competition: {name}</Dialog.Title>
+									<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+										<XIcon class="size-4" />
+									</Dialog.CloseTrigger>
+								</header>
+								{@render eventDetail(currentEdit.id)}
+								<footer class="flex justify-end gap-2">
+									<Dialog.CloseTrigger
+										class="btn preset-filled-primary-50-950"
+										onclick={async () => {
+											isActionBlocked = true;
+											//await workerRequest.insertNewCompetition(currentEdit!);
+											await fetch();
+										}}>Save</Dialog.CloseTrigger
+									>
+									<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+								</footer>
+							</Dialog.Content>
+						</Dialog.Positioner>
+					{/if}
+				</Portal>
+			</Dialog>
+		</Collapsible.Content>
+	</Collapsible>
 	<table class="table">
 		<thead>
 			<tr>
@@ -108,7 +200,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#if isLoading}
+			{#if isWholeLoading}
 				{#each _.range(0, limit, 1) as n (n)}
 					<tr>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
@@ -122,10 +214,7 @@
 					<tr>
 						<td>{name}</td>
 						<td
-							>{moment(startsAt, timezone).format('MM-DD-YYYY hh:mm:ss')} at timezone {timezone
-								.split('/')
-								.reverse()
-								.join(', ')}</td
+							>{moment(startsAt, timezone).format('MM-DD-YYYY hh:mm:ss')} at timezone {timezoneFormatted}</td
 						>
 						<td>{competitionName}</td>
 					</tr>
