@@ -24,11 +24,12 @@
 		phone: '',
 		principalEmail: '',
 		principalName: '',
-		teams: [generateTeam()],
+		teams: [generateTeam(0)],
 		coachTeamMappings: [],
 		coaches: [],
 		primaryCoachIndex: -1,
 		competitionId: '',
+		mutationIndex: 0,
 	});
 	var teamCoachMapping: { [teamId: number]: string[] } = $state({ 0: [] });
 	const collection = $derived.by(() => {
@@ -41,23 +42,25 @@
 			itemToString: ({ label }) => label
 		});
 	});
-	function generateStudents(division: Division) {
+	function generateStudents(division: Division, index: number) {
 		return {
 			lastName: '',
 			firstName: '',
 			gpa: undefined,
-			division
+			division,
+			mutationIndex: index
 		};
 	}
-	function generateTeam() {
+	function generateTeam(index: number) {
 		return {
 			students: [
-				..._.times(3, () => generateStudents('H')),
-				..._.times(3, () => generateStudents('S')),
-				..._.times(3, () => generateStudents('V'))
+				..._.times(3, (i) => generateStudents('H', i)),
+				..._.times(3, (i) => generateStudents('S', i + 3)),
+				..._.times(3, (i) => generateStudents('V', i + 6))
 			],
 			subjectiveStore: undefined,
-			objectiveScore: undefined
+			objectiveScore: undefined,
+			mutationIndex: index
 		};
 	}
 	function removeTeam(index: number) {
@@ -88,12 +91,13 @@
 			firstName: '',
 			lastName: '',
 			email: '',
-			phone: ''
+			phone: '',
+			mutationIndex: school.coaches.length
 		});
 	}
 	function addTeam() {
 		teamCoachMapping[school.coaches.length] = [];
-		school.teams.push(generateTeam());
+		school.teams.push(generateTeam(0));
 	}
 	function onSubmit() {
 		//console.log($state.snapshot(school));
