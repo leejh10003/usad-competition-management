@@ -129,7 +129,7 @@
 																.includes(s.shorthand as z.infer<typeof stateEnums>)
 													)
 													.map((s) => s.original)
-													.join(', ')}}`
+													.join(', ')}`
 											: ''
 									}`
 								: competition.competitionAvailableStates.join(', ')}
@@ -209,6 +209,20 @@
 															}
 														}
 													/>
+													<div class="grid grid-flow-row grid-cols-12">
+													{#each states as state (state.shorthand)}
+														<label class="flex items-center space-x-2 col-span-4">
+															<input class="checkbox" type="checkbox" checked={!!competition.competitionAvailableStates.find(s => s.state === state.shorthand)} onchange={(e) => {
+																if (e.currentTarget.checked) {
+																	competition.competitionAvailableStates.push({ state: state.shorthand as z.infer<typeof stateEnums>, competitionId: competition.id });
+																} else {
+																	competition.competitionAvailableStates = competition.competitionAvailableStates.filter(s => s.state !== state.shorthand);
+																}
+															}}/>
+															<p>{state.original}</p>
+														</label>
+													{/each}
+													</div>
 												</label>
 											</Dialog.Description>
 											<footer class="flex justify-end gap-2">
