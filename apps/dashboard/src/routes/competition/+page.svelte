@@ -16,7 +16,7 @@
 	import SveltyPicker, { formatDate, parseDate } from 'svelty-picker';
 	import { en} from 'svelty-picker/i18n';
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
-	var isLoading = $state<boolean>(true);
+	var isActionBlocked = $state<boolean>(true);
 	var isWholeLoading = $state<boolean>(true);
 	var limit = $state<number>(10);
 	var total = $state<number>(0);
@@ -65,7 +65,7 @@
 	}
 	const offset = $derived.by(() => (getCurrentPage - 1) * getLimit);
 	async function fetch() {
-		isLoading = true;
+		isActionBlocked = true;
 		const {result, count} = await workerRequest.getCompetition({
 			take: getLimit,
 			skip: offset,
@@ -73,7 +73,7 @@
 		competitions = result;
 		total = count;
 		currentCount = result.length;
-		isLoading = false;
+		isActionBlocked = false;
 	}
 	$effect(() => {
 		let searchParams = competitionQuerySchema.safeParse(
@@ -146,7 +146,7 @@
 									console.log('open', open);
 								}}
 							>
-								<Dialog.Trigger class="btn preset-filled"><MailIcon />Send Mails</Dialog.Trigger>
+								<Dialog.Trigger class="btn preset-filled" disabled={isActionBlocked}><MailIcon />Send Mails</Dialog.Trigger>
 								<Portal>
 									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
 									<Dialog.Positioner
@@ -181,7 +181,7 @@
 								</Portal>
 							</Dialog>
 							<Dialog>
-								<Dialog.Trigger onclick={() => currentEdit = cloneDeep(competition)} class="btn preset-filled"><Pencil />Edit</Dialog.Trigger>
+								<Dialog.Trigger onclick={() => currentEdit = cloneDeep(competition)} class="btn preset-filled" disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger>
 								<Portal>
 									{#if currentEdit}
 									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
@@ -244,6 +244,7 @@
 											</Dialog.Description>
 											<footer class="flex justify-end gap-2">
 												<Dialog.CloseTrigger class="btn preset-filled-primary-50-950" onclick={async () => {
+													isActionBlocked = true;
 													await workerRequest.updateCompetition([{where: {id: currentEdit!.id}, data: currentEdit!}]);
 													await fetch();
 												}}>Save</Dialog.CloseTrigger>
@@ -255,7 +256,7 @@
 								</Portal>
 							</Dialog>
 							<Dialog>
-								<Dialog.Trigger class="btn preset-filled-danger-50-950"><Trash />Delete</Dialog.Trigger>
+								<Dialog.Trigger class="btn preset-filled-danger-50-950" disabled={isActionBlocked}><Trash />Delete</Dialog.Trigger>
 							</Dialog>
 						</td>
 					</tr>
