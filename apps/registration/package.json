@@ -46,6 +46,7 @@
 		"@types/lodash": "^4.17.20",
 		"axios": "^1.13.2",
 		"linq": "^4.0.3",
-		"lodash": "^4.17.21"
+		"lodash": "^4.17.21",
+    	"usad-enums": "workspace:usad-enums"
 	}
 }

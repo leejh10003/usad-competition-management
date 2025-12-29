@@ -37,6 +37,7 @@
     "pg": "^8.16.3",
     "postgres": "^3.4.7",
     "usad-scheme": "workspace:usad-scheme",
-    "zod": "^4.1.12"
+    "zod": "^4.1.12",
+    "usad-enums": "workspace:usad-enums"
   }
 }

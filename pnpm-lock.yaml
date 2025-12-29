@@ -47,6 +47,9 @@ importers:
       romans:
         specifier: ^3.1.0
         version: 3.1.0
+      usad-enums:
+        specifier: workspace:usad-enums
+        version: link:../../packages/enums
       usad-scheme:
         specifier: workspace:usad-scheme
         version: link:../../packages/scheme
@@ -244,6 +247,9 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      usad-enums:
+        specifier: workspace:usad-enums
+        version: link:../../packages/enums
     devDependencies:
       '@eslint/compat':
         specifier: ^1.4.0
@@ -368,6 +374,9 @@ importers:
       postgres:
         specifier: ^3.4.7
         version: 3.4.7
+      usad-enums:
+        specifier: workspace:usad-enums
+        version: link:../../packages/enums
       usad-scheme:
         specifier: workspace:usad-scheme
         version: link:../../packages/scheme
@@ -415,6 +424,21 @@ importers:
       prisma-zod-generator:
         specifier: ^2.1.2
         version: 2.1.2(prisma@7.0.1(@types/react@19.2.7)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3))(typescript@5.9.3)(zod@4.1.12)
+
+  packages/enums:
+    devDependencies:
+      esbuild:
+        specifier: ^0.25.10
+        version: 0.25.12
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1(jiti@2.6.1)
+      prettier:
+        specifier: ^3.6.2
+        version: 3.6.2
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
 
   packages/scheme:
     dependencies:

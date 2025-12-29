@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { states } from "$lib/enums/states";
+	import { states } from "usad-enums";
 	import {storage, selectState} from '$lib/utils/store.svelte';
 	import {stateEnums} from "usad-scheme";
 	import z from 'zod';

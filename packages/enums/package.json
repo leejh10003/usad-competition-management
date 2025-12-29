@@ -1,5 +1,5 @@
 {
-  "name": "usad-scheme",
+  "name": "usad-enums",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.ts",
@@ -11,15 +11,9 @@
   "license": "ISC",
   "packageManager": "pnpm@10.10.0",
   "devDependencies": {
-    "@prisma/client": "^7.0.1",
     "esbuild": "^0.25.10",
     "eslint": "^9.39.1",
     "prettier": "^3.6.2",
     "typescript": "^5.9.2"
-  },
-  "dependencies": {
-    "@hono/zod-openapi": "^1.1.4",
-    "hono": "^4.9.9",
-    "zod": "^4.1.12"
   }
 }

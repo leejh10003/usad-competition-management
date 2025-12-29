@@ -49,6 +49,7 @@
 		"quill": "^2.0.3",
 		"romans": "^3.1.0",
 		"usad-scheme": "workspace:usad-scheme",
+    	"usad-enums": "workspace:usad-enums",
 		"zod": "^4.1.12"
 	}
 }
