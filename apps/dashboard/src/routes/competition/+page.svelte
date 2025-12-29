@@ -13,6 +13,8 @@
 	import { resolve } from '$app/paths';
 	import { workerRequest } from '$lib/api/test';
 	import { states } from 'usad-enums';
+	import SveltyPicker, { formatDate, parseDate } from 'svelty-picker';
+	import { en} from 'svelty-picker/i18n';
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
@@ -191,6 +193,22 @@
 												<label class="label">
 													<span class="label-text">Competition Name</span>
 													<input type="text" class="input w-full" bind:value={competition.name} />
+												</label>
+												<label class="label">
+													<span class="label-text">Competition Date</span>
+													<SveltyPicker
+														mode="datetime"
+														format="mm/dd/yyyy hh:ii:ss"
+														inputClasses="input w-full"
+														bind:value={
+															() => {
+																return formatDate(startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
+															},
+															(v) => {
+																competition.startsAt = parseDate(v, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
+															}
+														}
+													/>
 												</label>
 											</Dialog.Description>
 											<footer class="flex justify-end gap-2">
