@@ -128,7 +128,7 @@
 			</label>
 			<label class="label grid">
 				<span class="label-text">School State</span>
-				<StateDropdown disabled placeholder="School State..." />
+				<StateDropdown disabled />
 				<!--<input class="input" type="text" placeholder="School state..." bind:value={school.state}/>-->
 			</label>
 			<label class="label grid">

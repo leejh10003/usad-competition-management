@@ -134,7 +134,7 @@
 						>&nbsp;&nbsp;Check the state is valid or not</span
 					></span
 				>
-				<StateDropdown disabled placeholder="State..." />
+				<StateDropdown disabled />
 			</label>
 			<label class="label">
 				<span class="label-text"
