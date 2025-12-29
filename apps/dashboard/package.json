@@ -48,8 +48,9 @@
 		"pdfjs-dist": "5.4.149",
 		"quill": "^2.0.3",
 		"romans": "^3.1.0",
+		"svelty-picker": "^6.1.6",
+		"usad-enums": "workspace:usad-enums",
 		"usad-scheme": "workspace:usad-scheme",
-    	"usad-enums": "workspace:usad-enums",
 		"zod": "^4.1.12"
 	}
 }
