@@ -266,7 +266,7 @@
 		<tfoot>
 			<tr>
 				<td colspan="3">Total</td>
-				{#if isWholeLoading}
+				{#if !isWholeLoading}
 					<td colspan="1">{offset + 1} - {offset + currentCount}/{total} Elements</td>
 				{:else}
 					<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
