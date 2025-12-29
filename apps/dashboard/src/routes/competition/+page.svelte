@@ -17,7 +17,7 @@
 	import { en} from 'svelty-picker/i18n';
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	var isLoading = $state<boolean>(true);
-	var isFirstLoaded = $state<boolean>(true);
+	var isWholeLoading = $state<boolean>(true);
 	var limit = $state<number>(10);
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
@@ -80,7 +80,12 @@
 			Object.fromEntries(page.url.searchParams.entries())
 		);
 		if (searchParams.success) {
-			fetch();
+			isWholeLoading = true;
+			fetch().then(() => {
+				if (isWholeLoading) {
+					isWholeLoading = false;
+				}
+			});
 		}
 	})
 </script>
@@ -97,7 +102,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#if isLoading}
+			{#if isWholeLoading}
 				{#each _.range(0, limit, 1) as n (n)}
 					<tr>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
@@ -260,7 +265,7 @@
 		<tfoot>
 			<tr>
 				<td colspan="3">Total</td>
-				{#if isFirstLoaded}
+				{#if isWholeLoading}
 					<td colspan="1">{offset + 1} - {offset + currentCount}/{total} Elements</td>
 				{:else}
 					<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
