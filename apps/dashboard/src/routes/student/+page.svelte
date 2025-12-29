@@ -5,7 +5,7 @@
 	import { Dialog, Portal, Pagination, Collapsible } from '@skeletonlabs/skeleton-svelte';
 	import _, { debounce } from 'lodash';
 	import { studentQuerySchema, studentResponseSchema } from 'usad-scheme';
-	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, XIcon } from '@lucide/svelte';
+	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, XIcon, File } from '@lucide/svelte';
 	import z from 'zod';
 	import Pdf from '$lib/components/pdf.svelte';
 	import { workerRequest } from '$lib/api/test';
@@ -167,7 +167,7 @@
 						>
 						<td>
 							<Dialog>
-								<Dialog.Trigger disabled={!attachmentOnRegistering} class="btn preset-filled">Trigger</Dialog.Trigger>
+								<Dialog.Trigger class="btn-icon preset-filled"><File /></Dialog.Trigger>
 								<Portal>
 									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
 									<Dialog.Positioner
