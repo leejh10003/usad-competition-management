@@ -1,5 +1,6 @@
 import Enumerable from 'linq';
-import _ from 'lodash';
+import _, { isArray } from 'lodash';
+import moment from 'moment';
 import {
 	schoolResponse,
 	competitionResponseItemSchema,
@@ -9,9 +10,14 @@ import {
 	coachResponseSchema,
 	coachTeamMappings,
 	studentQuerySchema,
-    schoolQuerySchema,
-    coachQuerySchema,
-	teamQuerySchema
+	schoolQuerySchema,
+	coachQuerySchema,
+	teamQuerySchema,
+	competitionQuerySchema,
+	stateEnums,
+	eventQuerySchema,
+	eventCheckedInResponseSchema,
+	eventCheckInQuerySchema
 } from 'usad-scheme';
 import z from 'zod';
 
@@ -22,51 +28,52 @@ type StudentResponseItem = z.infer<typeof studentResponseSchema>['student'];
 type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
 type CoachResponseItem = z.infer<typeof coachResponseSchema>['coach'];
 type CoachTeamMappintItem = z.infer<typeof coachTeamMappings>;
+type EventCheckInItem = z.infer<typeof eventCheckedInResponseSchema>['eventCheckIn'];
 class WorkerRequest {
 	readonly coachTeamMappings = Enumerable.from<CoachTeamMappintItem>([
 		{
 			coachId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
-			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
 		},
 		{
 			coachId: 'aacee28b-6040-4ba7-b2a1-cee3f2068c2a',
-			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
 		},
 		{
 			coachId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
-			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4'
 		},
 		{
 			coachId: '2e577ebb-3ed4-4a5d-b96f-38aba22472e1',
-			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
+			teamId: '20bd6771-a683-4b0e-b37d-eed53ff799d4'
 		},
 		{
 			coachId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
-			teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31'
 		},
 		{
 			coachId: '3e70e81f-f5e1-4212-ba37-1c38e50bb866',
-			teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
+			teamId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31'
 		},
 		{
 			coachId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
-			teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8'
 		},
 		{
 			coachId: '1cf17dd3-77c8-493b-93d7-1d26d289a416',
-			teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
+			teamId: 'c3611b9f-b416-48af-9347-95c48ed060a8'
 		},
 		{
 			coachId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
-			teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081'
 		},
 		{
 			coachId: '1e0c58f4-12bf-48a2-959d-f806f5d07104',
-			teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
+			teamId: '21c95b7f-47d0-487b-99c1-bf93ee719081'
 		},
 		{
 			coachId: '01651989-32f4-49a9-962d-742f47b3b0cb',
-			teamId: '01651989-32f4-49a9-962d-742f47b3b0cb',
+			teamId: '01651989-32f4-49a9-962d-742f47b3b0cb'
 		},
 		{
 			coachId: 'bf2e8b11-c9c7-4eab-9923-7245e47565fd',
@@ -82,14 +89,14 @@ class WorkerRequest {
 			state: 'IL',
 			isVirtual: false,
 			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
-            streetAddress: '4821 Oak Meadow Ln',
-            city: 'Austin',
-            zipCode: '78745',
-            phone: '5125550182',
-            principalName: 'Liam Carter',
-            principalEmail: 'carter.liam@gmail.com',
-            division: 1,
-			mutationIndex: 0,
+			streetAddress: '4821 Oak Meadow Ln',
+			city: 'Austin',
+			zipCode: '78745',
+			phone: '5125550182',
+			principalName: 'Liam Carter',
+			principalEmail: 'carter.liam@gmail.com',
+			division: 1,
+			mutationIndex: 0
 		},
 		{
 			id: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
@@ -99,14 +106,14 @@ class WorkerRequest {
 			state: 'NY',
 			isVirtual: false,
 			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
-            streetAddress: '1092 Sunnyvale Dr',
-            city: 'San Jose',
-            zipCode: '95129',
-            phone: '4085550147',
-            principalName: 'Emma Brooks',
-            principalEmail: 'brooks.emma@gmail.com',
-            division: 2,
-			mutationIndex: 1,
+			streetAddress: '1092 Sunnyvale Dr',
+			city: 'San Jose',
+			zipCode: '95129',
+			phone: '4085550147',
+			principalName: 'Emma Brooks',
+			principalEmail: 'brooks.emma@gmail.com',
+			division: 2,
+			mutationIndex: 1
 		},
 		{
 			id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
@@ -116,14 +123,14 @@ class WorkerRequest {
 			state: 'CA',
 			isVirtual: false,
 			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
-            streetAddress: '8822 Lakeview Blvd',
-            city: 'Seattle',
-            zipCode: '98109',
-            phone: '2065550193',
-            principalName: 'Noah Foster',
-            principalEmail: 'foster.noah@gmail.com',
-            division: 3,
-			mutationIndex: 2,
+			streetAddress: '8822 Lakeview Blvd',
+			city: 'Seattle',
+			zipCode: '98109',
+			phone: '2065550193',
+			principalName: 'Noah Foster',
+			principalEmail: 'foster.noah@gmail.com',
+			division: 3,
+			mutationIndex: 2
 		},
 		{
 			id: 'c3611b9f-b416-48af-9347-95c48ed060a8',
@@ -133,14 +140,14 @@ class WorkerRequest {
 			state: 'TX',
 			isVirtual: false,
 			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
-            streetAddress: '3012 Broadway Ext',
-            city: 'Nashville',
-            zipCode: '37203',
-            phone: '6155550125',
-            principalName: 'Olivia Price',
-            principalEmail: 'price.olivia@gmail.com',
-            division: 4,
-			mutationIndex: 3,
+			streetAddress: '3012 Broadway Ext',
+			city: 'Nashville',
+			zipCode: '37203',
+			phone: '6155550125',
+			principalName: 'Olivia Price',
+			principalEmail: 'price.olivia@gmail.com',
+			division: 4,
+			mutationIndex: 3
 		},
 		{
 			id: '21c95b7f-47d0-487b-99c1-bf93ee719081',
@@ -150,14 +157,14 @@ class WorkerRequest {
 			state: 'FL',
 			isVirtual: false,
 			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
-            streetAddress: '5501 River Road',
-            city: 'Chicago',
-            zipCode: '60611',
-            phone: '3125550166',
-            principalName: 'Mason Butler',
-            principalEmail: 'butler.mason@gmail.com',
-            division: 5,
-			mutationIndex: 4,
+			streetAddress: '5501 River Road',
+			city: 'Chicago',
+			zipCode: '60611',
+			phone: '3125550166',
+			principalName: 'Mason Butler',
+			principalEmail: 'butler.mason@gmail.com',
+			division: 5,
+			mutationIndex: 4
 		},
 		{
 			id: '01651989-32f4-49a9-962d-742f47b3b0cb',
@@ -167,22 +174,79 @@ class WorkerRequest {
 			state: 'VA',
 			isVirtual: true,
 			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
-            streetAddress: '7702 Pine Street',
-            city: 'Atlanta',
-            zipCode: '30308',
-            phone: '4045550109',
-            principalName: 'Sophia Simmons',
-            principalEmail: 'simmons.sophia@gmail.com',
-            division: 1,
-			mutationIndex: 5,
+			streetAddress: '7702 Pine Street',
+			city: 'Atlanta',
+			zipCode: '30308',
+			phone: '4045550109',
+			principalName: 'Sophia Simmons',
+			principalEmail: 'simmons.sophia@gmail.com',
+			division: 1,
+			mutationIndex: 5
 		}
 	]);
-	readonly competitions = Enumerable.from([
+	readonly competitions = Enumerable.from<CompetitionResponseItem>([
 		{
 			id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
 			name: 'Regional Science Competition',
 			startsAt: new Date(),
-			endsAt: new Date()
+			endsAt: new Date(),
+			mutationIndex: 1,
+			competitionAvailableStates: [
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'AL' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'AK' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'AZ' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'AR' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'CA' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'CO' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'CT' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'DE' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'FL' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'GA' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'HI' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'ID' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'IL' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'IN' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'IA' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'KS' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'KY' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'LA' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'ME' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'MD' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'MA' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'MI' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'MN' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'MS' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'MO' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'MT' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'NE' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'NV' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'NH' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'NJ' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'NM' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'NY' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'NC' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'ND' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'OH' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'OK' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'OR' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'PA' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'RI' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'SC' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'SD' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'TN' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'TX' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'UT' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'VT' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'VA' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'WA' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'WV' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'WI' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'WY' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'AA' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'AE' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'AP' },
+				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'DC' }
+			]
 		}
 	]);
 	readonly teams = Enumerable.from<TeamResponseItem>([
@@ -192,7 +256,7 @@ class WorkerRequest {
 			externalTeamId: '101',
 			division: 1,
 			objectiveScore: 85,
-			subjectiveScore: 90,
+			subjectiveScore: 90
 		},
 		{
 			id: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
@@ -200,7 +264,7 @@ class WorkerRequest {
 			externalTeamId: '111',
 			division: 2,
 			objectiveScore: 88,
-			subjectiveScore: 92,
+			subjectiveScore: 92
 		},
 		{
 			id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
@@ -208,7 +272,7 @@ class WorkerRequest {
 			externalTeamId: '121',
 			division: 1,
 			objectiveScore: 90,
-			subjectiveScore: 85,
+			subjectiveScore: 85
 		},
 		{
 			id: 'c3611b9f-b416-48af-9347-95c48ed060a8',
@@ -216,7 +280,7 @@ class WorkerRequest {
 			externalTeamId: '131',
 			division: 2,
 			objectiveScore: 87,
-			subjectiveScore: 89,
+			subjectiveScore: 89
 		},
 		{
 			id: '21c95b7f-47d0-487b-99c1-bf93ee719081',
@@ -224,7 +288,7 @@ class WorkerRequest {
 			externalTeamId: '141',
 			division: 1,
 			objectiveScore: 92,
-			subjectiveScore: 91,
+			subjectiveScore: 91
 		},
 		{
 			id: '01651989-32f4-49a9-962d-742f47b3b0cb',
@@ -254,7 +318,7 @@ class WorkerRequest {
 			externalStudentId: '1011',
 			firstName: 'Lucille',
 			lastName: 'Mock',
-			mutationIndex: 0,
+			mutationIndex: 0
 		},
 		{
 			id: 'aacee28b-6040-4ba7-b2a1-cee3f2068c2a',
@@ -274,7 +338,7 @@ class WorkerRequest {
 			externalStudentId: '1012',
 			firstName: 'Marissa',
 			lastName: 'Guo',
-			mutationIndex: 1,
+			mutationIndex: 1
 		},
 		{
 			id: '49476cc2-048f-4d16-bf98-b9b87aa50077',
@@ -294,7 +358,7 @@ class WorkerRequest {
 			externalStudentId: '1013',
 			firstName: 'Shelby',
 			lastName: 'Aust',
-			mutationIndex: 2,
+			mutationIndex: 2
 		},
 		{
 			id: '080bce17-748b-402e-b44b-e1629a3782af',
@@ -314,7 +378,7 @@ class WorkerRequest {
 			externalStudentId: '1014',
 			firstName: 'JT',
 			lastName: 'Hare',
-			mutationIndex: 3,
+			mutationIndex: 3
 		},
 		{
 			id: '2cd17e6f-a3d4-4a2a-9bb5-e8da24d733c3',
@@ -334,7 +398,7 @@ class WorkerRequest {
 			externalStudentId: '1015',
 			firstName: 'Reyhan',
 			lastName: 'Ramrakhyani',
-			mutationIndex: 4,
+			mutationIndex: 4
 		},
 		{
 			id: 'ff465620-e097-4f80-8da6-ab846ee0938e',
@@ -354,7 +418,7 @@ class WorkerRequest {
 			externalStudentId: '1016',
 			firstName: 'Lia',
 			lastName: 'Ha',
-			mutationIndex: 5,
+			mutationIndex: 5
 		},
 		{
 			id: '825d4d26-405a-48b7-87a3-1093323d9b24',
@@ -374,7 +438,7 @@ class WorkerRequest {
 			externalStudentId: '1017',
 			firstName: 'Nathan',
 			lastName: 'Frost',
-			mutationIndex: 6,
+			mutationIndex: 6
 		},
 		{
 			id: '6b1ceadc-d7a1-457d-8e89-6cf99dd320ff',
@@ -394,7 +458,7 @@ class WorkerRequest {
 			externalStudentId: '1018',
 			firstName: 'Gavin',
 			lastName: 'Fox',
-			mutationIndex: 7,
+			mutationIndex: 7
 		},
 		{
 			id: 'de63cd76-05e1-4633-a81b-dcb635fbab4f',
@@ -414,7 +478,7 @@ class WorkerRequest {
 			externalStudentId: '1019',
 			firstName: 'Yuliya',
 			lastName: 'Gorbunova',
-			mutationIndex: 8,
+			mutationIndex: 8
 		},
 		{
 			id: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
@@ -434,7 +498,7 @@ class WorkerRequest {
 			externalStudentId: '1111',
 			firstName: 'Luke',
 			lastName: "O'Brien",
-			mutationIndex: 9,
+			mutationIndex: 9
 		},
 		{
 			id: '2e577ebb-3ed4-4a5d-b96f-38aba22472e1',
@@ -454,7 +518,7 @@ class WorkerRequest {
 			externalStudentId: '1112',
 			firstName: 'Caleb',
 			lastName: 'Olson',
-			mutationIndex: 10,
+			mutationIndex: 10
 		},
 		{
 			id: '292b4a8f-b675-4459-9761-1c729b6e364a',
@@ -474,7 +538,7 @@ class WorkerRequest {
 			externalStudentId: '1113',
 			firstName: 'Kylie',
 			lastName: 'Weaver',
-			mutationIndex: 11,
+			mutationIndex: 11
 		},
 		{
 			id: '51998bc9-c126-4ead-90c4-4551a0abf76b',
@@ -494,7 +558,7 @@ class WorkerRequest {
 			externalStudentId: '1114',
 			firstName: 'Rowan',
 			lastName: 'LeFevre',
-			mutationIndex: 12,
+			mutationIndex: 12
 		},
 		{
 			id: '16b4468a-5f27-4b17-98cf-9b94524b425d',
@@ -514,7 +578,7 @@ class WorkerRequest {
 			externalStudentId: '1115',
 			firstName: 'Austin',
 			lastName: 'Strong',
-			mutationIndex: 13,
+			mutationIndex: 13
 		},
 		{
 			id: '9d18ea73-5e14-453c-9f5a-02489cd8299e',
@@ -534,7 +598,7 @@ class WorkerRequest {
 			externalStudentId: '1116',
 			firstName: 'Heidi',
 			lastName: 'Curtis',
-			mutationIndex: 14,
+			mutationIndex: 14
 		},
 		{
 			id: '76264e0b-e6d9-4d92-ab3d-9bdf67aa3e54',
@@ -554,7 +618,7 @@ class WorkerRequest {
 			externalStudentId: '1117',
 			firstName: 'Gabriel',
 			lastName: 'Gois',
-			mutationIndex: 15,
+			mutationIndex: 15
 		},
 		{
 			id: '7c5591ff-2b19-4e05-98d8-22f88524dd88',
@@ -574,7 +638,7 @@ class WorkerRequest {
 			externalStudentId: '1118',
 			firstName: 'Maddy',
 			lastName: 'Inman',
-			mutationIndex: 16,
+			mutationIndex: 16
 		},
 		{
 			id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
@@ -594,7 +658,7 @@ class WorkerRequest {
 			externalStudentId: '1211',
 			firstName: 'Aariyaka',
 			lastName: 'Jain',
-			mutationIndex: 17,
+			mutationIndex: 17
 		},
 		{
 			id: '3e70e81f-f5e1-4212-ba37-1c38e50bb866',
@@ -614,7 +678,7 @@ class WorkerRequest {
 			externalStudentId: '1212',
 			firstName: 'Riley',
 			lastName: 'Delorey',
-			mutationIndex: 18,
+			mutationIndex: 18
 		},
 		{
 			id: '11a4fa9b-3820-4c1e-8196-053f60b72d68',
@@ -634,7 +698,7 @@ class WorkerRequest {
 			externalStudentId: '1213',
 			firstName: 'Ethan',
 			lastName: 'Chaing',
-			mutationIndex: 19,
+			mutationIndex: 19
 		},
 		{
 			id: '72739130-5a04-47c3-b0bd-76147de59a5d',
@@ -654,7 +718,7 @@ class WorkerRequest {
 			externalStudentId: '1214',
 			firstName: 'Ocean',
 			lastName: 'Hauke',
-			mutationIndex: 20,
+			mutationIndex: 20
 		},
 		{
 			id: '75e36127-d814-4340-a3bd-91f8ae890f6e',
@@ -674,7 +738,7 @@ class WorkerRequest {
 			externalStudentId: '1215',
 			firstName: 'Conor',
 			lastName: 'Long',
-			mutationIndex: 21,
+			mutationIndex: 21
 		},
 		{
 			id: 'c3611b9f-b416-48af-9347-95c48ed060a8',
@@ -694,7 +758,7 @@ class WorkerRequest {
 			externalStudentId: '1311',
 			firstName: 'Raya',
 			lastName: 'Waldron',
-			mutationIndex: 22,
+			mutationIndex: 22
 		},
 		{
 			id: '1cf17dd3-77c8-493b-93d7-1d26d289a416',
@@ -714,7 +778,7 @@ class WorkerRequest {
 			externalStudentId: '1312',
 			firstName: 'Dylan',
 			lastName: 'Portugal',
-			mutationIndex: 23,
+			mutationIndex: 23
 		},
 		{
 			id: '9a75d5b3-2df2-4939-9626-23bbdeb117d9',
@@ -734,7 +798,7 @@ class WorkerRequest {
 			externalStudentId: '1313',
 			firstName: 'Gregory',
 			lastName: 'DeFauw',
-			mutationIndex: 24,
+			mutationIndex: 24
 		},
 		{
 			id: '5bc3db05-28e8-4516-82af-09f2fcb1b29b',
@@ -754,7 +818,7 @@ class WorkerRequest {
 			externalStudentId: '1314',
 			firstName: 'Tyler',
 			lastName: 'Bettner',
-			mutationIndex: 25,
+			mutationIndex: 25
 		},
 		{
 			id: '8588bd34-d0cc-420b-b599-92c7edbbcb95',
@@ -774,7 +838,7 @@ class WorkerRequest {
 			externalStudentId: '1315',
 			firstName: 'AJ',
 			lastName: 'Morris',
-			mutationIndex: 26,
+			mutationIndex: 26
 		},
 		{
 			id: '21c95b7f-47d0-487b-99c1-bf93ee719081',
@@ -794,7 +858,7 @@ class WorkerRequest {
 			externalStudentId: '1411',
 			firstName: 'Ishaan',
 			lastName: 'Deshpande',
-			mutationIndex: 27,
+			mutationIndex: 27
 		},
 		{
 			id: 'bf2e8b11-c9c7-4eab-9923-7245e47565fd',
@@ -814,7 +878,7 @@ class WorkerRequest {
 			externalStudentId: '1412',
 			firstName: 'Charles',
 			lastName: 'Watts',
-			mutationIndex: 28,
+			mutationIndex: 28
 		},
 		{
 			id: '8cfde76f-be5d-4262-806b-a0d5ef7c55cc',
@@ -834,7 +898,7 @@ class WorkerRequest {
 			externalStudentId: '1413',
 			firstName: 'Frederick',
 			lastName: 'Sh',
-			mutationIndex: 29,
+			mutationIndex: 29
 		},
 		{
 			id: '01651989-32f4-49a9-962d-742f47b3b0cb',
@@ -854,7 +918,7 @@ class WorkerRequest {
 			externalStudentId: '1511',
 			firstName: 'Thomas',
 			lastName: 'Bender',
-			mutationIndex: 30,
+			mutationIndex: 30
 		},
 		{
 			id: '1e0c58f4-12bf-48a2-959d-f806f5d07104',
@@ -874,7 +938,7 @@ class WorkerRequest {
 			externalStudentId: '1512',
 			firstName: 'Ryan',
 			lastName: 'Waldro',
-			mutationIndex: 31,
+			mutationIndex: 31
 		}
 	]);
 	readonly events = Enumerable.from<EventResponseItem>([
@@ -884,9 +948,17 @@ class WorkerRequest {
 			name: 'Physics',
 			startsAt: new Date(),
 			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
-			mutationIndex: 32,
+			mutationIndex: 32
 		}
 	]);
+	readonly eventCheckIns = Enumerable.from<EventCheckInItem>([
+		{
+			studentId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			eventId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
+			checkedInAt: new Date(),
+			mutationIndex: 10,
+		}
+	])
 	readonly coaches = Enumerable.from<CoachResponseItem>([
 		{
 			externalCoachId: '1011',
@@ -896,7 +968,7 @@ class WorkerRequest {
 			lastName: 'Doe',
 			phone: '5551234567',
 			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
-			mutationIndex: 33,
+			mutationIndex: 33
 		},
 		{
 			externalCoachId: '1012',
@@ -906,7 +978,7 @@ class WorkerRequest {
 			lastName: 'Doe',
 			phone: '5554974267',
 			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
-			mutationIndex: 34,
+			mutationIndex: 34
 		},
 		{
 			externalCoachId: '1111',
@@ -916,7 +988,7 @@ class WorkerRequest {
 			lastName: 'Que',
 			phone: '5559876543',
 			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
-			mutationIndex: 35,
+			mutationIndex: 35
 		},
 		{
 			externalCoachId: '1112',
@@ -926,7 +998,7 @@ class WorkerRequest {
 			lastName: 'Rionel',
 			phone: '5555647382',
 			schoolId: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
-			mutationIndex: 36,
+			mutationIndex: 36
 		},
 		{
 			externalCoachId: '1211',
@@ -936,7 +1008,7 @@ class WorkerRequest {
 			lastName: 'Qubic',
 			phone: '5550192837',
 			schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
-			mutationIndex: 37,
+			mutationIndex: 37
 		},
 		{
 			externalCoachId: '1212',
@@ -946,7 +1018,7 @@ class WorkerRequest {
 			lastName: 'Tonal',
 			phone: '5555647382',
 			schoolId: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
-			mutationIndex: 38,
+			mutationIndex: 38
 		},
 		{
 			externalCoachId: '1311',
@@ -956,7 +1028,7 @@ class WorkerRequest {
 			lastName: 'Tonal',
 			phone: '5550192837',
 			schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
-			mutationIndex: 39,
+			mutationIndex: 39
 		},
 		{
 			externalCoachId: '1312',
@@ -966,7 +1038,7 @@ class WorkerRequest {
 			lastName: 'Tracy',
 			phone: '5555647382',
 			schoolId: 'c3611b9f-b416-48af-9347-95c48ed060a8',
-			mutationIndex: 40,
+			mutationIndex: 40
 		},
 		{
 			externalCoachId: '1411',
@@ -976,7 +1048,7 @@ class WorkerRequest {
 			lastName: 'Trudy',
 			phone: '5550192837',
 			schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
-			mutationIndex: 41,
+			mutationIndex: 41
 		},
 		{
 			externalCoachId: '1412',
@@ -986,7 +1058,7 @@ class WorkerRequest {
 			lastName: 'Grason',
 			phone: '5552472670',
 			schoolId: '21c95b7f-47d0-487b-99c1-bf93ee719081',
-			mutationIndex: 42,
+			mutationIndex: 42
 		},
 		{
 			externalCoachId: '1511',
@@ -996,7 +1068,7 @@ class WorkerRequest {
 			lastName: 'Guman',
 			phone: '5553519422',
 			schoolId: '01651989-32f4-49a9-962d-742f47b3b0cb',
-			mutationIndex: 43,
+			mutationIndex: 43
 		},
 		{
 			externalCoachId: '1512',
@@ -1006,13 +1078,13 @@ class WorkerRequest {
 			lastName: 'Cook',
 			phone: '3627252128',
 			schoolId: '01651989-32f4-49a9-962d-742f47b3b0cb',
-			mutationIndex: 44,
+			mutationIndex: 44
 		}
 	]);
 	async _mockDelay() {
 		return new Promise((resolve) => setTimeout(() => resolve(undefined), 1500));
 	}
-	async getTeam(input: z.infer<typeof teamQuerySchema>){
+	async getTeam(input: z.infer<typeof teamQuerySchema>) {
 		const { data, success } = z.safeParse(studentQuerySchema, input);
 		const result = this.teams
 			.select((e) => e)
@@ -1040,24 +1112,46 @@ class WorkerRequest {
 			count
 		};
 	}
-    async getCoach(input: z.infer<typeof coachQuerySchema>){
-        const test = ({firstName, lastName, externalCoachId}: CoachResponseItem) => {
-            let result = true;
-            if (input.where?.firstName && typeof input.where.firstName !== undefined && typeof input.where.firstName !== 'string' && typeof input.where.firstName.contains === 'string') {
-                result = result && firstName?.toLowerCase().includes(input.where.firstName.contains.toLowerCase())
-            }
-            if (input.where?.lastName && typeof input.where.lastName !== undefined && typeof input.where.lastName !== 'string' && typeof input.where.lastName.contains === 'string') {
-                result = result && lastName?.toLowerCase().includes(input.where.lastName.contains.toLowerCase())
-            }
-            if (input.where?.externalCoachId && typeof input.where.externalCoachId !== undefined && typeof input.where.externalCoachId !== 'string' && typeof input.where.externalCoachId.contains === 'string') {
-                result = result && (externalCoachId?.toLowerCase()?.includes(input.where.externalCoachId.contains.toLowerCase()) ?? false)
-            }
-            return result;
-        };
-        const result = this.coaches
+	async getCoach(input: z.infer<typeof coachQuerySchema>) {
+		const test = ({ firstName, lastName, externalCoachId }: CoachResponseItem) => {
+			let result = true;
+			if (
+				input.where?.firstName &&
+				typeof input.where.firstName !== undefined &&
+				typeof input.where.firstName !== 'string' &&
+				typeof input.where.firstName.contains === 'string'
+			) {
+				result =
+					result && firstName?.toLowerCase().includes(input.where.firstName.contains.toLowerCase());
+			}
+			if (
+				input.where?.lastName &&
+				typeof input.where.lastName !== undefined &&
+				typeof input.where.lastName !== 'string' &&
+				typeof input.where.lastName.contains === 'string'
+			) {
+				result =
+					result && lastName?.toLowerCase().includes(input.where.lastName.contains.toLowerCase());
+			}
+			if (
+				input.where?.externalCoachId &&
+				typeof input.where.externalCoachId !== undefined &&
+				typeof input.where.externalCoachId !== 'string' &&
+				typeof input.where.externalCoachId.contains === 'string'
+			) {
+				result =
+					result &&
+					(externalCoachId
+						?.toLowerCase()
+						?.includes(input.where.externalCoachId.contains.toLowerCase()) ??
+						false);
+			}
+			return result;
+		};
+		const result = this.coaches
 			.select((e) => e)
 			.skip(input?.skip ?? 0)
-            .where(test)
+			.where(test)
 			.take(input?.take ?? 10)
 			.toArray();
 		const count = this.coaches.where(test).count();
@@ -1066,22 +1160,37 @@ class WorkerRequest {
 			result,
 			count
 		};
-    }
-    async getSchool(input: z.infer<typeof schoolQuerySchema>) {
-        const test = ({name, externalSchoolId}: SchoolItemType) => {
-            let result = true;
-            if (input.where?.name && typeof input.where.name !== undefined && typeof input.where.name !== 'string' && typeof input.where.name.contains === 'string') {
-                result = result && name?.toLowerCase().includes(input.where.name.contains.toLowerCase())
-            }
-            if (input.where?.externalSchoolId && typeof input.where.externalSchoolId !== undefined && typeof input.where.externalSchoolId !== 'string' && typeof input.where.externalSchoolId.contains === 'string') {
-                result = result && (externalSchoolId?.toLowerCase()?.includes(input.where.externalSchoolId.contains.toLowerCase()) ?? false)
-            }
-            return result;
-        };
-        const result = this.schools
+	}
+	async getSchool(input: z.infer<typeof schoolQuerySchema>) {
+		const test = ({ name, externalSchoolId }: SchoolItemType) => {
+			let result = true;
+			if (
+				input.where?.name &&
+				typeof input.where.name !== undefined &&
+				typeof input.where.name !== 'string' &&
+				typeof input.where.name.contains === 'string'
+			) {
+				result = result && name?.toLowerCase().includes(input.where.name.contains.toLowerCase());
+			}
+			if (
+				input.where?.externalSchoolId &&
+				typeof input.where.externalSchoolId !== undefined &&
+				typeof input.where.externalSchoolId !== 'string' &&
+				typeof input.where.externalSchoolId.contains === 'string'
+			) {
+				result =
+					result &&
+					(externalSchoolId
+						?.toLowerCase()
+						?.includes(input.where.externalSchoolId.contains.toLowerCase()) ??
+						false);
+			}
+			return result;
+		};
+		const result = this.schools
 			.select((e) => e)
 			.skip(input?.skip ?? 0)
-            .where(test)
+			.where(test)
 			.take(input?.take ?? 10)
 			.toArray();
 		const count = this.schools.where(test).count();
@@ -1090,7 +1199,168 @@ class WorkerRequest {
 			result,
 			count
 		};
-    }
+	}
+	async getCompetition(input: z.infer<typeof competitionQuerySchema>) {
+		const test = ({
+			name,
+			startsAt,
+			endsAt,
+			competitionAvailableStates,
+		}: CompetitionResponseItem) => {
+			let result = true;
+			if (input.where) {
+				const {where} = input;
+				if (
+					typeof where.name !== undefined &&
+					typeof where.name !== 'string' &&
+					typeof where.name?.contains === 'string'
+				) {
+					result = result && name.includes(where.name.contains);
+				}
+				if (
+					typeof where.startsAt ==='object' &&
+					'lte' in where.startsAt &&
+					moment.isDate(where.startsAt.lte)
+				) {
+					result = result && moment(startsAt).isSameOrBefore(moment(where.startsAt.lte!));
+				}
+				if (
+					typeof where.startsAt ==='object' &&
+					'gte' in where.startsAt &&
+					moment.isDate(where.startsAt.gte)
+				) {
+					result = result && moment(startsAt).isSameOrBefore(moment(where.startsAt.gte!));
+				}
+				if (
+					typeof where.endsAt ==='object' &&
+					'lte' in where.endsAt &&
+					moment.isDate(where.endsAt.lte)
+				) {
+					result = result && moment(endsAt).isSameOrBefore(moment(where.endsAt.lte!));
+				}
+				if (
+					typeof where.endsAt ==='object' &&
+					'gte' in where.endsAt &&
+					moment.isDate(where.endsAt.gte)
+				) {
+					result = result && moment(endsAt).isSameOrBefore(moment(where.endsAt.gte!));
+				}
+				if (
+					typeof where.competitionAvailableStates === 'object' &&
+					typeof where.competitionAvailableStates.some?.state === 'object' &&
+					typeof where.competitionAvailableStates.some!.state?.in === 'object' &&
+					isArray(where.competitionAvailableStates.some?.state?.in)
+				) {
+					result = result && competitionAvailableStates.some(({state}) => (where.competitionAvailableStates!.some!.state! as {in: Array<z.infer<typeof stateEnums>>}).in.includes(state))
+				}
+			}
+			return result;
+		};
+		const result = this.competitions
+			.select((e) => e)
+			.skip(input?.skip ?? 0)
+			.where(test)
+			.take(input?.take ?? 10)
+			.toArray();
+		const count = this.competitions.where(test).count();
+		await this._mockDelay();
+		return {
+			result,
+			count
+		};
+	}
+	async getEvents(input: z.infer<typeof eventQuerySchema>) {
+		const test = ({
+			name,
+			startsAt,
+			endsAt,
+			competitionId,
+		}: EventResponseItem) => {
+			let result = true;
+			if (input.where) {
+				const {where} = input;
+				if (
+					typeof where.name !== undefined &&
+					typeof where.name !== 'string' &&
+					typeof where.name?.contains === 'string'
+				) {
+					result = result && name.includes(where.name.contains);
+				}
+				if (
+					typeof where.startsAt ==='object' &&
+					'lte' in where.startsAt &&
+					moment.isDate(where.startsAt.lte)
+				) {
+					result = result && moment(startsAt).isSameOrBefore(moment(where.startsAt.lte!));
+				}
+				if (
+					typeof where.startsAt ==='object' &&
+					'gte' in where.startsAt &&
+					moment.isDate(where.startsAt.gte)
+				) {
+					result = result && moment(startsAt).isSameOrBefore(moment(where.startsAt.gte!));
+				}
+				if (
+					typeof where.endsAt ==='object' &&
+					'lte' in where.endsAt &&
+					moment.isDate(where.endsAt.lte)
+				) {
+					result = result && moment(endsAt).isSameOrBefore(moment(where.endsAt.lte!));
+				}
+				if (
+					typeof where.endsAt ==='object' &&
+					'gte' in where.endsAt &&
+					moment.isDate(where.endsAt.gte)
+				) {
+					result = result && moment(endsAt).isSameOrBefore(moment(where.endsAt.gte!));
+				}
+				if (
+					typeof where.competitionId === 'object'
+				) {
+					if (typeof where.competitionId.equals === 'string') {
+						result = result && competitionId === where.competitionId.equals;
+					}
+				}
+			}
+			return result;
+		};
+		const result = this.events
+			.select((e) => e)
+			.skip(input?.skip ?? 0)
+			.where(test)
+			.take(input?.take ?? 10)
+			.toArray();
+		const count = this.events.where(test).count();
+		await this._mockDelay();
+		return {
+			result,
+			count
+		};
+	}
+	async getEventCheckIn(input: z.infer<typeof eventCheckInQuerySchema>) {
+		const test = ({
+			studentId,
+			eventId,
+			checkedInAt
+		}: EventCheckInItem) => {
+			let result = true;
+			if (input.where) {
+			}
+			return result;
+		};
+		const result = this.eventCheckIns
+			.select((e) => e)
+			.skip(input?.skip ?? 0)
+			.where(test)
+			.take(input?.take ?? 10)
+			.toArray();
+		const count = this.eventCheckIns.where(test).count();
+		await this._mockDelay();
+		return {
+			result,
+			count
+		};
+	}
 }
 
 const workerRequest = new WorkerRequest();
