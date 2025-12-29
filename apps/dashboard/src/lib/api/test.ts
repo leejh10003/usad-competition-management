@@ -1264,6 +1264,7 @@ class WorkerRequest {
 	async deleteCompetitions(input: z.infer<typeof competitionQuerySchema>) {
 		await this._mockDelay();
 		this.competitions = this.competitions.where((c) => !this.testCompetition(c, input));
+		//TODO: Also delete related entities
 	}
 	generateNewCompetitionId() {
 		const ids = this.competitions.select((c) => c.id).toArray();
