@@ -167,7 +167,7 @@
 						>
 						<td>
 							<Dialog>
-								<Dialog.Trigger class="btn-icon preset-filled"><File /></Dialog.Trigger>
+								<Dialog.Trigger class="btn preset-filled"><File />Show PDF</Dialog.Trigger>
 								<Portal>
 									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
 									<Dialog.Positioner

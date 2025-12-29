@@ -90,7 +90,7 @@
 				<td>Competition Name</td>
 				<td>Competition Date</td>
 				<td>Competition Available States</td>
-				<td>Send Mails</td>
+				<td>Actions</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -138,7 +138,7 @@
 									console.log('open', open);
 								}}
 							>
-								<Dialog.Trigger class="btn-icon preset-filled"><MailIcon /></Dialog.Trigger>
+								<Dialog.Trigger class="btn preset-filled"><MailIcon />Send Mails</Dialog.Trigger>
 								<Portal>
 									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
 									<Dialog.Positioner
