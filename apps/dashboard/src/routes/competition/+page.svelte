@@ -3,10 +3,10 @@
 	import { goto } from '$app/navigation';
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { page } from '$app/state';
-	import { Dialog, Pagination, Portal } from '@skeletonlabs/skeleton-svelte';
+	import { Collapsible, Dialog, Pagination, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _, { cloneDeep } from 'lodash';
 	import { competitionQuerySchema, competitionResponseItemSchema, stateEnums } from 'usad-scheme';
-	import { ArrowLeftIcon, ArrowRightIcon, MailIcon, XIcon, Pencil, Trash } from '@lucide/svelte';
+	import { ArrowLeftIcon, ArrowRightIcon, MailIcon, XIcon, Pencil, Trash, ArrowUpDownIcon, CalendarPlus2 } from '@lucide/svelte';
 	import moment from 'moment-timezone';
 	import z from 'zod';
     import Editor from '$lib/components/editor.svelte';
@@ -89,9 +89,103 @@
 		}
 	})
 </script>
-
+{#snippet competitionDetail(competitionId: string)}
+<Dialog.Description>
+	<label class="label">
+		<span class="label-text">Competition Name</span>
+		<input type="text" class="input w-full" bind:value={currentEdit!.name} />
+	</label>
+	<label class="label">
+		<span class="label-text">Competition Date</span>
+		<SveltyPicker
+			mode="datetime"
+			format="mm/dd/yyyy hh:ii:ss"
+			inputClasses="input w-full"
+			bind:value={
+				() => {
+					return formatDate(currentEdit!.startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
+				},
+				(v) => {
+					currentEdit!.startsAt = parseDate(v, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
+				}
+			}
+		/>
+		<div class="grid grid-flow-row grid-cols-12">
+		{#each states as state (state.shorthand)}
+			<label class="flex items-center space-x-2 col-span-4">
+				<input class="checkbox" type="checkbox" checked={!!currentEdit!.competitionAvailableStates.find(s => s.state === state.shorthand)} onchange={(e) => {
+					if (e.currentTarget.checked) {
+						currentEdit!.competitionAvailableStates.push({ state: state.shorthand as z.infer<typeof stateEnums>, competitionId: competitionId });
+					} else {
+						currentEdit!.competitionAvailableStates = currentEdit!.competitionAvailableStates.filter(s => s.state !== state.shorthand);
+					}
+				}}/>
+				<p>{state.original}</p>
+			</label>
+		{/each}
+		<label class="flex items-center space-x-2 col-span-4">
+			<input class="checkbox" type="checkbox" checked={currentEdit!.competitionAvailableStates.length === states.length} onchange={(e) => {
+				if (e.currentTarget.checked) {
+					currentEdit!.competitionAvailableStates.push(...states.map(s => ({ state: s.shorthand as z.infer<typeof stateEnums>, competitionId: competitionId })));
+				} else {
+					currentEdit!.competitionAvailableStates = [];
+				}
+			}}/>
+			<p>Toggle All</p>
+		</label>
+		</div>
+	</label>
+</Dialog.Description>
+{/snippet}
 <div class="flex h-full w-full flex-col gap-y-3.5 p-8">
 	<h1 class="h1 font-bold">Competition</h1>
+	<Collapsible class="rounded-xs border border-primary-100 p-4">
+		<div class="flex w-full items-center justify-between">
+			<p class="font-bold">Actions</p>
+			<Collapsible.Trigger class="btn-icon hover:preset-tonal">
+				<ArrowUpDownIcon class="size-4" />
+			</Collapsible.Trigger>
+		</div>
+		<Collapsible.Content class="grid w-full grid-cols-3 gap-1">
+			<Dialog>
+				<Dialog.Trigger onclick={() => currentEdit = {
+					id: workerRequest.generateNewCompetitionId(),
+					name: '',
+					startsAt: new Date(),
+					competitionAvailableStates: [],
+					mutationIndex: 0,
+					endsAt: new Date(),
+				}} class="btn preset-filled w-min" disabled={isActionBlocked}><CalendarPlus2 /> Create Competition</Dialog.Trigger>
+				<Portal>
+					{#if currentEdit}
+					<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+					<Dialog.Positioner
+						class="fixed inset-0 z-50 flex items-center justify-center p-4">
+						<Dialog.Content
+							class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {animation}"
+						>
+							<header class="flex items-center justify-between">
+								<Dialog.Title class="text-lg font-bold">Edit Competition: {name}</Dialog.Title>
+								<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+									<XIcon class="size-4" />
+								</Dialog.CloseTrigger>
+							</header>
+							{@render competitionDetail(currentEdit.id)}
+							<footer class="flex justify-end gap-2">
+								<Dialog.CloseTrigger class="btn preset-filled-primary-50-950" onclick={async () => {
+									isActionBlocked = true;
+									await workerRequest.insertNewCompetition(currentEdit!);
+									await fetch();
+								}}>Save</Dialog.CloseTrigger>
+								<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+							</footer>
+						</Dialog.Content>
+					</Dialog.Positioner>
+					{/if}
+				</Portal>
+			</Dialog>
+		</Collapsible.Content>
+	</Collapsible>
 	<table class="table">
 		<thead>
 			<tr>
@@ -196,52 +290,7 @@
 													<XIcon class="size-4" />
 												</Dialog.CloseTrigger>
 											</header>
-											<Dialog.Description>
-												<label class="label">
-													<span class="label-text">Competition Name</span>
-													<input type="text" class="input w-full" bind:value={currentEdit!.name} />
-												</label>
-												<label class="label">
-													<span class="label-text">Competition Date</span>
-													<SveltyPicker
-														mode="datetime"
-														format="mm/dd/yyyy hh:ii:ss"
-														inputClasses="input w-full"
-														bind:value={
-															() => {
-																return formatDate(startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
-															},
-															(v) => {
-																currentEdit!.startsAt = parseDate(v, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
-															}
-														}
-													/>
-													<div class="grid grid-flow-row grid-cols-12">
-													{#each states as state (state.shorthand)}
-														<label class="flex items-center space-x-2 col-span-4">
-															<input class="checkbox" type="checkbox" checked={!!currentEdit!.competitionAvailableStates.find(s => s.state === state.shorthand)} onchange={(e) => {
-																if (e.currentTarget.checked) {
-																	currentEdit!.competitionAvailableStates.push({ state: state.shorthand as z.infer<typeof stateEnums>, competitionId: competition.id });
-																} else {
-																	currentEdit!.competitionAvailableStates = currentEdit!.competitionAvailableStates.filter(s => s.state !== state.shorthand);
-																}
-															}}/>
-															<p>{state.original}</p>
-														</label>
-													{/each}
-													<label class="flex items-center space-x-2 col-span-4">
-														<input class="checkbox" type="checkbox" checked={currentEdit!.competitionAvailableStates.length === states.length} onchange={(e) => {
-															if (e.currentTarget.checked) {
-																currentEdit!.competitionAvailableStates.push(...states.map(s => ({ state: s.shorthand as z.infer<typeof stateEnums>, competitionId: competition.id })));
-															} else {
-																currentEdit!.competitionAvailableStates = [];
-															}
-														}}/>
-														<p>Toggle All</p>
-													</label>
-													</div>
-												</label>
-											</Dialog.Description>
+											{@render competitionDetail(currentEdit.id)}
 											<footer class="flex justify-end gap-2">
 												<Dialog.CloseTrigger class="btn preset-filled-primary-50-950" onclick={async () => {
 													isActionBlocked = true;

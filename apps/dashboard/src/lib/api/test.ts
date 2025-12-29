@@ -30,7 +30,7 @@ type CoachResponseItem = z.infer<typeof coachResponseSchema>['coach'];
 type CoachTeamMappintItem = z.infer<typeof coachTeamMappings>;
 type EventCheckInItem = z.infer<typeof eventCheckedInResponseSchema>['eventCheckIn'];
 class WorkerRequest {
-	readonly coachTeamMappings = Enumerable.from<CoachTeamMappintItem>([
+	coachTeamMappings = Enumerable.from<CoachTeamMappintItem>([
 		{
 			coachId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
 			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de'
@@ -80,7 +80,7 @@ class WorkerRequest {
 			teamId: '01651989-32f4-49a9-962d-742f47b3b0cb'
 		}
 	]);
-	readonly schools = Enumerable.from<SchoolItemType>([
+	schools = Enumerable.from<SchoolItemType>([
 		{
 			id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
 			primaryCoachId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
@@ -184,7 +184,7 @@ class WorkerRequest {
 			mutationIndex: 5
 		}
 	]);
-	readonly competitions = Enumerable.from<CompetitionResponseItem>([
+	competitions = Enumerable.from<CompetitionResponseItem>([
 		{
 			id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
 			name: 'Regional Science Competition',
@@ -249,7 +249,7 @@ class WorkerRequest {
 			]
 		}
 	]);
-	readonly teams = Enumerable.from<TeamResponseItem>([
+	teams = Enumerable.from<TeamResponseItem>([
 		{
 			id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
 			schoolId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
@@ -299,7 +299,7 @@ class WorkerRequest {
 			subjectiveScore: 82
 		}
 	]);
-	readonly students = Enumerable.from<StudentResponseItem>([
+	students = Enumerable.from<StudentResponseItem>([
 		{
 			id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
 			teamId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
@@ -941,7 +941,7 @@ class WorkerRequest {
 			mutationIndex: 31
 		}
 	]);
-	readonly events = Enumerable.from<EventResponseItem>([
+	events = Enumerable.from<EventResponseItem>([
 		{
 			endsAt: new Date(),
 			id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
@@ -951,7 +951,7 @@ class WorkerRequest {
 			mutationIndex: 32
 		}
 	]);
-	readonly eventCheckIns = Enumerable.from<EventCheckInItem>([
+	eventCheckIns = Enumerable.from<EventCheckInItem>([
 		{
 			studentId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
 			eventId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
@@ -959,7 +959,7 @@ class WorkerRequest {
 			mutationIndex: 10,
 		}
 	])
-	readonly coaches = Enumerable.from<CoachResponseItem>([
+	coaches = Enumerable.from<CoachResponseItem>([
 		{
 			externalCoachId: '1011',
 			email: 'john.doe@gmail.com',
@@ -1253,6 +1253,25 @@ class WorkerRequest {
 				}
 			});
 		});
+	}
+	async insertNewCompetition(competition: Omit<CompetitionResponseItem, 'id'>) {
+		this.competitions = Enumerable.from<CompetitionResponseItem>([...this.competitions.toArray(), {
+			...competition,
+			id: this.generateNewCompetitionId()
+		}]);
+		await this._mockDelay();
+	}
+	async deleteCompetitions(input: z.infer<typeof competitionQuerySchema>) {
+		await this._mockDelay();
+		this.competitions = this.competitions.where((c) => !this.testCompetition(c, input));
+	}
+	generateNewCompetitionId() {
+		const ids = this.competitions.select((c) => c.id).toArray();
+		let newId: string;
+		do {
+			newId = crypto.randomUUID();
+		} while (ids.includes(newId));
+		return newId;
 	}
 	testCompetition({
 		name,
