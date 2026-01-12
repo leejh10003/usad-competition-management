@@ -5,7 +5,7 @@
 	import { page } from '$app/state';
 	import { Collapsible, Dialog, Pagination, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _, { cloneDeep } from 'lodash';
-	import { competitionQuerySchema, competitionResponseItemSchema, stateEnums } from 'usad-scheme';
+	import { competitionQuerySchema, competitionResponseItemSchema, eventResponseItemSchema, stateEnums } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, MailIcon, XIcon, Pencil, Trash, ArrowUpDownIcon, CalendarPlus2 } from '@lucide/svelte';
 	import moment from 'moment-timezone';
 	import z from 'zod';
@@ -18,13 +18,14 @@
 	import {timezoneFormatted, timezone} from '$lib/utils/time';
 	import { dialogAppearAnimation } from '$lib/utils/animation';
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
+	type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
 	var isActionBlocked = $state<boolean>(true);
 	var isWholeLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(false);
 	var limit = $state<number>(10);
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
-	var competitions = $state<CompetitionResponseItem[]>([]);
+	var competitions = $state<(CompetitionResponseItem & {events: EventResponseItem[]})[]>([]);
     var mailAddresses = $state<string[]>(['', '', '']);
 	function _currentParam() {
 		const limit = query.get('limit');
@@ -70,7 +71,15 @@
 			take: getLimit,
 			skip: offset,
 		});
-		competitions = result;
+		const events = await workerRequest.getEvents({
+			where: {
+				competitionId: { in: result.map((r) => r.id) }
+			}
+		})
+		competitions = result.map((competition) => ({
+			...competition,
+			events: events.result.filter((event) => event.competitionId === competition.id)
+		}));
 		total = count;
 		currentCount = result.length;
 		isActionBlocked = false;
@@ -190,6 +199,8 @@
 							startsAt: new Date(),
 							competitionAvailableStates: [],
 							mutationIndex: 0,
+							nonRelativeEvents: [],
+							round: 0,
 							endsAt: new Date()
 						})}
 					class="btn preset-filled w-min"
@@ -229,8 +240,10 @@
 		<thead>
 			<tr>
 				<td>Competition Name</td>
+				<td>Competition Round</td>
 				<td>Competition Date</td>
 				<td>Competition Available States</td>
+				<td>Competition Event Types</td>
 				<td>Actions</td>
 			</tr>
 		</thead>
@@ -242,14 +255,18 @@
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
+						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
+						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 					</tr>
 				{/each}
 			{:else}
 				{#each competitions as competition (competition.id)}
-					{@const { name, startsAt, id } = competition}
+					{@const { name, startsAt, id, nonRelativeEvents, events, round } = competition}
+					{@const eventTypes = [...nonRelativeEvents, events.map((e) => e.type)].flat()}
 					{@const editor: {editor: Editor | undefined} = { editor: undefined } }
 					<tr>
 						<td>{name}</td>
+						<td>{round + 1}</td>
 						<td
 							>{moment(startsAt, timezone).format('MM-DD-YYYY hh:mm:ss')} at timezone {timezoneFormatted}</td
 						>
@@ -271,6 +288,9 @@
 								: competition.competitionAvailableStates
 										.map(({ state }) => states.find((s) => s.shorthand === state)?.shorthand)
 										.join(', ')}
+						</td>
+						<td>
+							{eventTypes.join(', ')}
 						</td>
 						<td>
 							<Dialog
@@ -402,7 +422,7 @@
 		</tbody>
 		<tfoot>
 			<tr>
-				<td colspan="3">Total</td>
+				<td colspan="5">Total</td>
 				{#if isFirstLoaded}
 					<td colspan="1">{offset + 1} - {offset + currentCount}/{total} Elements</td>
 				{:else}

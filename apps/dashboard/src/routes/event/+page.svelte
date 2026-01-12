@@ -155,6 +155,7 @@
 							name: '',
 							startsAt: new Date(),
 							competitionId: '',
+							type: 'Interview',
 							mutationIndex: 0,
 							endsAt: new Date()
 						})}
@@ -195,6 +196,7 @@
 		<thead>
 			<tr>
 				<td>Event Name</td>
+				<td>Event Type</td>
 				<td>Event Date</td>
 				<td>Competition Name</td>
 			</tr>
@@ -206,13 +208,15 @@
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
+						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 					</tr>
 				{/each}
 			{:else}
 				{#each aggregated as event (event.id)}
-					{@const { name, startsAt, competitionName } = event}
+					{@const { name, startsAt, competitionName, type } = event}
 					<tr>
 						<td>{name}</td>
+						<td>{type}</td>
 						<td
 							>{moment(startsAt, timezone).format('MM-DD-YYYY hh:mm:ss')} at timezone {timezoneFormatted}</td
 						>
@@ -223,7 +227,7 @@
 		</tbody>
 		<tfoot>
 			<tr>
-				<td colspan="2">Total</td>
+				<td colspan="3">Total</td>
 				{#if isFirstLoaded}
 					<td colspan="2">{offset + 1} - {offset + currentCount}/{total} Elements</td>
 				{:else}
