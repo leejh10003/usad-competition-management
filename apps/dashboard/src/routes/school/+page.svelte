@@ -2,19 +2,24 @@
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { Collapsible, Pagination } from '@skeletonlabs/skeleton-svelte';
+	import { imask } from '@imask/svelte';
+	import { cloneDeep } from 'lodash';
+	import { Collapsible, Dialog, Pagination, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _ from 'lodash';
 	import { splitStringForQueryHighlight } from '$lib/utils/string';
-	import { schoolQuerySchema, schoolResponse } from 'usad-scheme';
-	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon } from '@lucide/svelte';
+	import { schoolQuerySchema, schoolResponse, stateEnums } from 'usad-scheme';
+	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, CalendarPlus2, Pencil, School, Trash, XIcon } from '@lucide/svelte';
 	import z from 'zod';
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import romans, { romanize } from 'romans';
 	import { resolve } from '$app/paths';
 	import { workerRequest } from '$lib/api/test';
+	import { states } from 'usad-enums';
+	import { dialogAppearAnimation } from '$lib/utils/animation';
 	type SchoolResponseItem = z.infer<typeof schoolResponse>['school'];
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
+	var isActionBlocked = $state<boolean>(false);
 	function _currentParam() {
 		const limit = query.get('limit');
 		const currentPage = query.get('currentPage');
@@ -41,6 +46,7 @@
 		const parsed = parseInt(limit ?? 'NaN');
 		return isNaN(parsed) ? 10 : parseInt(limit ?? 'NaN');
 	});
+	let currentEdit = $state<SchoolResponseItem | null>(null);
 	function setLimit(input: number) {
 		const route = page.url.pathname;
 		const params = _currentParam();
@@ -128,7 +134,111 @@
 		goto(`?${searchParams.toString()}`);
 	}*/
 </script>
-
+{#snippet schoolDetail(schoolId: string)}
+	<Dialog.Description>
+		<label class="label">
+			<span class="label-text">School Id #</span>
+			<input type="text" class="input w-full" bind:value={currentEdit!.externalSchoolId} />
+		</label>
+		<label class="label">
+			<span class="label-text">School Name</span>
+			<input type="text" class="input w-full" bind:value={currentEdit!.name} />
+		</label>
+		<label class="label">
+			<span class="label-text">Is This School Virtual?</span>
+			<input type="checkbox" class="checkbox" bind:checked={currentEdit!.isVirtual} />
+		</label>
+		<label class="label">
+			<span class="label-text">Street Address</span>
+			<input type="text" class="input w-full" bind:value={currentEdit!.streetAddress} />
+		</label>
+		<label class="label">
+			<span class="label-text">City</span>
+			<input type="text" class="input w-full" bind:value={currentEdit!.city} />
+		</label>
+		<label class="label">
+			<span class="label-text">State</span>
+			<select required class="select" value={currentEdit!.state} onchange={(v) => currentEdit!.state = v.currentTarget.value as z.infer<typeof stateEnums>}>
+				<option disabled selected value={null}>Select State...</option>
+				{#each states as { shorthand, original }, i (i)}
+					<option value={shorthand}>{original} ({shorthand})</option>
+				{/each}
+			</select>
+		</label>
+		<label class="label">
+			<span class="label-text">Zip Code</span>
+			<input type="text" class="input w-full" bind:value={currentEdit!.zipCode} />
+		</label>
+		<label class="label">
+			<span class="label-text">Phone #</span>
+			<input type="text" class="input w-full" bind:value={currentEdit!.phone} />
+		</label>
+		<label class="label">
+			<span class="label-text">Principal Name</span>
+			<input type="text" class="input w-full" bind:value={currentEdit!.principalName} />
+		</label>
+		<label class="label">
+			<span class="label-text">Principal Email</span>
+			<input type="text" class="input w-full" bind:value={currentEdit!.principalEmail} />
+		</label>
+		<label class="label">
+			<span class="label-text">Objective Score</span>
+			<input
+				required
+				class="input"
+				use:imask={{
+					mask: Number,
+					thousandsSeparator: ',',
+					scale: 2,
+					radix: '.',
+					padFractionalZeros: true,
+					normalizeZeros: true,
+					lazy: false,
+				}}
+				onaccept={({detail: maskRef}) => {
+					currentEdit!.objectiveScore = parseFloat(maskRef.value.replaceAll(',', ''));
+				}}
+				value={currentEdit!.objectiveScore}
+			/>
+		</label>
+		<label class="label">
+			<span class="label-text">Subjective Score</span>
+			<input
+				required
+				class="input"
+				use:imask={{
+					mask: Number,
+					thousandsSeparator: ',',
+					scale: 2,
+					radix: '.',
+					padFractionalZeros: true,
+					normalizeZeros: true,
+					lazy: false,
+				}}
+				onaccept={({detail: maskRef}) => {
+					currentEdit!.subjectiveScore = parseFloat(maskRef.value.replaceAll(',', ''));
+				}}
+				value={currentEdit!.subjectiveScore}
+			/>
+		</label>
+		<label class="label">
+			<span class="label-text">Email Domain</span>
+			<input type="text" class="input w-full" bind:value={currentEdit!.emailDomain} />
+		</label>
+		<label class="label">
+			<span class="label-text">Division</span>
+			<select class="select w-full" bind:value={currentEdit!.division}>
+				<option disabled selected value={null}>Select Division...</option>
+				{#each _.range(1, 5) as division (division)}
+					<option value={division}>{romanize(division)}</option>
+				{/each}
+			</select>
+		</label>
+		<!--TODOs-->
+		primaryCoachId
+		competitionId
+	</Dialog.Description>
+{/snippet}
 <div class="flex h-full w-full flex-col gap-y-3.5 p-8">
 	<h1 class="h1 font-bold">School</h1>
 	<Collapsible class="rounded-xs border border-primary-100 p-4">
@@ -170,6 +280,51 @@
 					value={getLimit}
 				/>
 			</label>
+			<Dialog>
+				<Dialog.Trigger
+					onclick={() =>
+						(currentEdit = {
+							id: workerRequest.generateNewCompetitionId(),
+							name: '',
+							division: null,
+							isVirtual: false,
+							externalSchoolId: '',
+							streetAddress: '',
+							city: '',
+							mutationIndex: 0,
+							competitionId: '',
+						})}
+					class="btn preset-filled w-min"
+					disabled={isActionBlocked}><School /> Create School</Dialog.Trigger
+				>
+				<Portal>
+					{#if currentEdit}
+						<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+						<Dialog.Positioner class="fixed inset-0 z-50 flex items-center justify-center p-4">
+							<Dialog.Content class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}">
+								<header class="flex items-center justify-between">
+									<Dialog.Title class="text-lg font-bold">Create School</Dialog.Title>
+									<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+										<XIcon class="size-4" />
+									</Dialog.CloseTrigger>
+								</header>
+								{@render schoolDetail(currentEdit.id)}
+								<footer class="flex justify-end gap-2">
+									<Dialog.CloseTrigger
+										class="btn preset-filled-primary-50-950"
+										onclick={async () => {
+											isActionBlocked = true;
+											await workerRequest.insertNewSchool(currentEdit!);
+											await fetch();
+										}}>Save</Dialog.CloseTrigger
+									>
+									<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+								</footer>
+							</Dialog.Content>
+						</Dialog.Positioner>
+					{/if}
+				</Portal>
+			</Dialog>
 		</Collapsible.Content>
 	</Collapsible>
 	<table class="table">
@@ -181,12 +336,14 @@
 				<td>School Phone #</td>
 				<td>School Principal</td>
 				<td>Division</td>
+				<td>Action</td>
 			</tr>
 		</thead>
 		<tbody>
 			{#if isLoading}
 				{#each _.range(0, getLimit, 1) as n (n)}
 					<tr>
+						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
@@ -208,7 +365,8 @@
 						city,
 						state,
 						zipCode,
-						division
+						division,
+						id
 					} = school}
 					{@const nameSplit = splitStringForQueryHighlight(name, getSchoolNameQueryString)}
 					{@const externalSchoolIdSplit = splitStringForQueryHighlight(
@@ -241,13 +399,138 @@
 						<td>
 							{division ? romanize(division) : '-'}
 						</td>
+
+						<td>
+							<!--<Dialog
+								onOpenChange={({ open }) => {
+									console.log('open', open);
+								}}
+							>
+								<Dialog.Trigger class="btn preset-filled" disabled={isActionBlocked}
+									><MailIcon />Send Mails</Dialog.Trigger
+								>
+								<Portal>
+									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+									<Dialog.Positioner
+										class="fixed inset-0 z-50 flex items-center justify-center p-4"
+									>
+										<Dialog.Content
+											class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
+										>
+											<header class="flex items-center justify-between">
+												<Dialog.Title class="text-lg font-bold">Send Mails</Dialog.Title>
+												<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+													<XIcon class="size-4" />
+												</Dialog.CloseTrigger>
+											</header>
+											<Dialog.Description>
+												{#each mailAddresses as address, i (i)}
+													<p>{i + 1}</p>
+												{/each}
+												<Editor bind:this={editor.editor} />
+											</Dialog.Description>
+											<footer class="flex justify-end gap-2">
+												<Dialog.CloseTrigger
+													onclick={async () => {
+														console.log(editor.editor?.quill.getSemanticHTML());
+													}}
+													class="btn preset-filled-primary-50-950">Send</Dialog.CloseTrigger
+												>
+												<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+											</footer>
+										</Dialog.Content>
+									</Dialog.Positioner>
+								</Portal>
+							</Dialog>-->
+							<Dialog>
+								<Dialog.Trigger
+									onclick={() => (currentEdit = cloneDeep(school))}
+									class="btn preset-filled"
+									disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger
+								>
+								<Portal>
+									{#if currentEdit}
+										<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+										<Dialog.Positioner
+											class="fixed inset-0 z-50 flex items-center justify-center p-4"
+										>
+											<Dialog.Content
+												class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
+											>
+												<header class="flex items-center justify-between">
+													<Dialog.Title class="text-lg font-bold"
+														>Edit Competition: {name}</Dialog.Title
+													>
+													<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+														<XIcon class="size-4" />
+													</Dialog.CloseTrigger>
+												</header>
+												{@render schoolDetail(currentEdit.id)}
+												<footer class="flex justify-end gap-2">
+													<Dialog.CloseTrigger
+														class="btn preset-filled-primary-50-950"
+														onclick={async () => {
+															isActionBlocked = true;
+															await workerRequest.updateCompetition([
+																{ where: { id: currentEdit!.id }, data: currentEdit! }
+															]);
+															await fetch();
+														}}>Save</Dialog.CloseTrigger
+													>
+													<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+												</footer>
+											</Dialog.Content>
+										</Dialog.Positioner>
+									{/if}
+								</Portal>
+							</Dialog>
+							<Dialog>
+								<Dialog.Trigger class="btn preset-filled-danger-50-950" disabled={isActionBlocked}
+									><Trash />Delete</Dialog.Trigger
+								>
+								<Portal>
+									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+									<Dialog.Positioner
+										class="fixed inset-0 z-50 flex items-center justify-center p-4"
+									>
+										<Dialog.Content
+											class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
+										>
+											<header class="flex items-center justify-between">
+												<Dialog.Title class="text-lg font-bold"
+													>Delete School: {name}</Dialog.Title
+												>
+												<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+													<XIcon class="size-4" />
+												</Dialog.CloseTrigger>
+											</header>
+											<Dialog.Description>
+												Are you sure you want to delete school {name}? This action cannot be
+												undone.
+											</Dialog.Description>
+											<footer class="flex justify-end gap-2">
+												<Dialog.CloseTrigger
+													class="btn preset-filled-danger-50-950"
+													onclick={async () => {
+														isActionBlocked = true;
+														await workerRequest.deleteSchools({ where: {id: {equals: id}} });
+														await fetch();
+													}}>Delete</Dialog.CloseTrigger
+												>
+												<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+											</footer>
+										</Dialog.Content>
+									</Dialog.Positioner>
+								</Portal>
+							</Dialog>
+						</td>
 					</tr>
 				{/each}
 			{/if}
 		</tbody>
 		<tfoot>
 			<tr>
-				<td colspan="5">Total</td>
+				<td colspan="6">Total</td>
 				{#if isFirstLoaded}
 					<td colspan="1">{offset + 1} - {offset + currentCount}/{total} Elements</td>
 				{:else}

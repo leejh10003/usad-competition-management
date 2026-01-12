@@ -1209,38 +1209,13 @@ class WorkerRequest {
 		};
 	}
 	async getSchool(input: z.infer<typeof schoolQuerySchema>) {
-		const test = ({ name, externalSchoolId }: SchoolItemType) => {
-			let result = true;
-			if (
-				input.where?.name &&
-				typeof input.where.name !== undefined &&
-				typeof input.where.name !== 'string' &&
-				typeof input.where.name.contains === 'string'
-			) {
-				result = result && name?.toLowerCase().includes(input.where.name.contains.toLowerCase());
-			}
-			if (
-				input.where?.externalSchoolId &&
-				typeof input.where.externalSchoolId !== undefined &&
-				typeof input.where.externalSchoolId !== 'string' &&
-				typeof input.where.externalSchoolId.contains === 'string'
-			) {
-				result =
-					result &&
-					(externalSchoolId
-						?.toLowerCase()
-						?.includes(input.where.externalSchoolId.contains.toLowerCase()) ??
-						false);
-			}
-			return result;
-		};
 		const result = this.schools
 			.select((e) => e)
 			.skip(input?.skip ?? 0)
-			.where(test)
+			.where((e) => this.testSchool(e, input))
 			.take(input?.take ?? 10)
 			.toArray();
-		const count = this.schools.where(test).count();
+		const count = this.schools.where((e) => this.testSchool(e, input)).count();
 		await this._mockDelay();
 		return {
 			result,
@@ -1284,6 +1259,24 @@ class WorkerRequest {
 			});
 		});
 	}
+	async updateSchool(
+		inputs: {
+			where: z.infer<typeof schoolQuerySchema>['where'];
+			data: Partial<SchoolItemType>;
+		}[]
+	) {
+		await this._mockDelay();
+		this.schools.forEach((s, i) => {
+			inputs.forEach((input) => {
+				if (this.testSchool(s, { where: input.where })) {
+					for (const key in input.data) {
+						// @ts-ignore
+						s[key as keyof SchoolItemType] = input.data[key as keyof SchoolItemType];
+					}
+				}
+			});
+		});
+	}
 	async insertNewCompetition(competition: Omit<CompetitionResponseItem, 'id'>) {
 		this.competitions = Enumerable.from<CompetitionResponseItem>([
 			...this.competitions.toArray(),
@@ -1304,6 +1297,16 @@ class WorkerRequest {
 		]);
 		await this._mockDelay();
 	}
+	async insertNewSchool(school: Omit<SchoolItemType, 'id'>) {
+		this.schools = Enumerable.from<SchoolItemType>([
+			...this.schools.toArray(),
+			{
+				...school,
+				id: crypto.randomUUID()
+			}
+		]);
+		await this._mockDelay();
+	}
 	async deleteEvent(input: z.infer<typeof eventQuerySchema>) {
 		await this._mockDelay();
 		this.events = this.events.where((e) => !this.testEvent(e, input));
@@ -1312,6 +1315,10 @@ class WorkerRequest {
 		await this._mockDelay();
 		this.competitions = this.competitions.where((c) => !this.testCompetition(c, input));
 		//TODO: Also delete related entities
+	}
+	async deleteSchools(input: z.infer<typeof schoolQuerySchema>) {
+		await this._mockDelay();
+		this.schools = this.schools.where((s) => !this.testSchool(s, input));
 	}
 	generateNewCompetitionId() {
 		const ids = this.competitions.select((c) => c.id).toArray();
@@ -1328,7 +1335,32 @@ class WorkerRequest {
 			newId = crypto.randomUUID();
 		} while (ids.includes(newId));
 		return newId;
-	}	
+	}
+	testSchool({ name, externalSchoolId }: SchoolItemType, input: z.infer<typeof schoolQuerySchema>) {
+			let result = true;
+			if (
+				input.where?.name &&
+				typeof input.where.name !== undefined &&
+				typeof input.where.name !== 'string' &&
+				typeof input.where.name.contains === 'string'
+			) {
+				result = result && name?.toLowerCase().includes(input.where.name.contains.toLowerCase());
+			}
+			if (
+				input.where?.externalSchoolId &&
+				typeof input.where.externalSchoolId !== undefined &&
+				typeof input.where.externalSchoolId !== 'string' &&
+				typeof input.where.externalSchoolId.contains === 'string'
+			) {
+				result =
+					result &&
+					(externalSchoolId
+						?.toLowerCase()
+						?.includes(input.where.externalSchoolId.contains.toLowerCase()) ??
+						false);
+			}
+			return result;
+		}
 	testCompetition(
 		{ name, startsAt, endsAt, competitionAvailableStates, id }: CompetitionResponseItem,
 		input: z.infer<typeof competitionQuerySchema>
