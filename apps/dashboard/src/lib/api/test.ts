@@ -1266,6 +1266,24 @@ class WorkerRequest {
 			});
 		});
 	}
+	async updateEvent(
+		inputs: {
+			where: z.infer<typeof eventQuerySchema>['where'];
+			data: Partial<EventResponseItem>;
+		}[]
+	) {
+		await this._mockDelay();
+		this.events.forEach((e, i) => {
+			inputs.forEach((input) => {
+				if (this.testEvent(e, { where: input.where })) {
+					for (const key in input.data) {
+						// @ts-ignore
+						e[key as keyof EventResponseItem] = input.data[key as keyof EventResponseItem];
+					}
+				}
+			});
+		});
+	}
 	async insertNewCompetition(competition: Omit<CompetitionResponseItem, 'id'>) {
 		this.competitions = Enumerable.from<CompetitionResponseItem>([
 			...this.competitions.toArray(),
@@ -1275,6 +1293,20 @@ class WorkerRequest {
 			}
 		]);
 		await this._mockDelay();
+	}
+	async insertNewEvent(event: Omit<EventResponseItem, 'id'>) {
+		this.events = Enumerable.from<EventResponseItem>([
+			...this.events.toArray(),
+			{
+				...event,
+				id: this.generateNewEventId()
+			}
+		]);
+		await this._mockDelay();
+	}
+	async deleteEvent(input: z.infer<typeof eventQuerySchema>) {
+		await this._mockDelay();
+		this.events = this.events.where((e) => !this.testEvent(e, input));
 	}
 	async deleteCompetitions(input: z.infer<typeof competitionQuerySchema>) {
 		await this._mockDelay();
@@ -1289,6 +1321,14 @@ class WorkerRequest {
 		} while (ids.includes(newId));
 		return newId;
 	}
+	generateNewEventId() {
+		const ids = this.events.select((e) => e.id).toArray();
+		let newId: string;
+		do {
+			newId = crypto.randomUUID();
+		} while (ids.includes(newId));
+		return newId;
+	}	
 	testCompetition(
 		{ name, startsAt, endsAt, competitionAvailableStates, id }: CompetitionResponseItem,
 		input: z.infer<typeof competitionQuerySchema>
@@ -1367,64 +1407,64 @@ class WorkerRequest {
 			count
 		};
 	}
-	async getEvents(input: z.infer<typeof eventQuerySchema>) {
-		const test = ({ name, startsAt, endsAt, competitionId }: EventResponseItem) => {
-			let result = true;
-			if (input.where) {
-				const { where } = input;
-				if (
-					typeof where.name !== undefined &&
-					typeof where.name !== 'string' &&
-					typeof where.name?.contains === 'string'
-				) {
-					result = result && name.includes(where.name.contains);
+	testEvent({ name, type, startsAt, endsAt, competitionId, id }: EventResponseItem, input: z.infer<typeof eventQuerySchema>) {
+		let result = true;
+		if (input.where) {
+			const { where } = input;
+			if (
+				typeof where.name !== undefined &&
+				typeof where.name !== 'string' &&
+				typeof where.name?.contains === 'string'
+			) {
+				result = result && name.includes(where.name.contains);
+			}
+			if (
+				typeof where.startsAt === 'object' &&
+				'lte' in where.startsAt &&
+				moment.isDate(where.startsAt.lte)
+			) {
+				result = result && moment(startsAt).isSameOrBefore(moment(where.startsAt.lte!));
+			}
+			if (
+				typeof where.startsAt === 'object' &&
+				'gte' in where.startsAt &&
+				moment.isDate(where.startsAt.gte)
+			) {
+				result = result && moment(startsAt).isSameOrBefore(moment(where.startsAt.gte!));
+			}
+			if (
+				typeof where.endsAt === 'object' &&
+				'lte' in where.endsAt &&
+				moment.isDate(where.endsAt.lte)
+			) {
+				result = result && moment(endsAt).isSameOrBefore(moment(where.endsAt.lte!));
+			}
+			if (
+				typeof where.endsAt === 'object' &&
+				'gte' in where.endsAt &&
+				moment.isDate(where.endsAt.gte)
+			) {
+				result = result && moment(endsAt).isSameOrBefore(moment(where.endsAt.gte!));
+			}
+			if (typeof where.competitionId === 'object') {
+				if (typeof where.competitionId.equals === 'string') {
+					result = result && competitionId === where.competitionId.equals;
 				}
-				if (
-					typeof where.startsAt === 'object' &&
-					'lte' in where.startsAt &&
-					moment.isDate(where.startsAt.lte)
-				) {
-					result = result && moment(startsAt).isSameOrBefore(moment(where.startsAt.lte!));
-				}
-				if (
-					typeof where.startsAt === 'object' &&
-					'gte' in where.startsAt &&
-					moment.isDate(where.startsAt.gte)
-				) {
-					result = result && moment(startsAt).isSameOrBefore(moment(where.startsAt.gte!));
-				}
-				if (
-					typeof where.endsAt === 'object' &&
-					'lte' in where.endsAt &&
-					moment.isDate(where.endsAt.lte)
-				) {
-					result = result && moment(endsAt).isSameOrBefore(moment(where.endsAt.lte!));
-				}
-				if (
-					typeof where.endsAt === 'object' &&
-					'gte' in where.endsAt &&
-					moment.isDate(where.endsAt.gte)
-				) {
-					result = result && moment(endsAt).isSameOrBefore(moment(where.endsAt.gte!));
-				}
-				if (typeof where.competitionId === 'object') {
-					if (typeof where.competitionId.equals === 'string') {
-						result = result && competitionId === where.competitionId.equals;
-					}
-					if (typeof where.competitionId.in === 'object' && isArray(where.competitionId.in)) {
-						result = result && where.competitionId.in.includes(competitionId);
-					}
+				if (typeof where.competitionId.in === 'object' && isArray(where.competitionId.in)) {
+					result = result && where.competitionId.in.includes(competitionId);
 				}
 			}
-			return result;
-		};
+		}
+		return result;
+	}
+	async getEvents(input: z.infer<typeof eventQuerySchema>) {
 		const result = this.events
 			.select((e) => e)
 			.skip(input?.skip ?? 0)
-			.where(test)
+			.where((e) => this.testEvent(e, input))
 			.take(input?.take ?? 10)
 			.toArray();
-		const count = this.events.where(test).count();
+		const count = this.events.where((e) => this.testEvent(e, input)).count();
 		await this._mockDelay();
 		return {
 			result,

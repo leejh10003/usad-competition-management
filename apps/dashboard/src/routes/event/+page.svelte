@@ -6,7 +6,7 @@
 	import { Collapsible, Dialog, Listbox, Pagination, Portal, useListCollection } from '@skeletonlabs/skeleton-svelte';
 	import _, { clone, cloneDeep, debounce } from 'lodash';
 	import { eventQuerySchema, eventResponseItemSchema, competitionResponseItemSchema } from 'usad-scheme';
-	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, CalendarPlus2, Pencil, XIcon } from '@lucide/svelte';
+	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, CalendarPlus2, Pencil, Trash, XIcon } from '@lucide/svelte';
 	import moment from 'moment-timezone';
 	import z from 'zod';
 	import { resolve } from '$app/paths';
@@ -224,7 +224,7 @@
 										class="btn preset-filled-primary-50-950"
 										onclick={async () => {
 											isActionBlocked = true;
-											//await workerRequest.insertNewCompetition(currentEdit!);
+											await workerRequest.insertNewEvent(currentEdit!);
 											await fetch();
 										}}>Save</Dialog.CloseTrigger
 									>
@@ -260,7 +260,7 @@
 				{/each}
 			{:else}
 				{#each aggregated as event (event.id)}
-					{@const { name, startsAt, competitionName, type } = event}
+					{@const { name, startsAt, competitionName, type, id } = event}
 					<tr>
 						<td>{name}</td>
 						<td>{type}</td>
@@ -268,41 +268,85 @@
 							>{moment(startsAt, timezone).format('MM-DD-YYYY hh:mm:ss')} at timezone {timezoneFormatted}</td
 						>
 						<td>{competitionName}</td>
-						<td><Dialog>
-				<Dialog.Trigger
-					onclick={() =>
-						(currentEdit = cloneDeep(event))}
-					class="btn preset-filled w-min"
-					disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger
-				>
-				<Portal>
-					{#if currentEdit}
-						<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
-						<Dialog.Positioner class="fixed inset-0 z-50 flex items-center justify-center p-4">
-							<Dialog.Content class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}">
-								<header class="flex items-center justify-between">
-									<Dialog.Title class="text-lg font-bold">Edit Event: {name}</Dialog.Title>
-									<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
-										<XIcon class="size-4" />
-									</Dialog.CloseTrigger>
-								</header>
-								{@render eventDetail(currentEdit.id)}
-								<footer class="flex justify-end gap-2">
-									<Dialog.CloseTrigger
-										class="btn preset-filled-primary-50-950"
-										onclick={async () => {
-											isActionBlocked = true;
-											//await workerRequest.insertNewCompetition(currentEdit!);
-											await fetch();
-										}}>Save</Dialog.CloseTrigger
+						<td>
+							<Dialog>
+								<Dialog.Trigger
+									onclick={() =>
+										(currentEdit = cloneDeep(event))}
+									class="btn preset-filled w-min"
+									disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger
+								>
+								<Portal>
+									{#if currentEdit}
+										<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+										<Dialog.Positioner class="fixed inset-0 z-50 flex items-center justify-center p-4">
+											<Dialog.Content class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}">
+												<header class="flex items-center justify-between">
+													<Dialog.Title class="text-lg font-bold">Edit Event: {name}</Dialog.Title>
+													<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+														<XIcon class="size-4" />
+													</Dialog.CloseTrigger>
+												</header>
+												{@render eventDetail(currentEdit.id)}
+												<footer class="flex justify-end gap-2">
+													<Dialog.CloseTrigger
+														class="btn preset-filled-primary-50-950"
+														onclick={async () => {
+															isActionBlocked = true;
+															await workerRequest.updateEvent([{
+																where: { id: currentEdit!.id },
+																data: currentEdit!
+															}]);
+															await fetch();
+														}}>Save</Dialog.CloseTrigger
+													>
+													<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+												</footer>
+											</Dialog.Content>
+										</Dialog.Positioner>
+									{/if}
+								</Portal>
+							</Dialog>
+							<Dialog>
+								<Dialog.Trigger class="btn preset-filled-danger-50-950" disabled={isActionBlocked}
+									><Trash />Delete</Dialog.Trigger
+								>
+								<Portal>
+									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+									<Dialog.Positioner
+										class="fixed inset-0 z-50 flex items-center justify-center p-4"
 									>
-									<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
-								</footer>
-							</Dialog.Content>
-						</Dialog.Positioner>
-					{/if}
-				</Portal>
-			</Dialog></td>
+										<Dialog.Content
+											class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
+										>
+											<header class="flex items-center justify-between">
+												<Dialog.Title class="text-lg font-bold"
+													>Delete Event: {name}</Dialog.Title
+												>
+												<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+													<XIcon class="size-4" />
+												</Dialog.CloseTrigger>
+											</header>
+											<Dialog.Description>
+												Are you sure you want to delete event {name}? This action cannot be
+												undone.
+											</Dialog.Description>
+											<footer class="flex justify-end gap-2">
+												<Dialog.CloseTrigger
+													class="btn preset-filled-danger-50-950"
+													onclick={async () => {
+														isActionBlocked = true;
+														await workerRequest.deleteEvent({ where: {id: {equals: id}} });
+														await fetch();
+													}}>Delete</Dialog.CloseTrigger
+												>
+												<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+											</footer>
+										</Dialog.Content>
+									</Dialog.Positioner>
+								</Portal>
+							</Dialog>
+						</td>
 					</tr>
 				{/each}
 			{/if}
