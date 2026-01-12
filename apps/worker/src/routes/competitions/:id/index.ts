@@ -1,4 +1,4 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
+import { OpenAPIHono, z } from "@hono/zod-openapi";
 import { competitionResponse, competitionUpdateSchema } from "usad-scheme";
 
 const id = new OpenAPIHono();
@@ -23,7 +23,7 @@ id.openapi(
     const id = c.req.param("id");
     const result = await prisma.competition.findUnique({
       where: { id },
-    });
+    }) as z.infer<typeof competitionResponse>['competition'];
     return c.json({ success: true, competition: result! }, 200);
   }
 );
@@ -56,10 +56,10 @@ id.openapi(
     const prisma = c.get("prisma");
     const id = c.req.param("id");
     const updateData = c.req.valid("json");
-    const result = await prisma.competition.update({
+    const result = (await prisma.competition.update({
       where: { id },
       data: updateData,
-    });
+    })) as z.infer<typeof competitionResponse>['competition'];
     return c.json({ success: true, competition: result }, 200);
   }
 );

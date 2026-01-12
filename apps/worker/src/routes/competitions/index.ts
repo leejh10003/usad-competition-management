@@ -5,7 +5,7 @@ import {
   competitionsResponse,
   competitionsUpdateSchema,
 } from "usad-scheme";
-import { OpenAPIHono } from "@hono/zod-openapi";
+import { OpenAPIHono, z } from "@hono/zod-openapi";
 import { id } from "./:id";
 import { omit } from "lodash";
 
@@ -32,14 +32,16 @@ competitions.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { take, orderBy, where, skip } = c.req.valid('query');
-    const result = await prisma.competition.findMany({
+    const result = (await prisma.competition.findMany({
       select: competitionsFieldsSchema,
       take,
       orderBy,
       where,
       skip,
-    }); //TODO: Change to competition
-    const count = await prisma.event.count(); //TODO: Change to competition
+    })) as z.infer<typeof competitionsResponse>['competitions'];
+    const count = await prisma.competition.count({
+      where,
+    });
     return c.json({ success: true, competitions: result, count }, 200); //TODO: Add offset, limit
   }
 );
@@ -74,7 +76,7 @@ competitions.openapi(
     const result = await prisma.$transaction((tx) => {
       return Promise.all(
         competitions.map(async ({ id, competition }) => {
-          const result = await tx.competition.update({
+          const result = (await tx.competition.update({
             where: { id },
             data: {
               ...omit(competition, 'competitionAvailableStates'),
@@ -91,7 +93,7 @@ competitions.openapi(
               }} : {})
             },
             select: competitionsFieldsSchema,
-          });
+          }))  as z.infer<typeof competitionsResponse>['competitions'][number];
           return result;
         })
       );
@@ -130,10 +132,10 @@ competitions.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { competitions } = c.req.valid("json");
-    const result = (await prisma.competition.createManyAndReturn({
+    const result = ((await prisma.competition.createManyAndReturn({
       data: competitions,
       select: competitionsFieldsSchema
-    })).sort((a, b) => a.mutationIndex - b.mutationIndex);
+    })).sort((a, b) => a.mutationIndex - b.mutationIndex)) as z.infer<typeof competitionsResponse>['competitions'];
 
     return c.json(
       { success: true, competitions: result, count: result.length },

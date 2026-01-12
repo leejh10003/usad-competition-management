@@ -10,6 +10,23 @@ enum Division {
   V // Varsity
 }
 
+enum NonRelativeEvents {
+  math @map("Math")
+  eco @map("Eco")
+  science @map("Science")
+  socialScience @map("Social Science")
+  music @map("Music")
+  art @map("Art")
+  language @map("Language")
+  essay @map("Essay")
+  superQuiz @map("Super Quiz")
+}
+
+enum RelativeEvents {
+  speech @map("Speech")
+  interview @map("Interview")
+}
+
 enum State {
   AA
   AE
@@ -251,9 +268,13 @@ model Competition {
   schools  School[] @relation("CompetitionOfSchool")
   students Student[] @relation("CompetitionOfStudent")
   mutationIndex Int @map("mutation_index")
+  round Int @map("round")
+  nonRelativeEvents NonRelativeEvents[] @map("non_relative_events")
   @@index([startsAt])
   @@index([endsAt])
   @@index([name])
+  @@index([round])
+  @@index([nonRelativeEvents])
   @@map("competitions")
 }
 
@@ -273,12 +294,13 @@ model Event {
   competitionId String @map("competition_id") @db.Uuid
   mutationIndex Int @map("mutation_index")
   competition Competition @relation("CompetitionOfEvent", fields: [competitionId], references: [id])
-  
+  type RelativeEvents @map("type")
   eventCheckIn EventCheckIn[] @relation("EventOfEventCheckIn")
 
   // --- Indexes ---
   @@index([startsAt])
   @@index([competitionId])
+  @@index([type])
 
   @@map("events")
 }

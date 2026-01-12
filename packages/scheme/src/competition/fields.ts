@@ -6,4 +6,6 @@ export const competitionsFieldsSchema = {
   events: true,
   mutationIndex: true,
   competitionAvailableStates: true,
+  round: true,
+  nonRelativeEvents: true,
 };
