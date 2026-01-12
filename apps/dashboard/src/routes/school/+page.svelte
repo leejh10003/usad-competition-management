@@ -471,7 +471,7 @@
 														class="btn preset-filled-primary-50-950"
 														onclick={async () => {
 															isActionBlocked = true;
-															await workerRequest.updateCompetition([
+															await workerRequest.updateSchool([
 																{ where: { id: currentEdit!.id }, data: currentEdit! }
 															]);
 															await fetch();

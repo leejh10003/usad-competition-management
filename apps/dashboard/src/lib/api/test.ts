@@ -1336,7 +1336,7 @@ class WorkerRequest {
 		} while (ids.includes(newId));
 		return newId;
 	}
-	testSchool({ name, externalSchoolId }: SchoolItemType, input: z.infer<typeof schoolQuerySchema>) {
+	testSchool({ name, externalSchoolId, id }: SchoolItemType, input: z.infer<typeof schoolQuerySchema>) {
 			let result = true;
 			if (
 				input.where?.name &&
@@ -1358,6 +1358,20 @@ class WorkerRequest {
 						?.toLowerCase()
 						?.includes(input.where.externalSchoolId.contains.toLowerCase()) ??
 						false);
+			}
+			if (
+				input.where?.id &&
+				typeof input.where.id !== undefined
+			) {
+				if (typeof input.where.id === 'string') {
+					result = result && input.where.id === id;
+				} else if (typeof input.where.id === 'object') {
+					if (isArray(input.where.id.in)) {
+						result = result && input.where.id.in.includes(id);
+					} else if (input.where.id.equals) {
+						result = result && input.where.id.equals === id;
+					}
+				}
 			}
 			return result;
 		}
