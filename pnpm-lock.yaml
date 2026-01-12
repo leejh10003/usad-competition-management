@@ -17,6 +17,9 @@ importers:
 
   apps/dashboard:
     dependencies:
+      '@imask/svelte':
+        specifier: ^7.6.1
+        version: 7.6.1(svelte@5.43.11)
       '@lucide/svelte':
         specifier: ^0.553.0
         version: 0.553.0(svelte@5.43.11)

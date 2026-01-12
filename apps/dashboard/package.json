@@ -38,6 +38,7 @@
 		"vite": "^7.1.10"
 	},
 	"dependencies": {
+		"@imask/svelte": "^7.6.1",
 		"@lucide/svelte": "^0.553.0",
 		"@types/lodash": "^4.17.20",
 		"axios": "^1.13.2",
