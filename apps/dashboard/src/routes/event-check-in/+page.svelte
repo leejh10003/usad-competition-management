@@ -89,7 +89,6 @@
 			},
 			take: getLimit
 		});
-		console.log("fetched");
 		const { result: studentResult } = await workerRequest.getStudent({
 			where: {
 				id: {
@@ -154,9 +153,9 @@
 				{/each}
 			{:else}
 				{#each aggregated as checkIn (`${checkIn.eventId}-${checkIn.studentId}`)}
-					{@const { checkedInAt, eventId, eventName, studentName, studentExternalId } = checkIn}
+					{@const { checkedInAt, eventName, studentName, studentExternalId } = checkIn}
 					<tr>
-						<td>{eventName} ({eventId})</td>
+						<td>{eventName}</td>
 						<td>{studentName} ({studentExternalId})</td>
 						<td
 							>{!checkedInAt
