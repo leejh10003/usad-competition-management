@@ -191,6 +191,8 @@ class WorkerRequest {
 			startsAt: new Date(),
 			endsAt: new Date(),
 			mutationIndex: 1,
+			round: 2,
+			nonRelativeEvents: ["Art", "Essay", "Economics", "Essay"],
 			competitionAvailableStates: [
 				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'AL' },
 				{ competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de', state: 'AK' },
@@ -945,7 +947,8 @@ class WorkerRequest {
 		{
 			endsAt: new Date(),
 			id: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
-			name: 'Physics',
+			name: 'Speech',
+			type: 'Speech',
 			startsAt: new Date(),
 			competitionId: 'aea66d9b-cc3e-42e2-87c6-2f527bf789de',
 			mutationIndex: 32
