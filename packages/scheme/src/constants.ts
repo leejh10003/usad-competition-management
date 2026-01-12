@@ -75,7 +75,7 @@ const stateEnums = z.enum({
 const sortEnums = z.enum(["asc", "desc"]);
 const nonRelativeEventsEnums = z.enum({
   math: "Math",
-  eco: "Eco",
+  economics: "Economics",
   science: "Science",
   socialScience: "Social Science",
   music: "Music",
