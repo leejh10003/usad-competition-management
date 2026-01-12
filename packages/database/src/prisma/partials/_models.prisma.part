@@ -12,7 +12,7 @@ enum Division {
 
 enum NonRelativeEvents {
   math @map("Math")
-  eco @map("Eco")
+  economics @map("Economics")
   science @map("Science")
   socialScience @map("Social Science")
   music @map("Music")
