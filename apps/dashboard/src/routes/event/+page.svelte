@@ -3,8 +3,8 @@
 	import { goto } from '$app/navigation';
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { page } from '$app/state';
-	import { Collapsible, Dialog, Pagination, Portal } from '@skeletonlabs/skeleton-svelte';
-	import _ from 'lodash';
+	import { Collapsible, Dialog, Listbox, Pagination, Portal, useListCollection } from '@skeletonlabs/skeleton-svelte';
+	import _, { debounce } from 'lodash';
 	import { eventQuerySchema, eventResponseItemSchema, competitionResponseItemSchema } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, CalendarPlus2, XIcon } from '@lucide/svelte';
 	import moment from 'moment-timezone';
@@ -27,6 +27,29 @@
 	var events = $state<EventResponseItem[]>([]);
 	var competitions = $state<CompetitionResponseItem[]>([]);
 	let currentEdit = $state<EventResponseItem | null>(null);
+
+	const competitionCollection = $derived(
+		useListCollection({
+			items: competitions,
+			itemToString: (item) => item.name,
+			itemToValue: (item) => item.id,
+		}),
+	);
+
+	async function fetchCompetitions(query: string) {
+		const { result } = await workerRequest.getCompetition({
+			where: {
+				name: {
+					contains: query,
+					mode: 'insensitive'
+				}
+			},
+			take: 50,
+		});
+		competitions = result;
+	}
+	const fetchCompetitionWithDebounce = debounce(fetchCompetitions, 300);
+
 	var aggregated = $derived.by(() => {
 		return events.map((event) => {
 			const competition = competitions.find((comp) => comp.id === event.competitionId);
@@ -112,6 +135,28 @@
 {#snippet eventDetail(eventId: string)}
 	<Dialog.Description>
 		<label class="label">
+			<Listbox class="w-full max-w-md" collection={competitionCollection} selectionMode="single" value={[currentEdit!.competitionId]} deselectable onValueChange={({value}) => {
+				if (value.length > 0) {
+					currentEdit!.competitionId = value[0];
+				} else {
+					currentEdit!.competitionId = '';
+				}
+			}}>
+				<Listbox.Label>Competition Name</Listbox.Label>
+				<Listbox.Input placeholder="Type to search..." oninput={(e) => {
+					fetchCompetitionWithDebounce(e.currentTarget.value);
+				}} />
+				<Listbox.Content>
+					{#each competitionCollection.items as item (item.id)}
+						<Listbox.Item {item}>
+							<Listbox.ItemText>{item.name}</Listbox.ItemText>
+							<Listbox.ItemIndicator />
+						</Listbox.Item>
+					{/each}
+				</Listbox.Content>
+			</Listbox>
+		</label>
+		<label class="label">
 			<span class="label-text">Event Name</span>
 			<input type="text" class="input w-full" bind:value={currentEdit!.name} />
 		</label>
@@ -168,7 +213,7 @@
 						<Dialog.Positioner class="fixed inset-0 z-50 flex items-center justify-center p-4">
 							<Dialog.Content class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}">
 								<header class="flex items-center justify-between">
-									<Dialog.Title class="text-lg font-bold">Edit Competition: {name}</Dialog.Title>
+									<Dialog.Title class="text-lg font-bold">Edit Event: {name}</Dialog.Title>
 									<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
 										<XIcon class="size-4" />
 									</Dialog.CloseTrigger>
