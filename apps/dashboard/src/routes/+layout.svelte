@@ -24,6 +24,14 @@
 		items: { icon: typeof SchoolIcon; title: string; path: string }[];
 	}[] = [
 		{
+			groupName: 'Events',
+			items: [
+				{ icon: AwardIcon, title: 'Competition', path: 'competition' },
+				{ icon: CalendarIcon, title: 'Event', path: 'event' },
+				{ icon: UserCheckIcon, title: 'Check in', path: 'event-check-in' },
+			]
+		},
+		{
 			groupName: 'Participants',
 			items: [
 				{ icon: SchoolIcon, title: 'School', path: 'school' },
@@ -32,14 +40,6 @@
 				{ icon: UserIcon, title: 'Student', path: 'student' }
 			]
 		},
-		{
-			groupName: 'Events',
-			items: [
-				{ icon: AwardIcon, title: 'Competition', path: 'competition' },
-				{ icon: CalendarIcon, title: 'Event', path: 'event' },
-				{ icon: UserCheckIcon, title: 'Check in', path: 'event-check-in' },
-			]
-		}
 	];
 </script>
 
