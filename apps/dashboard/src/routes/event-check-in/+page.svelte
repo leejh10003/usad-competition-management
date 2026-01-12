@@ -3,10 +3,10 @@
 	import { goto } from '$app/navigation';
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { page } from '$app/state';
-	import { Pagination } from '@skeletonlabs/skeleton-svelte';
+	import { Collapsible, Dialog, Pagination, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _ from 'lodash';
 	import { eventCheckedInItem, eventCheckInQuerySchema, eventResponseItemSchema, studentResponseSchema } from 'usad-scheme';
-	import { ArrowLeftIcon, ArrowRightIcon } from '@lucide/svelte';
+	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, CalendarPlus2 } from '@lucide/svelte';
 	import z from 'zod';
 	import moment from 'moment-timezone';
 	import { resolve } from '$app/paths';
@@ -117,6 +117,24 @@
 
 <div class="flex h-full w-full flex-col gap-y-3.5 p-8">
 	<h1 class="h1 font-bold">Check In</h1>
+	<Collapsible class="rounded-xs border border-primary-100 p-4">
+		<div class="flex w-full items-center justify-between">
+			<p class="font-bold">Actions</p>
+			<Collapsible.Trigger class="btn-icon hover:preset-tonal">
+				<ArrowUpDownIcon class="size-4" />
+			</Collapsible.Trigger>
+		</div>
+		<Collapsible.Content class="grid w-full grid-cols-3 gap-1">
+			<Dialog>
+				<Dialog.Trigger
+					class="btn preset-filled w-min"><CalendarPlus2 />Assign Student To Event</Dialog.Trigger
+				>
+				<Portal>
+					test
+				</Portal>
+			</Dialog>
+		</Collapsible.Content>
+	</Collapsible>
 	<table class="table">
 		<thead>
 			<tr>

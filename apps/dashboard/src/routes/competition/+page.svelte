@@ -27,6 +27,7 @@
 	var currentCount = $state<number>(0);
 	var competitions = $state<(CompetitionResponseItem & {events: EventResponseItem[]})[]>([]);
     var mailAddresses = $state<string[]>(['', '', '']);
+	const toggleedAll = $derived.by(() => currentEdit!.competitionAvailableStates.length === states.length)
 	function _currentParam() {
 		const limit = query.get('limit');
 		const currentPage = query.get('currentPage');
@@ -160,21 +161,19 @@
 					<input
 						class="checkbox"
 						type="checkbox"
-						checked={currentEdit!.competitionAvailableStates.length === states.length}
+						checked={toggleedAll}
 						onchange={(e) => {
 							if (e.currentTarget.checked) {
-								currentEdit!.competitionAvailableStates.push(
-									...states.map((s) => ({
-										state: s.shorthand as z.infer<typeof stateEnums>,
-										competitionId: competitionId
-									}))
-								);
+								currentEdit!.competitionAvailableStates = states.map((s) => ({
+									state: s.shorthand as z.infer<typeof stateEnums>,
+									competitionId: competitionId
+								}));
 							} else {
 								currentEdit!.competitionAvailableStates = [];
 							}
 						}}
 					/>
-					<p>Toggle All</p>
+					<p>{toggleedAll ? 'Deselect' : 'Select'} All</p>
 				</label>
 			</div>
 		</label>
@@ -293,7 +292,7 @@
 							{eventTypes.join(', ')}
 						</td>
 						<td>
-							<Dialog
+							<!--<Dialog
 								onOpenChange={({ open }) => {
 									console.log('open', open);
 								}}
@@ -310,7 +309,7 @@
 											class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
 										>
 											<header class="flex items-center justify-between">
-												<Dialog.Title class="text-lg font-bold">Send mail</Dialog.Title>
+												<Dialog.Title class="text-lg font-bold">Send Mails</Dialog.Title>
 												<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
 													<XIcon class="size-4" />
 												</Dialog.CloseTrigger>
@@ -333,7 +332,7 @@
 										</Dialog.Content>
 									</Dialog.Positioner>
 								</Portal>
-							</Dialog>
+							</Dialog>-->
 							<Dialog>
 								<Dialog.Trigger
 									onclick={() => (currentEdit = cloneDeep(competition))}
