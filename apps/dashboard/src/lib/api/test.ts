@@ -1411,6 +1411,9 @@ class WorkerRequest {
 					if (typeof where.competitionId.equals === 'string') {
 						result = result && competitionId === where.competitionId.equals;
 					}
+					if (typeof where.competitionId.in === 'object' && isArray(where.competitionId.in)) {
+						result = result && where.competitionId.in.includes(competitionId);
+					}
 				}
 			}
 			return result;
