@@ -1087,14 +1087,31 @@ class WorkerRequest {
 	async _mockDelay() {
 		return new Promise((resolve) => setTimeout(() => resolve(undefined), 500));
 	}
+	testTeam({id}: TeamResponseItem, input: z.infer<typeof teamQuerySchema>) {
+		let result = true;
+		if (
+			input.where?.id &&
+			typeof input.where.id !== undefined
+		) {
+			if (typeof input.where.id === 'string'){
+				result = result && id === input.where.id;
+			} else if (typeof input.where.id !== 'string' && typeof input.where.id.equals === 'string'){
+				result = result && id === input.where.id.equals;
+			} else if (typeof input.where.id !== 'string' && typeof input.where.id.in === 'object' && isArray(input.where.id.in)){
+				result = result && (isArray(input.where.id.in) ? input.where.id.in.includes(id) : true);
+			}
+		}
+		return result;
+	}
 	async getTeam(input: z.infer<typeof teamQuerySchema>) {
 		const { data, success } = z.safeParse(studentQuerySchema, input);
 		const result = this.teams
 			.select((e) => e)
 			.skip(data?.skip ?? 0)
+			.where((e) => this.testTeam(e, input))
 			.take(data?.take ?? 10)
 			.toArray();
-		const count = this.teams.count();
+		const count = this.teams.where((e) => this.testTeam(e, input)).count();
 		await this._mockDelay();
 		return {
 			result,
@@ -1187,6 +1204,24 @@ class WorkerRequest {
 			count
 		};
 	}
+	async updateTeam(
+		inputs: {
+			where: z.infer<typeof teamQuerySchema>['where'];
+			data: Partial<TeamResponseItem>;
+		}[]
+	) {
+		await this._mockDelay();
+		this.teams.forEach((t, i) => {
+			inputs.forEach((input) => {
+				if (this.testTeam(t, { where: input.where })) {
+					for (const key in input.data) {
+						// @ts-ignore
+						t[key as keyof TeamResponseItem] = input.data[key as keyof TeamResponseItem];
+					}
+				}
+			});
+		});
+	}
 	async updateCompetition(
 		inputs: {
 			where: z.infer<typeof competitionQuerySchema>['where'];
@@ -1270,6 +1305,16 @@ class WorkerRequest {
 		]);
 		await this._mockDelay();
 	}
+	async insertNewTeam(team: Omit<TeamResponseItem, 'id'>) {
+		this.teams = Enumerable.from<TeamResponseItem>([
+			...this.teams.toArray(),
+			{
+				...team,
+				id: this.generateNewTeamId()
+			}
+		]);
+		await this._mockDelay();
+	}
 	async insertNewCoach(coach: Omit<CoachResponseItem, 'id'>) {
 		this.coaches = Enumerable.from<CoachResponseItem>([
 			...this.coaches.toArray(),
@@ -1304,6 +1349,10 @@ class WorkerRequest {
 		await this._mockDelay();
 		this.events = this.events.where((e) => !this.testEvent(e, input));
 	}
+	async deleteTeam(input: z.infer<typeof teamQuerySchema>) {
+		await this._mockDelay();
+		this.teams = this.teams.where((t) => !this.testTeam(t, input));
+	}
 	async deleteCompetitions(input: z.infer<typeof competitionQuerySchema>) {
 		await this._mockDelay();
 		this.competitions = this.competitions.where((c) => !this.testCompetition(c, input));
@@ -1319,6 +1368,14 @@ class WorkerRequest {
 	}
 	generateNewCompetitionId() {
 		const ids = this.competitions.select((c) => c.id).toArray();
+		let newId: string;
+		do {
+			newId = crypto.randomUUID();
+		} while (ids.includes(newId));
+		return newId;
+	}
+	generateNewTeamId() {
+		const ids = this.teams.select((t) => t.id).toArray();
 		let newId: string;
 		do {
 			newId = crypto.randomUUID();
