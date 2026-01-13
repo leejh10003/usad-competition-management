@@ -2,8 +2,10 @@
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { imask } from '@imask/svelte';
 	import { cloneDeep } from 'lodash';
+	import TextInput from '$lib/components/text-input.svelte'
+	import ScoreInput from '$lib/components/score-input.svelte'
+	import Select from '$lib/components/select.svelte';
 	import { Collapsible, Dialog, Pagination, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _ from 'lodash';
 	import { splitStringForQueryHighlight } from '$lib/utils/string';
@@ -136,104 +138,37 @@
 </script>
 {#snippet schoolDetail(schoolId: string)}
 	<Dialog.Description>
-		<label class="label">
-			<span class="label-text">School Id #</span>
-			<input type="text" class="input w-full" bind:value={currentEdit!.externalSchoolId} />
-		</label>
-		<label class="label">
-			<span class="label-text">School Name</span>
-			<input type="text" class="input w-full" bind:value={currentEdit!.name} />
-		</label>
+		<TextInput propName="School Id #" bind:inputValue={currentEdit!.externalSchoolId} />
+		<TextInput propName="School Name" bind:inputValue={currentEdit!.name} />
 		<label class="label">
 			<span class="label-text">Is This School Virtual?</span>
 			<input type="checkbox" class="checkbox" bind:checked={currentEdit!.isVirtual} />
 		</label>
-		<label class="label">
-			<span class="label-text">Street Address</span>
-			<input type="text" class="input w-full" bind:value={currentEdit!.streetAddress} />
-		</label>
-		<label class="label">
-			<span class="label-text">City</span>
-			<input type="text" class="input w-full" bind:value={currentEdit!.city} />
-		</label>
-		<label class="label">
-			<span class="label-text">State</span>
-			<select required class="select" value={currentEdit!.state} onchange={(v) => currentEdit!.state = v.currentTarget.value as z.infer<typeof stateEnums>}>
-				<option disabled selected value={null}>Select State...</option>
-				{#each states as { shorthand, original }, i (i)}
-					<option value={shorthand}>{original} ({shorthand})</option>
-				{/each}
-			</select>
-		</label>
-		<label class="label">
-			<span class="label-text">Zip Code</span>
-			<input type="text" class="input w-full" bind:value={currentEdit!.zipCode} />
-		</label>
-		<label class="label">
-			<span class="label-text">Phone #</span>
-			<input type="text" class="input w-full" bind:value={currentEdit!.phone} />
-		</label>
-		<label class="label">
-			<span class="label-text">Principal Name</span>
-			<input type="text" class="input w-full" bind:value={currentEdit!.principalName} />
-		</label>
-		<label class="label">
-			<span class="label-text">Principal Email</span>
-			<input type="text" class="input w-full" bind:value={currentEdit!.principalEmail} />
-		</label>
-		<label class="label">
-			<span class="label-text">Objective Score</span>
-			<input
-				required
-				class="input"
-				use:imask={{
-					mask: Number,
-					thousandsSeparator: ',',
-					scale: 2,
-					radix: '.',
-					padFractionalZeros: true,
-					normalizeZeros: true,
-					lazy: false,
-				}}
-				onaccept={({detail: maskRef}) => {
-					currentEdit!.objectiveScore = parseFloat(maskRef.value.replaceAll(',', ''));
-				}}
-				value={currentEdit!.objectiveScore}
-			/>
-		</label>
-		<label class="label">
-			<span class="label-text">Subjective Score</span>
-			<input
-				required
-				class="input"
-				use:imask={{
-					mask: Number,
-					thousandsSeparator: ',',
-					scale: 2,
-					radix: '.',
-					padFractionalZeros: true,
-					normalizeZeros: true,
-					lazy: false,
-				}}
-				onaccept={({detail: maskRef}) => {
-					currentEdit!.subjectiveScore = parseFloat(maskRef.value.replaceAll(',', ''));
-				}}
-				value={currentEdit!.subjectiveScore}
-			/>
-		</label>
-		<label class="label">
-			<span class="label-text">Email Domain</span>
-			<input type="text" class="input w-full" bind:value={currentEdit!.emailDomain} />
-		</label>
-		<label class="label">
-			<span class="label-text">Division</span>
-			<select class="select w-full" bind:value={currentEdit!.division}>
-				<option disabled selected value={null}>Select Division...</option>
-				{#each _.range(1, 5) as division (division)}
-					<option value={division}>{romanize(division)}</option>
-				{/each}
-			</select>
-		</label>
+		<TextInput propName="Street Address" bind:inputValue={currentEdit!.streetAddress} />
+		<TextInput propName="City" bind:inputValue={currentEdit!.city} />
+		<Select
+			propName="State"
+			bind:value={currentEdit!.state}
+			key={input => input?.shorthand ?? ''}
+			display={input => `${input?.original ?? ''} (${input?.shorthand ?? ''})`}
+			options={states}
+			mapValue={input => input.shorthand}
+		/>
+		<TextInput propName="Zip Code" bind:inputValue={currentEdit!.zipCode} />
+		<TextInput propName="Phone #" bind:inputValue={currentEdit!.phone} />
+		<TextInput propName="Principal Name" bind:inputValue={currentEdit!.principalName} />
+		<TextInput propName="Principal Email" bind:inputValue={currentEdit!.principalEmail} />
+		<ScoreInput propName="Objective Score" bind:inputValue={currentEdit!.objectiveScore} />
+		<ScoreInput propName="Subjective Score" bind:inputValue={currentEdit!.subjectiveScore} />
+		<TextInput propName="Email Domain" bind:inputValue={currentEdit!.emailDomain} />
+		<Select
+			propName="Division"
+			bind:value={currentEdit!.division}
+			key={input => input.toString()}
+			display={input => romanize(input)}
+			options={_.range(1, 5)}
+			mapValue={input => parseInt(input.toString())}
+		/>
 		<!--TODOs-->
 		primaryCoachId
 		competitionId
