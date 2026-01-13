@@ -141,7 +141,6 @@
 			value={currentEdit!.subjectiveScore}
 		/>
 	</label>
-	coachesRelationship
 	schoolId
 </Dialog.Description>
 {/snippet}
