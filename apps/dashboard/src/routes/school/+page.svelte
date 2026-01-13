@@ -459,7 +459,7 @@
 											>
 												<header class="flex items-center justify-between">
 													<Dialog.Title class="text-lg font-bold"
-														>Edit Competition: {name}</Dialog.Title
+														>Edit School: {name}</Dialog.Title
 													>
 													<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
 														<XIcon class="size-4" />

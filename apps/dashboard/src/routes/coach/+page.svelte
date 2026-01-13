@@ -2,17 +2,21 @@
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { Collapsible, Pagination } from '@skeletonlabs/skeleton-svelte';
+	import { cloneDeep } from 'lodash';
+	import { Collapsible, Dialog, Pagination, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _ from 'lodash';
 	import { coachQuerySchema, coachResponseSchema } from 'usad-scheme';
-	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon } from '@lucide/svelte';
+	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, IdCardLanyard, Pencil, Trash, XIcon } from '@lucide/svelte';
 	import z from 'zod';
 	import { splitStringForQueryHighlight } from '$lib/utils/string';
 	import { resolve } from '$app/paths';
 	import { workerRequest } from '$lib/api/test';
+	import { dialogAppearAnimation } from '$lib/utils/animation';
 	type CoachResponseItem = z.infer<typeof coachResponseSchema>['coach'];
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
+	var currentEdit = $state<CoachResponseItem | null>(null);
+	var isActionBlocked = $state<boolean>(false);
 	function _currentParam() {
 		const limit = query.get('limit');
 		const currentPage = query.get('currentPage');
@@ -102,7 +106,7 @@
 		goto(resolve(going));
 	}
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
-	async function fetch(searchParams: z.infer<typeof coachQuerySchema>) {
+	async function fetch() {
 		isLoading = true;
 		//TODO: server fetch
 		const {result, count} = await workerRequest.getCoach({
@@ -136,7 +140,7 @@
 			Object.fromEntries(page.url.searchParams.entries())
 		);
 		if (searchParams.success) {
-			fetch(searchParams.data);
+			fetch();
 		} else {
 			//TODO:
 		}
@@ -147,7 +151,33 @@
 		goto(`?${searchParams.toString()}`);
 	}*/
 </script>
-
+{#snippet coachDetail(coachId: string)}
+<Dialog.Description>
+	<label class="label">
+		<span class="label-text font-bold">Coach ID</span>
+		<input type="text" class="input w-full" bind:value={currentEdit!.externalCoachId} />
+	</label>
+	<label class="label">
+		<span class="label-text font-bold">First Name</span>
+		<input type="text" class="input w-full" bind:value={currentEdit!.firstName} />
+	</label>
+	<label class="label">
+		<span class="label-text font-bold">Last Name</span>
+		<input type="text" class="input w-full" bind:value={currentEdit!.lastName} />
+	</label>
+	<label class="label">
+		<span class="label-text font-bold">Email</span>
+		<input type="text" class="input w-full" bind:value={currentEdit!.email} />
+	</label>
+	<label class="label">
+		<span class="label-text font-bold">Phone</span>
+		<input type="text" class="input w-full" bind:value={currentEdit!.phone} />
+	</label>
+	<!--Todos-->
+	signature
+	schoolId
+</Dialog.Description>
+{/snippet}
 <div class="flex h-full w-full flex-col gap-y-3.5 p-8">
 	<h1 class="h1 font-bold">Coach</h1>
 	<Collapsible class="rounded-xs border border-primary-100 p-4">
@@ -197,6 +227,52 @@
 					value={getLimit}
 				/>
 			</label>
+			<div class="flex flex-row justify-center items-end">
+				<Dialog>
+					<Dialog.Trigger
+						onclick={() =>
+							(currentEdit = {
+								id: workerRequest.generateNewCompetitionId(),
+								mutationIndex: 0,
+								externalCoachId: '',
+								firstName: '',
+								lastName: '',
+								email: '',
+								phone: '',
+								schoolId: '',
+							})}
+						class="btn preset-filled w-min h-min"
+						disabled={isActionBlocked}><IdCardLanyard /> Create Coach</Dialog.Trigger
+					>
+					<Portal>
+						{#if currentEdit}
+							<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+							<Dialog.Positioner class="fixed inset-0 z-50 flex items-center justify-center p-4">
+								<Dialog.Content class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}">
+									<header class="flex items-center justify-between">
+										<Dialog.Title class="text-lg font-bold">Create Coach</Dialog.Title>
+										<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+											<XIcon class="size-4" />
+										</Dialog.CloseTrigger>
+									</header>
+									{@render coachDetail(currentEdit!.id)}
+									<footer class="flex justify-end gap-2">
+										<Dialog.CloseTrigger
+											class="btn preset-filled-primary-50-950"
+											onclick={async () => {
+												isActionBlocked = true;
+												await workerRequest.insertNewCoach(currentEdit!);
+												await fetch();
+											}}>Save</Dialog.CloseTrigger
+										>
+										<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+									</footer>
+								</Dialog.Content>
+							</Dialog.Positioner>
+						{/if}
+					</Portal>
+				</Dialog>
+			</div>
 		</Collapsible.Content>
 	</Collapsible>
 	<table class="table">
@@ -206,6 +282,7 @@
 				<td>Name</td>
 				<td>Phone</td>
 				<td>Email</td>
+				<td>Actions</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -216,11 +293,12 @@
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
+						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
 					</tr>
 				{/each}
 			{:else}
 				{#each coaches as coach (coach.id)}
-					{@const { externalCoachId, firstName, lastName, email, phone } = coach}
+					{@const { externalCoachId, firstName, lastName, email, phone, id } = coach}
 					{@const firstNameSplit = splitStringForQueryHighlight(
 						firstName,
 						getCoachFirstNameQueryString
@@ -257,13 +335,97 @@
 						</td>
 						<td><a href={`tel:${phone}`}>{phone}</a></td>
 						<td><a href={`mailto:${email}`}>{email}</a></td>
+						<td>
+
+							<Dialog>
+								<Dialog.Trigger
+									onclick={() => (currentEdit = cloneDeep(coach))}
+									class="btn preset-filled"
+									disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger
+								>
+								<Portal>
+									{#if currentEdit}
+										<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+										<Dialog.Positioner
+											class="fixed inset-0 z-50 flex items-center justify-center p-4"
+										>
+											<Dialog.Content
+												class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
+											>
+												<header class="flex items-center justify-between">
+													<Dialog.Title class="text-lg font-bold"
+														>Edit Coach: {name}</Dialog.Title
+													>
+													<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+														<XIcon class="size-4" />
+													</Dialog.CloseTrigger>
+												</header>
+												{@render coachDetail(currentEdit.id)}
+												<footer class="flex justify-end gap-2">
+													<Dialog.CloseTrigger
+														class="btn preset-filled-primary-50-950"
+														onclick={async () => {
+															isActionBlocked = true;
+															await workerRequest.updateCoach([
+																{ where: { id: currentEdit!.id }, data: currentEdit! }
+															]);
+															await fetch();
+														}}>Save</Dialog.CloseTrigger
+													>
+													<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+												</footer>
+											</Dialog.Content>
+										</Dialog.Positioner>
+									{/if}
+								</Portal>
+							</Dialog>
+							<Dialog>
+								<Dialog.Trigger class="btn preset-filled-danger-50-950" disabled={isActionBlocked}
+									><Trash />Delete</Dialog.Trigger
+								>
+								<Portal>
+									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+									<Dialog.Positioner
+										class="fixed inset-0 z-50 flex items-center justify-center p-4"
+									>
+										<Dialog.Content
+											class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
+										>
+											<header class="flex items-center justify-between">
+												<Dialog.Title class="text-lg font-bold"
+													>Delete Coach: {name}</Dialog.Title
+												>
+												<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+													<XIcon class="size-4" />
+												</Dialog.CloseTrigger>
+											</header>
+											<Dialog.Description>
+												Are you sure you want to delete coach {name}? This action cannot be
+												undone.
+											</Dialog.Description>
+											<footer class="flex justify-end gap-2">
+												<Dialog.CloseTrigger
+													class="btn preset-filled-danger-50-950"
+													onclick={async () => {
+														isActionBlocked = true;
+														await workerRequest.deleteCoaches({ where: {id: {equals: id}} });
+														await fetch();
+													}}>Delete</Dialog.CloseTrigger
+												>
+												<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+											</footer>
+										</Dialog.Content>
+									</Dialog.Positioner>
+								</Portal>
+							</Dialog>
+						</td>
 					</tr>
 				{/each}
 			{/if}
 		</tbody>
 		<tfoot>
 			<tr>
-				<td colspan="3">Total</td>
+				<td colspan="4">Total</td>
 				{#if isFirstLoaded}
 					<td colspan="1">{offset + 1} - {offset + currentCount}/{total} Elements</td>
 				{:else}

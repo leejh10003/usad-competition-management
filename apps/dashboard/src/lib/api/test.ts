@@ -1160,48 +1160,13 @@ class WorkerRequest {
 		};
 	}
 	async getCoach(input: z.infer<typeof coachQuerySchema>) {
-		const test = ({ firstName, lastName, externalCoachId }: CoachResponseItem) => {
-			let result = true;
-			if (
-				input.where?.firstName &&
-				typeof input.where.firstName !== undefined &&
-				typeof input.where.firstName !== 'string' &&
-				typeof input.where.firstName.contains === 'string'
-			) {
-				result =
-					result && firstName?.toLowerCase().includes(input.where.firstName.contains.toLowerCase());
-			}
-			if (
-				input.where?.lastName &&
-				typeof input.where.lastName !== undefined &&
-				typeof input.where.lastName !== 'string' &&
-				typeof input.where.lastName.contains === 'string'
-			) {
-				result =
-					result && lastName?.toLowerCase().includes(input.where.lastName.contains.toLowerCase());
-			}
-			if (
-				input.where?.externalCoachId &&
-				typeof input.where.externalCoachId !== undefined &&
-				typeof input.where.externalCoachId !== 'string' &&
-				typeof input.where.externalCoachId.contains === 'string'
-			) {
-				result =
-					result &&
-					(externalCoachId
-						?.toLowerCase()
-						?.includes(input.where.externalCoachId.contains.toLowerCase()) ??
-						false);
-			}
-			return result;
-		};
 		const result = this.coaches
 			.select((e) => e)
 			.skip(input?.skip ?? 0)
-			.where(test)
+			.where((e) => this.testCoach(e, input))
 			.take(input?.take ?? 10)
 			.toArray();
-		const count = this.coaches.where(test).count();
+		const count = this.coaches.where((e) => this.testCoach(e, input)).count();
 		await this._mockDelay();
 		return {
 			result,
@@ -1236,6 +1201,24 @@ class WorkerRequest {
 						// @ts-ignore
 						c[key as keyof CompetitionResponseItem] =
 							input.data[key as keyof CompetitionResponseItem];
+					}
+				}
+			});
+		});
+	}
+	async updateCoach(
+		inputs: {
+			where: z.infer<typeof coachQuerySchema>['where'];
+			data: Partial<CoachResponseItem>;
+		}[]
+	) {
+		await this._mockDelay();
+		this.coaches.forEach((c, i) => {
+			inputs.forEach((input) => {
+				if (this.testCoach(c, { where: input.where })) {
+					for (const key in input.data) {
+						// @ts-ignore
+						c[key as keyof CoachResponseItem] = input.data[key as keyof CoachResponseItem];
 					}
 				}
 			});
@@ -1287,6 +1270,16 @@ class WorkerRequest {
 		]);
 		await this._mockDelay();
 	}
+	async insertNewCoach(coach: Omit<CoachResponseItem, 'id'>) {
+		this.coaches = Enumerable.from<CoachResponseItem>([
+			...this.coaches.toArray(),
+			{
+				...coach,
+				id: this.generateNewCoachId()
+			}
+		]);
+		await this._mockDelay();
+	}
 	async insertNewEvent(event: Omit<EventResponseItem, 'id'>) {
 		this.events = Enumerable.from<EventResponseItem>([
 			...this.events.toArray(),
@@ -1302,7 +1295,7 @@ class WorkerRequest {
 			...this.schools.toArray(),
 			{
 				...school,
-				id: crypto.randomUUID()
+				id: this.generateNewSchoolId()
 			}
 		]);
 		await this._mockDelay();
@@ -1316,12 +1309,32 @@ class WorkerRequest {
 		this.competitions = this.competitions.where((c) => !this.testCompetition(c, input));
 		//TODO: Also delete related entities
 	}
+	async deleteCoaches(input: z.infer<typeof coachQuerySchema>) {
+		await this._mockDelay();
+		this.coaches = this.coaches.where((c) => !this.testCoach(c, input));
+	}
 	async deleteSchools(input: z.infer<typeof schoolQuerySchema>) {
 		await this._mockDelay();
 		this.schools = this.schools.where((s) => !this.testSchool(s, input));
 	}
 	generateNewCompetitionId() {
 		const ids = this.competitions.select((c) => c.id).toArray();
+		let newId: string;
+		do {
+			newId = crypto.randomUUID();
+		} while (ids.includes(newId));
+		return newId;
+	}
+	generateNewSchoolId() {
+		const ids = this.schools.select((s) => s.id).toArray();
+		let newId: string;
+		do {
+			newId = crypto.randomUUID();
+		} while (ids.includes(newId));
+		return newId;
+	}
+	generateNewCoachId() {
+		const ids = this.coaches.select((c) => c.id).toArray();
 		let newId: string;
 		do {
 			newId = crypto.randomUUID();
@@ -1337,44 +1350,90 @@ class WorkerRequest {
 		return newId;
 	}
 	testSchool({ name, externalSchoolId, id }: SchoolItemType, input: z.infer<typeof schoolQuerySchema>) {
-			let result = true;
-			if (
-				input.where?.name &&
-				typeof input.where.name !== undefined &&
-				typeof input.where.name !== 'string' &&
-				typeof input.where.name.contains === 'string'
-			) {
-				result = result && name?.toLowerCase().includes(input.where.name.contains.toLowerCase());
-			}
-			if (
-				input.where?.externalSchoolId &&
-				typeof input.where.externalSchoolId !== undefined &&
-				typeof input.where.externalSchoolId !== 'string' &&
-				typeof input.where.externalSchoolId.contains === 'string'
-			) {
-				result =
-					result &&
-					(externalSchoolId
-						?.toLowerCase()
-						?.includes(input.where.externalSchoolId.contains.toLowerCase()) ??
-						false);
-			}
-			if (
-				input.where?.id &&
-				typeof input.where.id !== undefined
-			) {
-				if (typeof input.where.id === 'string') {
-					result = result && input.where.id === id;
-				} else if (typeof input.where.id === 'object') {
-					if (isArray(input.where.id.in)) {
-						result = result && input.where.id.in.includes(id);
-					} else if (input.where.id.equals) {
-						result = result && input.where.id.equals === id;
-					}
+		let result = true;
+		if (
+			input.where?.name &&
+			typeof input.where.name !== undefined &&
+			typeof input.where.name !== 'string' &&
+			typeof input.where.name.contains === 'string'
+		) {
+			result = result && name?.toLowerCase().includes(input.where.name.contains.toLowerCase());
+		}
+		if (
+			input.where?.externalSchoolId &&
+			typeof input.where.externalSchoolId !== undefined &&
+			typeof input.where.externalSchoolId !== 'string' &&
+			typeof input.where.externalSchoolId.contains === 'string'
+		) {
+			result =
+				result &&
+				(externalSchoolId
+					?.toLowerCase()
+					?.includes(input.where.externalSchoolId.contains.toLowerCase()) ??
+					false);
+		}
+		if (
+			input.where?.id &&
+			typeof input.where.id !== undefined
+		) {
+			if (typeof input.where.id === 'string') {
+				result = result && input.where.id === id;
+			} else if (typeof input.where.id === 'object') {
+				if (isArray(input.where.id.in)) {
+					result = result && input.where.id.in.includes(id);
+				} else if (input.where.id.equals) {
+					result = result && input.where.id.equals === id;
 				}
 			}
-			return result;
 		}
+		return result;
+	}
+	testCoach({ firstName, lastName, externalCoachId, id }: CoachResponseItem, input: z.infer<typeof coachQuerySchema>) {
+		let result = true;
+		if (
+			input.where?.firstName &&
+			typeof input.where.firstName !== undefined &&
+			typeof input.where.firstName !== 'string' &&
+			typeof input.where.firstName.contains === 'string'
+		) {
+			result =
+				result && firstName?.toLowerCase().includes(input.where.firstName.contains.toLowerCase());
+		}
+		if (
+			input.where?.lastName &&
+			typeof input.where.lastName !== undefined &&
+			typeof input.where.lastName !== 'string' &&
+			typeof input.where.lastName.contains === 'string'
+		) {
+			result =
+				result && lastName?.toLowerCase().includes(input.where.lastName.contains.toLowerCase());
+		}
+		if (
+			input.where?.externalCoachId &&
+			typeof input.where.externalCoachId !== undefined &&
+			typeof input.where.externalCoachId !== 'string' &&
+			typeof input.where.externalCoachId.contains === 'string'
+		) {
+			result =
+				result &&
+				(externalCoachId
+					?.toLowerCase()
+					?.includes(input.where.externalCoachId.contains.toLowerCase()) ??
+					false);
+		}
+		if (input.where?.id) {
+			if (typeof input.where.id === 'string') {
+				result = result && input.where.id === id;
+			} else if (typeof input.where.id === 'object') {
+				if (input.where.id.equals) {
+					result = result && input.where.id.equals === id;
+				} else if (isArray(input.where.id.in)) {
+					result = result && input.where.id.in.includes(id);
+				}
+			}
+		}
+		return result;
+	}
 	testCompetition(
 		{ name, startsAt, endsAt, competitionAvailableStates, id }: CompetitionResponseItem,
 		input: z.infer<typeof competitionQuerySchema>
