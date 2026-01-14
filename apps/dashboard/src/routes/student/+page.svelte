@@ -10,6 +10,7 @@
 	import Pdf from '$lib/components/pdf.svelte';
 	import { workerRequest } from '$lib/api/test';
 	import { resolve } from '$app/paths';
+	import PaginateTable from '$lib/components/paginate-table.svelte';
 	type StudentResponseItem = z.infer<typeof studentResponseSchema>['student'];
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
@@ -208,21 +209,10 @@
 			</tr>
 		</tfoot>
 	</table>
-	<Pagination count={total} pageSize={getLimit} page={getCurrentPage}>
-		<Pagination.PrevTrigger onclick={() => setCurrentPage(getCurrentPage - 1)}><ArrowLeftIcon class="size-4" /></Pagination.PrevTrigger>
-		<Pagination.Context>
-			{#snippet children(pagination)}
-				{#each pagination().pages as page, index (page)}
-					{#if page.type === 'page'}
-						<Pagination.Item onclick={(v) => {setCurrentPage(page.value)}} {...page}>
-							{page.value}
-						</Pagination.Item>
-					{:else}
-						<Pagination.Ellipsis {index}>&#8230;</Pagination.Ellipsis>
-					{/if}
-				{/each}
-			{/snippet}
-		</Pagination.Context>
-		<Pagination.NextTrigger onclick={() => setCurrentPage(getCurrentPage + 1)}><ArrowRightIcon class="size-4" /></Pagination.NextTrigger>
-	</Pagination>
+	<PaginateTable
+		getLimit={getLimit}
+		total={total}
+		getCurrentPage={getCurrentPage}
+		{setCurrentPage}
+	/>
 </div>

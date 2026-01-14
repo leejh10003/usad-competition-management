@@ -12,7 +12,7 @@
 	import { schoolQuerySchema, schoolResponse, stateEnums } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, CalendarPlus2, Pencil, School, Trash, XIcon } from '@lucide/svelte';
 	import z from 'zod';
-	//eslint-disable-next-line @typescript-eslint/no-unused-vars
+	import PaginateTable from '$lib/components/paginate-table.svelte';
 	import romans, { romanize } from 'romans';
 	import { resolve } from '$app/paths';
 	import { workerRequest } from '$lib/api/test';
