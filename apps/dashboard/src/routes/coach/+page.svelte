@@ -16,11 +16,41 @@
 	import PaginateTable from '$lib/components/paginate-table.svelte';
 	import DisplayTable from '$lib/components/display-table.svelte';
 	import SearchedText from '$lib/components/searched-text.svelte';
+	import SearchSelect from '$lib/components/search-select.svelte';
 	type CoachResponseItem = z.infer<typeof coachResponseSchema>['coach'];
+	type SchoolSearch = {
+		schoolId: string;
+		schoolName: string;
+		competitionInfo: string;
+	}
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
 	var currentEdit = $state<CoachResponseItem | null>(null);
 	var isActionBlocked = $state<boolean>(false);
+	var searchedSchools = $state<SchoolSearch[]>([]);
+	async function fetchSchools(query: string) {
+		const { result } = await workerRequest.getSchool({
+			where: {
+				name: {
+					contains: query,
+					mode: 'insensitive'
+				}
+			},
+			take: 50,
+		});
+		const {result: competitions} = await workerRequest.getCompetition({
+			where: {
+				id: {
+					in: result.map((school) => school.competitionId)
+				}
+			}
+		});
+		searchedSchools = result.map((school) => ({
+			schoolId: school.id,
+			schoolName: school.name,
+			competitionInfo: competitions.find((comp) => comp.id === school.competitionId)?.name || 'N/A'
+		}));
+	}
 	function _currentParam() {
 		const limit = query.get('limit');
 		const currentPage = query.get('currentPage');
@@ -134,6 +164,25 @@
 				} : {})
 			} : undefined
 		});
+		const {result: schools} = await workerRequest.getSchool({
+			where: {
+				id: {
+					in: result.map((team) => team.schoolId)
+				}
+			}
+		});
+		const {result: competitions} = await workerRequest.getCompetition({
+			where: {
+				id: {
+					in: schools.map((school) => school.competitionId)
+				}
+			}
+		});
+		searchedSchools = schools.map((school) => ({
+			schoolId: school.id,
+			schoolName: school.name,
+			competitionInfo: competitions.find((comp) => comp.id === school.competitionId)?.name || 'N/A'
+		}));
 		coaches = result;
 		total = count;
 		currentCount = result.length;
@@ -157,6 +206,16 @@
 </script>
 {#snippet coachDetail(coachId: string)}
 <Dialog.Description>
+	<SearchSelect
+		items={searchedSchools}
+		bind:value={currentEdit!.schoolId}
+		itemToString={(item) => item.schoolName}
+		itemToValue={(item) => item.schoolId}
+		itemsSubscript={(item) => `Competition: ${item.competitionInfo}`}
+		fetchItems={fetchSchools}
+		propName="School Name"
+		placeHolder="Type to search schools..."
+	/>
 	<TextInput
 		propName="Coach ID"
 		bind:inputValue={currentEdit!.externalCoachId}
@@ -179,7 +238,6 @@
 	/>
 	<!--Todos-->
 	signature
-	schoolId
 </Dialog.Description>
 {/snippet}
 {#snippet actions(coach: CoachResponseItem)}
