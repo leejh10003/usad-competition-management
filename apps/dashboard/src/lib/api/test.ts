@@ -20,6 +20,7 @@ import {
 	eventCheckInQuerySchema
 } from 'usad-scheme';
 import z from 'zod';
+import { v4 as uuidv4 } from 'uuid';
 
 type SchoolItemType = z.infer<typeof schoolResponse>['school'];
 type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
@@ -1370,7 +1371,7 @@ class WorkerRequest {
 		const ids = this.competitions.select((c) => c.id).toArray();
 		let newId: string;
 		do {
-			newId = crypto.randomUUID();
+			newId = uuidv4();
 		} while (ids.includes(newId));
 		return newId;
 	}
@@ -1378,7 +1379,7 @@ class WorkerRequest {
 		const ids = this.teams.select((t) => t.id).toArray();
 		let newId: string;
 		do {
-			newId = crypto.randomUUID();
+			newId = uuidv4();
 		} while (ids.includes(newId));
 		return newId;
 	}
@@ -1386,7 +1387,7 @@ class WorkerRequest {
 		const ids = this.schools.select((s) => s.id).toArray();
 		let newId: string;
 		do {
-			newId = crypto.randomUUID();
+			newId = uuidv4();
 		} while (ids.includes(newId));
 		return newId;
 	}
@@ -1394,7 +1395,7 @@ class WorkerRequest {
 		const ids = this.coaches.select((c) => c.id).toArray();
 		let newId: string;
 		do {
-			newId = crypto.randomUUID();
+			newId = uuidv4();
 		} while (ids.includes(newId));
 		return newId;
 	}
@@ -1402,7 +1403,7 @@ class WorkerRequest {
 		const ids = this.events.select((e) => e.id).toArray();
 		let newId: string;
 		do {
-			newId = crypto.randomUUID();
+			newId = uuidv4();
 		} while (ids.includes(newId));
 		return newId;
 	}
