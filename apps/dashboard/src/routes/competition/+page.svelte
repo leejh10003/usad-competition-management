@@ -18,6 +18,7 @@
 	import {timezoneFormatted, timezone} from '$lib/utils/time';
 	import { dialogAppearAnimation } from '$lib/utils/animation';
 	import PaginateTable from '$lib/components/paginate-table.svelte';
+	import DisplayTable from '$lib/components/display-table.svelte';
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
 	var isActionBlocked = $state<boolean>(true);
@@ -180,6 +181,89 @@
 		</label>
 	</Dialog.Description>
 {/snippet}
+{#snippet actions(competition: CompetitionResponseItem)}
+<Dialog>
+	<Dialog.Trigger
+		onclick={() => (currentEdit = cloneDeep(competition))}
+		class="btn preset-filled"
+		disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger
+	>
+	<Portal>
+		{#if currentEdit}
+			<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+			<Dialog.Positioner
+				class="fixed inset-0 z-50 flex items-center justify-center p-4"
+			>
+				<Dialog.Content
+					class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
+				>
+					<header class="flex items-center justify-between">
+						<Dialog.Title class="text-lg font-bold"
+							>Edit Competition: {name}</Dialog.Title
+						>
+						<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+							<XIcon class="size-4" />
+						</Dialog.CloseTrigger>
+					</header>
+					{@render competitionDetail(currentEdit.id)}
+					<footer class="flex justify-end gap-2">
+						<Dialog.CloseTrigger
+							class="btn preset-filled-primary-50-950"
+							onclick={async () => {
+								isActionBlocked = true;
+								await workerRequest.updateCompetition([
+									{ where: { id: currentEdit!.id }, data: currentEdit! }
+								]);
+								await fetch();
+							}}>Save</Dialog.CloseTrigger
+						>
+						<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+					</footer>
+				</Dialog.Content>
+			</Dialog.Positioner>
+		{/if}
+	</Portal>
+</Dialog>
+<Dialog>
+	<Dialog.Trigger class="btn preset-filled-danger-50-950" disabled={isActionBlocked}
+		><Trash />Delete</Dialog.Trigger
+	>
+	<Portal>
+		<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+		<Dialog.Positioner
+			class="fixed inset-0 z-50 flex items-center justify-center p-4"
+		>
+			<Dialog.Content
+				class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
+			>
+				<header class="flex items-center justify-between">
+					<Dialog.Title class="text-lg font-bold"
+						>Delete Competition: {name}</Dialog.Title
+					>
+					<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+						<XIcon class="size-4" />
+					</Dialog.CloseTrigger>
+				</header>
+				<Dialog.Description>
+					Are you sure you want to delete competition {name}? This action cannot be
+					undone.
+				</Dialog.Description>
+				<footer class="flex justify-end gap-2">
+					<Dialog.CloseTrigger
+						class="btn preset-filled-danger-50-950"
+						onclick={async () => {
+							isActionBlocked = true;
+							await workerRequest.deleteCompetitions({ where: {id: {equals: competition.id}} });
+							await fetch();
+						}}>Delete</Dialog.CloseTrigger
+					>
+					<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+				</footer>
+			</Dialog.Content>
+		</Dialog.Positioner>
+	</Portal>
+</Dialog>
+{/snippet}
 <div class="flex h-full w-full flex-col gap-y-3.5 p-8">
 	<h1 class="h1 font-bold">Competition</h1>
 	<Collapsible class="rounded-xs border border-primary-100 p-4">
@@ -236,202 +320,55 @@
 			</Dialog>
 		</Collapsible.Content>
 	</Collapsible>
-	<table class="table">
-		<thead>
-			<tr>
-				<td>Competition Name</td>
-				<td>Competition Round</td>
-				<td>Competition Date</td>
-				<td>Competition Available States</td>
-				<td>Competition Event Types</td>
-				<td>Actions</td>
-			</tr>
-		</thead>
-		<tbody>
-			{#if isWholeLoading}
-				{#each _.range(0, limit, 1) as n (n)}
-					<tr>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-					</tr>
-				{/each}
-			{:else}
-				{#each competitions as competition (competition.id)}
-					{@const { name, startsAt, id, nonRelativeEvents, events, round } = competition}
-					{@const eventTypes = [...nonRelativeEvents, events.map((e) => e.type)].flat()}
-					{@const editor: {editor: Editor | undefined} = { editor: undefined } }
-					<tr>
-						<td>{name}</td>
-						<td>{round + 1}</td>
-						<td
-							>{moment(startsAt, timezone).format('MM-DD-YYYY hh:mm:ss')} at timezone {timezoneFormatted}</td
-						>
-						<td>
-							{competition.competitionAvailableStates.length > states.length / 2
-								? `All${
-										competition.competitionAvailableStates.length < states.length
-											? ` except for ${states
-													.filter(
-														(s) =>
-															!competition.competitionAvailableStates
-																.map(({ state }) => state)
-																.includes(s.shorthand as z.infer<typeof stateEnums>)
-													)
-													.map((s) => s.shorthand)
-													.join(', ')}`
-											: ''
-									}`
-								: competition.competitionAvailableStates
-										.map(({ state }) => states.find((s) => s.shorthand === state)?.shorthand)
-										.join(', ')}
-						</td>
-						<td>
-							{eventTypes.join(', ')}
-						</td>
-						<td>
-							<!--<Dialog
-								onOpenChange={({ open }) => {
-									console.log('open', open);
-								}}
-							>
-								<Dialog.Trigger class="btn preset-filled" disabled={isActionBlocked}
-									><MailIcon />Send Mails</Dialog.Trigger
-								>
-								<Portal>
-									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
-									<Dialog.Positioner
-										class="fixed inset-0 z-50 flex items-center justify-center p-4"
-									>
-										<Dialog.Content
-											class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
-										>
-											<header class="flex items-center justify-between">
-												<Dialog.Title class="text-lg font-bold">Send Mails</Dialog.Title>
-												<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
-													<XIcon class="size-4" />
-												</Dialog.CloseTrigger>
-											</header>
-											<Dialog.Description>
-												{#each mailAddresses as address, i (i)}
-													<p>{i + 1}</p>
-												{/each}
-												<Editor bind:this={editor.editor} />
-											</Dialog.Description>
-											<footer class="flex justify-end gap-2">
-												<Dialog.CloseTrigger
-													onclick={async () => {
-														console.log(editor.editor?.quill.getSemanticHTML());
-													}}
-													class="btn preset-filled-primary-50-950">Send</Dialog.CloseTrigger
-												>
-												<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
-											</footer>
-										</Dialog.Content>
-									</Dialog.Positioner>
-								</Portal>
-							</Dialog>-->
-							<Dialog>
-								<Dialog.Trigger
-									onclick={() => (currentEdit = cloneDeep(competition))}
-									class="btn preset-filled"
-									disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger
-								>
-								<Portal>
-									{#if currentEdit}
-										<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
-										<Dialog.Positioner
-											class="fixed inset-0 z-50 flex items-center justify-center p-4"
-										>
-											<Dialog.Content
-												class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
-											>
-												<header class="flex items-center justify-between">
-													<Dialog.Title class="text-lg font-bold"
-														>Edit Competition: {name}</Dialog.Title
-													>
-													<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
-														<XIcon class="size-4" />
-													</Dialog.CloseTrigger>
-												</header>
-												{@render competitionDetail(currentEdit.id)}
-												<footer class="flex justify-end gap-2">
-													<Dialog.CloseTrigger
-														class="btn preset-filled-primary-50-950"
-														onclick={async () => {
-															isActionBlocked = true;
-															await workerRequest.updateCompetition([
-																{ where: { id: currentEdit!.id }, data: currentEdit! }
-															]);
-															await fetch();
-														}}>Save</Dialog.CloseTrigger
-													>
-													<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
-												</footer>
-											</Dialog.Content>
-										</Dialog.Positioner>
-									{/if}
-								</Portal>
-							</Dialog>
-							<Dialog>
-								<Dialog.Trigger class="btn preset-filled-danger-50-950" disabled={isActionBlocked}
-									><Trash />Delete</Dialog.Trigger
-								>
-								<Portal>
-									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
-									<Dialog.Positioner
-										class="fixed inset-0 z-50 flex items-center justify-center p-4"
-									>
-										<Dialog.Content
-											class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
-										>
-											<header class="flex items-center justify-between">
-												<Dialog.Title class="text-lg font-bold"
-													>Delete Competition: {name}</Dialog.Title
-												>
-												<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
-													<XIcon class="size-4" />
-												</Dialog.CloseTrigger>
-											</header>
-											<Dialog.Description>
-												Are you sure you want to delete competition {name}? This action cannot be
-												undone.
-											</Dialog.Description>
-											<footer class="flex justify-end gap-2">
-												<Dialog.CloseTrigger
-													class="btn preset-filled-danger-50-950"
-													onclick={async () => {
-														isActionBlocked = true;
-														await workerRequest.deleteCompetitions({ where: {id: {equals: id}} });
-														await fetch();
-													}}>Delete</Dialog.CloseTrigger
-												>
-												<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
-											</footer>
-										</Dialog.Content>
-									</Dialog.Positioner>
-								</Portal>
-							</Dialog>
-						</td>
-					</tr>
-				{/each}
-			{/if}
-		</tbody>
-		<tfoot>
-			<tr>
-				<td colspan="5">Total</td>
-				{#if isFirstLoaded}
-					<td colspan="1">{offset + 1} - {offset + currentCount}/{total} Elements</td>
-				{:else}
-					<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-				{/if}
-			</tr>
-		</tfoot>
-	</table>
-	
+	<DisplayTable
+		{total}
+		{offset}
+		{currentCount}
+		{isFirstLoaded}
+		{getLimit}
+		isLoading={isWholeLoading}
+		data={competitions}
+		columns={[
+			{ header: 'Competition Name', accessor: 'name' },
+			{ header: 'Competition Round', cell: ({round}) => round + 1 },
+			{
+				header: 'Competition Date',
+				cell: ({startsAt}) => `${moment(startsAt, timezone).format('MM-DD-YYYY hh:mm:ss')} at timezone ${timezoneFormatted}`
+			},
+			{
+				header: 'Competition Available States',
+				cell: (competition) => {
+					if (competition.competitionAvailableStates.length > states.length / 2) {
+						return `All${
+							competition.competitionAvailableStates.length < states.length
+								? ` except for ${states
+										.filter(
+											(s) =>
+												!competition.competitionAvailableStates
+													.map(({ state }) => state)
+													.includes(s.shorthand as z.infer<typeof stateEnums>)
+										)
+										.map((s) => s.shorthand)
+										.join(', ')}`
+								: ''
+						}`;
+					} else {
+						return competition.competitionAvailableStates
+							.map(({ state }) => states.find((s) => s.shorthand === state)?.shorthand)
+							.join(', ');
+					}
+				}
+			},
+			{
+				header: 'Competition Event Types',
+				cell: (competition) => {
+					const eventTypes = [...competition.nonRelativeEvents, competition.events.map((e) => e.type)].flat();
+					return eventTypes.join(', ');
+				}
+			},
+			{ header: 'Actions', snippet: actions }
+		]}
+	/>
 	<PaginateTable
 		getLimit={getLimit}
 		total={total}

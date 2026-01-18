@@ -11,6 +11,7 @@
 	import { workerRequest } from '$lib/api/test';
 	import { resolve } from '$app/paths';
 	import PaginateTable from '$lib/components/paginate-table.svelte';
+	import DisplayTable from '$lib/components/display-table.svelte';
 	type StudentResponseItem = z.infer<typeof studentResponseSchema>['student'];
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
@@ -87,7 +88,35 @@
 		}
 	});
 </script>
-
+{#snippet actions(student: StudentResponseItem)}
+	{@const { attachmentOnRegistering } = student}
+	<Dialog>
+		<Dialog.Trigger class="btn preset-filled"><File />Show PDF</Dialog.Trigger>
+		<Portal>
+			<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+			<Dialog.Positioner
+				class="fixed inset-0 z-50 flex items-center justify-center p-4"
+			>
+				<Dialog.Content
+					class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {animation}"
+				>
+					<header class="flex items-center justify-between">
+						<Dialog.Title class="text-lg font-bold">Pdf Viewer</Dialog.Title>
+						<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+							<XIcon class="size-4" />
+						</Dialog.CloseTrigger>
+					</header>
+					<Dialog.Description>
+						<Pdf data={attachmentOnRegistering ?? ''} />
+					</Dialog.Description>
+					<footer class="flex justify-end gap-2">
+						<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+					</footer>
+				</Dialog.Content>
+			</Dialog.Positioner>
+		</Portal>
+	</Dialog>
+{/snippet}
 <div class="flex h-full w-full flex-col gap-y-3.5 p-8">
 	<h1 class="h1 font-bold">Student</h1>
 	<Collapsible class="rounded-xs border border-primary-100 p-4">
@@ -115,100 +144,35 @@
 			</label>
 		</Collapsible.Content>
 	</Collapsible>
-	<table class="table">
-		<thead>
-			<tr>
-				<td>ID #</td>
-				<td>Name</td>
-				<td>Address</td>
-				<td>GPA</td>
-				<td>Group</td>
-				<td>Attachment</td>
-			</tr>
-		</thead>
-		<tbody>
-			{#if isLoading}
-				{#each _.range(0, getLimit, 1) as n (n)}
-					<tr>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-					</tr>
-				{/each}
-			{:else}
-				{#each students as student (student.id)}
-					{@const {
-						firstName,
-						lastName,
-						streetAddress,
-						city,
-						state,
-						zipCode,
-						gpa,
-						division,
-						externalStudentId,
-						attachmentOnRegistering
-					} = student}
-					<tr>
-						<td>{externalStudentId}</td>
-						<td>{firstName} {lastName}</td>
-						<td>{streetAddress}{streetAddress ? ', ' : ''}{city}{city ? ', ' : ''}{state}{state ? ', ' : ''}{zipCode ? '(' : ''}{zipCode}{zipCode ? ')' : ''}</td>
-						<td>{gpa}</td>
-						<td
-							>{division === 'H'
-								? 'Honors'
-								: division === 'S'
-									? 'Scholastic'
-									: division === 'V'
-										? 'Varsity'
-										: 'Not assigned'}</td
-						>
-						<td>
-							<Dialog>
-								<Dialog.Trigger class="btn preset-filled"><File />Show PDF</Dialog.Trigger>
-								<Portal>
-									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
-									<Dialog.Positioner
-										class="fixed inset-0 z-50 flex items-center justify-center p-4"
-									>
-										<Dialog.Content
-											class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {animation}"
-										>
-											<header class="flex items-center justify-between">
-												<Dialog.Title class="text-lg font-bold">Pdf Viewer</Dialog.Title>
-												<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
-													<XIcon class="size-4" />
-												</Dialog.CloseTrigger>
-											</header>
-											<Dialog.Description>
-												<Pdf data={attachmentOnRegistering ?? ''} />
-											</Dialog.Description>
-											<footer class="flex justify-end gap-2">
-												<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
-											</footer>
-										</Dialog.Content>
-									</Dialog.Positioner>
-								</Portal>
-							</Dialog>
-						</td>
-					</tr>
-				{/each}
-			{/if}
-		</tbody>
-		<tfoot>
-			<tr>
-				<td colspan="5">Total</td>
-				{#if isFirstLoaded}
-					<td colspan="1">{offset + 1} - {offset + currentCount}/{total} Elements</td>
-				{:else}
-					<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-				{/if}
-			</tr>
-		</tfoot>
-	</table>
+	<DisplayTable 
+		{isLoading} 
+		data={students}
+		{total}
+		{getLimit}
+		{isFirstLoaded}
+		{offset}
+		{currentCount}
+		columns={[
+			{ header: 'ID #', accessor: 'externalStudentId' },
+			{ header: 'Name', cell: (row) => `${row.firstName} ${row.lastName}` },
+			{ header: 'Address', cell: (row) => {
+				const { streetAddress, city, state, zipCode } = row;
+				return `${streetAddress ?? ''}${streetAddress ? ', ' : ''}${city ?? ''}${city ? ', ' : ''}${state ?? ''}${state ? ', ' : ''}${zipCode ? `(${zipCode})` : ''}`;
+			} },
+			{ header: 'GPA', accessor: 'gpa' },
+			{ header: 'Group', cell: (row) => {
+				const { division } = row;
+				return division === 'H'
+					? 'Honors'
+					: division === 'S'
+						? 'Scholastic'
+						: division === 'V'
+							? 'Varsity'
+							: 'Not assigned';
+			} },
+			{header: 'Attachment', snippet: actions}
+		]}
+	/>
 	<PaginateTable
 		getLimit={getLimit}
 		total={total}
