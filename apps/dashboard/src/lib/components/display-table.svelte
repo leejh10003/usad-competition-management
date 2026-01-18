@@ -1,6 +1,6 @@
 <script lang="ts" generics="T">
     import { range } from 'lodash';
-	import type { Snippet } from 'svelte';
+	import { type Snippet } from 'svelte';
     const {
         isLoading = $bindable<boolean>(),
         getLimit = $bindable<number>(),
@@ -9,7 +9,7 @@
             header: string;
             accessor?: keyof T;
             cell?: (row: T) => any;
-            snippet?: (row: T) => Snippet;
+            snippet?: (row: T) => ReturnType<Snippet>;
         }>>(),
         isFirstLoaded = $bindable<boolean>(false),
         offset = $bindable<number>(0),
@@ -23,7 +23,7 @@
             header: string;
             accessor?: keyof T;
             cell?: (row: T) => any;
-            snippet?: (row: T) => Snippet;
+            snippet?: (row: T) => ReturnType<Snippet>;
         }>,
         isFirstLoaded: boolean,
         offset: number,
