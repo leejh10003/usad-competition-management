@@ -9,7 +9,7 @@
 	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _ from 'lodash';
 	import { splitStringForQueryHighlight } from '$lib/utils/string';
-	import { schoolQuerySchema, schoolResponse, stateEnums } from 'usad-scheme';
+	import { competitionResponseItemSchema, schoolQuerySchema, schoolResponse, stateEnums } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, CalendarPlus2, Pencil, School, Trash, XIcon } from '@lucide/svelte';
 	import z from 'zod';
 	import PaginateTable from '$lib/components/paginate-table.svelte';
@@ -20,10 +20,13 @@
 	import { dialogAppearAnimation } from '$lib/utils/animation';
 	import DisplayTable from '$lib/components/display-table.svelte';
 	import SearchedText from '$lib/components/searched-text.svelte';
+	import SearchSelect from '$lib/components/search-select.svelte';
 	type SchoolResponseItem = z.infer<typeof schoolResponse>['school'];
+	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
 	var isActionBlocked = $state<boolean>(false);
+	var competitions = $state<CompetitionResponseItem[]>([]);
 	function _currentParam() {
 		const limit = query.get('limit');
 		const currentPage = query.get('currentPage');
@@ -98,6 +101,18 @@
 	var currentCount = $state<number>(0);
 	var schools = $state<SchoolResponseItem[]>([]);
 		//eslint-disable-next-line @typescript-eslint/no-unused-vars
+	async function fetchCompetitions(query: string) {
+		const { result } = await workerRequest.getCompetition({
+			where: {
+				name: {
+					contains: query,
+					mode: 'insensitive'
+				}
+			},
+			take: 50,
+		});
+		competitions = result;
+	}
 	async function fetch() {
 		isLoading = true;
 		//TODO: server fetch
@@ -117,7 +132,15 @@
 				} : {})
 			} : undefined
 		});
+		const { result: competitionResult } = await workerRequest.getCompetition({
+			where: {
+				id: {
+					in: result.map((e) => e.competitionId)
+				}
+			}
+		});
 		schools = result;
+		competitions = competitionResult;
 		total = count;
 		currentCount = result.length;
 		isLoading = false;
@@ -140,6 +163,15 @@
 </script>
 {#snippet schoolDetail(schoolId: string)}
 	<Dialog.Description>
+		<SearchSelect
+			items={competitions}
+			bind:value={currentEdit!.competitionId}
+			itemToString={(item) => item.name}
+			itemToValue={(item) => item.id}
+			fetchItems={fetchCompetitions}
+			propName="Competition Name"
+			placeHolder="Type to search competitions..."
+		/>
 		<TextInput propName="School Id #" bind:inputValue={currentEdit!.externalSchoolId} />
 		<TextInput propName="School Name" bind:inputValue={currentEdit!.name} />
 		<label class="label">
@@ -173,7 +205,6 @@
 		/>
 		<!--TODOs-->
 		primaryCoachId
-		competitionId
 	</Dialog.Description>
 {/snippet}
 {#snippet actions(school: SchoolResponseItem)}
