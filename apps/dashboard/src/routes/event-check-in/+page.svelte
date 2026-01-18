@@ -12,6 +12,8 @@
 	import { resolve } from '$app/paths';
 	import { workerRequest } from '$lib/api/test';
 	import PaginateTable from '$lib/components/paginate-table.svelte';
+	import DisplayTable from '$lib/components/display-table.svelte';
+	import { timezoneFormatted } from '$lib/utils/time';
 	type EventCheckedInItem = z.infer<typeof eventCheckedInItem>;
 	type StudentResponseItem = z.infer<typeof studentResponseSchema>['student'];
 	type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
@@ -135,49 +137,38 @@
 			</Dialog>
 		</Collapsible.Content>
 	</Collapsible>
-	<table class="table">
-		<thead>
-			<tr>
-				<td>Event</td>
-				<td>Student</td>
-				<td>Checked In At</td>
-			</tr>
-		</thead>
-		<tbody>
-			{#if isLoading}
-				{#each _.range(0, limit, 1) as n (n)}
-					<tr>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-					</tr>
-				{/each}
-			{:else}
-				{#each aggregated as checkIn (`${checkIn.eventId}-${checkIn.studentId}`)}
-					{@const { checkedInAt, eventName, studentName, studentExternalId } = checkIn}
-					<tr>
-						<td>{eventName}</td>
-						<td>{studentName} ({studentExternalId})</td>
-						<td
-							>{!checkedInAt
-								? 'Not yet'
-								: `${moment(checkedInAt).format('MM-DD-YYYY hh:mm:ss')} at timezone ${timezone.split('/').reverse().join(', ')}`}</td
-						>
-					</tr>
-				{/each}
-			{/if}
-		</tbody>
-		<tfoot>
-			<tr>
-				<td colspan="2">Total</td>
-				{#if isFirstLoaded}
-					<td colspan="1">{offset + 1} - {offset + currentCount}/{total} Elements</td>
-				{:else}
-					<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-				{/if}
-			</tr>
-		</tfoot>
-	</table>
+	<DisplayTable
+		{isFirstLoaded}
+		{isLoading}
+		{getLimit}
+		{offset}
+		{total}
+		{currentCount}
+		data={aggregated}
+		columns={[
+			{
+				header: 'Event',
+				accessor: 'eventName' as keyof EventCheckedInItem,
+			},
+			{
+				header: 'Student',
+				accessor: 'studentName' as keyof EventCheckedInItem,
+				cell: (value, row) => {
+					const student = students.find((s) => s.id === row.studentId);
+					return student ? `${value} (${student.externalStudentId})` : value;
+				}
+			},
+			{
+				header: 'Checked In At',
+				accessor: 'checkedInAt' as keyof EventCheckedInItem,
+				cell: (value) => {
+					return !value
+						? 'Not yet'
+						: `${moment(value).format('MM-DD-YYYY hh:mm:ss')} at timezone ${timezoneFormatted}`;
+				}
+			}
+		]}
+	/>
 	<PaginateTable
 		getLimit={getLimit}
 		total={total}
