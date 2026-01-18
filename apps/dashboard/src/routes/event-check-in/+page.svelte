@@ -153,9 +153,9 @@
 			{
 				header: 'Student',
 				accessor: 'studentName' as keyof EventCheckedInItem,
-				cell: (value, row) => {
+				cell: (row) => {
 					const student = students.find((s) => s.id === row.studentId);
-					return student ? `${value} (${student.externalStudentId})` : value;
+					return student ? `${row.studentName} (${student.externalStudentId})` : row.studentName;
 				}
 			},
 			{
@@ -164,7 +164,7 @@
 				cell: (value) => {
 					return !value
 						? 'Not yet'
-						: `${moment(value).format('MM-DD-YYYY hh:mm:ss')} at timezone ${timezoneFormatted}`;
+						: `${moment(value.checkedInAt).format('MM-DD-YYYY hh:mm:ss')} at timezone ${timezoneFormatted}`;
 				}
 			}
 		]}

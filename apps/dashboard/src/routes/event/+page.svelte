@@ -18,6 +18,7 @@
 	import SearchSelect from '$lib/components/search-select.svelte';
 	import TextInput from '$lib/components/text-input.svelte';
 	import PaginateTable from '$lib/components/paginate-table.svelte';
+	import DisplayTable from '$lib/components/display-table.svelte';
 	type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	var isActionBlocked = $state<boolean>(true);
@@ -171,6 +172,88 @@
 		</label>
 	</Dialog.Description>
 {/snippet}
+{#snippet actionBlock(event: EventResponseItem)}
+	{@const { name, id } = event}
+	<div>
+		<Dialog>
+			<Dialog.Trigger
+				onclick={() =>
+					(currentEdit = cloneDeep(event))}
+				class="btn preset-filled w-min"
+				disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger
+			>
+			<Portal>
+				{#if currentEdit}
+					<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+					<Dialog.Positioner class="fixed inset-0 z-50 flex items-center justify-center p-4">
+						<Dialog.Content class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}">
+							<header class="flex items-center justify-between">
+								<Dialog.Title class="text-lg font-bold">Edit Event: {name}</Dialog.Title>
+								<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+									<XIcon class="size-4" />
+								</Dialog.CloseTrigger>
+							</header>
+							{@render eventDetail(currentEdit.id)}
+							<footer class="flex justify-end gap-2">
+								<Dialog.CloseTrigger
+									class="btn preset-filled-primary-50-950"
+									onclick={async () => {
+										isActionBlocked = true;
+										await workerRequest.updateEvent([{
+											where: { id: currentEdit!.id },
+											data: currentEdit!
+										}]);
+										await fetch();
+									}}>Save</Dialog.CloseTrigger
+								>
+								<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+							</footer>
+						</Dialog.Content>
+					</Dialog.Positioner>
+				{/if}
+			</Portal>
+		</Dialog>
+		<Dialog>
+			<Dialog.Trigger class="btn preset-filled-danger-50-950" disabled={isActionBlocked}
+				><Trash />Delete</Dialog.Trigger
+			>
+			<Portal>
+				<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+				<Dialog.Positioner
+					class="fixed inset-0 z-50 flex items-center justify-center p-4"
+				>
+					<Dialog.Content
+						class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
+					>
+						<header class="flex items-center justify-between">
+							<Dialog.Title class="text-lg font-bold"
+								>Delete Event: {name}</Dialog.Title
+							>
+							<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+								<XIcon class="size-4" />
+							</Dialog.CloseTrigger>
+						</header>
+						<Dialog.Description>
+							Are you sure you want to delete event {name}? This action cannot be
+							undone.
+						</Dialog.Description>
+						<footer class="flex justify-end gap-2">
+							<Dialog.CloseTrigger
+								class="btn preset-filled-danger-50-950"
+								onclick={async () => {
+									isActionBlocked = true;
+									await workerRequest.deleteEvent({ where: {id: {equals: id}} });
+									await fetch();
+								}}>Delete</Dialog.CloseTrigger
+							>
+							<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+						</footer>
+					</Dialog.Content>
+				</Dialog.Positioner>
+			</Portal>
+		</Dialog>
+	</div>
+{/snippet}
 <div class="flex h-full w-full flex-col gap-y-3.5 p-8">
 	<h1 class="h1 font-bold">Event</h1>
 	<Collapsible class="rounded-xs border border-primary-100 p-4">
@@ -226,131 +309,40 @@
 			</Dialog>
 		</Collapsible.Content>
 	</Collapsible>
-	<table class="table">
-		<thead>
-			<tr>
-				<td>Event Name</td>
-				<td>Event Type</td>
-				<td>Event Date</td>
-				<td>Competition Name</td>
-				<td>Actions</td>
-			</tr>
-		</thead>
-		<tbody>
-			{#if isWholeLoading}
-				{#each _.range(0, limit, 1) as n (n)}
-					<tr>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-						<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-					</tr>
-				{/each}
-			{:else}
-				{#each aggregated as event (event.id)}
-					{@const { name, startsAt, competitionName, type, id } = event}
-					<tr>
-						<td>{name}</td>
-						<td>{type}</td>
-						<td
-							>{moment(startsAt, timezone).format('MM-DD-YYYY hh:mm:ss')} at timezone {timezoneFormatted}</td
-						>
-						<td>{competitionName}</td>
-						<td>
-							<Dialog>
-								<Dialog.Trigger
-									onclick={() =>
-										(currentEdit = cloneDeep(event))}
-									class="btn preset-filled w-min"
-									disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger
-								>
-								<Portal>
-									{#if currentEdit}
-										<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
-										<Dialog.Positioner class="fixed inset-0 z-50 flex items-center justify-center p-4">
-											<Dialog.Content class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}">
-												<header class="flex items-center justify-between">
-													<Dialog.Title class="text-lg font-bold">Edit Event: {name}</Dialog.Title>
-													<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
-														<XIcon class="size-4" />
-													</Dialog.CloseTrigger>
-												</header>
-												{@render eventDetail(currentEdit.id)}
-												<footer class="flex justify-end gap-2">
-													<Dialog.CloseTrigger
-														class="btn preset-filled-primary-50-950"
-														onclick={async () => {
-															isActionBlocked = true;
-															await workerRequest.updateEvent([{
-																where: { id: currentEdit!.id },
-																data: currentEdit!
-															}]);
-															await fetch();
-														}}>Save</Dialog.CloseTrigger
-													>
-													<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
-												</footer>
-											</Dialog.Content>
-										</Dialog.Positioner>
-									{/if}
-								</Portal>
-							</Dialog>
-							<Dialog>
-								<Dialog.Trigger class="btn preset-filled-danger-50-950" disabled={isActionBlocked}
-									><Trash />Delete</Dialog.Trigger
-								>
-								<Portal>
-									<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
-									<Dialog.Positioner
-										class="fixed inset-0 z-50 flex items-center justify-center p-4"
-									>
-										<Dialog.Content
-											class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
-										>
-											<header class="flex items-center justify-between">
-												<Dialog.Title class="text-lg font-bold"
-													>Delete Event: {name}</Dialog.Title
-												>
-												<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
-													<XIcon class="size-4" />
-												</Dialog.CloseTrigger>
-											</header>
-											<Dialog.Description>
-												Are you sure you want to delete event {name}? This action cannot be
-												undone.
-											</Dialog.Description>
-											<footer class="flex justify-end gap-2">
-												<Dialog.CloseTrigger
-													class="btn preset-filled-danger-50-950"
-													onclick={async () => {
-														isActionBlocked = true;
-														await workerRequest.deleteEvent({ where: {id: {equals: id}} });
-														await fetch();
-													}}>Delete</Dialog.CloseTrigger
-												>
-												<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
-											</footer>
-										</Dialog.Content>
-									</Dialog.Positioner>
-								</Portal>
-							</Dialog>
-						</td>
-					</tr>
-				{/each}
-			{/if}
-		</tbody>
-		<tfoot>
-			<tr>
-				<td colspan="4">Total</td>
-				{#if isFirstLoaded}
-					<td colspan="2">{offset + 1} - {offset + currentCount}/{total} Elements</td>
-				{:else}
-					<td><div class="placeholder w-full animate-pulse">&nbsp;</div></td>
-				{/if}
-			</tr>
-		</tfoot>
-	</table>
+	<DisplayTable
+		{isFirstLoaded}
+		isLoading={isWholeLoading}
+		{getLimit}
+		{offset}
+		{total}
+		{currentCount}
+		data={aggregated}
+		columns={[
+			{
+				header: 'Event Name',
+				accessor: 'name'
+			},
+			{
+				header: 'Event Type',
+				accessor: 'type'
+			},
+			{
+				header: 'Event Date',
+				accessor: 'startsAt',
+				cell: ({startsAt}) => {
+					return `${moment(startsAt, timezone).format('MM-DD-YYYY hh:mm:ss')} at timezone ${timezoneFormatted}`;
+				}
+			},
+			{
+				header: 'Competition Name',
+				accessor: 'competitionName'
+			},
+			{
+				header: 'Actions',
+				snippet: actionBlock
+			}
+		]}
+	/>
 	
 	<PaginateTable
 		getLimit={getLimit}

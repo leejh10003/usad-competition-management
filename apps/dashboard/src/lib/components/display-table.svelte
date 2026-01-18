@@ -1,13 +1,15 @@
 <script lang="ts" generics="T">
     import { range } from 'lodash';
+	import type { Snippet } from 'svelte';
     const {
         isLoading = $bindable<boolean>(),
         getLimit = $bindable<number>(),
         data = $bindable<Array<T>>(),
         columns = $bindable<Array<{
             header: string;
-            accessor: keyof T;
-            cell?: (value: T[keyof T], row: T) => any;
+            accessor?: keyof T;
+            cell?: (row: T) => any;
+            snippet?: (row: T) => Snippet;
         }>>(),
         isFirstLoaded = $bindable<boolean>(false),
         offset = $bindable<number>(0),
@@ -19,8 +21,9 @@
         data: Array<T>,
         columns: Array<{
             header: string;
-            accessor: keyof T;
-            cell?: (value: T[keyof T], row: T) => any;
+            accessor?: keyof T;
+            cell?: (row: T) => any;
+            snippet?: (row: T) => Snippet;
         }>,
         isFirstLoaded: boolean,
         offset: number,
@@ -49,7 +52,17 @@
             {#each data as item (item.id)}
                 <tr>
                     {#each columns as column (column.header)}
-                        <td>{column.cell ? column.cell(item[column.accessor], item) : item[column.accessor]}</td>
+                        <td>
+                            {#if column.snippet}
+                                {@render column.snippet(item)}
+                            {:else if column.cell}
+                                {column.cell(item)}
+                            {:else if !column.cell && column.accessor}
+                                {item[column.accessor]}
+                            {:else}
+                                <!--{column.cell ? (column.cell(item)) : item[column.accessor]}-->
+                            {/if}
+                        </td>
                     {/each}
                 </tr>
             {/each}
