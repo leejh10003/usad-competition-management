@@ -15,6 +15,8 @@
 	import { workerRequest } from '$lib/api/test';
 	import { dialogAppearAnimation } from '$lib/utils/animation';
 	import { timezoneFormatted } from '$lib/utils/time';
+	import SearchSelect from '$lib/components/search-select.svelte';
+	import TextInput from '$lib/components/text-input.svelte';
 	type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	var isActionBlocked = $state<boolean>(true);
@@ -134,32 +136,19 @@
 </script>
 {#snippet eventDetail(eventId: string)}
 	<Dialog.Description>
-		<label class="label">
-			<Listbox class="w-full max-w-md" collection={competitionCollection} selectionMode="single" value={[currentEdit!.competitionId]} deselectable onValueChange={({value}) => {
-				if (value.length > 0) {
-					currentEdit!.competitionId = value[0];
-				} else {
-					currentEdit!.competitionId = '';
-				}
-			}}>
-				<Listbox.Label>Competition Name</Listbox.Label>
-				<Listbox.Input placeholder="Type to search..." oninput={(e) => {
-					fetchCompetitionWithDebounce(e.currentTarget.value);
-				}} />
-				<Listbox.Content>
-					{#each competitionCollection.items as item (item.id)}
-						<Listbox.Item {item}>
-							<Listbox.ItemText>{item.name}</Listbox.ItemText>
-							<Listbox.ItemIndicator />
-						</Listbox.Item>
-					{/each}
-				</Listbox.Content>
-			</Listbox>
-		</label>
-		<label class="label">
-			<span class="label-text">Event Name</span>
-			<input type="text" class="input w-full" bind:value={currentEdit!.name} />
-		</label>
+		<SearchSelect
+			items={competitions}
+			bind:value={currentEdit!.competitionId}
+			itemToString={(item) => item.name}
+			itemToValue={(item) => item.id}
+			fetchItems={fetchCompetitions}
+			propName="Competition Name"
+			placeHolder="Type to search competitions..."
+		/>
+		<TextInput
+			propName="Event Name"
+			bind:inputValue={currentEdit!.name}
+		/>
 		<label class="label">
 			<span class="label-text">Event Date</span>
 			<p class="grid">

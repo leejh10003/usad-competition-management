@@ -12,6 +12,7 @@
 	import { resolve } from '$app/paths';
 	import { workerRequest } from '$lib/api/test';
 	import { dialogAppearAnimation } from '$lib/utils/animation';
+	import TextInput from '$lib/components/text-input.svelte';
 	type CoachResponseItem = z.infer<typeof coachResponseSchema>['coach'];
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
@@ -153,26 +154,26 @@
 </script>
 {#snippet coachDetail(coachId: string)}
 <Dialog.Description>
-	<label class="label">
-		<span class="label-text font-bold">Coach ID</span>
-		<input type="text" class="input w-full" bind:value={currentEdit!.externalCoachId} />
-	</label>
-	<label class="label">
-		<span class="label-text font-bold">First Name</span>
-		<input type="text" class="input w-full" bind:value={currentEdit!.firstName} />
-	</label>
-	<label class="label">
-		<span class="label-text font-bold">Last Name</span>
-		<input type="text" class="input w-full" bind:value={currentEdit!.lastName} />
-	</label>
-	<label class="label">
-		<span class="label-text font-bold">Email</span>
-		<input type="text" class="input w-full" bind:value={currentEdit!.email} />
-	</label>
-	<label class="label">
-		<span class="label-text font-bold">Phone</span>
-		<input type="text" class="input w-full" bind:value={currentEdit!.phone} />
-	</label>
+	<TextInput
+		propName="Coach ID"
+		bind:inputValue={currentEdit!.externalCoachId}
+	/>
+	<TextInput
+		propName="First Name"
+		bind:inputValue={currentEdit!.firstName}
+	/>
+	<TextInput
+		propName="Last Name"
+		bind:inputValue={currentEdit!.lastName}
+	/>
+	<TextInput
+		propName="Email"
+		bind:inputValue={currentEdit!.email}
+	/>
+	<TextInput
+		propName="Phone"
+		bind:inputValue={currentEdit!.phone}
+	/>
 	<!--Todos-->
 	signature
 	schoolId

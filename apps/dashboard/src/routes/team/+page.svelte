@@ -12,6 +12,9 @@
 	import { resolve } from '$app/paths';
 	import { workerRequest } from '$lib/api/test';
 	import { dialogAppearAnimation } from '$lib/utils/animation';
+	import TextInput from '$lib/components/text-input.svelte';
+	import Select from '$lib/components/select.svelte';
+	import ScoreInput from '$lib/components/score-input.svelte';
 	type TeamResponseItem = z.infer<typeof teamResponseItemSchema>;
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
@@ -88,59 +91,29 @@
 </script>
 {#snippet teamDetail(teamId: string)}
 <Dialog.Description>
-	<label class="label">
-		<span class="label-text">Team Id #</span>
-		<input type="text" class="input w-full" bind:value={currentEdit!.externalTeamId} />
-	</label>
-	<label class="label">
-		<span class="label-text">Division</span>
-		<select class="select w-full" bind:value={currentEdit!.division}>
-			<option disabled selected value={null}>Select Division...</option>
-			{#each _.range(1, 5) as division (division)}
-				<option value={division}>{romanize(division)}</option>
-			{/each}
-		</select>
-	</label>
-	<label class="label">
-		<span class="label-text">Objective Score</span>
-		<input
-			required
-			class="input"
-			use:imask={{
-				mask: Number,
-				thousandsSeparator: ',',
-				scale: 2,
-				radix: '.',
-				padFractionalZeros: true,
-				normalizeZeros: true,
-				lazy: false,
-			}}
-			onaccept={({detail: maskRef}) => {
-				currentEdit!.objectiveScore = parseFloat(maskRef.value.replaceAll(',', ''));
-			}}
-			value={currentEdit!.objectiveScore}
-		/>
-	</label>
-	<label class="label">
-		<span class="label-text">Subjective Score</span>
-		<input
-			required
-			class="input"
-			use:imask={{
-				mask: Number,
-				thousandsSeparator: ',',
-				scale: 2,
-				radix: '.',
-				padFractionalZeros: true,
-				normalizeZeros: true,
-				lazy: false,
-			}}
-			onaccept={({detail: maskRef}) => {
-				currentEdit!.subjectiveScore = parseFloat(maskRef.value.replaceAll(',', ''));
-			}}
-			value={currentEdit!.subjectiveScore}
-		/>
-	</label>
+	<TextInput
+		propName="Team Id #"
+		bind:inputValue={currentEdit!.externalTeamId}
+	/>
+	<Select
+		propName="Division"
+		bind:value={currentEdit!.division}
+		options={_.range(1, 5).map((division) => ({
+			label: romanize(division),
+			value: division
+		}))}
+		key={(option) => option.value}
+		display={(option) => option.label}
+		mapValue={(option) => option.value}
+	/>
+	<ScoreInput
+		propName="Objective Score"
+		bind:inputValue={currentEdit!.objectiveScore}
+	/>
+	<ScoreInput
+		propName="Subjective Score"
+		bind:inputValue={currentEdit!.subjectiveScore}
+	/>
 	schoolId
 </Dialog.Description>
 {/snippet}
