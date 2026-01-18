@@ -2,7 +2,7 @@
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { Dialog, Portal, Pagination, Collapsible } from '@skeletonlabs/skeleton-svelte';
+	import { Dialog, Portal, Collapsible } from '@skeletonlabs/skeleton-svelte';
 	import _, { debounce } from 'lodash';
 	import { studentQuerySchema, studentResponseSchema } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, XIcon, File } from '@lucide/svelte';

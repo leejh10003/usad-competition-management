@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { imask } from '@imask/svelte';
-	import { Collapsible, Dialog, Pagination, Portal } from '@skeletonlabs/skeleton-svelte';
+	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _, { cloneDeep } from 'lodash';
 	import { teamQuerySchema, teamResponseItemSchema } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, Pencil, Trash, UsersIcon, XIcon } from '@lucide/svelte';
@@ -15,6 +15,7 @@
 	import TextInput from '$lib/components/text-input.svelte';
 	import Select from '$lib/components/select.svelte';
 	import ScoreInput from '$lib/components/score-input.svelte';
+	import PaginateTable from '$lib/components/paginate-table.svelte';
 	type TeamResponseItem = z.infer<typeof teamResponseItemSchema>;
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
@@ -338,21 +339,10 @@
 			</tr>
 		</tfoot>
 	</table>
-	<Pagination count={total} pageSize={getLimit} page={getCurrentPage}>
-		<Pagination.PrevTrigger onclick={() => setCurrentPage(getCurrentPage - 1)}><ArrowLeftIcon class="size-4" /></Pagination.PrevTrigger>
-		<Pagination.Context>
-			{#snippet children(pagination)}
-				{#each pagination().pages as page, index (page)}
-					{#if page.type === 'page'}
-						<Pagination.Item onclick={() => setCurrentPage(page.value)} {...page}>
-							{page.value}
-						</Pagination.Item>
-					{:else}
-						<Pagination.Ellipsis {index}>&#8230;</Pagination.Ellipsis>
-					{/if}
-				{/each}
-			{/snippet}
-		</Pagination.Context>
-		<Pagination.NextTrigger onclick={() => setCurrentPage(getCurrentPage + 1)}><ArrowRightIcon class="size-4" /></Pagination.NextTrigger>
-	</Pagination>
+	<PaginateTable
+		getLimit={getLimit}
+		total={total}
+		getCurrentPage={getCurrentPage}
+		{setCurrentPage}
+	/>
 </div>

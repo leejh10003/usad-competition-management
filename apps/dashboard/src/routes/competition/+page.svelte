@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { page } from '$app/state';
-	import { Collapsible, Dialog, Pagination, Portal } from '@skeletonlabs/skeleton-svelte';
+	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _, { cloneDeep } from 'lodash';
 	import { competitionQuerySchema, competitionResponseItemSchema, eventResponseItemSchema, stateEnums } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, MailIcon, XIcon, Pencil, Trash, ArrowUpDownIcon, CalendarPlus2 } from '@lucide/svelte';
@@ -17,6 +17,7 @@
 	import { en } from 'svelty-picker/i18n';
 	import {timezoneFormatted, timezone} from '$lib/utils/time';
 	import { dialogAppearAnimation } from '$lib/utils/animation';
+	import PaginateTable from '$lib/components/paginate-table.svelte';
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
 	var isActionBlocked = $state<boolean>(true);
@@ -430,25 +431,11 @@
 			</tr>
 		</tfoot>
 	</table>
-	<Pagination count={total} pageSize={getLimit} page={getCurrentPage}>
-		<Pagination.PrevTrigger onclick={() => setCurrentPage(getCurrentPage - 1)}
-			><ArrowLeftIcon class="size-4" /></Pagination.PrevTrigger
-		>
-		<Pagination.Context>
-			{#snippet children(pagination)}
-				{#each pagination().pages as page, index (page)}
-					{#if page.type === 'page'}
-						<Pagination.Item onclick={() => setCurrentPage(page.value)} {...page}>
-							{page.value}
-						</Pagination.Item>
-					{:else}
-						<Pagination.Ellipsis {index}>&#8230;</Pagination.Ellipsis>
-					{/if}
-				{/each}
-			{/snippet}
-		</Pagination.Context>
-		<Pagination.NextTrigger onclick={() => setCurrentPage(getCurrentPage + 1)}
-			><ArrowRightIcon class="size-4" /></Pagination.NextTrigger
-		>
-	</Pagination>
+	
+	<PaginateTable
+		getLimit={getLimit}
+		total={total}
+		getCurrentPage={getCurrentPage}
+		{setCurrentPage}
+	/>
 </div>

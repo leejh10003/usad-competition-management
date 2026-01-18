@@ -6,7 +6,7 @@
 	import TextInput from '$lib/components/text-input.svelte'
 	import ScoreInput from '$lib/components/score-input.svelte'
 	import Select from '$lib/components/select.svelte';
-	import { Collapsible, Dialog, Pagination, Portal } from '@skeletonlabs/skeleton-svelte';
+	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _ from 'lodash';
 	import { splitStringForQueryHighlight } from '$lib/utils/string';
 	import { schoolQuerySchema, schoolResponse, stateEnums } from 'usad-scheme';
@@ -474,21 +474,10 @@
 			</tr>
 		</tfoot>
 	</table>
-	<Pagination count={total} pageSize={getLimit} page={getCurrentPage}>
-		<Pagination.PrevTrigger onclick={() => setCurrentPage(getCurrentPage - 1)}><ArrowLeftIcon class="size-4" /></Pagination.PrevTrigger>
-		<Pagination.Context>
-			{#snippet children(pagination)}
-				{#each pagination().pages as page, index (page)}
-					{#if page.type === 'page'}
-						<Pagination.Item onclick={() => setCurrentPage(page.value)} {...page}>
-							{page.value}
-						</Pagination.Item>
-					{:else}
-						<Pagination.Ellipsis {index}>&#8230;</Pagination.Ellipsis>
-					{/if}
-				{/each}
-			{/snippet}
-		</Pagination.Context>
-		<Pagination.NextTrigger onclick={() => setCurrentPage(getCurrentPage + 1)}><ArrowRightIcon class="size-4" /></Pagination.NextTrigger>
-	</Pagination>
+	<PaginateTable
+		getLimit={getLimit}
+		total={total}
+		getCurrentPage={getCurrentPage}
+		{setCurrentPage}
+	/>
 </div>

@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { page } from '$app/state';
-	import { Collapsible, Dialog, Pagination, Portal } from '@skeletonlabs/skeleton-svelte';
+	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _ from 'lodash';
 	import { eventCheckedInItem, eventCheckInQuerySchema, eventResponseItemSchema, studentResponseSchema } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, CalendarPlus2 } from '@lucide/svelte';
@@ -11,13 +11,14 @@
 	import moment from 'moment-timezone';
 	import { resolve } from '$app/paths';
 	import { workerRequest } from '$lib/api/test';
+	import PaginateTable from '$lib/components/paginate-table.svelte';
 	type EventCheckedInItem = z.infer<typeof eventCheckedInItem>;
 	type StudentResponseItem = z.infer<typeof studentResponseSchema>['student'];
 	type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
 	var limit = $state<number>(10);
-	var pagination = $state<number>(0);
+	var pagination = $state<number>(0);//TODO: Remove variables related to pagination
 	var offset = $derived.by(() => pagination * limit);
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
@@ -177,25 +178,10 @@
 			</tr>
 		</tfoot>
 	</table>
-	<Pagination count={total} pageSize={getLimit} page={getCurrentPage}>
-		<Pagination.PrevTrigger onclick={() => setCurrentPage(getCurrentPage - 1)}
-			><ArrowLeftIcon class="size-4" /></Pagination.PrevTrigger
-		>
-		<Pagination.Context>
-			{#snippet children(pagination)}
-				{#each pagination().pages as page, index (page)}
-					{#if page.type === 'page'}
-						<Pagination.Item onclick={() => setCurrentPage(page.value)} {...page}>
-							{page.value}
-						</Pagination.Item>
-					{:else}
-						<Pagination.Ellipsis {index}>&#8230;</Pagination.Ellipsis>
-					{/if}
-				{/each}
-			{/snippet}
-		</Pagination.Context>
-		<Pagination.NextTrigger onclick={() => setCurrentPage(getCurrentPage + 1)}
-			><ArrowRightIcon class="size-4" /></Pagination.NextTrigger
-		>
-	</Pagination>
+	<PaginateTable
+		getLimit={getLimit}
+		total={total}
+		getCurrentPage={getCurrentPage}
+		{setCurrentPage}
+	/>
 </div>
