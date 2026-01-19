@@ -9,7 +9,7 @@
             header: string;
             accessor?: keyof T;
             cell?: (row: T) => any;
-            snippet?: (row: T) => ReturnType<Snippet>;
+            snippet?: Snippet<[T]>;
         }>>(),
         isFirstLoaded = $bindable<boolean>(false),
         offset = $bindable<number>(0),
@@ -23,7 +23,7 @@
             header: string;
             accessor?: keyof T;
             cell?: (row: T) => any;
-            snippet?: (row: T) => ReturnType<Snippet>;
+            snippet?: Snippet<[T]>;
         }>,
         isFirstLoaded: boolean,
         offset: number,
