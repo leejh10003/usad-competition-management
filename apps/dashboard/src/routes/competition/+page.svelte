@@ -6,7 +6,7 @@
 	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _, { cloneDeep } from 'lodash';
 	import { competitionQuerySchema, competitionResponseItemSchema, eventResponseItemSchema, stateEnums } from 'usad-scheme';
-	import { ArrowLeftIcon, ArrowRightIcon, MailIcon, XIcon, Pencil, Trash, ArrowUpDownIcon, CalendarPlus2 } from '@lucide/svelte';
+	import { ArrowLeftIcon, ArrowRightIcon, MailIcon, XIcon, Pencil, Trash, ArrowUpDownIcon, CalendarPlus2, FileSpreadsheetIcon } from '@lucide/svelte';
 	import moment from 'moment-timezone';
 	import z from 'zod';
     import Editor from '$lib/components/editor.svelte';
@@ -318,6 +318,9 @@
 					{/if}
 				</Portal>
 			</Dialog>
+			<button class="btn preset-filled w-min" onclick={() => {
+				
+			}}><FileSpreadsheetIcon/>Export As CSV</button>
 		</Collapsible.Content>
 	</Collapsible>
 	<DisplayTable
