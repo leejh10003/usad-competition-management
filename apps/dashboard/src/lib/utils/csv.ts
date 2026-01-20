@@ -1,7 +1,7 @@
 
 import Papa from 'papaparse';
-import z from 'zod/v3';
-import type { ZodSchema } from 'zod/v3';
+import type { ZodObject, ZodType } from 'zod';
+import z from 'zod';
 //eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function downloadCSV(input: any[]){
     const csv = Papa.unparse(input)
@@ -15,8 +15,8 @@ export function downloadCSV(input: any[]){
     document.body.removeChild(link);
     URL.revokeObjectURL(csvURL);
 }
-export async function uploadCSV<T>(file: File, schema: ZodSchema<T>) : Promise<T[]> {
-    let parsed: T[] = await new Promise((resolve, reject) => {
+export async function uploadCSV<T extends ZodObject>(file: File, schema: T) : Promise<z.infer<T>[]> {
+    let parsed: z.infer<T>[] = await new Promise((resolve, reject) => {
         Papa.parse<T>(file, {
             header: true,
             complete: function (results) {
