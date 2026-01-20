@@ -5,7 +5,8 @@
   "sendCrashReports": "false",
   "terraformProviders": [
     "vercel/vercel@~> 3.15",
-    "cockroachdb/cockroach@~> 1.15"
+    "cockroachdb/cockroach@~> 1.15",
+    "kislerdm/neon@~> 0.13"
   ],
   "terraformModules": [],
   "context": {}

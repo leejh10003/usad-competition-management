@@ -10,10 +10,12 @@ import { LocalProvider } from '@cdktf/provider-local/lib/provider';
 import { File } from '@cdktf/provider-local/lib/file';
 import { HyperdriveConfig } from '@cdktf/provider-cloudflare/lib/hyperdrive-config';
 import { R2Bucket } from '@cdktf/provider-cloudflare/lib/r2-bucket';
-import { Cluster as CockroachCluster } from './.gen/providers/cockroach/cluster';
-import { CockroachProvider } from './.gen/providers/cockroach/provider';
-import { DataCockroachConnectionString } from './.gen/providers/cockroach/data-cockroach-connection-string';
-import { SqlUser } from './.gen/providers/cockroach/sql-user';
+import { NeonProvider } from './.gen/providers/neon/provider';
+import { Project as NeonProject } from './.gen/providers/neon/project';
+//import { Endpoint as NeonEndpoint } from './.gen/providers/neon/endpoint';
+//import { Role as NeonRole } from './.gen/providers/neon/role';
+//import { Database as NeonDatabase } from './.gen/providers/neon/database';
+//import { CockroachProvider } from './.gen/providers/cockroach/provider';
 
 dotenv.config();
 
@@ -22,9 +24,11 @@ dotenv.config();
 const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID as string;
 const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN as string;
 const VERCEL_API_TOKEN = process.env.VERCEL_API_TOKEN as string;
-const COCKROACH_API_KEY = process.env.COCKROACH_API_KEY as string;
-const COCKROACH_SQL_USERNAME = process.env.COCKROACH_SQL_USERNAME as string;
-const COCKROACH_SQL_USER_PASSWORD = process.env.COCKROACH_SQL_USER_PASSWORD as string;
+const NEON_API_KEY = process.env.NEON_API_KEY as string;
+//const COCKROACH_API_KEY = process.env.COCKROACH_API_KEY as string;
+const NEON_ORG_ID = process.env.NEON_ORG_ID as string;
+//const COCKROACH_SQL_USERNAME = process.env.COCKROACH_SQL_USERNAME as string;
+//const COCKROACH_SQL_USER_PASSWORD = process.env.COCKROACH_SQL_USER_PASSWORD as string;
 
 class MyUsadPocStack extends TerraformStack {
   constructor(scope: Construct, id: string) {
@@ -38,51 +42,34 @@ class MyUsadPocStack extends TerraformStack {
       apiToken: VERCEL_API_TOKEN,
     });
     new LocalProvider(this, "local", {});
-    const cockroachProvider = new CockroachProvider(this, "cockroachdb", {
-      apikey: COCKROACH_API_KEY,
-    });
-    const cockroachCluster = new CockroachCluster(this, "usad-cockroachdb-cluster", {
-      name: "usad-cockroachdb-cluster",
-      provider: cockroachProvider,
-      cloudProvider: "GCP",
-      plan: "BASIC",
-      regions: [{
-        name: "us-central1",
-      }],
-      serverless: {
-        usageLimits: {
-          requestUnitLimit: 50000000,
-          storageMibLimit: 9536,
-        }
-      },
-    });
-    const cockroachUser = new SqlUser(this, "cockroach-sql-user", {
-      password: COCKROACH_SQL_USER_PASSWORD,
-      clusterId: cockroachCluster.id,
-      name: COCKROACH_SQL_USERNAME,
-    });
-    const connectionString = new DataCockroachConnectionString(this, "cockroach-connection-string", {
-      id: cockroachCluster.id,
-      sqlUser: COCKROACH_SQL_USERNAME,
-      password: COCKROACH_SQL_USER_PASSWORD,
-    });
     new R2Bucket(this, 'usad-bucket', {
       name: 'usad-bucket',
       accountId: CLOUDFLARE_ACCOUNT_ID,
       storageClass: 'Standard',
       location: 'wnam'
     });
+    const neonProvider = new NeonProvider(this, "usad-neon-provider", {
+      apiKey: NEON_API_KEY,
+    })
+    /*new CockroachProvider(this, "cockroachdb", {
+      apikey: COCKROACH_API_KEY,
+    });*/
+    const neonProject = new NeonProject(this, "usad-neon-project", {
+      provider: neonProvider,
+      orgId: NEON_ORG_ID,
+      name: "usad-competition-management-neon-project",
+      historyRetentionSeconds: 6 * 60 * 60, // 6 hours
+    });
     const hyperdrive = new HyperdriveConfig(this, "usad-hyperdrive", {
       name: "usad-hyperdrive",
       accountId: CLOUDFLARE_ACCOUNT_ID,
-      dependsOn: [connectionString, cockroachCluster, cockroachUser],
       origin: {
-        database: "postgres",
-        host: connectionString.connectionParams.host,
-        password: COCKROACH_SQL_USER_PASSWORD,
-        port: Fn.parseint(connectionString.connectionParams.port, 10),
-        scheme: "postgres",
-        user: COCKROACH_SQL_USERNAME,
+        database: neonProject.databaseName,
+        host: neonProject.databaseHost,
+        password: neonProject.databasePassword,
+        port: neonProject.connection?.port ?? 5432,
+        scheme: "postgresql",
+        user: neonProject.databaseUser,
       },
       caching: {
         disabled: false,
