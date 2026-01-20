@@ -72,7 +72,7 @@ class MyUsadPocStack extends TerraformStack {
         user: neonProject.databaseUser,
       },
       caching: {
-        disabled: false,
+        disabled: true,
       },
     });
     new Worker(this, "usad-worker", {
