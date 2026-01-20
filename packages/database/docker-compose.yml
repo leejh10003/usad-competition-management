@@ -1,13 +1,13 @@
-version: "3.8"
 services:
-  db:
-    image: cockroachdb/cockroach:latest-v23.2
-    container_name: usad_cockroachdb
-    command: start-single-node --insecure
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpass
+      POSTGRES_DB: testdb
     ports:
-      - "26257:26257" # PostgreSQL 포트
-      - "8082:8080" # CockroachDB 관리자 UI 포트
+      - "5432:5432"
     volumes:
-      - cockroach_data:/cockroach/cockroach-data
+      - pgdata:/var/lib/postgresql/data
 volumes:
-  cockroach_data:
+  pgdata:
