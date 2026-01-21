@@ -19,8 +19,17 @@
 	import { dialogAppearAnimation } from '$lib/utils/animation';
 	import PaginateTable from '$lib/components/paginate-table.svelte';
 	import DisplayTable from '$lib/components/display-table.svelte';
+	import { nonRelativeEventsEnums, relativeEventEnums } from 'usad-scheme/src/constants';
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
+	const nonRelativeEvents = Object.entries(nonRelativeEventsEnums.def.entries).map(([key, value]) => ({
+		shorthand: key,
+		original: value
+	}));
+	const relativeEvents = Object.entries(relativeEventEnums.def.entries).map(([key, value]) => ({
+		shorthand: key,
+		original: value
+	}));
 	var isActionBlocked = $state<boolean>(true);
 	var isWholeLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(false);
@@ -29,7 +38,7 @@
 	var currentCount = $state<number>(0);
 	var competitions = $state<(CompetitionResponseItem & {events: EventResponseItem[]})[]>([]);
     var mailAddresses = $state<string[]>(['', '', '']);
-	const toggleedAll = $derived.by(() => currentEdit!.competitionAvailableStates.length === states.length)
+	const toggledAll = $derived.by(() => currentEdit!.competitionAvailableStates.length === states.length)
 	function _currentParam() {
 		const limit = query.get('limit');
 		const currentPage = query.get('currentPage');
@@ -105,7 +114,7 @@
 	})
 </script>
 
-{#snippet competitionDetail(competitionId: string)}
+{#snippet competitionDetail(competitionId: string, existing: boolean)}
 	<Dialog.Description>
 		<label class="label">
 			<span class="label-text">Competition Name</span>
@@ -163,7 +172,7 @@
 					<input
 						class="checkbox"
 						type="checkbox"
-						checked={toggleedAll}
+						checked={toggledAll}
 						onchange={(e) => {
 							if (e.currentTarget.checked) {
 								currentEdit!.competitionAvailableStates = states.map((s) => ({
@@ -175,10 +184,35 @@
 							}
 						}}
 					/>
-					<p>{toggleedAll ? 'Deselect' : 'Select'} All</p>
+					<p>{toggledAll ? 'Deselect' : 'Select'} All</p>
 				</label>
 			</div>
 		</label>
+		{#if !existing}
+			<label class="label">
+				<span class="label-text">Event</span>
+				{#each nonRelativeEvents as event (event.shorthand)}
+					<label class="flex items-center space-x-2 mr-2">
+						<input
+							type="checkbox"
+							class="checkbox"
+							checked={currentEdit!.nonRelativeEvents.includes(event.original)}
+							onchange={(e) => {
+								if (e.currentTarget.checked) {
+									currentEdit!.nonRelativeEvents.push(event.original);
+								} else {
+									currentEdit!.nonRelativeEvents =
+										currentEdit!.nonRelativeEvents.filter(
+											(ev) => ev !== event.original
+										);
+								}
+							}}
+						/>
+						<p>{event.original}</p>
+					</label>
+				{/each}
+			</label>
+		{/if}
 	</Dialog.Description>
 {/snippet}
 {#snippet actions(competition: CompetitionResponseItem)}
@@ -205,7 +239,7 @@
 							<XIcon class="size-4" />
 						</Dialog.CloseTrigger>
 					</header>
-					{@render competitionDetail(currentEdit.id)}
+					{@render competitionDetail(currentEdit.id, true)}
 					<footer class="flex justify-end gap-2">
 						<Dialog.CloseTrigger
 							class="btn preset-filled-primary-50-950"
@@ -296,12 +330,12 @@
 						<Dialog.Positioner class="fixed inset-0 z-50 flex items-center justify-center p-4">
 							<Dialog.Content class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}">
 								<header class="flex items-center justify-between">
-									<Dialog.Title class="text-lg font-bold">Edit Competition: {name}</Dialog.Title>
+									<Dialog.Title class="text-lg font-bold">Create Competition: {name}</Dialog.Title>
 									<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
 										<XIcon class="size-4" />
 									</Dialog.CloseTrigger>
 								</header>
-								{@render competitionDetail(currentEdit.id)}
+								{@render competitionDetail(currentEdit.id, false)}
 								<footer class="flex justify-end gap-2">
 									<Dialog.CloseTrigger
 										class="btn preset-filled-primary-50-950"
