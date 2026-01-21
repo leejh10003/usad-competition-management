@@ -30,6 +30,7 @@
 		shorthand: key,
 		original: value
 	}));
+	var relativeEventsSelected = $state<z.infer<typeof relativeEventEnums>[]>([]);
 	var isActionBlocked = $state<boolean>(true);
 	var isWholeLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(false);
@@ -140,78 +141,96 @@
 				/>
 			</p>
 		</label>
-		<label class="label">
-			<span class="label-text">Competition Available States</span>
-			<div class="grid grid-flow-row grid-cols-12">
-				{#each states as state (state.shorthand)}
-					<label class="flex items-center space-x-2 col-span-4">
-						<input
-							class="checkbox"
-							type="checkbox"
-							checked={!!currentEdit!.competitionAvailableStates.find(
-								(s) => s.state === state.shorthand
-							)}
-							onchange={(e) => {
-								if (e.currentTarget.checked) {
-									currentEdit!.competitionAvailableStates.push({
-										state: state.shorthand as z.infer<typeof stateEnums>,
-										competitionId: competitionId
-									});
-								} else {
-									currentEdit!.competitionAvailableStates =
-										currentEdit!.competitionAvailableStates.filter(
-											(s) => s.state !== state.shorthand
-										);
-								}
-							}}
-						/>
-						<p>{state.original}</p>
-					</label>
-				{/each}
+		<span class="label-text">Competition Available States</span>
+		<div class="grid grid-flow-row grid-cols-12">
+			{#each states as state (state.shorthand)}
 				<label class="flex items-center space-x-2 col-span-4">
 					<input
 						class="checkbox"
 						type="checkbox"
-						checked={toggledAll}
+						checked={!!currentEdit!.competitionAvailableStates.find(
+							(s) => s.state === state.shorthand
+						)}
 						onchange={(e) => {
 							if (e.currentTarget.checked) {
-								currentEdit!.competitionAvailableStates = states.map((s) => ({
-									state: s.shorthand as z.infer<typeof stateEnums>,
+								currentEdit!.competitionAvailableStates.push({
+									state: state.shorthand as z.infer<typeof stateEnums>,
 									competitionId: competitionId
-								}));
+								});
 							} else {
-								currentEdit!.competitionAvailableStates = [];
+								currentEdit!.competitionAvailableStates =
+									currentEdit!.competitionAvailableStates.filter(
+										(s) => s.state !== state.shorthand
+									);
 							}
 						}}
 					/>
-					<p>{toggledAll ? 'Deselect' : 'Select'} All</p>
+					<p>{state.original}</p>
 				</label>
-			</div>
-		</label>
-		{#if !existing}
-			<label class="label">
-				<span class="label-text">Event</span>
-				{#each nonRelativeEvents as event (event.shorthand)}
-					<label class="flex items-center space-x-2 mr-2">
-						<input
-							type="checkbox"
-							class="checkbox"
-							checked={currentEdit!.nonRelativeEvents.includes(event.original)}
-							onchange={(e) => {
-								if (e.currentTarget.checked) {
-									currentEdit!.nonRelativeEvents.push(event.original);
-								} else {
-									currentEdit!.nonRelativeEvents =
-										currentEdit!.nonRelativeEvents.filter(
-											(ev) => ev !== event.original
-										);
-								}
-							}}
-						/>
-						<p>{event.original}</p>
-					</label>
-				{/each}
+			{/each}
+			<label class="flex items-center space-x-2 col-span-4">
+				<input
+					class="checkbox"
+					type="checkbox"
+					checked={toggledAll}
+					onchange={(e) => {
+						if (e.currentTarget.checked) {
+							currentEdit!.competitionAvailableStates = states.map((s) => ({
+								state: s.shorthand as z.infer<typeof stateEnums>,
+								competitionId: competitionId
+							}));
+						} else {
+							currentEdit!.competitionAvailableStates = [];
+						}
+					}}
+				/>
+				<p>{toggledAll ? 'Deselect' : 'Select'} All</p>
 			</label>
+		</div>
+		{#if !existing}
+			<span class="label-text">Event</span>
+			<div class="grid grid-flow-row grid-cols-12">
+			{#each nonRelativeEvents as event (event.shorthand)}
+				<label class="flex items-center space-x-2 mr-2 col-span-4">
+					<input
+						type="checkbox"
+						class="checkbox"
+						checked={currentEdit!.nonRelativeEvents.includes(event.original)}
+						onchange={(e) => {
+							if (e.currentTarget.checked) {
+								currentEdit!.nonRelativeEvents.push(event.original);
+							} else {
+								currentEdit!.nonRelativeEvents =
+									currentEdit!.nonRelativeEvents.filter(
+										(ev) => ev !== event.original
+									);
+							}
+						}}
+					/>
+					<p>{event.original}</p>
+				</label>
+			{/each}
+			{#each relativeEvents as event (event.shorthand)}
+				<label class="flex items-center space-x-2 mr-2 col-span-4">
+					<input
+						type="checkbox"
+						class="checkbox"
+						checked={relativeEventsSelected.includes(event.original)}
+						onchange={(e) => {
+							if (e.currentTarget.checked) {
+								relativeEventsSelected.push(event.original);
+							} else {
+								relativeEventsSelected =
+									relativeEventsSelected.filter(
+										(ev) => ev !== event.original
+									);
+							}
+						}}
+					/>
+					<p>{event.original}</p>
+				</label>
+			{/each}
+			</div>
 		{/if}
 	</Dialog.Description>
 {/snippet}
@@ -310,8 +329,9 @@
 		<Collapsible.Content class="grid w-full grid-cols-3 gap-1">
 			<Dialog>
 				<Dialog.Trigger
-					onclick={() =>
-						(currentEdit = {
+					onclick={() => {
+						relativeEventsSelected = [];
+						currentEdit = {
 							id: workerRequest.generateNewCompetitionId(),
 							name: '',
 							startsAt: new Date(),
@@ -320,7 +340,8 @@
 							nonRelativeEvents: [],
 							round: 0,
 							endsAt: new Date()
-						})}
+						}
+					}}
 					class="btn preset-filled w-min"
 					disabled={isActionBlocked}><CalendarPlus2 /> Create Competition</Dialog.Trigger
 				>
