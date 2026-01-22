@@ -19,7 +19,7 @@
 	import { imask } from '@imask/svelte';
 	import SearchSelect from '$lib/components/search-select.svelte';
 	import { competitionResponseItemSchema } from 'usad-scheme';
-	import type { SchoolSearch } from '$lib/data/schema';
+	import type { SchoolSearch, TeamSearch } from '$lib/data/schema';
 	import { dialogAppearAnimation } from '$lib/utils/animation';
 	import { cloneDeep } from 'lodash';
 	//TODO: determine to use response item as schema, or use client specific schema, or splitting input/update schema
@@ -27,6 +27,7 @@
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	var isLoading = $state<boolean>(true);
 	var searchedSchools = $state<SchoolSearch[]>([]);
+	var searchedTeams = $state<TeamSearch[]>([]);
 	var isFirstLoaded = $state<boolean>(true);
 	var isActionBlocked = $state<boolean>(false);
 	var students = $state<StudentResponseItem[]>([]);
@@ -35,6 +36,7 @@
 	var pin = $state<string>('');
 	const query = $derived.by(() => page.url.searchParams);
 	var competitions = $state<CompetitionResponseItem[]>([]);
+
 	async function fetchCompetitions(query: string) {
 		const { result } = await workerRequest.getCompetition({
 			where: {
@@ -112,9 +114,48 @@
 	async function fetch() {
 		isLoading = true;
 		//TODO: server fetch
+		//TODO: Split searched/to be reserved(selected) values for search comppnents
+		//TODO: Handle school/team id for indieivual or school student
 		const {result, count} = await workerRequest.getStudent({
 			take: getLimit,
 			skip: offset
+		});
+		var teams = await workerRequest.getTeam({
+			where: {
+				id: {
+					in: result.map((student) => student.teamId).filter((id): id is string => !!id)
+				}
+			}
+		});
+		var schools = await workerRequest.getSchool({
+			where: {
+				id: {
+					in: result.map((student) => student.schoolId).filter((id): id is string => !!id)
+				}
+			}
+		});
+		competitions = (await workerRequest.getCompetition({
+			where: {
+				id: {
+					in: schools.result.map((school) => school.competitionId)
+				}
+			}
+		})).result;
+		searchedSchools = schools.result.map((school) => {
+			const competition = competitions.find((comp) => comp.id === school.competitionId);
+			return {
+				schoolId: school.id,
+				schoolName: school.name,
+				competitionInfo: competition ? competition.name : 'N/A'
+			}
+		});
+		searchedTeams = teams.result.map((team) => {
+			const school = schools.result.find((school) => school.id === team.schoolId);
+			const competition = competitions.find((comp) => comp.id === school?.competitionId);
+			return {
+				teamId: team.id,
+				additionalInfo: `School: ${school ? school.name : 'N/A'}, Competition: ${competition ? competition.name : 'N/A'}`
+			}
 		});
 		students = result;
 		total = count;
@@ -218,7 +259,6 @@
 	signature
 	attachmentOnRegistering
 	{#if !individual || alreadyExisting}
-		teamId
 		<SearchSelect
 			items={searchedSchools}
 			bind:value={currentEdit!.schoolId!}
@@ -229,6 +269,15 @@
 			propName="School Name"
 			placeHolder="Type to search schools..."
 		/>
+		<!--<SearchSelect
+			items={searchedTeams}
+			bind:value={currentEdit!.teamId!}
+			itemToString={(item) => item.additionalInfo}
+			itemToValue={(item) => item.teamId}
+			fetchItems={fetchTeams}
+			propName="Search Team"
+			placeHolder="Type to search team..."
+		/>-->
 	{/if}
 	{#if individual}
 		<TextInput

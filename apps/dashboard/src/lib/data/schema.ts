@@ -4,3 +4,7 @@ export type SchoolSearch = {
     schoolName: string;
     competitionInfo: string;
 }
+export type TeamSearch = {
+    teamId: string;
+    additionalInfo: string;
+}

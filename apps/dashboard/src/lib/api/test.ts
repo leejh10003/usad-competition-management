@@ -1169,12 +1169,11 @@ class WorkerRequest {
 		return result;
 	}
 	async getTeam(input: z.infer<typeof teamQuerySchema>) {
-		const { data, success } = z.safeParse(studentQuerySchema, input);
 		const result = this.teams
 			.select((e) => e)
-			.skip(data?.skip ?? 0)
+			.skip(input?.skip ?? 0)
 			.where((e) => this.testTeam(e, input))
-			.take(data?.take ?? 10)
+			.take(input?.take ?? 10)
 			.toArray();
 		const count = this.teams.where((e) => this.testTeam(e, input)).count();
 		await this._mockDelay();
