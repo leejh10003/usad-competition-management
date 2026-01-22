@@ -114,8 +114,7 @@
 	async function fetch() {
 		isLoading = true;
 		//TODO: server fetch
-		//TODO: Split searched/to be reserved(selected) values for search comppnents
-		//TODO: Handle school/team id for indieivual or school student
+		//TODO: Handle school/team id for individual or school student
 		const {result, count} = await workerRequest.getStudent({
 			take: getLimit,
 			skip: offset
