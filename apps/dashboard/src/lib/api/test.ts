@@ -321,7 +321,9 @@ class WorkerRequest {
 			externalStudentId: '1011',
 			firstName: 'James',
 			lastName: 'Miller',
-			mutationIndex: 0
+			mutationIndex: 0,
+			objectiveScore: 85,
+			subjectiveScore: 92
 		},
 		{
 			id: 'aacee28b-6040-4ba7-b2a1-cee3f2068c2a',
@@ -341,7 +343,9 @@ class WorkerRequest {
 			externalStudentId: '1012',
 			firstName: 'Olivia',
 			lastName: 'Smith',
-			mutationIndex: 1
+			mutationIndex: 1,
+			objectiveScore: 78,
+			subjectiveScore: 88
 		},
 		{
 			id: '49476cc2-048f-4d16-bf98-b9b87aa50077',
@@ -361,7 +365,9 @@ class WorkerRequest {
 			externalStudentId: '1013',
 			firstName: 'Liam',
 			lastName: 'Johnson',
-			mutationIndex: 2
+			mutationIndex: 2,
+			objectiveScore: 94,
+			subjectiveScore: 81
 		},
 		{
 			id: '080bce17-748b-402e-b44b-e1629a3782af',
@@ -381,7 +387,9 @@ class WorkerRequest {
 			externalStudentId: '1014',
 			firstName: 'Emma',
 			lastName: 'Williams',
-			mutationIndex: 3
+			mutationIndex: 3,
+			objectiveScore: 62,
+			subjectiveScore: 75
 		},
 		{
 			id: '2cd17e6f-a3d4-4a2a-9bb5-e8da24d733c3',
@@ -401,7 +409,9 @@ class WorkerRequest {
 			externalStudentId: '1015',
 			firstName: 'Noah',
 			lastName: 'Brown',
-			mutationIndex: 4
+			mutationIndex: 4,
+			objectiveScore: 71,
+			subjectiveScore: 69
 		},
 		{
 			id: 'ff465620-e097-4f80-8da6-ab846ee0938e',
@@ -421,7 +431,9 @@ class WorkerRequest {
 			externalStudentId: '1016',
 			firstName: 'Ava',
 			lastName: 'Jones',
-			mutationIndex: 5
+			mutationIndex: 5,
+			objectiveScore: 88,
+			subjectiveScore: 84
 		},
 		{
 			id: '825d4d26-405a-48b7-87a3-1093323d9b24',
@@ -441,7 +453,9 @@ class WorkerRequest {
 			externalStudentId: '1017',
 			firstName: 'Oliver',
 			lastName: 'Garcia',
-			mutationIndex: 6
+			mutationIndex: 6,
+			objectiveScore: 55,
+			subjectiveScore: 60
 		},
 		{
 			id: '6b1ceadc-d7a1-457d-8e89-6cf99dd320ff',
@@ -461,7 +475,9 @@ class WorkerRequest {
 			externalStudentId: '1018',
 			firstName: 'Sophia',
 			lastName: 'Miller',
-			mutationIndex: 7
+			mutationIndex: 7,
+			objectiveScore: 67,
+			subjectiveScore: 72
 		},
 		{
 			id: 'de63cd76-05e1-4633-a81b-dcb635fbab4f',
@@ -481,7 +497,9 @@ class WorkerRequest {
 			externalStudentId: '1019',
 			firstName: 'Lucas',
 			lastName: 'Davis',
-			mutationIndex: 8
+			mutationIndex: 8,
+			objectiveScore: 49,
+			subjectiveScore: 58
 		},
 		{
 			id: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
@@ -501,7 +519,9 @@ class WorkerRequest {
 			externalStudentId: '1111',
 			firstName: 'Mia',
 			lastName: 'Rodriguez',
-			mutationIndex: 9
+			mutationIndex: 9,
+			objectiveScore: 91,
+			subjectiveScore: 89
 		},
 		{
 			id: '2e577ebb-3ed4-4a5d-b96f-38aba22472e1',
@@ -521,7 +541,9 @@ class WorkerRequest {
 			externalStudentId: '1112',
 			firstName: 'Benjamin',
 			lastName: 'Martinez',
-			mutationIndex: 10
+			mutationIndex: 10,
+			objectiveScore: 83,
+			subjectiveScore: 95
 		},
 		{
 			id: '292b4a8f-b675-4459-9761-1c729b6e364a',
@@ -541,7 +563,9 @@ class WorkerRequest {
 			externalStudentId: '1113',
 			firstName: 'Charlotte',
 			lastName: 'Hernandez',
-			mutationIndex: 11
+			mutationIndex: 11,
+			objectiveScore: 97,
+			subjectiveScore: 90
 		},
 		{
 			id: '51998bc9-c126-4ead-90c4-4551a0abf76b',
@@ -561,7 +585,9 @@ class WorkerRequest {
 			externalStudentId: '1114',
 			firstName: 'Ethan',
 			lastName: 'Lopez',
-			mutationIndex: 12
+			mutationIndex: 12,
+			objectiveScore: 74,
+			subjectiveScore: 82
 		},
 		{
 			id: '16b4468a-5f27-4b17-98cf-9b94524b425d',
@@ -581,7 +607,9 @@ class WorkerRequest {
 			externalStudentId: '1115',
 			firstName: 'Amelia',
 			lastName: 'Gonzalez',
-			mutationIndex: 13
+			mutationIndex: 13,
+			objectiveScore: 80,
+			subjectiveScore: 76
 		},
 		{
 			id: '9d18ea73-5e14-453c-9f5a-02489cd8299e',
@@ -601,7 +629,9 @@ class WorkerRequest {
 			externalStudentId: '1116',
 			firstName: 'Alex',
 			lastName: 'Wilson',
-			mutationIndex: 14
+			mutationIndex: 14,
+			objectiveScore: 68,
+			subjectiveScore: 73
 		},
 		{
 			id: '76264e0b-e6d9-4d92-ab3d-9bdf67aa3e54',
@@ -621,7 +651,9 @@ class WorkerRequest {
 			externalStudentId: '1117',
 			firstName: 'Isabella',
 			lastName: 'Anderson',
-			mutationIndex: 15
+			mutationIndex: 15,
+			objectiveScore: 42,
+			subjectiveScore: 54
 		},
 		{
 			id: '7c5591ff-2b19-4e05-98d8-22f88524dd88',
@@ -641,7 +673,9 @@ class WorkerRequest {
 			externalStudentId: '1118',
 			firstName: 'Henry',
 			lastName: 'Thomas',
-			mutationIndex: 16
+			mutationIndex: 16,
+			objectiveScore: 59,
+			subjectiveScore: 61
 		},
 		{
 			id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
@@ -661,7 +695,9 @@ class WorkerRequest {
 			externalStudentId: '1211',
 			firstName: 'Harper',
 			lastName: 'Taylor',
-			mutationIndex: 17
+			mutationIndex: 17,
+			objectiveScore: 88,
+			subjectiveScore: 84
 		},
 		{
 			id: '3e70e81f-f5e1-4212-ba37-1c38e50bb866',
@@ -681,7 +717,9 @@ class WorkerRequest {
 			externalStudentId: '1212',
 			firstName: 'Sebastian',
 			lastName: 'Moore',
-			mutationIndex: 18
+			mutationIndex: 18,
+			objectiveScore: 92,
+			subjectiveScore: 87
 		},
 		{
 			id: '11a4fa9b-3820-4c1e-8196-053f60b72d68',
@@ -701,7 +739,9 @@ class WorkerRequest {
 			externalStudentId: '1213',
 			firstName: 'Evelyn',
 			lastName: 'Jackson',
-			mutationIndex: 19
+			mutationIndex: 19,
+			objectiveScore: 85,
+			subjectiveScore: 91
 		},
 		{
 			id: '72739130-5a04-47c3-b0bd-76147de59a5d',
@@ -721,7 +761,9 @@ class WorkerRequest {
 			externalStudentId: '1214',
 			firstName: 'Jack',
 			lastName: 'Martin',
-			mutationIndex: 20
+			mutationIndex: 20,
+			objectiveScore: 72,
+			subjectiveScore: 78
 		},
 		{
 			id: '75e36127-d814-4340-a3bd-91f8ae890f6e',
@@ -741,7 +783,9 @@ class WorkerRequest {
 			externalStudentId: '1215',
 			firstName: 'Abigail',
 			lastName: 'Lee',
-			mutationIndex: 21
+			mutationIndex: 21,
+			objectiveScore: 81,
+			subjectiveScore: 74
 		},
 		{
 			id: 'c3611b9f-b416-48af-9347-95c48ed060a8',
@@ -761,7 +805,9 @@ class WorkerRequest {
 			externalStudentId: '1311',
 			firstName: 'Daniel',
 			lastName: 'Perez',
-			mutationIndex: 22
+			mutationIndex: 22,
+			objectiveScore: 89,
+			subjectiveScore: 93
 		},
 		{
 			id: '1cf17dd3-77c8-493b-93d7-1d26d289a416',
@@ -781,7 +827,9 @@ class WorkerRequest {
 			externalStudentId: '1312',
 			firstName: 'Emily',
 			lastName: 'Thompson',
-			mutationIndex: 23
+			mutationIndex: 23,
+			objectiveScore: 94,
+			subjectiveScore: 88
 		},
 		{
 			id: '9a75d5b3-2df2-4939-9626-23bbdeb117d9',
@@ -801,7 +849,9 @@ class WorkerRequest {
 			externalStudentId: '1313',
 			firstName: 'William',
 			lastName: 'White',
-			mutationIndex: 24
+			mutationIndex: 24,
+			objectiveScore: 82,
+			subjectiveScore: 85
 		},
 		{
 			id: '5bc3db05-28e8-4516-82af-09f2fcb1b29b',
@@ -821,7 +871,9 @@ class WorkerRequest {
 			externalStudentId: '1314',
 			firstName: 'Elizabeth',
 			lastName: 'Harris',
-			mutationIndex: 25
+			mutationIndex: 25,
+			objectiveScore: 70,
+			subjectiveScore: 79
 		},
 		{
 			id: '8588bd34-d0cc-420b-b599-92c7edbbcb95',
@@ -841,7 +893,9 @@ class WorkerRequest {
 			externalStudentId: '1315',
 			firstName: 'Michael',
 			lastName: 'Sanchez',
-			mutationIndex: 26
+			mutationIndex: 26,
+			objectiveScore: 76,
+			subjectiveScore: 71
 		},
 		{
 			id: '21c95b7f-47d0-487b-99c1-bf93ee719081',
@@ -861,7 +915,9 @@ class WorkerRequest {
 			externalStudentId: '1411',
 			firstName: 'Sofia',
 			lastName: 'Clark',
-			mutationIndex: 27
+			mutationIndex: 27,
+			objectiveScore: 90,
+			subjectiveScore: 86
 		},
 		{
 			id: 'bf2e8b11-c9c7-4eab-9923-7245e47565fd',
@@ -881,7 +937,9 @@ class WorkerRequest {
 			externalStudentId: '1412',
 			firstName: 'Owen',
 			lastName: 'Ramirez',
-			mutationIndex: 28
+			mutationIndex: 28,
+			objectiveScore: 84,
+			subjectiveScore: 90
 		},
 		{
 			id: '8cfde76f-be5d-4262-806b-a0d5ef7c55cc',
@@ -901,7 +959,9 @@ class WorkerRequest {
 			externalStudentId: '1413',
 			firstName: 'Avery',
 			lastName: 'Lewis',
-			mutationIndex: 29
+			mutationIndex: 29,
+			objectiveScore: 95,
+			subjectiveScore: 82
 		},
 		{
 			id: '01651989-32f4-49a9-962d-742f47b3b0cb',
@@ -921,7 +981,9 @@ class WorkerRequest {
 			externalStudentId: '1511',
 			firstName: 'Samuel',
 			lastName: 'Robinson',
-			mutationIndex: 30
+			mutationIndex: 30,
+			objectiveScore: 87,
+			subjectiveScore: 89
 		},
 		{
 			id: '1e0c58f4-12bf-48a2-959d-f806f5d07104',
@@ -941,7 +1003,9 @@ class WorkerRequest {
 			externalStudentId: '1512',
 			firstName: 'Luna',
 			lastName: 'Walker',
-			mutationIndex: 31
+			mutationIndex: 31,
+			objectiveScore: 91,
+			subjectiveScore: 94
 		}
 	]);
 	events = Enumerable.from<EventResponseItem>([
