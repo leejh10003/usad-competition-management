@@ -1184,57 +1184,13 @@ class WorkerRequest {
 		};
 	}
 	async getStudent(input: z.infer<typeof studentQuerySchema>) {
-		const test = ({ firstName, lastName, externalStudentId, id }: StudentResponseItem) => {
-			let result = true;
-			if (
-				input.where?.firstName &&
-				typeof input.where.firstName !== undefined &&
-				typeof input.where.firstName !== 'string' &&
-				typeof input.where.firstName.contains === 'string'
-			) {
-				result =
-					result && firstName?.toLowerCase().includes(input.where.firstName.contains.toLowerCase());
-			}
-			if (
-				input.where?.lastName &&
-				typeof input.where.lastName !== undefined &&
-				typeof input.where.lastName !== 'string' &&
-				typeof input.where.lastName.contains === 'string'
-			) {
-				result =
-					result && lastName?.toLowerCase().includes(input.where.lastName.contains.toLowerCase());
-			}
-			if (
-				input.where?.externalStudentId &&
-				typeof input.where.externalStudentId !== undefined &&
-				typeof input.where.externalStudentId !== 'string' &&
-				typeof input.where.externalStudentId.equals === 'string'
-			) {
-				result =
-					result &&
-					(externalStudentId
-						?.toLowerCase()
-						.includes(input.where.externalStudentId.equals.toLowerCase()) ??
-						true);
-			}
-			if (
-				input.where?.id &&
-				typeof input.where.id !== undefined &&
-				typeof input.where.id !== 'string' &&
-				typeof input.where.id.in === 'object' &&
-				isArray(input.where.id.in)
-			) {
-				result = result && (isArray(input.where.id.in) ? input.where.id.in.includes(id) : true);
-			}
-			return result;
-		};
 		const result = this.students
 			.select((e) => e)
-			.where(test)
+			.where((e) => this.testStudent(e, input))
 			.skip(input.skip ?? 0)
 			.take(input.take ?? 10)
 			.toArray();
-		const count = this.students.count();
+		const count = this.students.where((e) => this.testStudent(e, input)).count();
 		await this._mockDelay();
 		return {
 			result,
@@ -1301,6 +1257,24 @@ class WorkerRequest {
 						// @ts-ignore
 						c[key as keyof CompetitionResponseItem] =
 							input.data[key as keyof CompetitionResponseItem];
+					}
+				}
+			});
+		});
+	}
+	async updateStudent(
+		inputs: {
+			where: z.infer<typeof studentQuerySchema>['where'];
+			data: Partial<StudentResponseItem>;
+		}[]
+	) {
+		await this._mockDelay();
+		this.students.forEach((s, i) => {
+			inputs.forEach((input) => {
+				if (this.testStudent(s, { where: input.where })) {
+					for (const key in input.data) {
+						// @ts-ignore
+						s[key as keyof StudentResponseItem] = input.data[key as keyof StudentResponseItem];
 					}
 				}
 			});
@@ -1423,6 +1397,10 @@ class WorkerRequest {
 		this.competitions = this.competitions.where((c) => !this.testCompetition(c, input));
 		//TODO: Also delete related entities
 	}
+	async deleteStudents(input: z.infer<typeof studentQuerySchema>) {
+		await this._mockDelay();
+		this.students = this.students.where((s) => !this.testStudent(s, input));
+	}
 	async deleteCoaches(input: z.infer<typeof coachQuerySchema>) {
 		await this._mockDelay();
 		this.coaches = this.coaches.where((c) => !this.testCoach(c, input));
@@ -1506,6 +1484,56 @@ class WorkerRequest {
 				} else if (input.where.id.equals) {
 					result = result && input.where.id.equals === id;
 				}
+			}
+		}
+		return result;
+	}
+	testStudent({ firstName, lastName, externalStudentId, id }: StudentResponseItem, input: z.infer<typeof studentQuerySchema>) {
+		let result = true;
+		if (
+			input.where?.firstName &&
+			typeof input.where.firstName !== undefined &&
+			typeof input.where.firstName !== 'string' &&
+			typeof input.where.firstName.contains === 'string'
+		) {
+			result =
+				result && firstName?.toLowerCase().includes(input.where.firstName.contains.toLowerCase());
+		}
+		if (
+			input.where?.lastName &&
+			typeof input.where.lastName !== undefined &&
+			typeof input.where.lastName !== 'string' &&
+			typeof input.where.lastName.contains === 'string'
+		) {
+			result =
+				result && lastName?.toLowerCase().includes(input.where.lastName.contains.toLowerCase());
+		}
+		if (
+			input.where?.externalStudentId &&
+			typeof input.where.externalStudentId !== undefined &&
+			typeof input.where.externalStudentId !== 'string' &&
+			typeof input.where.externalStudentId.equals === 'string'
+		) {
+			result =
+				result &&
+				(externalStudentId
+					?.toLowerCase()
+					.includes(input.where.externalStudentId.equals.toLowerCase()) ??
+					true);
+		}
+		if (
+			input.where?.id &&
+			typeof input.where.id !== undefined
+		) {
+			if (typeof input.where.id !== 'string' &&
+				typeof input.where.id.in === 'object' &&
+				isArray(input.where.id.in)){
+				result = result && (isArray(input.where.id.in) ? input.where.id.in.includes(id) : true);
+			}
+			else if (typeof input.where.id === 'string'){
+				result = result && id === input.where.id;
+			} else if (typeof input.where.id !== 'string' && typeof input.where.id.equals === 'string'){
+				result = result && id === input.where.id.equals;
 			}
 		}
 		return result;
