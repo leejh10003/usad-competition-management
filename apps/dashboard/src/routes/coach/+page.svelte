@@ -17,12 +17,8 @@
 	import DisplayTable from '$lib/components/display-table.svelte';
 	import SearchedText from '$lib/components/searched-text.svelte';
 	import SearchSelect from '$lib/components/search-select.svelte';
+	import type { SchoolSearch } from '$lib/data/schema';
 	type CoachResponseItem = z.infer<typeof coachResponseSchema>['coach'];
-	type SchoolSearch = {
-		schoolId: string;
-		schoolName: string;
-		competitionInfo: string;
-	}
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
 	var currentEdit = $state<CoachResponseItem | null>(null);
