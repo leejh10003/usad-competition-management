@@ -12,11 +12,17 @@
 	import { resolve } from '$app/paths';
 	import PaginateTable from '$lib/components/paginate-table.svelte';
 	import DisplayTable from '$lib/components/display-table.svelte';
+	import TextInput from '$lib/components/text-input.svelte';
+	import Select from '$lib/components/select.svelte';
+	import ScoreInput from '$lib/components/score-input.svelte';
+	import { states } from 'usad-enums';
+	import { imask } from '@imask/svelte';
 	type StudentResponseItem = z.infer<typeof studentResponseSchema>['student'];
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
 	var students = $state<StudentResponseItem[]>([]);
 	var currentCount = $state<number>(0);
+	var currentEdit = $state<StudentResponseItem | null>(null);
 	const query = $derived.by(() => page.url.searchParams);
 	const getLimit = $derived.by(() => {
 		const limit = query.get('limit');
@@ -88,6 +94,91 @@
 		}
 	});
 </script>
+{#snippet studentDetail(alreadyExisting: boolean, individual: boolean)}
+	competitionId
+	<TextInput
+		propName="Student ID #"
+		bind:inputValue={currentEdit!.externalStudentId}
+	/>
+	<TextInput
+		propName="First Name"
+		bind:inputValue={currentEdit!.firstName}
+	/>
+	<TextInput
+		propName="Last Name"
+		bind:inputValue={currentEdit!.lastName}
+	/>
+	<Select
+		propName="Division"
+		bind:value={currentEdit!.division}
+		options={[
+			{ label: 'Honors', value: 'H' },
+			{ label: 'Scholastic', value: 'S' },
+			{ label: 'Varsity', value: 'V' }
+		]}
+		key={(option) => option.value}
+		display={(option) => option.label}
+		mapValue={(option) => option.value}
+	/>
+	<TextInput propName="Street Address" bind:inputValue={currentEdit!.streetAddress} />
+	<TextInput propName="City" bind:inputValue={currentEdit!.city} />
+	<Select
+		propName="State"
+		bind:value={currentEdit!.state}
+		key={input => input?.shorthand ?? ''}
+		display={input => `${input?.original ?? ''} (${input?.shorthand ?? ''})`}
+		options={states}
+		mapValue={input => input.shorthand}
+	/>
+	<TextInput propName="Zip Code" bind:inputValue={currentEdit!.zipCode} />
+	<ScoreInput propName="Objective Score" bind:inputValue={currentEdit!.objectiveScore} />
+	<ScoreInput propName="Subjective Score" bind:inputValue={currentEdit!.subjectiveScore} />
+	<label class="label">
+		<span class="label-text">GPA</span>
+		<input
+			required
+			class="input"
+			use:imask={{
+				mask: Number,
+				thousandsSeparator: ',',
+				scale: 4,
+				radix: '.',
+				padFractionalZeros: true,
+				normalizeZeros: true,
+				lazy: false,
+			}}
+			onaccept={({detail: maskRef}) => {
+				currentEdit!.gpa = parseFloat(maskRef.value.replaceAll(',', ''));
+			}}
+			value={currentEdit!.gpa}
+		/>
+	</label>
+	usadPin
+	signature
+	attachmentOnRegistering
+	{#if !individual || alreadyExisting}
+		teamId
+		schoolId
+	{/if}
+	{#if individual}
+		<TextInput
+			propName="Guardian First Name"
+			bind:inputValue={currentEdit!.guardianFirstName}
+		/>
+		<TextInput
+			propName="Guardian Last Name"
+			bind:inputValue={currentEdit!.guardianLastName}
+		/>
+		<TextInput
+			propName="Guardian Phone"
+			bind:inputValue={currentEdit!.guardianPhone}
+		/>
+		<TextInput
+			propName="Guardian Email"
+			bind:inputValue={currentEdit!.guardianEmail}
+		/>
+	{/if}
+{/snippet}
 {#snippet actions(student: StudentResponseItem)}
 	{@const { attachmentOnRegistering } = student}
 	<Dialog>

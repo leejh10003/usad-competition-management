@@ -22,6 +22,8 @@ export const studentResponseItemSchema = z.object({
   attachmentOnRegistering: z.string().nullable(),
   competitionId: z.uuid().nullable().optional(),
   mutationIndex: z.int(),
+  objectiveScore: z.float32().nullable(),
+  subjectiveScore: z.float32().nullable(),
 });
 export const studentsResponseSchema = basicSuccess.extend({
   success: z.literal(true),
