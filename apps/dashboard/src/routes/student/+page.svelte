@@ -17,13 +17,56 @@
 	import ScoreInput from '$lib/components/score-input.svelte';
 	import { states } from 'usad-enums';
 	import { imask } from '@imask/svelte';
+	import SearchSelect from '$lib/components/search-select.svelte';
+	import { competitionResponseItemSchema } from 'usad-scheme';
+	import type { SchoolSearch } from '$lib/data/schema';
+	//TODO: determine to use response item as schema, or use client specific schema, or splitting input/update schema
 	type StudentResponseItem = z.infer<typeof studentResponseSchema>['student'];
+	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	var isLoading = $state<boolean>(true);
+	var searchedSchools = $state<SchoolSearch[]>([]);
 	var isFirstLoaded = $state<boolean>(true);
 	var students = $state<StudentResponseItem[]>([]);
 	var currentCount = $state<number>(0);
 	var currentEdit = $state<StudentResponseItem | null>(null);
+	var pin = $state<string>('');
 	const query = $derived.by(() => page.url.searchParams);
+	var competitions = $state<CompetitionResponseItem[]>([]);
+	async function fetchCompetitions(query: string) {
+		const { result } = await workerRequest.getCompetition({
+			where: {
+				name: {
+					contains: query,
+					mode: 'insensitive'
+				}
+			},
+			take: 50,
+		});
+		competitions = result;
+	}
+	async function fetchSchools(query: string) {
+		const { result } = await workerRequest.getSchool({
+			where: {
+				name: {
+					contains: query,
+					mode: 'insensitive'
+				}
+			},
+			take: 50,
+		});
+		const {result: competitions} = await workerRequest.getCompetition({
+			where: {
+				id: {
+					in: result.map((school) => school.competitionId)
+				}
+			}
+		});
+		searchedSchools = result.map((school) => ({
+			schoolId: school.id,
+			schoolName: school.name,
+			competitionInfo: competitions.find((comp) => comp.id === school.competitionId)?.name || 'N/A'
+		}));
+	}
 	const getLimit = $derived.by(() => {
 		const limit = query.get('limit');
 		const parsed = parseInt(limit ?? 'NaN');
@@ -95,7 +138,15 @@
 	});
 </script>
 {#snippet studentDetail(alreadyExisting: boolean, individual: boolean)}
-	competitionId
+	<SearchSelect
+		items={competitions}
+		bind:value={currentEdit!.competitionId!}
+		itemToString={(item) => item.name}
+		itemToValue={(item) => item.id}
+		fetchItems={fetchCompetitions}
+		propName="Competition Name"
+		placeHolder="Type to search competitions..."
+	/>
 	<TextInput
 		propName="Student ID #"
 		bind:inputValue={currentEdit!.externalStudentId}
@@ -153,12 +204,26 @@
 			value={currentEdit!.gpa}
 		/>
 	</label>
-	usadPin
+	<!--TODO: uploaded files-->
+	<label class="label">
+		<span class="label-text">PIN</span>
+		<input class="input w-full" type="password" onchange={(v) => pin = v.currentTarget.value} />
+	</label>
+	<!--TODO: uploaded files-->
 	signature
 	attachmentOnRegistering
 	{#if !individual || alreadyExisting}
 		teamId
-		schoolId
+		<SearchSelect
+			items={searchedSchools}
+			bind:value={currentEdit!.schoolId!}
+			itemToString={(item) => item.schoolName}
+			itemToValue={(item) => item.schoolId}
+			itemsSubscript={(item) => `Competition: ${item.competitionInfo}`}
+			fetchItems={fetchSchools}
+			propName="School Name"
+			placeHolder="Type to search schools..."
+		/>
 	{/if}
 	{#if individual}
 		<TextInput
