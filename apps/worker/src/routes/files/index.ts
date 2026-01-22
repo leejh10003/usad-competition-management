@@ -32,9 +32,9 @@ files.openapi(
     },
   },
   async (c) => {
-    const { file, fileKey, kind, index } = c.req.valid("form");
+    const { file, fileKey, kind, index, targetEntityType, targetEntityId } = c.req.valid("form");
     const uploaded = await c.env.USAD_BUCKET.put(
-      `/${kind}/${crypto.randomUUID()}/${Date.now()}/${index}/${fileKey.replace(
+      `/${kind}/${targetEntityType}/${targetEntityId ?? 'undefined'}/${crypto.randomUUID()}/${Date.now()}/${index}/${fileKey.replace(
         /^\//g,
         ""
       )}`,
