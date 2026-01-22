@@ -5,7 +5,7 @@
 	import { Dialog, Portal, Collapsible } from '@skeletonlabs/skeleton-svelte';
 	import _, { debounce } from 'lodash';
 	import { studentQuerySchema, studentResponseSchema } from 'usad-scheme';
-	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, XIcon, File } from '@lucide/svelte';
+	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, XIcon, File, Trash, Pencil } from '@lucide/svelte';
 	import z from 'zod';
 	import Pdf from '$lib/components/pdf.svelte';
 	import { workerRequest } from '$lib/api/test';
@@ -20,12 +20,15 @@
 	import SearchSelect from '$lib/components/search-select.svelte';
 	import { competitionResponseItemSchema } from 'usad-scheme';
 	import type { SchoolSearch } from '$lib/data/schema';
+	import { dialogAppearAnimation } from '$lib/utils/animation';
+	import { cloneDeep } from 'lodash';
 	//TODO: determine to use response item as schema, or use client specific schema, or splitting input/update schema
 	type StudentResponseItem = z.infer<typeof studentResponseSchema>['student'];
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	var isLoading = $state<boolean>(true);
 	var searchedSchools = $state<SchoolSearch[]>([]);
 	var isFirstLoaded = $state<boolean>(true);
+	var isActionBlocked = $state<boolean>(false);
 	var students = $state<StudentResponseItem[]>([]);
 	var currentCount = $state<number>(0);
 	var currentEdit = $state<StudentResponseItem | null>(null);
@@ -136,6 +139,9 @@
 			//TODO
 		}
 	});
+	function determineStudentIsIndividual(student: StudentResponseItem) {
+		return !!(student.guardianPhone || student.guardianLastName || student.guardianFirstName || student.guardianEmail);
+	}
 </script>
 {#snippet studentDetail(alreadyExisting: boolean, individual: boolean)}
 	<SearchSelect
@@ -244,7 +250,83 @@
 	{/if}
 {/snippet}
 {#snippet actions(student: StudentResponseItem)}
-	{@const { attachmentOnRegistering } = student}
+	{@const { attachmentOnRegistering, id } = student}
+	<Dialog>
+		<Dialog.Trigger
+			onclick={() =>
+				(currentEdit = cloneDeep(student))}
+			class="btn preset-filled w-min"
+			disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger
+		>
+		<Portal>
+			{#if currentEdit}
+				<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+				<Dialog.Positioner class="fixed inset-0 z-50 flex items-center justify-center p-4">
+					<Dialog.Content class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}">
+						<header class="flex items-center justify-between">
+							<Dialog.Title class="text-lg font-bold">Edit Student: {name}</Dialog.Title>
+							<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+								<XIcon class="size-4" />
+							</Dialog.CloseTrigger>
+						</header>
+						{@render studentDetail(true, determineStudentIsIndividual(student))}
+						<footer class="flex justify-end gap-2">
+							<Dialog.CloseTrigger
+								class="btn preset-filled-primary-50-950"
+								onclick={async () => {
+									isActionBlocked = true;
+									await workerRequest.updateStudent([{
+										where: { id: currentEdit!.id },
+										data: currentEdit!
+									}]);
+									await fetch();
+								}}>Save</Dialog.CloseTrigger
+							>
+							<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+						</footer>
+					</Dialog.Content>
+				</Dialog.Positioner>
+			{/if}
+		</Portal>
+	</Dialog>
+	<Dialog>
+		<Dialog.Trigger class="btn preset-filled-danger-50-950" disabled={isActionBlocked}
+			><Trash />Delete</Dialog.Trigger
+		>
+		<Portal>
+			<Dialog.Backdrop class="fixed inset-0 z-50 bg-surface-50-950/50" />
+			<Dialog.Positioner
+				class="fixed inset-0 z-50 flex items-center justify-center p-4"
+			>
+				<Dialog.Content
+					class="space-y-4 card bg-surface-100-900 p-4 shadow-xl {dialogAppearAnimation}"
+				>
+					<header class="flex items-center justify-between">
+						<Dialog.Title class="text-lg font-bold"
+							>Delete Student: {name}</Dialog.Title>
+						<Dialog.CloseTrigger class="btn-icon hover:preset-tonal">
+							<XIcon class="size-4" />
+						</Dialog.CloseTrigger>
+					</header>
+					<Dialog.Description>
+						Are you sure you want to delete student {name}? This action cannot be
+						undone.
+					</Dialog.Description>
+					<footer class="flex justify-end gap-2">
+						<Dialog.CloseTrigger
+							class="btn preset-filled-danger-50-950"
+							onclick={async () => {
+								isActionBlocked = true;
+								await workerRequest.deleteStudents({ where: {id: {equals: id}} });
+								await fetch();
+							}}>Delete</Dialog.CloseTrigger
+						>
+						<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
+					</footer>
+				</Dialog.Content>
+			</Dialog.Positioner>
+		</Portal>
+	</Dialog>
 	<Dialog>
 		<Dialog.Trigger class="btn preset-filled"><File />Show PDF</Dialog.Trigger>
 		<Portal>
