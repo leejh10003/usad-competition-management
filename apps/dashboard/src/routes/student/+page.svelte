@@ -204,12 +204,11 @@
 			value={currentEdit!.gpa}
 		/>
 	</label>
-	<!--TODO: uploaded files-->
 	<label class="label">
 		<span class="label-text">PIN</span>
 		<input class="input w-full" type="password" onchange={(v) => pin = v.currentTarget.value} />
 	</label>
-	<!--TODO: uploaded files-->
+	<!--TODO: uploaded files => After implementing file uploading-->
 	signature
 	attachmentOnRegistering
 	{#if !individual || alreadyExisting}
