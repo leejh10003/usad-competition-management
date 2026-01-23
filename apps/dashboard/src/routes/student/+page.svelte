@@ -184,15 +184,8 @@
 	}
 </script>
 {#snippet studentDetail(alreadyExisting: boolean, individual: boolean)}
-	<SearchSelect
-		items={competitions}
-		bind:value={currentEdit!.competitionId!}
-		itemToString={(item) => item.name}
-		itemToValue={(item) => item.id}
-		fetchItems={fetchCompetitions}
-		propName="Competition Name"
-		placeHolder="Type to search competitions..."
-	/>
+	<!--TODO: If creating, ignore individual and show individual or school/team dropdown.-->
+
 	<TextInput
 		propName="Student ID #"
 		bind:inputValue={currentEdit!.externalStudentId}
@@ -217,17 +210,6 @@
 		display={(option) => option.label}
 		mapValue={(option) => option.value}
 	/>
-	<TextInput propName="Street Address" bind:inputValue={currentEdit!.streetAddress} />
-	<TextInput propName="City" bind:inputValue={currentEdit!.city} />
-	<Select
-		propName="State"
-		bind:value={currentEdit!.state}
-		key={input => input?.shorthand ?? ''}
-		display={input => `${input?.original ?? ''} (${input?.shorthand ?? ''})`}
-		options={states}
-		mapValue={input => input.shorthand}
-	/>
-	<TextInput propName="Zip Code" bind:inputValue={currentEdit!.zipCode} />
 	<ScoreInput propName="Objective Score" bind:inputValue={currentEdit!.objectiveScore} />
 	<ScoreInput propName="Subjective Score" bind:inputValue={currentEdit!.subjectiveScore} />
 	<label class="label">
@@ -258,6 +240,17 @@
 	signature
 	attachmentOnRegistering
 	{#if !individual || alreadyExisting}
+		<!--TODO: Select school/team. But for individuals, only show virtual ones. If school/team ones, show real ones-->
+		<!--TODO: If parent ones are changed, reset children ones. List and value, both of them-->
+		<SearchSelect
+			items={competitions}
+			bind:value={currentEdit!.competitionId!}
+			itemToString={(item) => item.name}
+			itemToValue={(item) => item.id}
+			fetchItems={fetchCompetitions}
+			propName="Competition Name"
+			placeHolder="Type to search competitions..."
+		/>
 		<SearchSelect
 			items={searchedSchools}
 			bind:value={currentEdit!.schoolId!}
@@ -279,6 +272,17 @@
 		/>-->
 	{/if}
 	{#if individual}
+		<TextInput propName="Street Address" bind:inputValue={currentEdit!.streetAddress} />
+		<TextInput propName="City" bind:inputValue={currentEdit!.city} />
+		<Select
+			propName="State"
+			bind:value={currentEdit!.state}
+			key={input => input?.shorthand ?? ''}
+			display={input => `${input?.original ?? ''} (${input?.shorthand ?? ''})`}
+			options={states}
+			mapValue={input => input.shorthand}
+		/>
+		<TextInput propName="Zip Code" bind:inputValue={currentEdit!.zipCode} />
 		<TextInput
 			propName="Guardian First Name"
 			bind:inputValue={currentEdit!.guardianFirstName}
