@@ -499,13 +499,13 @@
 		{currentCount}
 		getId={(row) => row.student.id}
 		columns={[
-			{ header: 'ID #', accessor: 'externalStudentId' },
+			{ header: 'ID #', accessor: 'student.externalStudentId' },
 			{ header: 'Name', cell: (row) => `${row.student.firstName} ${row.student.lastName}` },
 			{ header: 'Address', cell: (row) => {
 				const { student: {streetAddress, city, state, zipCode} } = row;
 				return `${streetAddress ?? ''}${streetAddress ? ', ' : ''}${city ?? ''}${city ? ', ' : ''}${state ?? ''}${state ? ', ' : ''}${zipCode ? `(${zipCode})` : ''}`;
 			} },
-			{ header: 'GPA', accessor: 'gpa' },
+			{ header: 'GPA', accessor: 'student.gpa' },
 			{ header: 'Group', cell: (row) => {
 				const { student: { division } } = row;
 				return division === 'H'
