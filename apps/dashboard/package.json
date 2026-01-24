@@ -43,6 +43,7 @@
 		"@types/lodash": "^4.17.20",
 		"@types/papaparse": "^5.5.2",
 		"axios": "^1.13.2",
+		"es-toolkit": "^1.44.0",
 		"linq": "^4.0.3",
 		"lodash": "^4.17.21",
 		"moment": "^2.30.1",
