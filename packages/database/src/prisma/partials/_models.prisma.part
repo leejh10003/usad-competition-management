@@ -10,6 +10,11 @@ enum Division {
   V // Varsity
 }
 
+enum StudentType {
+  individual
+  team
+}
+
 enum NonRelativeEvents {
   math @map("Math")
   economics @map("Economics")
@@ -236,6 +241,7 @@ model Student {
 
   // Relations
   teamId String? @map("team_id") @db.Uuid
+  type StudentType
   team   Team?   @relation(fields: [teamId], references: [id])
 
   schoolId String? @map("school_id") @db.Uuid
