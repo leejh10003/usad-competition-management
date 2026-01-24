@@ -18,7 +18,7 @@
 <label class="label">
     <span class="label-text">{propName}</span>
     <select required class="select" value={value} onchange={(v) => {
-        value = mapValue(v.currentTarget.value) as S;
+        value = mapValue(v.currentTarget.value) ?? v.currentTarget.value as S;
     }}>
         <option disabled selected value={null}>Select {propName}...</option>
         {#each options as option (key(option))}
