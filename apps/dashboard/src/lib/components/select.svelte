@@ -5,20 +5,25 @@
         propName,
         key,
         display,
-        mapValue
-    } = $props<{
+        mapValue,
+        valueChanged
+    }: {
         options: T[],
         propName: string,
         key: (input: T) => string | number,
         display: (input: T) => string | undefined,
-        value?: S,
+        value?: S | null,
         mapValue: (input: T) => S
-    }>();
+        valueChanged?: (oldValue: S | null | undefined, newValue: S | null | undefined) => void
+    } = $props();
 </script>
 <label class="label">
     <span class="label-text">{propName}</span>
     <select required class="select" value={value} onchange={(v) => {
-        value = mapValue(v.currentTarget.value) ?? v.currentTarget.value as S;
+        const currentValue = value;
+        value = mapValue(v.currentTarget.value as T) ?? v.currentTarget.value as S;
+        const changedValue = value;
+        valueChanged?.(currentValue, changedValue);
     }}>
         <option disabled selected value={null}>Select {propName}...</option>
         {#each options as option (key(option))}

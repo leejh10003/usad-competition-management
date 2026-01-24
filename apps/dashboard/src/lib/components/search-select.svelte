@@ -9,9 +9,10 @@
         propName: string,
         placeHolder?: string,
         value: string,
-        itemsSubscript?: (input: T) => string
+        itemsSubscript?: (input: T) => string,
+        valueChanged?: (oldValue: string, newValue: string) => void
     }
-    let { items, itemToString, itemToValue, itemsSubscript, fetchItems, propName, placeHolder, value = $bindable<string>() }: SearchSelectProps = $props();
+    let { items, itemToString, itemToValue, itemsSubscript, fetchItems, propName, placeHolder, value = $bindable<string>(), valueChanged }: SearchSelectProps = $props();
     var currentSelected: T | null = null;
     const collection = $derived(
 		useListCollection({
@@ -25,12 +26,15 @@
     });
     const fetchItemsWithDebounce = debounce(fetchItems, 300);
 </script>
-<Listbox class="w-full max-w-md" collection={collection} selectionMode="single" value={[value]} deselectable onValueChange={({value: changedValue}) => {
-        if (changedValue.length > 0) {
-            value = changedValue[0];
+<Listbox class="w-full max-w-md" collection={collection} selectionMode="single" value={[value]} deselectable onValueChange={({value: eventValue}) => {
+        const currentValue = value;
+        if (eventValue.length > 0) {
+            value = eventValue[0];
         } else {
             value = '';
         }
+        const changedValue = value;
+        valueChanged?.(currentValue, changedValue);
     }}>
     <Listbox.Label>{propName}</Listbox.Label>
     <Listbox.Input placeholder={placeHolder || "Type to search..."} oninput={(e) => {
