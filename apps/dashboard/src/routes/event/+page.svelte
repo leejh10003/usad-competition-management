@@ -21,13 +21,17 @@
 	import DisplayTable from '$lib/components/display-table.svelte';
 	type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
+	type EventAggregatedItem = {
+		event: EventResponseItem;
+		competition: CompetitionResponseItem;
+	};
 	var isActionBlocked = $state<boolean>(true);
 	var isWholeLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(false);
 	var limit = $state<number>(10);
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
-	var events = $state<EventResponseItem[]>([]);
+	var events = $state<EventAggregatedItem[]>([]);
 	var competitions = $state<CompetitionResponseItem[]>([]);
 	let currentEdit = $state<EventResponseItem | null>(null);
 
@@ -52,16 +56,6 @@
 		competitions = result;
 	}
 	const fetchCompetitionWithDebounce = debounce(fetchCompetitions, 300);
-
-	var aggregated = $derived.by(() => {
-		return events.map((event) => {
-			const competition = competitions.find((comp) => comp.id === event.competitionId);
-			return {
-				...event,
-				competitionName: competition ? competition.name : 'Unknown Competition'
-			};
-		});
-	});
 	var timezone = moment.tz.guess();
 	const query = $derived.by(() => page.url.searchParams);
 	function _currentParam() {
@@ -113,8 +107,13 @@
 				}
 			}
 		});
-		events = result;
-		competitions = competitionResult;
+		events = result.map((event) => {
+			const competition = competitionResult.find((comp) => comp.id === event.competitionId);
+			return {
+				event,
+				competition: competition!
+			};
+		});
 		total = count;
 		currentCount = result.length;
 		isActionBlocked = false;
@@ -174,13 +173,16 @@
 	</Dialog.Description>
 </div>
 {/snippet}
-{#snippet actionBlock(event: EventResponseItem)}
-	{@const { name, id } = event}
+{#snippet actionBlock(item: EventAggregatedItem)}
+	{@const {event, competition} = item }
+	{@const { name, id } = event }
 	<div>
 		<Dialog>
 			<Dialog.Trigger
-				onclick={() =>
-					(currentEdit = cloneDeep(event))}
+				onclick={() =>{
+					currentEdit = cloneDeep(event);
+					competitions = [competition];
+				}}
 				class="btn preset-filled w-min"
 				disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger
 			>
@@ -318,26 +320,28 @@
 		{offset}
 		{total}
 		{currentCount}
-		data={aggregated}
+		data={events}
 		columns={[
 			{
 				header: 'Event Name',
-				accessor: 'name'
+				cell: ({event}) => {
+					return event.name;
+				}
 			},
 			{
 				header: 'Event Type',
-				accessor: 'type'
+				accessor: 'event.type'
 			},
 			{
 				header: 'Event Date',
-				accessor: 'startsAt',
-				cell: ({startsAt}) => {
+				accessor: 'event.startsAt',
+				cell: ({event: {startsAt}}) => {
 					return `${moment(startsAt, timezone).format('MM-DD-YYYY hh:mm:ss')} at timezone ${timezoneFormatted}`;
 				}
 			},
 			{
 				header: 'Competition Name',
-				accessor: 'competitionName'
+				accessor: 'competition.name'
 			},
 			{
 				header: 'Actions',
