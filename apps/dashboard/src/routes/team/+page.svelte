@@ -4,7 +4,8 @@
 	import { page } from '$app/state';
 	import { imask } from '@imask/svelte';
 	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
-	import _, { cloneDeep } from 'lodash';
+	import { cloneDeep, range } from 'es-toolkit';
+	import { parseInt } from 'es-toolkit/compat';
 	import { competitionResponseItemSchema, teamQuerySchema, teamResponseItemSchema } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, Pencil, Trash, UsersIcon, XIcon } from '@lucide/svelte';
 	import z from 'zod';
@@ -62,7 +63,7 @@
 		const currentPage = query.get('currentPage');
 		const params = new URLSearchParams();
 		try {
-			params.set('limit', _.parseInt(decodeURI(limit!)).toString());
+			params.set('limit', parseInt(decodeURI(limit!)).toString());
 		} catch (e) {}
 		if (currentPage && decodeURI(currentPage as string).trim().length > 0) {
 			params.set('currentPage', decodeURI(currentPage as string));
@@ -159,13 +160,14 @@
 		<Select
 			propName="Division"
 			bind:value={currentEdit!.division}
-			options={_.range(1, 5).map((division) => ({
+			options={range(1, 5).map((division) => ({
 				label: romanize(division),
 				value: division
 			}))}
 			key={(option) => option.value}
 			display={(option) => option.label}
 			mapValue={(option) => option.value}
+			convertValue={(input) => parseInt(input)}
 		/>
 		<ScoreInput
 			propName="Objective Score"

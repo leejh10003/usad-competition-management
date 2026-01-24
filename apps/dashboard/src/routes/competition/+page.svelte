@@ -4,7 +4,8 @@
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { page } from '$app/state';
 	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
-	import _, { cloneDeep } from 'lodash';
+	import { cloneDeep } from 'es-toolkit';
+	import { parseInt } from 'es-toolkit/compat';
 	import { competitionQuerySchema, competitionResponseItemSchema, eventResponseItemSchema, stateEnums } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, MailIcon, XIcon, Pencil, Trash, ArrowUpDownIcon, CalendarPlus2, FileSpreadsheetIcon } from '@lucide/svelte';
 	import moment from 'moment-timezone';
@@ -44,7 +45,7 @@
 		const currentPage = query.get('currentPage');
 		const params = new URLSearchParams();
 		try {
-			params.set('limit', _.parseInt(decodeURI(limit!)).toString());
+			params.set('limit', parseInt(decodeURI(limit!)).toString());
 		} catch (e) {}
 		if (currentPage && decodeURI(currentPage as string).trim().length > 0) {
 			params.set('currentPage', decodeURI(currentPage as string));

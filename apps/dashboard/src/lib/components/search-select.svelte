@@ -1,6 +1,6 @@
 <script lang="ts" generics="T">
 	import { Listbox, useListCollection } from "@skeletonlabs/skeleton-svelte";
-	import { debounce, uniqBy } from "lodash";
+	import { debounce, uniqBy } from "es-toolkit";
     interface SearchSelectProps { 
         items: T[],
         itemToString: (item: T) => string,

@@ -7,7 +7,8 @@
 	import ScoreInput from '$lib/components/score-input.svelte'
 	import Select from '$lib/components/select.svelte';
 	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
-	import _ from 'lodash';
+	import { parseInt, isNumber } from 'es-toolkit/compat';
+	import { range } from 'es-toolkit';
 	import { splitStringForQueryHighlight } from '$lib/utils/string';
 	import { competitionResponseItemSchema, schoolQuerySchema, schoolResponse, stateEnums } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, CalendarPlus2, Pencil, School, Trash, XIcon } from '@lucide/svelte';
@@ -39,7 +40,7 @@
 		const externalSchoolIdQueryString = query.get('externalSchoolIdQueryString');
 		const params = new URLSearchParams();
 		try {
-			params.set('limit', _.parseInt(decodeURI(limit!)).toString());
+			params.set('limit', parseInt(decodeURI(limit!)).toString());
 		} catch (e) {}
 		if (currentPage && decodeURI(currentPage as string).trim().length > 0) {
 			params.set('currentPage', decodeURI(currentPage as string));
@@ -208,7 +209,7 @@
 			bind:value={currentEdit!.division}
 			key={input => input.toString()}
 			display={input => romanize(input)}
-			options={_.range(1, 5)}
+			options={range(1, 5)}
 			mapValue={input => parseInt(input.toString())}
 		/>
 		<!--TODOs-->
@@ -347,7 +348,7 @@
 					class="input"
 					type="number"
 					onchange={(e) => {
-						if (_.isNumber(e.currentTarget.value)) {
+						if (isNumber(e.currentTarget.value)) {
 							setLimit(e.currentTarget.value);
 						} else {
 							setLimit(parseInt(e.currentTarget.value));

@@ -3,7 +3,6 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { Dialog, Portal, Collapsible } from '@skeletonlabs/skeleton-svelte';
-	import _, { debounce } from 'lodash';
 	import { studentQuerySchema, studentResponseSchema } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, XIcon, File, Trash, Pencil } from '@lucide/svelte';
 	import z from 'zod';
@@ -20,7 +19,7 @@
 	import SearchSelect from '$lib/components/search-select.svelte';
 	import { competitionResponseItemSchema } from 'usad-scheme';
 	import { dialogAppearAnimation } from '$lib/utils/animation';
-	import { cloneDeep } from 'lodash';
+	import { cloneDeep, isNumber } from 'es-toolkit';
 	import type { CompetitionResponseItem, SchoolsAgregatedItem, StudentAggregatedItem, StudentResponseItem, TeamAggregatedItem } from '$lib/data/types';
 	//TODO: determine to use response item as schema, or use client specific schema, or splitting input/update schema
 	var isLoading = $state<boolean>(true);
@@ -478,8 +477,8 @@
 					class="input"
 					type="number"
 					onchange={(e) => {
-						if (_.isNumber(e.currentTarget.value)) {
-							setLimit(e.currentTarget.value);
+						if (isNumber(e.currentTarget.value)) {
+							setLimit(e.currentTarget.value as unknown as number);
 						} else {
 							setLimit(parseInt(e.currentTarget.value));
 						}

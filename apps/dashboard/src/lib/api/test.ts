@@ -1,5 +1,5 @@
 import Enumerable from 'linq';
-import _, { assign, find, isArray } from 'lodash';
+import { isTypedArray } from 'es-toolkit';
 import moment from 'moment';
 import {
 	schoolResponse,
@@ -1194,8 +1194,8 @@ class WorkerRequest {
 				result = result && id === input.where.id;
 			} else if (typeof input.where.id !== 'string' && typeof input.where.id.equals === 'string'){
 				result = result && id === input.where.id.equals;
-			} else if (typeof input.where.id !== 'string' && typeof input.where.id.in === 'object' && isArray(input.where.id.in)){
-				result = result && (isArray(input.where.id.in) ? input.where.id.in.includes(id) : true);
+			} else if (typeof input.where.id !== 'string' && typeof input.where.id.in === 'object' && isTypedArray(input.where.id.in)){
+				result = result && (isTypedArray(input.where.id.in) ? (input.where.id.in as string[]).includes(id) : true);
 			}
 		}
 		return result;
@@ -1510,8 +1510,8 @@ class WorkerRequest {
 			if (typeof input.where.id === 'string') {
 				result = result && input.where.id === id;
 			} else if (typeof input.where.id === 'object') {
-				if (isArray(input.where.id.in)) {
-					result = result && input.where.id.in.includes(id);
+				if (isTypedArray(input.where.id.in)) {
+					result = result && (input.where.id.in as string[]).includes(id);
 				} else if (input.where.id.equals) {
 					result = result && input.where.id.equals === id;
 				}
@@ -1558,8 +1558,8 @@ class WorkerRequest {
 		) {
 			if (typeof input.where.id !== 'string' &&
 				typeof input.where.id.in === 'object' &&
-				isArray(input.where.id.in)){
-				result = result && (isArray(input.where.id.in) ? input.where.id.in.includes(id) : true);
+				isTypedArray(input.where.id.in)){
+				result = result && (isTypedArray(input.where.id.in) ? (input.where.id.in as string[]).includes(id) : true);
 			}
 			else if (typeof input.where.id === 'string'){
 				result = result && id === input.where.id;
@@ -1608,8 +1608,8 @@ class WorkerRequest {
 			} else if (typeof input.where.id === 'object') {
 				if (input.where.id.equals) {
 					result = result && input.where.id.equals === id;
-				} else if (isArray(input.where.id.in)) {
-					result = result && input.where.id.in.includes(id);
+				} else if (isTypedArray(input.where.id.in)) {
+					result = result && (input.where.id.in as string[]).includes(id);
 				}
 			}
 		}
@@ -1661,7 +1661,7 @@ class WorkerRequest {
 				typeof where.competitionAvailableStates === 'object' &&
 				typeof where.competitionAvailableStates.some?.state === 'object' &&
 				typeof where.competitionAvailableStates.some!.state?.in === 'object' &&
-				isArray(where.competitionAvailableStates.some?.state?.in)
+				isTypedArray(where.competitionAvailableStates.some?.state?.in)
 			) {
 				result =
 					result &&
@@ -1673,8 +1673,8 @@ class WorkerRequest {
 						).in.includes(state)
 					);
 			}
-			if (typeof where.id === 'object' && typeof where.id.in === 'object' && isArray(where.id.in)) {
-				result = result && where.id.in.includes(id);
+			if (typeof where.id === 'object' && typeof where.id.in === 'object' && isTypedArray(where.id.in)) {
+				result = result && (where.id.in as string[]).includes(id);
 			}
 		}
 		return result;
@@ -1736,8 +1736,8 @@ class WorkerRequest {
 				if (typeof where.competitionId.equals === 'string') {
 					result = result && competitionId === where.competitionId.equals;
 				}
-				if (typeof where.competitionId.in === 'object' && isArray(where.competitionId.in)) {
-					result = result && where.competitionId.in.includes(competitionId);
+				if (typeof where.competitionId.in === 'object' && isTypedArray(where.competitionId.in)) {
+					result = result && (where.competitionId.in as string[]).includes(competitionId);
 				}
 			}
 		}

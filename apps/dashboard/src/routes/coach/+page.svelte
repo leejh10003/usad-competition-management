@@ -2,9 +2,9 @@
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { cloneDeep } from 'lodash';
+	import { cloneDeep, isNumber } from 'es-toolkit';
+	import { parseInt } from 'es-toolkit/compat';
 	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
-	import _ from 'lodash';
 	import { coachQuerySchema, coachResponseSchema, competitionResponseItemSchema } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, IdCardLanyard, Pencil, Trash, XIcon } from '@lucide/svelte';
 	import z from 'zod';
@@ -55,7 +55,7 @@
 		const coachLastNameQueryString = query.get('coachLastNameQueryString');
 		const params = new URLSearchParams();
 		try {
-			params.set('limit', _.parseInt(decodeURI(limit!)).toString());
+			params.set('limit', parseInt(decodeURI(limit!)).toString());
 		} catch (e) {}
 		if (currentPage && decodeURI(currentPage as string).trim().length > 0) {
 			params.set('currentPage', decodeURI(currentPage as string));
@@ -382,7 +382,7 @@
 					class="input"
 					type="number"
 					onchange={(e) => {
-						if (_.isNumber(e.currentTarget.value)) {
+						if (isNumber(e.currentTarget.value)) {
 							setLimit(e.currentTarget.value);
 						} else {
 							setLimit(parseInt(e.currentTarget.value));

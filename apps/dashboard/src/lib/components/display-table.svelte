@@ -1,7 +1,7 @@
 <script lang="ts" generics="T">
-    import { range } from 'lodash';
+    import { range } from 'es-toolkit';
+    import { get } from 'es-toolkit/compat';
 	import { type Snippet } from 'svelte';
-    import { get } from 'lodash'
     const {
         isLoading = $bindable<boolean>(),
         getLimit = $bindable<number>(),

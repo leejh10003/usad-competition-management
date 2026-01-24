@@ -4,10 +4,10 @@
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { page } from '$app/state';
 	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
-	import _ from 'lodash';
 	import { eventCheckedInItem, eventCheckInQuerySchema, eventResponseItemSchema, studentResponseSchema } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, CalendarPlus2 } from '@lucide/svelte';
 	import z from 'zod';
+	import { parseInt } from 'es-toolkit/compat';
 	import moment from 'moment-timezone';
 	import { resolve } from '$app/paths';
 	import { workerRequest } from '$lib/api/test';
@@ -47,7 +47,7 @@
 		const currentPage = query.get('currentPage');
 		const params = new URLSearchParams();
 		try {
-			params.set('limit', _.parseInt(decodeURI(limit!)).toString());
+			params.set('limit', parseInt(decodeURI(limit!)).toString());
 		} catch (e) {}
 		if (currentPage && decodeURI(currentPage as string).trim().length > 0) {
 			params.set('currentPage', decodeURI(currentPage as string));
@@ -140,6 +140,7 @@
 	<DisplayTable
 		{isFirstLoaded}
 		{isLoading}
+		getId={(item) => `${item.studentId}-${item.eventId}`}
 		{getLimit}
 		{offset}
 		{total}
