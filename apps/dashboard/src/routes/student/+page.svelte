@@ -113,7 +113,6 @@
 	async function fetch() {
 		isLoading = true;
 		//TODO: server fetch
-		//TODO: Handle school/team id for individual or school student
 		const {result, count} = await workerRequest.getStudent({
 			take: getLimit,
 			skip: offset
