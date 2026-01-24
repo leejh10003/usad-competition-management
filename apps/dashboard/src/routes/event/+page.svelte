@@ -136,6 +136,7 @@
 	})
 </script>
 {#snippet eventDetail(eventId: string)}
+<div class="grid grid-rows-[auto_1fr_auto] h-full max-h-[calc(100vh-200px)] overflow-y-scroll">
 	<Dialog.Description>
 		<SearchSelect
 			items={competitions}
@@ -171,6 +172,7 @@
 			</p>
 		</label>
 	</Dialog.Description>
+</div>
 {/snippet}
 {#snippet actionBlock(event: EventResponseItem)}
 	{@const { name, id } = event}

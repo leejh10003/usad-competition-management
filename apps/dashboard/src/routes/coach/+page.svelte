@@ -201,40 +201,42 @@
 	}*/
 </script>
 {#snippet coachDetail(coachId: string)}
-<Dialog.Description>
-	<SearchSelect
-		items={searchedSchools}
-		bind:value={currentEdit!.schoolId}
-		itemToString={(item) => item.schoolName}
-		itemToValue={(item) => item.schoolId}
-		itemsSubscript={(item) => `Competition: ${item.competitionInfo}`}
-		fetchItems={fetchSchools}
-		propName="School Name"
-		placeHolder="Type to search schools..."
-	/>
-	<TextInput
-		propName="Coach ID"
-		bind:inputValue={currentEdit!.externalCoachId}
-	/>
-	<TextInput
-		propName="First Name"
-		bind:inputValue={currentEdit!.firstName}
-	/>
-	<TextInput
-		propName="Last Name"
-		bind:inputValue={currentEdit!.lastName}
-	/>
-	<TextInput
-		propName="Email"
-		bind:inputValue={currentEdit!.email}
-	/>
-	<TextInput
-		propName="Phone"
-		bind:inputValue={currentEdit!.phone}
-	/>
-	<!--Todos-->
-	signature
-</Dialog.Description>
+<div class="grid grid-rows-[auto_1fr_auto] h-full max-h-[calc(100vh-200px)] overflow-y-scroll">
+	<Dialog.Description>
+		<SearchSelect
+			items={searchedSchools}
+			bind:value={currentEdit!.schoolId}
+			itemToString={(item) => item.schoolName}
+			itemToValue={(item) => item.schoolId}
+			itemsSubscript={(item) => `Competition: ${item.competitionInfo}`}
+			fetchItems={fetchSchools}
+			propName="School Name"
+			placeHolder="Type to search schools..."
+		/>
+		<TextInput
+			propName="Coach ID"
+			bind:inputValue={currentEdit!.externalCoachId}
+		/>
+		<TextInput
+			propName="First Name"
+			bind:inputValue={currentEdit!.firstName}
+		/>
+		<TextInput
+			propName="Last Name"
+			bind:inputValue={currentEdit!.lastName}
+		/>
+		<TextInput
+			propName="Email"
+			bind:inputValue={currentEdit!.email}
+		/>
+		<TextInput
+			propName="Phone"
+			bind:inputValue={currentEdit!.phone}
+		/>
+		<!--Todos-->
+		signature
+	</Dialog.Description>
+</div>
 {/snippet}
 {#snippet actions(coach: CoachResponseItem)}
 <Dialog>

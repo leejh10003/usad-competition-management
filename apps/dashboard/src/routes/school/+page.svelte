@@ -162,6 +162,7 @@
 	}*/
 </script>
 {#snippet schoolDetail(schoolId: string)}
+<div class="grid grid-rows-[auto_1fr_auto] h-full max-h-[calc(100vh-200px)] overflow-y-scroll">
 	<Dialog.Description>
 		<SearchSelect
 			items={competitions}
@@ -206,6 +207,7 @@
 		<!--TODOs-->
 		primaryCoachId
 	</Dialog.Description>
+</div>
 {/snippet}
 {#snippet actions(school: SchoolResponseItem)}
 <Dialog>

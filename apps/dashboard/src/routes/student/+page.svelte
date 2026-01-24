@@ -184,131 +184,133 @@
 	}
 </script>
 {#snippet studentDetail(alreadyExisting: boolean)}
-	<Select
-		propName="Student Type"
-		bind:value={currentEdit!.type}
-		options={[
-			{ label: 'Individual', value: "individual" },
-			{ label: 'School/Team', value: "team" }
-		]}
-		key={(option) => option.value.toString()}
-		display={(option) => option.label}
-		mapValue={(option) => option.value}
-	/>
-	<TextInput
-		propName="Student ID #"
-		bind:inputValue={currentEdit!.externalStudentId}
-	/>
-	<TextInput
-		propName="First Name"
-		bind:inputValue={currentEdit!.firstName}
-	/>
-	<TextInput
-		propName="Last Name"
-		bind:inputValue={currentEdit!.lastName}
-	/>
-	<Select
-		propName="Division"
-		bind:value={currentEdit!.division}
-		options={[
-			{ label: 'Honors', value: 'H' },
-			{ label: 'Scholastic', value: 'S' },
-			{ label: 'Varsity', value: 'V' }
-		]}
-		key={(option) => option.value}
-		display={(option) => option.label}
-		mapValue={(option) => option.value}
-	/>
-	<ScoreInput propName="Objective Score" bind:inputValue={currentEdit!.objectiveScore} />
-	<ScoreInput propName="Subjective Score" bind:inputValue={currentEdit!.subjectiveScore} />
-	<label class="label">
-		<span class="label-text">GPA</span>
-		<input
-			required
-			class="input"
-			use:imask={{
-				mask: Number,
-				thousandsSeparator: ',',
-				scale: 4,
-				radix: '.',
-				padFractionalZeros: true,
-				normalizeZeros: true,
-				lazy: false,
-			}}
-			onaccept={({detail: maskRef}) => {
-				currentEdit!.gpa = parseFloat(maskRef.value.replaceAll(',', ''));
-			}}
-			value={currentEdit!.gpa}
-		/>
-	</label>
-	<label class="label">
-		<span class="label-text">PIN</span>
-		<input class="input w-full" type="password" onchange={(v) => pin = v.currentTarget.value} />
-	</label>
-	<!--TODO: uploaded files => After implementing file uploading-->
-	signature
-	attachmentOnRegistering
-	{#if currentEdit!.type !== "individual" || alreadyExisting}
-		<!--TODO: Select school/team. But for individuals, only show virtual ones. If school/team ones, show real ones-->
-		<!--TODO: If parent ones are changed, reset children ones. List and value, both of them-->
-		<SearchSelect
-			items={competitions}
-			bind:value={currentEdit!.competitionId!}
-			itemToString={(item) => item.name}
-			itemToValue={(item) => item.id}
-			fetchItems={fetchCompetitions}
-			propName="Competition Name"
-			placeHolder="Type to search competitions..."
-		/>
-		<SearchSelect
-			items={searchedSchools}
-			bind:value={currentEdit!.schoolId!}
-			itemToString={(item) => item.schoolName}
-			itemToValue={(item) => item.schoolId}
-			itemsSubscript={(item) => `Competition: ${item.competitionInfo}`}
-			fetchItems={fetchSchools}
-			propName="School Name"
-			placeHolder="Type to search schools..."
-		/>
-		<!--<SearchSelect
-			items={searchedTeams}
-			bind:value={currentEdit!.teamId!}
-			itemToString={(item) => item.additionalInfo}
-			itemToValue={(item) => item.teamId}
-			fetchItems={fetchTeams}
-			propName="Search Team"
-			placeHolder="Type to search team..."
-		/>-->
-	{/if}
-	{#if currentEdit!.type === "individual"	}
-		<TextInput propName="Street Address" bind:inputValue={currentEdit!.streetAddress} />
-		<TextInput propName="City" bind:inputValue={currentEdit!.city} />
+	<div class="grid grid-rows-[auto_1fr_auto] h-full max-h-[calc(100vh-200px)] overflow-y-scroll">
 		<Select
-			propName="State"
-			bind:value={currentEdit!.state}
-			key={input => input?.shorthand ?? ''}
-			display={input => `${input?.original ?? ''} (${input?.shorthand ?? ''})`}
-			options={states}
-			mapValue={input => input.shorthand}
-		/>
-		<TextInput propName="Zip Code" bind:inputValue={currentEdit!.zipCode} />
-		<TextInput
-			propName="Guardian First Name"
-			bind:inputValue={currentEdit!.guardianFirstName}
+			propName="Student Type"
+			bind:value={currentEdit!.type}
+			options={[
+				{ label: 'Individual', value: "individual" },
+				{ label: 'School/Team', value: "team" }
+			]}
+			key={(option) => option.value.toString()}
+			display={(option) => option.label}
+			mapValue={(option) => option.value}
 		/>
 		<TextInput
-			propName="Guardian Last Name"
-			bind:inputValue={currentEdit!.guardianLastName}
+			propName="Student ID #"
+			bind:inputValue={currentEdit!.externalStudentId}
 		/>
 		<TextInput
-			propName="Guardian Phone"
-			bind:inputValue={currentEdit!.guardianPhone}
+			propName="First Name"
+			bind:inputValue={currentEdit!.firstName}
 		/>
 		<TextInput
-			propName="Guardian Email"
-			bind:inputValue={currentEdit!.guardianEmail}
+			propName="Last Name"
+			bind:inputValue={currentEdit!.lastName}
 		/>
-	{/if}
+		<Select
+			propName="Division"
+			bind:value={currentEdit!.division}
+			options={[
+				{ label: 'Honors', value: 'H' },
+				{ label: 'Scholastic', value: 'S' },
+				{ label: 'Varsity', value: 'V' }
+			]}
+			key={(option) => option.value}
+			display={(option) => option.label}
+			mapValue={(option) => option.value}
+		/>
+		<ScoreInput propName="Objective Score" bind:inputValue={currentEdit!.objectiveScore} />
+		<ScoreInput propName="Subjective Score" bind:inputValue={currentEdit!.subjectiveScore} />
+		<label class="label">
+			<span class="label-text">GPA</span>
+			<input
+				required
+				class="input"
+				use:imask={{
+					mask: Number,
+					thousandsSeparator: ',',
+					scale: 4,
+					radix: '.',
+					padFractionalZeros: true,
+					normalizeZeros: true,
+					lazy: false,
+				}}
+				onaccept={({detail: maskRef}) => {
+					currentEdit!.gpa = parseFloat(maskRef.value.replaceAll(',', ''));
+				}}
+				value={currentEdit!.gpa}
+			/>
+		</label>
+		<label class="label">
+			<span class="label-text">PIN</span>
+			<input class="input w-full" type="password" onchange={(v) => pin = v.currentTarget.value} />
+		</label>
+		<!--TODO: uploaded files => After implementing file uploading-->
+		signature
+		attachmentOnRegistering
+		{#if currentEdit!.type !== "individual" || alreadyExisting}
+			<!--TODO: Select school/team. But for individuals, only show virtual ones. If school/team ones, show real ones-->
+			<!--TODO: If parent ones are changed, reset children ones. List and value, both of them-->
+			<SearchSelect
+				items={competitions}
+				bind:value={currentEdit!.competitionId!}
+				itemToString={(item) => item.name}
+				itemToValue={(item) => item.id}
+				fetchItems={fetchCompetitions}
+				propName="Competition Name"
+				placeHolder="Type to search competitions..."
+			/>
+			<SearchSelect
+				items={searchedSchools}
+				bind:value={currentEdit!.schoolId!}
+				itemToString={(item) => item.schoolName}
+				itemToValue={(item) => item.schoolId}
+				itemsSubscript={(item) => `Competition: ${item.competitionInfo}`}
+				fetchItems={fetchSchools}
+				propName="School Name"
+				placeHolder="Type to search schools..."
+			/>
+			<!--<SearchSelect
+				items={searchedTeams}
+				bind:value={currentEdit!.teamId!}
+				itemToString={(item) => item.additionalInfo}
+				itemToValue={(item) => item.teamId}
+				fetchItems={fetchTeams}
+				propName="Search Team"
+				placeHolder="Type to search team..."
+			/>-->
+		{/if}
+		{#if currentEdit!.type === "individual"	}
+			<TextInput propName="Street Address" bind:inputValue={currentEdit!.streetAddress} />
+			<TextInput propName="City" bind:inputValue={currentEdit!.city} />
+			<Select
+				propName="State"
+				bind:value={currentEdit!.state}
+				key={input => input?.shorthand ?? ''}
+				display={input => `${input?.original ?? ''} (${input?.shorthand ?? ''})`}
+				options={states}
+				mapValue={input => input.shorthand}
+			/>
+			<TextInput propName="Zip Code" bind:inputValue={currentEdit!.zipCode} />
+			<TextInput
+				propName="Guardian First Name"
+				bind:inputValue={currentEdit!.guardianFirstName}
+			/>
+			<TextInput
+				propName="Guardian Last Name"
+				bind:inputValue={currentEdit!.guardianLastName}
+			/>
+			<TextInput
+				propName="Guardian Phone"
+				bind:inputValue={currentEdit!.guardianPhone}
+			/>
+			<TextInput
+				propName="Guardian Email"
+				bind:inputValue={currentEdit!.guardianEmail}
+			/>
+		{/if}
+	</div>
 {/snippet}
 {#snippet actions(student: StudentResponseItem)}
 	{@const { attachmentOnRegistering, id } = student}

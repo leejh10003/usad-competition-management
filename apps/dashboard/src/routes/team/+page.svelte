@@ -142,42 +142,44 @@
 	}*/
 </script>
 {#snippet teamDetail(teamId: string)}
-<Dialog.Description>
-	<SearchSelect
-		items={searchedSchools}
-		bind:value={currentEdit!.schoolId}
-		itemToString={(item) => item.schoolName}
-		itemToValue={(item) => item.schoolId}
-		itemsSubscript={(item) => `Competition: ${item.competitionInfo}`}
-		fetchItems={fetchSchools}
-		propName="School Name"
-		placeHolder="Type to search schools..."
-	/>
-	<TextInput
-		propName="Team Id #"
-		bind:inputValue={currentEdit!.externalTeamId}
-	/>
-	<Select
-		propName="Division"
-		bind:value={currentEdit!.division}
-		options={_.range(1, 5).map((division) => ({
-			label: romanize(division),
-			value: division
-		}))}
-		key={(option) => option.value}
-		display={(option) => option.label}
-		mapValue={(option) => option.value}
-	/>
-	<ScoreInput
-		propName="Objective Score"
-		bind:inputValue={currentEdit!.objectiveScore}
-	/>
-	<ScoreInput
-		propName="Subjective Score"
-		bind:inputValue={currentEdit!.subjectiveScore}
-	/>
-	schoolId
-</Dialog.Description>
+<div class="grid grid-rows-[auto_1fr_auto] h-full max-h-[calc(100vh-200px)] overflow-y-scroll">
+	<Dialog.Description>
+		<SearchSelect
+			items={searchedSchools}
+			bind:value={currentEdit!.schoolId}
+			itemToString={(item) => item.schoolName}
+			itemToValue={(item) => item.schoolId}
+			itemsSubscript={(item) => `Competition: ${item.competitionInfo}`}
+			fetchItems={fetchSchools}
+			propName="School Name"
+			placeHolder="Type to search schools..."
+		/>
+		<TextInput
+			propName="Team Id #"
+			bind:inputValue={currentEdit!.externalTeamId}
+		/>
+		<Select
+			propName="Division"
+			bind:value={currentEdit!.division}
+			options={_.range(1, 5).map((division) => ({
+				label: romanize(division),
+				value: division
+			}))}
+			key={(option) => option.value}
+			display={(option) => option.label}
+			mapValue={(option) => option.value}
+		/>
+		<ScoreInput
+			propName="Objective Score"
+			bind:inputValue={currentEdit!.objectiveScore}
+		/>
+		<ScoreInput
+			propName="Subjective Score"
+			bind:inputValue={currentEdit!.subjectiveScore}
+		/>
+		schoolId
+	</Dialog.Description>
+</div>
 {/snippet}
 {#snippet actions(team: TeamResponseItem)}
 <Dialog>

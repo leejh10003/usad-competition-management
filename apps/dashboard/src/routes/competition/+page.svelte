@@ -116,6 +116,7 @@
 </script>
 
 {#snippet competitionDetail(competitionId: string, existing: boolean)}
+<div class="grid grid-rows-[auto_1fr_auto] h-full max-h-[calc(100vh-200px)] overflow-y-scroll">
 	<Dialog.Description>
 		<label class="label">
 			<span class="label-text">Competition Name</span>
@@ -233,6 +234,7 @@
 			</div>
 		{/if}
 	</Dialog.Description>
+</div>
 {/snippet}
 {#snippet actions(competition: CompetitionResponseItem)}
 <Dialog>
