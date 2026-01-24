@@ -21,4 +21,5 @@ export const studentSelectFieldsSchema = {
   objectiveScore: true,
   subjectiveScore: true,
   mutationIndex: true,
+  type: true,
 };

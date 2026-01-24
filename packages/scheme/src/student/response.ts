@@ -24,6 +24,7 @@ export const studentResponseItemSchema = z.object({
   mutationIndex: z.int(),
   objectiveScore: z.float32().nullable(),
   subjectiveScore: z.float32().nullable(),
+  type: z.enum(['individual', 'team']),
 });
 export const studentsResponseSchema = basicSuccess.extend({
   success: z.literal(true),
