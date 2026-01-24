@@ -23,10 +23,15 @@
 	import SearchSelect from '$lib/components/search-select.svelte';
 	type SchoolResponseItem = z.infer<typeof schoolResponse>['school'];
 	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
+	type SchoolWithCompetition = {
+		school: SchoolResponseItem;
+		competition: CompetitionResponseItem;
+	}
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
 	var isActionBlocked = $state<boolean>(false);
 	var competitions = $state<CompetitionResponseItem[]>([]);
+	var schools = $state<SchoolWithCompetition[]>([]);
 	function _currentParam() {
 		const limit = query.get('limit');
 		const currentPage = query.get('currentPage');
@@ -99,7 +104,6 @@
 	}
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
-	var schools = $state<SchoolResponseItem[]>([]);
 		//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	async function fetchCompetitions(query: string) {
 		const { result } = await workerRequest.getCompetition({
@@ -139,7 +143,10 @@
 				}
 			}
 		});
-		schools = result;
+		schools = result.map((school) => ({
+			school,
+			competition: competitionResult.find((comp) => comp.id === school.competitionId)!
+		}));
 		competitions = competitionResult;
 		total = count;
 		currentCount = result.length;
@@ -209,10 +216,14 @@
 	</Dialog.Description>
 </div>
 {/snippet}
-{#snippet actions(school: SchoolResponseItem)}
+{#snippet actions(row: SchoolWithCompetition)}
+{@const {school, school: {name}, competition} = row}
 <Dialog>
 	<Dialog.Trigger
-		onclick={() => (currentEdit = cloneDeep(school))}
+		onclick={() => {
+			currentEdit = cloneDeep(school);
+			competitions = [competition];
+		}}
 		class="btn preset-filled"
 		disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger
 	>
@@ -292,15 +303,15 @@
 	</Portal>
 </Dialog>
 {/snippet}
-{#snippet schoolNameSearch(row: SchoolResponseItem)}
-	{@const splitted = splitStringForQueryHighlight(row.name, getSchoolNameQueryString)}
+{#snippet schoolNameSearch(row: SchoolWithCompetition)}
+	{@const splitted = splitStringForQueryHighlight(row.school.name, getSchoolNameQueryString)}
 	<SearchedText {splitted} />
 {/snippet}
-{#snippet schoolIdSearch(row: SchoolResponseItem)}
-	{@const splitted = splitStringForQueryHighlight(row.externalSchoolId, getExternalSchoolIdQueryString)}
+{#snippet schoolIdSearch(row: SchoolWithCompetition)}
+	{@const splitted = splitStringForQueryHighlight(row.school.externalSchoolId, getExternalSchoolIdQueryString)}
 	<SearchedText {splitted} />
 {/snippet}
-{#snippet schoolPrincipal({principalEmail, principalName}: SchoolResponseItem)}
+{#snippet schoolPrincipal({school: {principalEmail, principalName}}: SchoolWithCompetition)}
 {principalName} (email:
 		<a href={`mailto:${principalEmail}`}>{principalEmail}</a>)
 {/snippet}
@@ -347,8 +358,8 @@
 			</label>
 			<Dialog>
 				<Dialog.Trigger
-					onclick={() =>
-						(currentEdit = {
+					onclick={() =>{
+						currentEdit = {
 							id: workerRequest.generateNewCompetitionId(),
 							name: '',
 							division: null,
@@ -358,7 +369,9 @@
 							city: '',
 							mutationIndex: 0,
 							competitionId: '',
-						})}
+						};
+						competitions = [];
+					}}
 					class="btn preset-filled w-min"
 					disabled={isActionBlocked}><School /> Create School</Dialog.Trigger
 				>
@@ -399,6 +412,7 @@
 		{getLimit}
 		{total}
 		{currentCount}
+		getId={(item) => item.school.id}
 		data={schools}
 		columns={[
 			{
@@ -411,11 +425,11 @@
 			},
 			{
 				header: 'School Address',
-				cell: ({streetAddress, city, state, zipCode}) => `${streetAddress}, ${city}, ${state} (${zipCode})`
+				cell: ({school: {streetAddress, city, state, zipCode}}) => `${streetAddress}, ${city}, ${state} (${zipCode})`
 			},
 			{
 				header: 'School Phone #',
-				accessor: 'phone'
+				accessor: 'school.phone'
 			},
 			{
 				header: 'School Principal',
@@ -423,7 +437,7 @@
 			},
 			{
 				header: 'Division',
-				cell: ({division}) => division ? romanize(division) : '-'
+				cell: ({school: {division}}) => division ? romanize(division) : '-'
 			},
 			{
 				header: 'Action',

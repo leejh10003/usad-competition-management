@@ -5,7 +5,7 @@
 	import { imask } from '@imask/svelte';
 	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _, { cloneDeep } from 'lodash';
-	import { teamQuerySchema, teamResponseItemSchema } from 'usad-scheme';
+	import { competitionResponseItemSchema, teamQuerySchema, teamResponseItemSchema } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, Pencil, Trash, UsersIcon, XIcon } from '@lucide/svelte';
 	import z from 'zod';
 	import { romanize } from 'romans';
@@ -18,20 +18,17 @@
 	import PaginateTable from '$lib/components/paginate-table.svelte';
 	import DisplayTable from '$lib/components/display-table.svelte';
 	import SearchSelect from '$lib/components/search-select.svelte';
-	type TeamResponseItem = z.infer<typeof teamResponseItemSchema>;
-	type SchoolSearch = {
-		schoolId: string;
-		schoolName: string;
-		competitionInfo: string;
-	}
+	import type { schoolResponseItemSchema } from 'usad-scheme/src/school';
+	import type { SchoolsAgregatedItem, TeamAggregatedItem, TeamResponseItem } from '$lib/data/types';
+	
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
-	var teams = $state<TeamResponseItem[]>([]);
+	var teams = $state<TeamAggregatedItem[]>([]);
 	var currentEdit = $state<TeamResponseItem | null>(null);
 	var isActionBlocked = $state<boolean>(false);
-	var searchedSchools = $state<SchoolSearch[]>([]);
+	var searchedSchools = $state<SchoolsAgregatedItem[]>([]);
 	const query = $derived.by(() => page.url.searchParams);
 	const getLimit = $derived.by(() => {
 		const limit = query.get('limit');
@@ -56,9 +53,8 @@
 			}
 		});
 		searchedSchools = result.map((school) => ({
-			schoolId: school.id,
-			schoolName: school.name,
-			competitionInfo: competitions.find((comp) => comp.id === school.competitionId)?.name || 'N/A'
+			school,
+			competition: competitions.find((comp) => comp.id === school.competitionId)!
 		}));
 	}
 	function _currentParam() {
@@ -114,12 +110,14 @@
 				}
 			}
 		});
-		searchedSchools = schools.map((school) => ({
-			schoolId: school.id,
-			schoolName: school.name,
-			competitionInfo: competitions.find((comp) => comp.id === school.competitionId)?.name || 'N/A'
+		const fetchedSchools = schools.map((school) => ({
+			school,
+			competition: competitions.find((comp) => comp.id === school.competitionId)!
 		}));
-		teams = result;
+		teams = result.map((team) => ({
+			team,
+			school: fetchedSchools.find((s) => s.school.id === team.schoolId)!
+		}));
 		total = count;
 		currentCount = result.length;
 		isLoading = false;
@@ -147,9 +145,9 @@
 		<SearchSelect
 			items={searchedSchools}
 			bind:value={currentEdit!.schoolId}
-			itemToString={(item) => item.schoolName}
-			itemToValue={(item) => item.schoolId}
-			itemsSubscript={(item) => `Competition: ${item.competitionInfo}`}
+			itemToString={(item) => item.school.name}
+			itemToValue={(item) => item.school.id}
+			itemsSubscript={(item) => `Competition: ${item.competition.name}`}
 			fetchItems={fetchSchools}
 			propName="School Name"
 			placeHolder="Type to search schools..."
@@ -181,10 +179,15 @@
 	</Dialog.Description>
 </div>
 {/snippet}
-{#snippet actions(team: TeamResponseItem)}
+{#snippet actions(row: TeamAggregatedItem)}
+	{@const {team, school, team: {id, externalTeamId, division}} = row }
+	{@const name = `${school.school.name} (ID: ${externalTeamId})`}
 <Dialog>
 	<Dialog.Trigger
-		onclick={() => (currentEdit = cloneDeep(team))}
+		onclick={() => {
+			currentEdit = cloneDeep(team);
+			searchedSchools = [school];
+		}}
 		class="btn preset-filled"
 		disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger
 	>
@@ -276,15 +279,17 @@
 		<Collapsible.Content class="grid w-full grid-cols-3 gap-1">
 			<Dialog>
 				<Dialog.Trigger
-					onclick={() =>
-						(currentEdit = {
+					onclick={() => {
+						currentEdit = {
 							id: workerRequest.generateNewTeamId(),
 							division: null,
 							externalTeamId: '',
 							objectiveScore: 0,
 							subjectiveScore: 0,
 							schoolId: ''
-						})}
+						};
+						searchedSchools = [];
+					}}
 					class="btn preset-filled w-min"
 					disabled={isActionBlocked}><UsersIcon /> Create Team</Dialog.Trigger
 				>
@@ -321,11 +326,12 @@
 	<DisplayTable
 		{isLoading}
 		columns={[
-			{ header: 'ID #', accessor: 'externalTeamId' },
-			{ header: 'School ID #', accessor: 'schoolId' },
-			{ header: 'Division', cell: (row) => (row.division ? romanize(row.division) : '-') },
+			{ header: 'ID #', accessor: 'team.externalTeamId' },
+			{ header: 'School ID #', accessor: 'school.id' },
+			{ header: 'Division', cell: (row) => (row.team.division ? romanize(row.team.division) : '-') },
 			{ header: 'Action', snippet: actions }
 		]}
+		getId={(row) => row.team.id}
 		{getLimit}
 		{offset}
 		{total}

@@ -19,18 +19,16 @@
 	import { imask } from '@imask/svelte';
 	import SearchSelect from '$lib/components/search-select.svelte';
 	import { competitionResponseItemSchema } from 'usad-scheme';
-	import type { SchoolSearch, TeamSearch } from '$lib/data/schema';
 	import { dialogAppearAnimation } from '$lib/utils/animation';
 	import { cloneDeep } from 'lodash';
+	import type { CompetitionResponseItem, SchoolsAgregatedItem, StudentAggregatedItem, StudentResponseItem, TeamAggregatedItem } from '$lib/data/types';
 	//TODO: determine to use response item as schema, or use client specific schema, or splitting input/update schema
-	type StudentResponseItem = z.infer<typeof studentResponseSchema>['student'];
-	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
 	var isLoading = $state<boolean>(true);
-	var searchedSchools = $state<SchoolSearch[]>([]);
-	var searchedTeams = $state<TeamSearch[]>([]);
+	var searchedSchools = $state<SchoolsAgregatedItem[]>([]);
+	var searchedTeams = $state<TeamAggregatedItem[]>([]);
 	var isFirstLoaded = $state<boolean>(true);
 	var isActionBlocked = $state<boolean>(false);
-	var students = $state<StudentResponseItem[]>([]);
+	var students = $state<StudentAggregatedItem[]>([]);
 	var currentCount = $state<number>(0);
 	var currentEdit = $state<StudentResponseItem | null>(null);
 	var pin = $state<string>('');
@@ -66,11 +64,13 @@
 				}
 			}
 		});
-		searchedSchools = result.map((school) => ({
-			schoolId: school.id,
-			schoolName: school.name,
-			competitionInfo: competitions.find((comp) => comp.id === school.competitionId)?.name || 'N/A'
-		}));
+		searchedSchools = result.map((school) => {
+			const competition = competitions.find((comp) => comp.id === school.competitionId);
+			return {
+				school,
+				competition: competition!,
+			}
+		});
 	}
 	const getLimit = $derived.by(() => {
 		const limit = query.get('limit');
@@ -119,44 +119,50 @@
 			take: getLimit,
 			skip: offset
 		});
-		var teams = await workerRequest.getTeam({
+		const fetchedTeams = await workerRequest.getTeam({
 			where: {
 				id: {
 					in: result.map((student) => student.teamId).filter((id): id is string => !!id)
 				}
 			}
 		});
-		var schools = await workerRequest.getSchool({
+		const fetchedSchools = await workerRequest.getSchool({
 			where: {
 				id: {
 					in: result.map((student) => student.schoolId).filter((id): id is string => !!id)
 				}
 			}
 		});
-		competitions = (await workerRequest.getCompetition({
+		const fetchedCompetitions = (await workerRequest.getCompetition({
 			where: {
 				id: {
-					in: schools.result.map((school) => school.competitionId)
+					in: fetchedSchools.result.map((school) => school.competitionId)
 				}
 			}
 		})).result;
-		searchedSchools = schools.result.map((school) => {
-			const competition = competitions.find((comp) => comp.id === school.competitionId);
+		const convertedSchools = fetchedSchools.result.map((school) => {
+			const competition = fetchedCompetitions.find((comp) => comp.id === school.competitionId);
 			return {
-				schoolId: school.id,
-				schoolName: school.name,
-				competitionInfo: competition ? competition.name : 'N/A'
+				school,
+				competition: competition!,
 			}
 		});
-		searchedTeams = teams.result.map((team) => {
-			const school = schools.result.find((school) => school.id === team.schoolId);
-			const competition = competitions.find((comp) => comp.id === school?.competitionId);
+		const convertedTeams = fetchedTeams.result.map((team) => {
+			const school = convertedSchools.find((school) => school.school.id === team.schoolId);
 			return {
-				teamId: team.id,
-				additionalInfo: `School: ${school ? school.name : 'N/A'}, Competition: ${competition ? competition.name : 'N/A'}`
+				team,
+				school: school!,
 			}
 		});
-		students = result;
+		students = result.map((student) => {
+			const team = convertedTeams.find((t) => t.team.id === student.teamId) || null;
+			const school = convertedSchools.find((s) => s.school.id === student.schoolId) || null;
+			return {
+				student,
+				team,
+				school,
+			}
+		});
 		total = count;
 		currentCount = result.length;
 		isLoading = false;
@@ -287,9 +293,9 @@
 			<SearchSelect
 				items={searchedSchools}
 				bind:value={currentEdit!.schoolId!}
-				itemToString={(item) => item.schoolName}
-				itemToValue={(item) => item.schoolId}
-				itemsSubscript={(item) => `Competition: ${item.competitionInfo}`}
+				itemToString={(item) => item.school.name}
+				itemToValue={(item) => item.school.id}
+				itemsSubscript={(item) => `Competition: ${item.competition.name}`}
 				fetchItems={fetchSchools}
 				propName="School Name"
 				placeHolder="Type to search schools..."
@@ -341,12 +347,22 @@
 		{/if}
 	</div>
 {/snippet}
-{#snippet actions(student: StudentResponseItem)}
+{#snippet actions(row: StudentAggregatedItem)}
+	{@const { student } = row}
+	{@const { firstName, lastName } = student}
+	{@const name = `${firstName} ${lastName}`}
 	{@const { attachmentOnRegistering, id } = student}
 	<Dialog>
 		<Dialog.Trigger
-			onclick={() =>
-				(currentEdit = cloneDeep(student))}
+			onclick={() => {
+				currentEdit = cloneDeep(student);
+				searchedSchools = row.school ? [row.school] : [];
+				searchedTeams = row.team ? [row.team] : [];
+				if (!currentEdit!.competitionId && row.school) {
+					currentEdit!.competitionId = row.school.competition.id;
+					competitions = row.school ? [row.school.competition] : [];
+				}
+			}}
 			class="btn preset-filled w-min"
 			disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger
 		>
@@ -481,16 +497,17 @@
 		{isFirstLoaded}
 		{offset}
 		{currentCount}
+		getId={(row) => row.student.id}
 		columns={[
 			{ header: 'ID #', accessor: 'externalStudentId' },
-			{ header: 'Name', cell: (row) => `${row.firstName} ${row.lastName}` },
+			{ header: 'Name', cell: (row) => `${row.student.firstName} ${row.student.lastName}` },
 			{ header: 'Address', cell: (row) => {
-				const { streetAddress, city, state, zipCode } = row;
+				const { student: {streetAddress, city, state, zipCode} } = row;
 				return `${streetAddress ?? ''}${streetAddress ? ', ' : ''}${city ?? ''}${city ? ', ' : ''}${state ?? ''}${state ? ', ' : ''}${zipCode ? `(${zipCode})` : ''}`;
 			} },
 			{ header: 'GPA', accessor: 'gpa' },
 			{ header: 'Group', cell: (row) => {
-				const { division } = row;
+				const { student: { division } } = row;
 				return division === 'H'
 					? 'Honors'
 					: division === 'S'

@@ -19,12 +19,7 @@
 	import TextInput from '$lib/components/text-input.svelte';
 	import PaginateTable from '$lib/components/paginate-table.svelte';
 	import DisplayTable from '$lib/components/display-table.svelte';
-	type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
-	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
-	type EventAggregatedItem = {
-		event: EventResponseItem;
-		competition: CompetitionResponseItem;
-	};
+	import type { CompetitionResponseItem, EventAggregatedItem, EventResponseItem } from '$lib/data/types';
 	var isActionBlocked = $state<boolean>(true);
 	var isWholeLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(false);
@@ -320,6 +315,7 @@
 		{offset}
 		{total}
 		{currentCount}
+		getId={(item) => item.event.id}
 		data={events}
 		columns={[
 			{

@@ -5,7 +5,7 @@
 	import { cloneDeep } from 'lodash';
 	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
 	import _ from 'lodash';
-	import { coachQuerySchema, coachResponseSchema } from 'usad-scheme';
+	import { coachQuerySchema, coachResponseSchema, competitionResponseItemSchema } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, IdCardLanyard, Pencil, Trash, XIcon } from '@lucide/svelte';
 	import z from 'zod';
 	import { splitStringForQueryHighlight } from '$lib/utils/string';
@@ -17,13 +17,14 @@
 	import DisplayTable from '$lib/components/display-table.svelte';
 	import SearchedText from '$lib/components/searched-text.svelte';
 	import SearchSelect from '$lib/components/search-select.svelte';
-	import type { SchoolSearch } from '$lib/data/schema';
-	type CoachResponseItem = z.infer<typeof coachResponseSchema>['coach'];
+	import type { schoolResponseItemSchema } from 'usad-scheme/src/school';
+	import type { CoachAggregatedItem, CoachResponseItem, SchoolsAgregatedItem } from '$lib/data/types';
+	
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
 	var currentEdit = $state<CoachResponseItem | null>(null);
 	var isActionBlocked = $state<boolean>(false);
-	var searchedSchools = $state<SchoolSearch[]>([]);
+	var searchedSchools = $state<SchoolsAgregatedItem[]>([]);
 	async function fetchSchools(query: string) {
 		const { result } = await workerRequest.getSchool({
 			where: {
@@ -42,9 +43,8 @@
 			}
 		});
 		searchedSchools = result.map((school) => ({
-			schoolId: school.id,
-			schoolName: school.name,
-			competitionInfo: competitions.find((comp) => comp.id === school.competitionId)?.name || 'N/A'
+			school,
+			competition: competitions.find((comp) => comp.id === school.competitionId)!
 		}));
 	}
 	function _currentParam() {
@@ -97,7 +97,7 @@
 	const offset = $derived.by(() => (getCurrentPage - 1) * getLimit);
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
-	var coaches = $state<CoachResponseItem[]>([]);
+	var coaches = $state<CoachAggregatedItem[]>([]);
 	const query = $derived.by(() => page.url.searchParams);
 	const getExternalCoachIdQueryString = $derived(query.get('externalCoachIdQueryString') ?? undefined)
 	function setExternalCoachIdQueryString(input: string | undefined) {
@@ -174,12 +174,14 @@
 				}
 			}
 		});
-		searchedSchools = schools.map((school) => ({
-			schoolId: school.id,
-			schoolName: school.name,
-			competitionInfo: competitions.find((comp) => comp.id === school.competitionId)?.name || 'N/A'
+		const fetchedSchools = schools.map((school) => ({
+			school,
+			competition: competitions.find((comp) => comp.id === school.competitionId)!
 		}));
-		coaches = result;
+		coaches = result.map((coach) => ({
+			coach,
+			school: fetchedSchools.find((school) => school.school.id === coach.schoolId)!
+		}));
 		total = count;
 		currentCount = result.length;
 		isLoading = false;
@@ -206,9 +208,9 @@
 		<SearchSelect
 			items={searchedSchools}
 			bind:value={currentEdit!.schoolId}
-			itemToString={(item) => item.schoolName}
-			itemToValue={(item) => item.schoolId}
-			itemsSubscript={(item) => `Competition: ${item.competitionInfo}`}
+			itemToString={(item) => item.school.name}
+			itemToValue={(item) => item.school.id}
+			itemsSubscript={(item) => `Competition: ${item.competition.name}`}
 			fetchItems={fetchSchools}
 			propName="School Name"
 			placeHolder="Type to search schools..."
@@ -238,10 +240,15 @@
 	</Dialog.Description>
 </div>
 {/snippet}
-{#snippet actions(coach: CoachResponseItem)}
+{#snippet actions(row: CoachAggregatedItem)}
+	{@const {coach, school, coach: {id, firstName, lastName}} = row }
+	{@const name = `${firstName} ${lastName}`}
 <Dialog>
 	<Dialog.Trigger
-		onclick={() => (currentEdit = cloneDeep(coach))}
+		onclick={() => {
+			currentEdit = cloneDeep(coach);
+			searchedSchools = [school];
+		}}
 		class="btn preset-filled"
 		disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger
 	>
@@ -321,8 +328,8 @@
 	</Portal>
 </Dialog>
 {/snippet}
-{#snippet nameSearch(row: CoachResponseItem)}
-	{@const { firstName, lastName } = row}
+{#snippet nameSearch(row: CoachAggregatedItem)}
+	{@const {coach: {firstName, lastName}} = row }
 	{@const firstNameSplit = splitStringForQueryHighlight(
 		firstName,
 		getCoachFirstNameQueryString
@@ -387,8 +394,8 @@
 			<div class="flex flex-row justify-center items-end">
 				<Dialog>
 					<Dialog.Trigger
-						onclick={() =>
-							(currentEdit = {
+						onclick={() => {
+							currentEdit = {
 								id: workerRequest.generateNewCompetitionId(),
 								mutationIndex: 0,
 								externalCoachId: '',
@@ -397,7 +404,9 @@
 								email: '',
 								phone: '',
 								schoolId: '',
-							})}
+							};
+							searchedSchools = [];
+						}}
 						class="btn preset-filled w-min h-min"
 						disabled={isActionBlocked}><IdCardLanyard /> Create Coach</Dialog.Trigger
 					>
@@ -440,11 +449,12 @@
 		{offset}
 		{isFirstLoaded}
 		{currentCount}
+		getId={(row) => row.coach.id}
 		columns={[
-			{ header: 'Coach ID', accessor: 'externalCoachId' },
+			{ header: 'Coach ID', accessor: 'coach.externalCoachId' },
 			{ header: 'Name', snippet: nameSearch },
-			{ header: 'Phone', accessor: 'phone' },
-			{ header: 'Email', accessor: 'email' },
+			{ header: 'Phone', accessor: 'coach.phone' },
+			{ header: 'Email', accessor: 'coach.email' },
 			{ header: 'Actions', snippet: actions },
 		]}
 	/>

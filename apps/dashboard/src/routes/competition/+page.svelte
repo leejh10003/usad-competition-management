@@ -20,8 +20,7 @@
 	import PaginateTable from '$lib/components/paginate-table.svelte';
 	import DisplayTable from '$lib/components/display-table.svelte';
 	import { nonRelativeEventsEnums, relativeEventEnums } from 'usad-scheme/src/constants';
-	type CompetitionResponseItem = z.infer<typeof competitionResponseItemSchema>;
-	type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
+	import type { CompetitionListItem, CompetitionResponseItem } from '$lib/data/types';
 	const nonRelativeEvents = Object.entries(nonRelativeEventsEnums.def.entries).map(([key, value]) => ({
 		shorthand: key,
 		original: value
@@ -37,7 +36,7 @@
 	var limit = $state<number>(10);
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
-	var competitions = $state<(CompetitionResponseItem & {events: EventResponseItem[]})[]>([]);
+	var competitions = $state<CompetitionListItem[]>([]);
     var mailAddresses = $state<string[]>(['', '', '']);
 	const toggledAll = $derived.by(() => currentEdit!.competitionAvailableStates.length === states.length)
 	function _currentParam() {
@@ -386,6 +385,7 @@
 		{currentCount}
 		{isFirstLoaded}
 		{getLimit}
+		getId={(item) => item.id}
 		isLoading={isWholeLoading}
 		data={competitions}
 		columns={[
