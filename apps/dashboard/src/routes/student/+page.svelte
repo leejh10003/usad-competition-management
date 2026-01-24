@@ -184,7 +184,6 @@
 	}
 </script>
 {#snippet studentDetail(alreadyExisting: boolean)}
-	<!--TODO: If creating, ignore individual and show individual or school/team dropdown.-->
 	<Select
 		propName="Student Type"
 		bind:value={currentEdit!.type}
