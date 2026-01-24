@@ -12,6 +12,7 @@
             cell?: (row: T) => any;
             snippet?: Snippet<[T]>;
         }>>(),
+        getId,
         isFirstLoaded = $bindable<boolean>(false),
         offset = $bindable<number>(0),
         currentCount = $bindable<number>(0),
@@ -26,6 +27,7 @@
             cell?: (row: T) => any;
             snippet?: Snippet<[T]>;
         }>,
+        getId: (item: T) => string | number,
         isFirstLoaded: boolean,
         offset: number,
         currentCount: number,
@@ -50,7 +52,7 @@
                 </tr>
             {/each}
         {:else}
-            {#each data as item (item.id)}
+            {#each data as item (getId(item))}
                 <tr>
                     {#each columns as column (column.header)}
                         <td>
