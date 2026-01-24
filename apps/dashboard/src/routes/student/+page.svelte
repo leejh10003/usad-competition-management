@@ -183,9 +183,19 @@
 		return !!(student.guardianPhone || student.guardianLastName || student.guardianFirstName || student.guardianEmail);
 	}
 </script>
-{#snippet studentDetail(alreadyExisting: boolean, individual: boolean)}
+{#snippet studentDetail(alreadyExisting: boolean)}
 	<!--TODO: If creating, ignore individual and show individual or school/team dropdown.-->
-
+	<Select
+		propName="Student Type"
+		bind:value={currentEdit!.type}
+		options={[
+			{ label: 'Individual', value: "individual" },
+			{ label: 'School/Team', value: "team" }
+		]}
+		key={(option) => option.value.toString()}
+		display={(option) => option.label}
+		mapValue={(option) => option.value}
+	/>
 	<TextInput
 		propName="Student ID #"
 		bind:inputValue={currentEdit!.externalStudentId}
@@ -239,7 +249,7 @@
 	<!--TODO: uploaded files => After implementing file uploading-->
 	signature
 	attachmentOnRegistering
-	{#if !individual || alreadyExisting}
+	{#if currentEdit!.type !== "individual" || alreadyExisting}
 		<!--TODO: Select school/team. But for individuals, only show virtual ones. If school/team ones, show real ones-->
 		<!--TODO: If parent ones are changed, reset children ones. List and value, both of them-->
 		<SearchSelect
@@ -271,7 +281,7 @@
 			placeHolder="Type to search team..."
 		/>-->
 	{/if}
-	{#if individual}
+	{#if currentEdit!.type === "individual"	}
 		<TextInput propName="Street Address" bind:inputValue={currentEdit!.streetAddress} />
 		<TextInput propName="City" bind:inputValue={currentEdit!.city} />
 		<Select
@@ -321,7 +331,7 @@
 								<XIcon class="size-4" />
 							</Dialog.CloseTrigger>
 						</header>
-						{@render studentDetail(true, determineStudentIsIndividual(student))}
+						{@render studentDetail(true)}
 						<footer class="flex justify-end gap-2">
 							<Dialog.CloseTrigger
 								class="btn preset-filled-primary-50-950"
