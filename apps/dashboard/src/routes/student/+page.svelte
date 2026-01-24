@@ -195,6 +195,24 @@
 			key={(option) => option.value.toString()}
 			display={(option) => option.label}
 			mapValue={(option) => option.value}
+			valueChanged={(oldValue, newValue) => {
+				if (newValue === 'individual' && oldValue !== 'individual') {
+					//reset team/school related info
+					currentEdit!.competitionId = null;
+					currentEdit!.schoolId = null;
+					currentEdit!.teamId = null;
+				} else if (newValue === 'team' && oldValue !== 'team') {
+					//reset individual related info
+					currentEdit!.streetAddress = null;
+					currentEdit!.city = null;
+					currentEdit!.state = null;
+					currentEdit!.zipCode = null;
+					currentEdit!.guardianFirstName = null;
+					currentEdit!.guardianLastName = null;
+					currentEdit!.guardianPhone = null;
+					currentEdit!.guardianEmail = null;
+				}
+			}}
 		/>
 		<TextInput
 			propName="Student ID #"
@@ -251,7 +269,6 @@
 		attachmentOnRegistering
 		{#if currentEdit!.type !== "individual" || alreadyExisting}
 			<!--TODO: Select school/team. But for individuals, only show virtual ones. If school/team ones, show real ones-->
-			<!--TODO: If parent ones are changed, reset children ones. List and value, both of them-->
 			<SearchSelect
 				items={competitions}
 				bind:value={currentEdit!.competitionId!}
@@ -260,6 +277,12 @@
 				fetchItems={fetchCompetitions}
 				propName="Competition Name"
 				placeHolder="Type to search competitions..."
+				valueChanged={(oldValue, newValue) => {
+					if (oldValue !== newValue) {
+						currentEdit!.schoolId = null;
+						currentEdit!.teamId = null;
+					}
+				}}
 			/>
 			<SearchSelect
 				items={searchedSchools}
@@ -270,6 +293,12 @@
 				fetchItems={fetchSchools}
 				propName="School Name"
 				placeHolder="Type to search schools..."
+				valueChanged={(oldValue, newValue) => {
+					if (oldValue !== newValue) {
+						//reset team related info
+						currentEdit!.teamId = null;
+					}
+				}}
 			/>
 			<!--<SearchSelect
 				items={searchedTeams}
