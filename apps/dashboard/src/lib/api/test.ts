@@ -323,7 +323,8 @@ class WorkerRequest {
 			lastName: 'Miller',
 			mutationIndex: 0,
 			objectiveScore: 85,
-			subjectiveScore: 92
+			subjectiveScore: 92,
+			type: "team",
 		},
 		{
 			id: 'aacee28b-6040-4ba7-b2a1-cee3f2068c2a',
@@ -345,7 +346,8 @@ class WorkerRequest {
 			lastName: 'Smith',
 			mutationIndex: 1,
 			objectiveScore: 78,
-			subjectiveScore: 88
+			subjectiveScore: 88,
+			type: "team",
 		},
 		{
 			id: '49476cc2-048f-4d16-bf98-b9b87aa50077',
@@ -367,7 +369,8 @@ class WorkerRequest {
 			lastName: 'Johnson',
 			mutationIndex: 2,
 			objectiveScore: 94,
-			subjectiveScore: 81
+			subjectiveScore: 81,
+			type: "team",
 		},
 		{
 			id: '080bce17-748b-402e-b44b-e1629a3782af',
@@ -389,7 +392,8 @@ class WorkerRequest {
 			lastName: 'Williams',
 			mutationIndex: 3,
 			objectiveScore: 62,
-			subjectiveScore: 75
+			subjectiveScore: 75,
+			type: "team",
 		},
 		{
 			id: '2cd17e6f-a3d4-4a2a-9bb5-e8da24d733c3',
@@ -411,7 +415,8 @@ class WorkerRequest {
 			lastName: 'Brown',
 			mutationIndex: 4,
 			objectiveScore: 71,
-			subjectiveScore: 69
+			subjectiveScore: 69,
+			type: "team",
 		},
 		{
 			id: 'ff465620-e097-4f80-8da6-ab846ee0938e',
@@ -433,7 +438,8 @@ class WorkerRequest {
 			lastName: 'Jones',
 			mutationIndex: 5,
 			objectiveScore: 88,
-			subjectiveScore: 84
+			subjectiveScore: 84,
+			type: "team",
 		},
 		{
 			id: '825d4d26-405a-48b7-87a3-1093323d9b24',
@@ -455,7 +461,8 @@ class WorkerRequest {
 			lastName: 'Garcia',
 			mutationIndex: 6,
 			objectiveScore: 55,
-			subjectiveScore: 60
+			subjectiveScore: 60,
+			type: "team",
 		},
 		{
 			id: '6b1ceadc-d7a1-457d-8e89-6cf99dd320ff',
@@ -477,7 +484,8 @@ class WorkerRequest {
 			lastName: 'Miller',
 			mutationIndex: 7,
 			objectiveScore: 67,
-			subjectiveScore: 72
+			subjectiveScore: 72,
+			type: "team",
 		},
 		{
 			id: 'de63cd76-05e1-4633-a81b-dcb635fbab4f',
@@ -499,7 +507,8 @@ class WorkerRequest {
 			lastName: 'Davis',
 			mutationIndex: 8,
 			objectiveScore: 49,
-			subjectiveScore: 58
+			subjectiveScore: 58,
+			type: "team",
 		},
 		{
 			id: '20bd6771-a683-4b0e-b37d-eed53ff799d4',
@@ -521,7 +530,8 @@ class WorkerRequest {
 			lastName: 'Rodriguez',
 			mutationIndex: 9,
 			objectiveScore: 91,
-			subjectiveScore: 89
+			subjectiveScore: 89,
+			type: "team",
 		},
 		{
 			id: '2e577ebb-3ed4-4a5d-b96f-38aba22472e1',
@@ -543,7 +553,8 @@ class WorkerRequest {
 			lastName: 'Martinez',
 			mutationIndex: 10,
 			objectiveScore: 83,
-			subjectiveScore: 95
+			subjectiveScore: 95,
+			type: "team",
 		},
 		{
 			id: '292b4a8f-b675-4459-9761-1c729b6e364a',
@@ -565,7 +576,8 @@ class WorkerRequest {
 			lastName: 'Hernandez',
 			mutationIndex: 11,
 			objectiveScore: 97,
-			subjectiveScore: 90
+			subjectiveScore: 90,
+			type: "team",
 		},
 		{
 			id: '51998bc9-c126-4ead-90c4-4551a0abf76b',
@@ -587,7 +599,8 @@ class WorkerRequest {
 			lastName: 'Lopez',
 			mutationIndex: 12,
 			objectiveScore: 74,
-			subjectiveScore: 82
+			subjectiveScore: 82,
+			type: "team",
 		},
 		{
 			id: '16b4468a-5f27-4b17-98cf-9b94524b425d',
@@ -609,7 +622,8 @@ class WorkerRequest {
 			lastName: 'Gonzalez',
 			mutationIndex: 13,
 			objectiveScore: 80,
-			subjectiveScore: 76
+			subjectiveScore: 76,
+			type: "team",
 		},
 		{
 			id: '9d18ea73-5e14-453c-9f5a-02489cd8299e',
@@ -631,7 +645,8 @@ class WorkerRequest {
 			lastName: 'Wilson',
 			mutationIndex: 14,
 			objectiveScore: 68,
-			subjectiveScore: 73
+			subjectiveScore: 73,
+			type: "team",
 		},
 		{
 			id: '76264e0b-e6d9-4d92-ab3d-9bdf67aa3e54',
@@ -653,7 +668,8 @@ class WorkerRequest {
 			lastName: 'Anderson',
 			mutationIndex: 15,
 			objectiveScore: 42,
-			subjectiveScore: 54
+			subjectiveScore: 54,
+			type: "team",
 		},
 		{
 			id: '7c5591ff-2b19-4e05-98d8-22f88524dd88',
@@ -675,7 +691,8 @@ class WorkerRequest {
 			lastName: 'Thomas',
 			mutationIndex: 16,
 			objectiveScore: 59,
-			subjectiveScore: 61
+			subjectiveScore: 61,
+			type: "team",
 		},
 		{
 			id: 'f67bcd35-f6c9-4278-8949-18814ab1ee31',
@@ -697,7 +714,8 @@ class WorkerRequest {
 			lastName: 'Taylor',
 			mutationIndex: 17,
 			objectiveScore: 88,
-			subjectiveScore: 84
+			subjectiveScore: 84,
+			type: "team",
 		},
 		{
 			id: '3e70e81f-f5e1-4212-ba37-1c38e50bb866',
@@ -719,7 +737,8 @@ class WorkerRequest {
 			lastName: 'Moore',
 			mutationIndex: 18,
 			objectiveScore: 92,
-			subjectiveScore: 87
+			subjectiveScore: 87,
+			type: "team"
 		},
 		{
 			id: '11a4fa9b-3820-4c1e-8196-053f60b72d68',
@@ -741,7 +760,8 @@ class WorkerRequest {
 			lastName: 'Jackson',
 			mutationIndex: 19,
 			objectiveScore: 85,
-			subjectiveScore: 91
+			subjectiveScore: 91,
+			type: "team"
 		},
 		{
 			id: '72739130-5a04-47c3-b0bd-76147de59a5d',
@@ -763,7 +783,8 @@ class WorkerRequest {
 			lastName: 'Martin',
 			mutationIndex: 20,
 			objectiveScore: 72,
-			subjectiveScore: 78
+			subjectiveScore: 78,
+			type: "team"
 		},
 		{
 			id: '75e36127-d814-4340-a3bd-91f8ae890f6e',
@@ -785,7 +806,8 @@ class WorkerRequest {
 			lastName: 'Lee',
 			mutationIndex: 21,
 			objectiveScore: 81,
-			subjectiveScore: 74
+			subjectiveScore: 74,
+			type: "team"
 		},
 		{
 			id: 'c3611b9f-b416-48af-9347-95c48ed060a8',
@@ -807,7 +829,8 @@ class WorkerRequest {
 			lastName: 'Perez',
 			mutationIndex: 22,
 			objectiveScore: 89,
-			subjectiveScore: 93
+			subjectiveScore: 93,
+			type: "team"
 		},
 		{
 			id: '1cf17dd3-77c8-493b-93d7-1d26d289a416',
@@ -829,7 +852,8 @@ class WorkerRequest {
 			lastName: 'Thompson',
 			mutationIndex: 23,
 			objectiveScore: 94,
-			subjectiveScore: 88
+			subjectiveScore: 88,
+			type: "team"
 		},
 		{
 			id: '9a75d5b3-2df2-4939-9626-23bbdeb117d9',
@@ -851,7 +875,8 @@ class WorkerRequest {
 			lastName: 'White',
 			mutationIndex: 24,
 			objectiveScore: 82,
-			subjectiveScore: 85
+			subjectiveScore: 85,
+			type: "team",
 		},
 		{
 			id: '5bc3db05-28e8-4516-82af-09f2fcb1b29b',
@@ -873,7 +898,8 @@ class WorkerRequest {
 			lastName: 'Harris',
 			mutationIndex: 25,
 			objectiveScore: 70,
-			subjectiveScore: 79
+			subjectiveScore: 79,
+			type: "team",
 		},
 		{
 			id: '8588bd34-d0cc-420b-b599-92c7edbbcb95',
@@ -895,7 +921,8 @@ class WorkerRequest {
 			lastName: 'Sanchez',
 			mutationIndex: 26,
 			objectiveScore: 76,
-			subjectiveScore: 71
+			subjectiveScore: 71,
+			type: "team",
 		},
 		{
 			id: '21c95b7f-47d0-487b-99c1-bf93ee719081',
@@ -917,7 +944,8 @@ class WorkerRequest {
 			lastName: 'Clark',
 			mutationIndex: 27,
 			objectiveScore: 90,
-			subjectiveScore: 86
+			subjectiveScore: 86,
+			type: "team",
 		},
 		{
 			id: 'bf2e8b11-c9c7-4eab-9923-7245e47565fd',
@@ -939,7 +967,8 @@ class WorkerRequest {
 			lastName: 'Ramirez',
 			mutationIndex: 28,
 			objectiveScore: 84,
-			subjectiveScore: 90
+			subjectiveScore: 90,
+			type: "team",
 		},
 		{
 			id: '8cfde76f-be5d-4262-806b-a0d5ef7c55cc',
@@ -961,7 +990,8 @@ class WorkerRequest {
 			lastName: 'Lewis',
 			mutationIndex: 29,
 			objectiveScore: 95,
-			subjectiveScore: 82
+			subjectiveScore: 82,
+			type: "team",
 		},
 		{
 			id: '01651989-32f4-49a9-962d-742f47b3b0cb',
@@ -983,7 +1013,8 @@ class WorkerRequest {
 			lastName: 'Robinson',
 			mutationIndex: 30,
 			objectiveScore: 87,
-			subjectiveScore: 89
+			subjectiveScore: 89,
+			type: "team",
 		},
 		{
 			id: '1e0c58f4-12bf-48a2-959d-f806f5d07104',
@@ -1005,7 +1036,8 @@ class WorkerRequest {
 			lastName: 'Walker',
 			mutationIndex: 31,
 			objectiveScore: 91,
-			subjectiveScore: 94
+			subjectiveScore: 94,
+			type: "team",
 		}
 	]);
 	events = Enumerable.from<EventResponseItem>([
