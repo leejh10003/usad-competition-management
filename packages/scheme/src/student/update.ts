@@ -9,8 +9,12 @@ const basicStudentUpdate = z.object({
   division: division.optional(),
   mutationIndex: z.int(),
 });
-
-export const studentUpdateItem = basicStudentUpdate.or(insertStudentWithSchoolId).or(insertStudentWithIndividualAddress).or(optionalInfosCommon);
+export const studentUpdateItem = basicStudentUpdate
+  .and(optionalInfosCommon)
+  .and(
+    insertStudentWithSchoolId.partial({type: true})
+    .or(insertStudentWithIndividualAddress.partial({type: true}))
+  )
 
 export const studentUpdateSchema = z.object({
   id: z.uuid(),

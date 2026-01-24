@@ -14,6 +14,8 @@ export const optionalInfosCommon = z.object({
 
 export const insertStudentWithSchoolId = z.object({
   schoolId: z.uuid().nullable().optional(),
+  teamId: z.uuid().nullable().optional(),
+  type: z.literal("team")
 });
 
 export const insertStudentWithIndividualAddress = z.object({
@@ -26,6 +28,7 @@ export const insertStudentWithIndividualAddress = z.object({
   guardianPhone: z.string().nullable().optional(),
   guardianEmail: z.string().nullable().optional(),
   competitionId: z.uuid().nullable().optional(),
+  type: z.literal("individual")
 });
 
 export const optionalInfos = optionalInfosCommon.and(
