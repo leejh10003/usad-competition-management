@@ -1,13 +1,14 @@
 <script lang="ts" generics="T">
     import { range } from 'lodash';
 	import { type Snippet } from 'svelte';
+    import { get } from 'lodash'
     const {
         isLoading = $bindable<boolean>(),
         getLimit = $bindable<number>(),
         data = $bindable<Array<T>>(),
         columns = $bindable<Array<{
             header: string;
-            accessor?: keyof T;
+            accessor?: Parameters<typeof get<T>>[1];
             cell?: (row: T) => any;
             snippet?: Snippet<[T]>;
         }>>(),
@@ -21,7 +22,7 @@
         data: Array<T>,
         columns: Array<{
             header: string;
-            accessor?: keyof T;
+            accessor?: Parameters<typeof get<T>>[1];
             cell?: (row: T) => any;
             snippet?: Snippet<[T]>;
         }>,
@@ -58,7 +59,7 @@
                             {:else if column.cell}
                                 {column.cell(item)}
                             {:else if !column.cell && column.accessor}
-                                {item[column.accessor]}
+                                {get(item, column.accessor, '')}
                             {:else}
                                 <!--{column.cell ? (column.cell(item)) : item[column.accessor]}-->
                             {/if}
