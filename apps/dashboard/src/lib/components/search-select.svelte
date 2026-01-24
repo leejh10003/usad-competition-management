@@ -1,6 +1,6 @@
 <script lang="ts" generics="T">
 	import { Listbox, useListCollection } from "@skeletonlabs/skeleton-svelte";
-	import { debounce } from "lodash";
+	import { debounce, uniqBy } from "lodash";
     interface SearchSelectProps { 
         items: T[],
         itemToString: (item: T) => string,
@@ -17,11 +17,13 @@
     $effect(() => {
         currentSelected = (items as T[]).find((item) => itemToValue(item) === value) || null
     });
-    const collection = $derived(useListCollection({
-        items: new Set<T>([...items as T[], ...(currentSelected ? [currentSelected] : [])]),
-        itemToString,
-        itemToValue,
-    }));
+    const collection = $derived.by(() => {
+        return useListCollection({
+            items: uniqBy([...items, ...(currentSelected ? [currentSelected] : [])], itemToValue),
+            itemToString,
+            itemToValue,
+        })
+    });
     const fetchItemsWithDebounce = debounce(fetchItems, 300);
 </script>
 <Listbox class="w-full max-w-md" collection={collection} selectionMode="single" value={[value]} deselectable onValueChange={({value: eventValue}) => {
