@@ -13,17 +13,15 @@
         valueChanged?: (oldValue: string, newValue: string) => void
     }
     let { items, itemToString, itemToValue, itemsSubscript, fetchItems, propName, placeHolder, value = $bindable<string>(), valueChanged }: SearchSelectProps = $props();
-    var currentSelected: T | null = null;
-    const collection = $derived(
-		useListCollection({
-			items: new Set<T>([...items as T[], ...(currentSelected ? [currentSelected] : [])]),
-			itemToString,
-			itemToValue,
-		}),
-	);
+    var currentSelected = $state<T | null>(null);
     $effect(() => {
-        currentSelected = (items as T[]).find((item) => itemToValue(item) === value) || null;
+        currentSelected = (items as T[]).find((item) => itemToValue(item) === value) || null
     });
+    const collection = $derived(useListCollection({
+        items: new Set<T>([...items as T[], ...(currentSelected ? [currentSelected] : [])]),
+        itemToString,
+        itemToValue,
+    }));
     const fetchItemsWithDebounce = debounce(fetchItems, 300);
 </script>
 <Listbox class="w-full max-w-md" collection={collection} selectionMode="single" value={[value]} deselectable onValueChange={({value: eventValue}) => {
