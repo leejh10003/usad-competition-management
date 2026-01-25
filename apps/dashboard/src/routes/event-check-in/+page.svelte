@@ -5,8 +5,8 @@
 	import { page } from '$app/state';
 	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
 	import { eventCheckedInItem, eventCheckInQuerySchema, eventResponseItemSchema, studentResponseSchema } from 'usad-scheme';
-	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, CalendarPlus2 } from '@lucide/svelte';
-	import z from 'zod';
+	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, CalendarPlus2, XIcon } from '@lucide/svelte';
+	import z, { check } from 'zod';
 	import { parseInt } from 'es-toolkit/compat';
 	import moment from 'moment-timezone';
 	import { resolve } from '$app/paths';
@@ -14,9 +14,8 @@
 	import PaginateTable from '$lib/components/paginate-table.svelte';
 	import DisplayTable from '$lib/components/display-table.svelte';
 	import { timezoneFormatted } from '$lib/utils/time';
-	type EventCheckedInItem = z.infer<typeof eventCheckedInItem>;
-	type StudentResponseItem = z.infer<typeof studentResponseSchema>['student'];
-	type EventResponseItem = z.infer<typeof eventResponseItemSchema>;
+	import type { EventCheckedInItem, StudentResponseItem, EventResponseItem, EventCheckedInAggregatedItem, CompetitionResponseItem } from '$lib/data/types';
+	import { dialogAppearAnimation } from '$lib/utils/animation';
 	var isLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(true);
 	var limit = $state<number>(10);
@@ -24,22 +23,7 @@
 	var offset = $derived.by(() => pagination * limit);
 	var total = $state<number>(0);
 	var currentCount = $state<number>(0);
-	var checkIns = $state<EventCheckedInItem[]>([]);
-	var students = $state<StudentResponseItem[]>([]);
-	var events = $state<EventResponseItem[]>([]);
-	var aggregated = $derived.by(() => {
-		return checkIns.map((checkIn) => {
-			const event = events.find((e) => e.id === checkIn.eventId);
-			const student = students.find((s) => s.id === checkIn.studentId);
-			return {
-				...checkIn,
-				eventName: event ? event.name : 'Unknown Event',
-				eventId: event ? event.id : 'Unknown Event',
-				studentName: student ? `${student.firstName} ${student.lastName}` : 'Unknown Student',
-				studentExternalId: student ? student.externalStudentId : 'Unknown Student',
-			};
-		});
-	});
+	var checkIns = $state<EventCheckedInAggregatedItem[]>([])
 	var timezone = moment.tz.guess();
 	const query = $derived.by(() => page.url.searchParams);
 	function _currentParam() {
@@ -84,25 +68,77 @@
 			take: getLimit,
 			skip: offset,
 		});
-		const { result: eventResult } = await workerRequest.getEvents({
+		 const [eventResult, studentResult] = await Promise.all([(workerRequest.getEvents({
 			where: {
 				id: {
 					in: result.map((e) => e.eventId)
 				}
 			},
 			take: getLimit
-		});
-		const { result: studentResult } = await workerRequest.getStudent({
+		})).then((res) => res.result), workerRequest.getStudent({
 			where: {
 				id: {
 					in: result.map((e) => e.studentId)
 				}
 			},
 			take: getLimit
+		}).then((res) => res.result)]);
+		const team = await workerRequest.getTeam({
+			where: {
+				id: {
+					in: studentResult.map((s) => s.teamId!)
+				}
+			},
 		});
-		checkIns = result;
-		events = eventResult;
-		students = studentResult;
+		const school = await workerRequest.getSchool({
+			where: {
+				id: {
+					in: Array.from(new Set([...studentResult.map((s) => s.schoolId!), ...team.result.map((t) => t.schoolId)].filter((id): id is string => !!id)))
+				}
+			},
+		});
+		const competition = await workerRequest.getCompetition({
+			where: {
+				id: {
+					in: Array.from(new Set([
+						...school.result.map((s) => s.competitionId),
+						...eventResult.map((e) => e.competitionId),
+						...studentResult.map((s) => s.competitionId),
+					].filter((id): id is string => !!id)))
+				}
+			},
+		});
+		checkIns = result.map((eventCheckedIn) => {
+			const event = eventResult.find((e) => e.id === eventCheckedIn.eventId)!;
+			const student = studentResult.find((s) => s.id === eventCheckedIn.studentId)!;
+			const eventCompetition = competition.result.find((c) => c.id === event.competitionId)!;
+			const studentSchool = school.result.find((s) => s.id === student.schoolId);
+			const studentCompetition = competition.result.find((c) => c.id === student.competitionId);
+			const studentTeam = team.result.find((t) => t.id === student.teamId);
+			const teamSchool = studentTeam ? school.result.find((s) => s.id === studentTeam.schoolId) : null;
+			const schoolCompetition = studentSchool ? competition.result.find((c) => c.id === studentSchool.competitionId) : null;
+			return {
+				eventCheckedIn,
+				event: {
+					event,
+					competition: eventCompetition
+				},
+				student: {
+					student,
+					school: {
+						school: studentSchool,
+						competition: studentCompetition,
+					},
+					team: {
+						school: {
+							school: teamSchool,
+							competition: schoolCompetition,
+						},
+						team: studentTeam,
+					},
+				},
+			} as EventCheckedInAggregatedItem;
+		});
 		total = count;
 		currentCount = result.length;
 		isLoading = false;
@@ -115,6 +151,19 @@
 			fetch();
 		}
 	});
+	var competitions = $state<CompetitionResponseItem[]>([]);
+	async function fetchCompetitions(query: string) {
+		const { result } = await workerRequest.getCompetition({
+			where: {
+				name: {
+					contains: query,
+					mode: 'insensitive'
+				}
+			},
+			take: 50,
+		});
+		competitions = result;
+	}
 </script>
 
 <div class="flex h-full w-full flex-col gap-y-3.5 p-8">
@@ -127,36 +176,28 @@
 			</Collapsible.Trigger>
 		</div>
 		<Collapsible.Content class="grid w-full grid-cols-3 gap-1">
-			<Dialog>
-				<Dialog.Trigger
-					class="btn preset-filled w-min"><CalendarPlus2 />Assign Student To Event</Dialog.Trigger
-				>
-				<Portal>
-					test
-				</Portal>
-			</Dialog>
 		</Collapsible.Content>
 	</Collapsible>
 	<DisplayTable
 		{isFirstLoaded}
 		{isLoading}
-		getId={(item) => `${item.studentId}-${item.eventId}`}
+		getId={(item) => `${item.eventCheckedIn.studentId}-${item.eventCheckedIn.eventId}`}
 		{getLimit}
 		{offset}
 		{total}
 		{currentCount}
-		data={aggregated}
+		data={checkIns}
 		columns={[
 			{
 				header: 'Event',
-				accessor: 'eventName' as keyof EventCheckedInItem,
+				accessor: 'event.event.name',
 			},
 			{
 				header: 'Student',
-				accessor: 'studentName' as keyof EventCheckedInItem,
+				accessor: 'student.student.firstName',
 				cell: (row) => {
-					const student = students.find((s) => s.id === row.studentId);
-					return student ? `${row.studentName} (${student.externalStudentId})` : row.studentName;
+					const studentName = `${row.student.student.firstName} ${row.student.student.lastName}`;
+					return studentName ? `${studentName} (${row.student.student.externalStudentId})` : studentName;
 				}
 			},
 			{
@@ -165,7 +206,7 @@
 				cell: (value) => {
 					return !value
 						? 'Not yet'
-						: `${moment(value.checkedInAt).format('MM-DD-YYYY hh:mm:ss')} at timezone ${timezoneFormatted}`;
+						: `${moment(value.eventCheckedIn.checkedInAt).format('MM-DD-YYYY hh:mm:ss')} at timezone ${timezoneFormatted}`;
 				}
 			}
 		]}
