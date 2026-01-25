@@ -269,6 +269,7 @@
 			<input class="input w-full" type="password" onchange={(v) => pin = v.currentTarget.value} />
 		</label>
 		<!--TODO: uploaded files => After implementing file uploading-->
+		<!--TODO: or check is this really needed-->
 		signature
 		attachmentOnRegistering
 		{#if currentEdit!.type !== "individual" || alreadyExisting}
