@@ -15,7 +15,7 @@
     let { items, itemToString, itemToValue, itemsSubscript, fetchItems, propName, placeHolder, value = $bindable<string>(), valueChanged }: SearchSelectProps = $props();
     var currentSelected = $state<T | null>(null);
     $effect(() => {
-        currentSelected = (items as T[]).find((item) => itemToValue(item) === value) || null
+        currentSelected = (items as T[]).find((item) => itemToValue(item) === value) || null;
     });
     const collection = $derived.by(() => {
         return useListCollection({
