@@ -65,7 +65,7 @@ class MyUsadPocStack extends TerraformStack {
       accountId: CLOUDFLARE_ACCOUNT_ID,
       origin: {
         database: neonProject.databaseName,
-        host: neonProject.databaseHost,
+        host: neonProject.databaseHostPooler,
         password: neonProject.databasePassword,
         port: neonProject.connection?.port ?? 5432,
         scheme: "postgresql",
