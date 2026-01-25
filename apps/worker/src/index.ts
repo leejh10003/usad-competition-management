@@ -31,8 +31,12 @@ declare module "hono" {
 
 app.use("*", appendTrailingSlash());
 app.use("*", async (c, next) => {
+  const hyperdriveUrl = new URL(c.env.HYPERDRIVE.connectionString);
+  hyperdriveUrl.searchParams.set('pgbouncer', 'true');
+  const connectionString = hyperdriveUrl.toString();
+
   const adapter = new PrismaPg({
-    connectionString: c.env.HYPERDRIVE.connectionString,
+    connectionString,
   });
   const prisma = new PrismaClient({
     adapter,
