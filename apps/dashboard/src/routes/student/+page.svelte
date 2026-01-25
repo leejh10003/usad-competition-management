@@ -52,6 +52,12 @@
 				name: {
 					contains: query,
 					mode: 'insensitive'
+				},
+				competitionId: {
+					equals: currentEdit?.competitionId ?? undefined
+				},
+				isVirtual: {
+					equals: currentEdit?.type === 'individual' ? true : false
 				}
 			},
 			take: 50,
@@ -68,6 +74,45 @@
 			return {
 				school,
 				competition: competition!,
+			}
+		});
+	}
+	async function fetchTeams(query: string) {
+		const { result } = await workerRequest.getTeam({
+			where: {
+				externalTeamId: {
+					contains: query,
+					mode: 'insensitive'
+				},
+				schoolId: {
+					equals: currentEdit?.schoolId ?? undefined
+				}
+			},
+			take: 50,
+		});
+		const { result: schools } = await workerRequest.getSchool({
+			where: {
+				id: {
+					in: result.map((team) => team.schoolId)
+				}
+			}
+		});
+		const { result: competitions } = await workerRequest.getCompetition({
+			where: {
+				id: {
+					in: schools.map((school) => school.competitionId)
+				}
+			}
+		});
+		searchedTeams = result.map((team) => {
+			const school = schools.find((s) => s.id === team.schoolId);
+			const competition = competitions.find((c) => c.id === school?.competitionId);
+			return {
+				team,
+				school: {
+					school: school!,
+					competition: competition!,
+				}
 			}
 		});
 	}
@@ -273,7 +318,6 @@
 		signature
 		attachmentOnRegistering
 		{#if currentEdit!.type !== "individual" || alreadyExisting}
-			<!--TODO: Select school/team. But for individuals, only show virtual ones. If school/team ones, show real ones-->
 			<SearchSelect
 				items={competitions}
 				bind:value={currentEdit!.competitionId!}
@@ -285,35 +329,42 @@
 				valueChanged={(oldValue, newValue) => {
 					if (oldValue !== newValue) {
 						currentEdit!.schoolId = null;
+						searchedSchools = [];
 						currentEdit!.teamId = null;
+						searchedTeams = [];
 					}
 				}}
 			/>
-			<SearchSelect
-				items={searchedSchools}
-				bind:value={currentEdit!.schoolId!}
-				itemToString={(item) => item.school.name}
-				itemToValue={(item) => item.school.id}
-				itemsSubscript={(item) => `Competition: ${item.competition.name}`}
-				fetchItems={fetchSchools}
-				propName="School Name"
-				placeHolder="Type to search schools..."
-				valueChanged={(oldValue, newValue) => {
-					if (oldValue !== newValue) {
-						//reset team related info
-						currentEdit!.teamId = null;
-					}
-				}}
-			/>
-			<!--<SearchSelect
-				items={searchedTeams}
-				bind:value={currentEdit!.teamId!}
-				itemToString={(item) => item.additionalInfo}
-				itemToValue={(item) => item.teamId}
-				fetchItems={fetchTeams}
-				propName="Search Team"
-				placeHolder="Type to search team..."
-			/>-->
+			{#if currentEdit?.competitionId}
+				<SearchSelect
+					items={searchedSchools}
+					bind:value={currentEdit!.schoolId!}
+					itemToString={(item) => item.school.name}
+					itemToValue={(item) => item.school.id}
+					itemsSubscript={(item) => `Competition: ${item.competition.name}`}
+					fetchItems={fetchSchools}
+					propName="School Name"
+					placeHolder="Type to search schools..."
+					valueChanged={(oldValue, newValue) => {
+						if (oldValue !== newValue) {
+							currentEdit!.teamId = null;
+							searchedTeams = [];
+						}
+					}}
+				/>
+			{/if}
+			{#if currentEdit?.competitionId && currentEdit?.schoolId}
+				<SearchSelect
+					items={searchedTeams}
+					bind:value={currentEdit!.teamId!}
+					itemToString={(item) => `Team: ${item.team.externalTeamId}`}
+					itemsSubscript={(item) => `Competition: ${item.school.competition.name} | School: ${item.school.school.name}`}
+					itemToValue={(item) => item.team.id}
+					fetchItems={fetchTeams}
+					propName="Search Team"
+					placeHolder="Type to search team..."
+				/>
+			{/if}
 		{/if}
 		{#if currentEdit!.type === "individual"	}
 			<TextInput propName="Street Address" bind:inputValue={currentEdit!.streetAddress} />
