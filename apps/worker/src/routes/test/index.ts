@@ -71,20 +71,60 @@ test.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const windowStart = new Date("2024-01-01T00:00:00Z");
-    const currentEvents = await prisma.event.findMany({
-      where: {
-        startsAt: { gte: windowStart },
-      },
-      select: {
-        competitionId: true,
-        id: true,
-      },
-    });
+    const windoeEnd = new Date("2024-12-31T23:59:59Z");
     //eslint-disable-next-line @typescript-eslint/no-unused-vars
     const coaches = await prisma.coach.findMany({
+      select: {
+        lastName: true,
+        firstName: true,
+        id: true,
+        externalCoachId: true,
+        teamRelationship: {
+          where: {
+            team: {
+              students: {
+                some: {
+                  eventCheckIns: {
+                    none: {
+                      event: {
+                        startsAt: { gte: windowStart, lte: windoeEnd },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          select: {
+            team: {
+              select: {
+                students: {
+                  where: {
+                    eventCheckIns: {
+                      none: { event: { startsAt: { gte: windowStart, lte: windoeEnd } } },
+                    },
+                  },
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    externalStudentId: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
       where: {
         school: {
-          competitionId: { in: currentEvents.map((e) => e.competitionId) },
+          competition: {
+            events: {
+              some: {
+                startsAt: { gte: windowStart, lte: windoeEnd },
+              },
+            },
+          },
         },
         teamRelationship: {
           some: {
@@ -93,7 +133,9 @@ test.openapi(
                 some: {
                   eventCheckIns: {
                     none: {
-                      eventId: { in: currentEvents.map((e) => e.id) },
+                      event: {
+                        startsAt: { gte: windowStart, lte: windoeEnd },
+                      },
                     },
                   },
                 },
