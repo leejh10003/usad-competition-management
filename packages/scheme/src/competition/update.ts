@@ -1,5 +1,6 @@
 import { z } from "@hono/zod-openapi";
 import { competitionRounds, nonRelativeEventsEnums, stateEnums } from "../constants";
+import { optionalBasicInfos } from "./baseTypes";
 
 const competitionAvailableStatesModification = z.object({
   delete: z.array(stateEnums),
@@ -15,11 +16,11 @@ export const requiredInfosOptional = z.object({
   nonRelativeEvents: z.array(nonRelativeEventsEnums).optional(),
 });
 
-export const competitionUpdateItem = requiredInfosOptional;
+export const competitionUpdateItem = requiredInfosOptional.extend(optionalBasicInfos.shape);
 
 export const competitionUpdateSchema = z.object({
   id: z.uuid(),
-  competition: requiredInfosOptional,
+  competition: competitionUpdateItem,
 });
 export const competitionsUpdateSchema = z.object({
   competitions: z.array(competitionUpdateSchema),

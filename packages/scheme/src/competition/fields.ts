@@ -8,4 +8,8 @@ export const competitionsFieldsSchema = {
   competitionAvailableStates: true,
   round: true,
   nonRelativeEvents: true,
+  streetAddress: true,
+  city: true,
+  state: true,
+  zipCode: true,
 };

@@ -1,10 +1,11 @@
 import { z } from "@hono/zod-openapi";
-import { basicRequiredInfos } from "./baseTypes";
+import { basicRequiredInfos, optionalBasicInfos } from "./baseTypes";
 import { eventsInsertSchema } from "../event";
 import { schoolsInsertSchema } from "../school";
 
 
 export const competitionInsertItem = basicRequiredInfos
+  .extend(optionalBasicInfos.shape)
   .extend(eventsInsertSchema.shape)
   .extend(schoolsInsertSchema.shape);
 export const competitionInsertSchema = z.object({

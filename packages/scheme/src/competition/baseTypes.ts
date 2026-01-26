@@ -13,5 +13,12 @@ export const basicRequiredInfos = z.object({
   mutationIndex: z.number().int(),
   competitionAvailableStates: z.array(competitionAvailableStates),
   round: competitionRounds,
-  nonRelativeEvents: z.array(nonRelativeEventsEnums)
+  nonRelativeEvents: z.array(nonRelativeEventsEnums),
 });
+
+export const optionalBasicInfos = z.object({
+  streetAddress: z.string().nullable().optional(),
+  city: z.string().nullable().optional(),
+  state: stateEnums.nullable().optional(),
+  zipCode: z.string().nullable().optional(),
+})
