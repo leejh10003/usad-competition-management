@@ -276,11 +276,16 @@ model Competition {
   mutationIndex Int @map("mutation_index")
   round Int @map("round")
   nonRelativeEvents NonRelativeEvents[] @map("non_relative_events")
+  streetAddress  String? @map("street_address")
+  city           String?
+  state          State?
+  zipCode        String? @map("zip_code")
   @@index([startsAt])
   @@index([endsAt])
   @@index([name])
   @@index([round])
   @@index([nonRelativeEvents])
+  @@index([state, city, streetAddress, zipCode])
   @@map("competitions")
 }
 
