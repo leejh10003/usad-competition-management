@@ -4,7 +4,7 @@
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { page } from '$app/state';
 	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
-	import { cloneDeep } from 'es-toolkit';
+	import { capitalize, cloneDeep } from 'es-toolkit';
 	import { parseInt } from 'es-toolkit/compat';
 	import { competitionQuerySchema, competitionResponseItemSchema, eventResponseItemSchema, stateEnums } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, MailIcon, XIcon, Pencil, Trash, ArrowUpDownIcon, CalendarPlus2, FileSpreadsheetIcon } from '@lucide/svelte';
@@ -21,6 +21,8 @@
 	import { nonRelativeEventsEnums, relativeEventEnums } from 'usad-scheme/src/constants';
 	import type { CompetitionListItem, CompetitionResponseItem } from '$lib/data/types';
 	import DateTimePicker from '$lib/components/date-time-picker.svelte';
+	import { toDate } from 'date-fns';
+	import { map } from 'lodash';
 	const nonRelativeEvents = Object.entries(nonRelativeEventsEnums.def.entries).map(([key, value]) => ({
 		shorthand: key,
 		original: value
@@ -132,8 +134,8 @@
 		</label>
 		<span class="label-text">Competition Date</span>
 		<div class="flex flex-row">
-			<DateTimePicker value={new Date(currentEdit!.startsAt)} zone={timezone} />
-			<DateTimePicker value={new Date(currentEdit!.endsAt)} zone={timezone} />
+			<DateTimePicker bind:value={currentEdit!.startsAt} zone={timezone} />
+			<DateTimePicker bind:value={currentEdit!.endsAt} zone={timezone} />
 		</div>
 		<span class="label-text">Competition Available States</span>
 		<div class="grid grid-flow-row grid-cols-12">
@@ -362,6 +364,7 @@
 									<Dialog.CloseTrigger
 										class="btn preset-filled-primary-50-950"
 										onclick={async () => {
+											console.log($state.snapshot(currentEdit));
 											isActionBlocked = true;
 											await workerRequest.competition.create({
 												competitions: [{
@@ -406,7 +409,9 @@
 			{ header: 'Competition Round', cell: ({round}) => round + 1 },
 			{
 				header: 'Competition Date',
-				cell: ({startsAt}) => `${moment(startsAt, timezone).format('MM-DD-YYYY hh:mm:ss')} at timezone ${timezoneFormatted}`
+				cell: ({startsAt}) => {
+					return `${moment(startsAt).tz(timezone).format('MM-DD-YYYY hh:mm:ss')} at timezone ${timezoneFormatted}`;
+				}
 			},
 			{
 				header: 'Competition Available States',
@@ -435,7 +440,7 @@
 			{
 				header: 'Competition Event Types',
 				cell: (competition) => {
-					const eventTypes = [...competition.nonRelativeEvents, competition.events.map((e) => e.type)].flat();
+					const eventTypes = [...competition.nonRelativeEvents, competition.events.map((e) => e.type)].flat().map((word) => capitalize(word));
 					return eventTypes.join(', ');
 				}
 			},
