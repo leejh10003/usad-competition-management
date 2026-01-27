@@ -11,8 +11,6 @@
 	import moment from 'moment-timezone';
 	import z from 'zod';
 	import { resolve } from '$app/paths';
-	import SveltyPicker, { formatDate, parseDate } from 'svelty-picker';
-	import { en } from 'svelty-picker/i18n';
 	import { workerRequest } from '$lib/api/test';
 	import { dialogAppearAnimation } from '$lib/utils/animation';
 	import { timezoneFormatted } from '$lib/utils/time';
@@ -149,7 +147,7 @@
 		<label class="label">
 			<span class="label-text">Event Date</span>
 			<p class="grid">
-				<SveltyPicker
+				<!--<SveltyPicker
 					mode="datetime"
 					isRange={true}
 					format="mm/dd/yyyy hh:ii:ss"
@@ -163,7 +161,7 @@
 							currentEdit!.endsAt = parseDate(endsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
 						}
 					}
-				/>
+				/>-->
 			</p>
 		</label>
 	</Dialog.Description>
@@ -270,11 +268,9 @@
 						(currentEdit = {
 							id: workerRequest.generateNewCompetitionId(), //TODO Change to generateNewEventId
 							name: '',
-							startsAt: new Date(),
 							competitionId: '',
 							type: 'Interview',
 							mutationIndex: 0,
-							endsAt: new Date()
 						})}
 					class="btn preset-filled w-min"
 					disabled={isActionBlocked}><CalendarPlus2 /> Create Event</Dialog.Trigger
@@ -328,13 +324,6 @@
 			{
 				header: 'Event Type',
 				accessor: 'event.type'
-			},
-			{
-				header: 'Event Date',
-				accessor: 'event.startsAt',
-				cell: ({event: {startsAt}}) => {
-					return `${moment(startsAt, timezone).format('MM-DD-YYYY hh:mm:ss')} at timezone ${timezoneFormatted}`;
-				}
 			},
 			{
 				header: 'Competition Name',
