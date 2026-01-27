@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { DatePicker, Portal, parseDate } from '@skeletonlabs/skeleton-svelte';
-	import { ZonedDateTime } from '@internationalized/date';
+	import { Time } from '@internationalized/date';
 	import { parseISO, format } from 'date-fns';
 	import { imask, IMask } from '@imask/svelte';
 	import { TZDate } from '@date-fns/tz';
+	import { TimeField } from "bits-ui";
 
 	let { value = $bindable(), zone }: {value: Date, zone: string} = $props();
 	const datePart = $derived.by(() => {
@@ -15,7 +16,7 @@
 	const timePart = $derived.by(() => {
 		if (value) {
 			const result = new TZDate(parseISO(value.toISOString()), zone)
-			return format(result, 'HH:mm');
+			return new Time(result.getHours(), result.getMinutes(), result.getSeconds());
 		}
 	});
 </script>
@@ -29,41 +30,39 @@
 }}>
 	<DatePicker.Label>Choose Date</DatePicker.Label>
 	<DatePicker.Control>
-		<input
-			onaccept={({detail: maskRef}) => {
-				const timeParts = maskRef.value.split(':');
-				if (timeParts.length === 2) {
-					const hours = parseInt(timeParts[0], 10);
-					const minutes = parseInt(timeParts[1], 10);
-					const current = new TZDate(parseISO((value ?? new Date()).toISOString()), zone);
-					current.setHours(hours);
-					current.setMinutes(minutes);
-					value = new Date(current.toISOString());
-				}
-			}}
-			class="input flex-3"
-			value={timePart}
-			placeholder="Time..." use:imask={{
-			overwrite: true,
-			autofix: true,
-			mask: 'HH:MM',
-			blocks: {
-				HH: {
-					mask: IMask.MaskedRange,
-					placeholderChar: 'HH',
-					from: 0,
-					to: 23,
-					maxLength: 2
-				},
-				MM: {
-					mask: IMask.MaskedRange,
-					placeholderChar: 'MM',
-					from: 0,
-					to: 59,
-					maxLength: 2
-				}
+		<TimeField.Root value={timePart} onValueChange={(e) => {
+			const current = new TZDate(parseISO((value ?? new Date()).toISOString()), zone);
+			if (e) {
+				current.setHours(e.hour);
+				current.setMinutes(e.minute);
+				current.setSeconds(e.second);
+				value = new Date(current.toISOString());
 			}
-		}}/>
+		}}>
+		<TimeField.Input
+			name="TODO: Fixit"
+			class="h-input w-full input border-border-input bg-background text-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover data-invalid:border-destructive flex select-none items-center px-2 py-3 text-sm tracking-[0.01em]"
+			>
+			{#snippet children({ segments })}
+				{#each segments as { part, value }, i (part + i)}
+				<div class="inline-block select-none">
+					{#if part === "literal"}
+					<TimeField.Segment {part} class="text-muted-foreground p-1">
+						{value}
+					</TimeField.Segment>
+					{:else}
+					<TimeField.Segment
+						{part}
+						class="rounded-5px hover:bg-muted focus:bg-muted focus:text-foreground aria-[valuetext=Empty]:text-muted-foreground data-invalid:text-destructive focus-visible:ring-0! focus-visible:ring-offset-0! px-1 py-1"
+					>
+						{value}
+					</TimeField.Segment>
+					{/if}
+				</div>
+				{/each}
+			{/snippet}
+			</TimeField.Input>
+		</TimeField.Root>
 		<DatePicker.Input placeholder="mm/dd/yyyy" />
 	</DatePicker.Control>
 	<DatePicker.Content>
