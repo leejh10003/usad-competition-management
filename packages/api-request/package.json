@@ -1,0 +1,23 @@
+{
+  "name": "usad-api-request",
+  "version": "1.0.0",
+  "description": "An API request package for handling HTTP requests and responses.",
+  "main": "src/index.ts",
+  "scripts": {
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.10.0",
+  "dependencies": {},
+  "peerDependencies": {
+    "zod": "^4.1.12",
+    "usad-scheme": "workspace:usad-scheme",
+		"axios": "^1.13.2"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^10.0.0",
+    "eslint": "^9.39.1",
+    "prettier": "^3.6.2"
+  }
+}

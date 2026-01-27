@@ -37,6 +37,7 @@
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.46.1",
 		"usad-scheme": "workspace:usad-scheme",
+		"usad-api-request": "workspace:usad-api-request",
 		"vite": "^7.1.10",
 		"zod": "^4.1.12"
 	},

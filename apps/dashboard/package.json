@@ -55,6 +55,7 @@
 		"svelty-picker": "^6.1.6",
 		"usad-enums": "workspace:usad-enums",
 		"usad-scheme": "workspace:usad-scheme",
+		"usad-api-request": "workspace:usad-api-request",
 		"uuid": "^13.0.0",
 		"zod": "^4.1.12"
 	}
