@@ -12,7 +12,7 @@
 	import z from 'zod';
     import Editor from '$lib/components/editor.svelte';
 	import { resolve } from '$app/paths';
-	import { workerRequest } from '$lib/api/test';
+	import { workerRequest } from '$lib/api';
 	import { states } from 'usad-enums';
 	import SveltyPicker, { formatDate, parseDate } from 'svelty-picker';
 	import { en } from 'svelty-picker/i18n';
@@ -28,9 +28,18 @@
 	}));
 	const relativeEvents = Object.entries(relativeEventEnums.def.entries).map(([key, value]) => ({
 		shorthand: key,
-		original: value
+		original: value,
 	}));
-	var relativeEventsSelected = $state<z.infer<typeof relativeEventEnums>[]>([]);
+	function generateNewRelativeEvents() {
+		return Object.entries(relativeEventEnums.def.entries).map(([key, value]) => ({
+			type: value,
+			selected: false,
+		}));
+	}
+	var relativeEventsSelected = $state<{
+		type: z.infer<typeof relativeEventEnums>;
+		selected: boolean;
+	}[]>(generateNewRelativeEvents());
 	var isActionBlocked = $state<boolean>(true);
 	var isWholeLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(false);
@@ -80,18 +89,18 @@
 	const offset = $derived.by(() => (getCurrentPage - 1) * getLimit);
 	async function fetch() {
 		isActionBlocked = true;
-		const {result, count} = await workerRequest.getCompetition({
+		const {competitions: result, count} = await workerRequest.competition.get({
 			take: getLimit,
 			skip: offset,
 		});
-		const events = await workerRequest.getEvents({
+		const {events} = await workerRequest.event.get({
 			where: {
 				competitionId: { in: result.map((r) => r.id) }
 			}
 		})
 		competitions = result.map((competition) => ({
 			...competition,
-			events: events.result.filter((event) => event.competitionId === competition.id)
+			events: events.filter((event) => event.competitionId === competition.id)
 		}));
 		total = count;
 		currentCount = result.length;
@@ -211,25 +220,22 @@
 					<p>{event.original}</p>
 				</label>
 			{/each}
-			{#each relativeEvents as event (event.shorthand)}
-				<label class="flex items-center space-x-2 mr-2 col-span-4">
+			{#each relativeEventsSelected as event (event.type)}
+				<div class="flex items-center space-x-2 mr-2 col-span-4">
 					<input
 						type="checkbox"
 						class="checkbox"
-						checked={relativeEventsSelected.includes(event.original)}
+						checked={event.selected}
 						onchange={(e) => {
 							if (e.currentTarget.checked) {
-								relativeEventsSelected.push(event.original);
+								event.selected = true;
 							} else {
-								relativeEventsSelected =
-									relativeEventsSelected.filter(
-										(ev) => ev !== event.original
-									);
+								event.selected = false;
 							}
 						}}
 					/>
-					<p>{event.original}</p>
-				</label>
+					<p>{event.type}</p>
+				</div>
 			{/each}
 			</div>
 		{/if}
@@ -266,9 +272,17 @@
 							class="btn preset-filled-primary-50-950"
 							onclick={async () => {
 								isActionBlocked = true;
-								await workerRequest.updateCompetition([
-									{ where: { id: currentEdit!.id }, data: currentEdit! }
-								]);
+								await workerRequest.competition.update({
+									competitions: [
+										{ id: currentEdit!.id, competition: {
+											...currentEdit!,
+											competitionAvailableStates: {
+												delete: [],
+												create: [], //TODO: handle delete and create properly
+											}
+										} }
+									]
+								});
 								await fetch();
 							}}>Save</Dialog.CloseTrigger
 						>
@@ -308,7 +322,8 @@
 						class="btn preset-filled-danger-50-950"
 						onclick={async () => {
 							isActionBlocked = true;
-							await workerRequest.deleteCompetitions({ where: {id: {equals: competition.id}} });
+							//await workerRequest.deleteCompetitions({ where: {id: {equals: competition.id}} });
+							//TODO: implement delete competition api
 							await fetch();
 						}}>Delete</Dialog.CloseTrigger
 					>
@@ -332,9 +347,9 @@
 			<Dialog>
 				<Dialog.Trigger
 					onclick={() => {
-						relativeEventsSelected = [];
+						relativeEventsSelected = generateNewRelativeEvents();
 						currentEdit = {
-							id: workerRequest.generateNewCompetitionId(),
+							id: '',
 							name: '',
 							startsAt: new Date(),
 							competitionAvailableStates: [],
@@ -364,7 +379,20 @@
 										class="btn preset-filled-primary-50-950"
 										onclick={async () => {
 											isActionBlocked = true;
-											await workerRequest.insertNewCompetition(currentEdit!);
+											await workerRequest.competition.create({
+												competitions: [{
+													...currentEdit!,
+													competitionAvailableStates: currentEdit!.competitionAvailableStates.map((s) => ({
+														state: s.state,
+													})),
+													events: relativeEvents.map((e, j) => ({
+														name: e.original,
+														type: e.original,
+														mutationIndex: j,
+													})),
+													schools: [],
+												}]
+											});
 											await fetch();
 										}}>Save</Dialog.CloseTrigger
 									>
