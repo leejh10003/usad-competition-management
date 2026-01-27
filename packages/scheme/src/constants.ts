@@ -74,19 +74,19 @@ const stateEnums = z.enum({
 });
 const sortEnums = z.enum(["asc", "desc"]);
 const nonRelativeEventsEnums = z.enum({
-  math: "Math",
-  economics: "Economics",
-  science: "Science",
-  socialScience: "Social Science",
-  music: "Music",
-  art: "Art",
-  language: "Language",
-  essay: "Essay",
-  superQuiz: "Super Quiz",
+  math: "math",
+  economics: "economics",
+  science: "science",
+  socialScience: "socialScience",
+  music: "music",
+  art: "art",
+  language: "language",
+  essay: "essay",
+  superQuiz: "superQuiz",
 });
 const relativeEventEnums = z.enum({
-  speech: "Speech",
-  interview: "Interview",
+  speech: "speech",
+  interview: "interview",
 });
 const competitionRounds = z.enum({
   informal: 0,
