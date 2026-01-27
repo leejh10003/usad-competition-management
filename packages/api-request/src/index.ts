@@ -33,11 +33,11 @@ class WorkerRequest {
         get: async (input: z.infer<typeof eventQuerySchema>): Promise<z.infer<typeof eventsResponseSchema>> => {
             const result = await this.axiosClient.get<
                 never,
-                z.infer<typeof eventsResponseSchema>
+                {data: z.infer<typeof eventsResponseSchema>}
             >(`/events`, {
                 params: input
             });
-            return result;
+            return result.data;
         }
     }
 	readonly competition = {
