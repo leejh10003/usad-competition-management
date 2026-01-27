@@ -9,8 +9,8 @@ const competitionAvailableStatesModification = z.object({
 
 export const requiredInfosOptional = z.object({
   name: z.string().optional(),
-  startsAt: z.date().optional(),
-  endsAt: z.date().optional(),
+  startsAt: z.coerce.date().optional(),
+  endsAt: z.coerce.date().optional(),
   competitionAvailableStates: competitionAvailableStatesModification.optional(),
   round: competitionRounds.optional(),
   nonRelativeEvents: z.array(nonRelativeEventsEnums).optional(),

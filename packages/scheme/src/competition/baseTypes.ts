@@ -8,8 +8,8 @@ export const competitionAvailableStates = z.object({
 
 export const basicRequiredInfos = z.object({
   name: z.string(),
-  startsAt: z.date(),
-  endsAt: z.date(),
+  startsAt: z.coerce.date(),
+  endsAt: z.coerce.date(),
   mutationIndex: z.number().int(),
   competitionAvailableStates: z.array(competitionAvailableStates),
   round: competitionRounds,
