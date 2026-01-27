@@ -4,7 +4,7 @@
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { page } from '$app/state';
 	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
-	import { capitalize, cloneDeep } from 'es-toolkit';
+	import { cloneDeep, startCase } from 'es-toolkit';
 	import { parseInt } from 'es-toolkit/compat';
 	import { competitionQuerySchema, competitionResponseItemSchema, eventResponseItemSchema, stateEnums } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, MailIcon, XIcon, Pencil, Trash, ArrowUpDownIcon, CalendarPlus2, FileSpreadsheetIcon } from '@lucide/svelte';
@@ -135,8 +135,12 @@
 		</label>
 		<span class="label-text">Competition Date</span>
 		<div class="flex flex-row">
-			<DateTimePicker bind:value={currentEdit!.startsAt} zone={timezone} />
-			<DateTimePicker bind:value={currentEdit!.endsAt} zone={timezone} />
+			<DateTimePicker bind:value={currentEdit!.startsAt} zone={timezone} afterUpdate={() => {
+				(currentEdit!.endsAt < currentEdit!.startsAt) && (currentEdit!.endsAt = new Date(currentEdit!.startsAt));
+			}} />
+			<DateTimePicker bind:value={currentEdit!.endsAt} zone={timezone} afterUpdate={() => {
+				(currentEdit!.endsAt < currentEdit!.startsAt) && (currentEdit!.startsAt = new Date(currentEdit!.endsAt));
+			}} />
 		</div>
 		<span class="label-text">Competition Available States</span>
 		<div class="grid grid-flow-row grid-cols-12">
@@ -444,7 +448,7 @@
 			{
 				header: 'Competition Event Types',
 				cell: (competition) => {
-					const eventTypes = [...competition.nonRelativeEvents, competition.events.map((e) => e.type)].flat().map((word) => capitalize(word));
+					const eventTypes = [...competition.nonRelativeEvents, competition.events.map((e) => e.type)].flat().map((word) => startCase(word));
 					return eventTypes.join(', ');
 				}
 			},
