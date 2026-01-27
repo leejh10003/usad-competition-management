@@ -4,7 +4,7 @@
 	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { page } from '$app/state';
 	import { Collapsible, Dialog, Listbox, Portal, useListCollection } from '@skeletonlabs/skeleton-svelte';
-	import { cloneDeep, debounce } from 'es-toolkit';
+	import { cloneDeep, debounce, startCase } from 'es-toolkit';
 	import { parseInt } from 'es-toolkit/compat';
 	import { eventQuerySchema, eventResponseItemSchema, competitionResponseItemSchema } from 'usad-scheme';
 	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, CalendarPlus2, Pencil, Trash, XIcon } from '@lucide/svelte';
@@ -249,7 +249,7 @@
 							id: workerRequest.generateNewCompetitionId(), //TODO Change to generateNewEventId
 							name: '',
 							competitionId: '',
-							type: 'Interview',
+							type: 'interview',
 							mutationIndex: 0,
 						})}
 					class="btn preset-filled w-min"
@@ -303,7 +303,10 @@
 			},
 			{
 				header: 'Event Type',
-				accessor: 'event.type'
+				accessor: 'event.type',
+				cell: ({event}) => {
+					return startCase(event.type);
+				}
 			},
 			{
 				header: 'Competition Name',
