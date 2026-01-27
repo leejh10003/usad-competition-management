@@ -8,22 +8,21 @@
 	import { onMount } from 'svelte';
 
 	let { value = $bindable(), zone }: {value: Date, zone: string} = $props();
+	const valueTypeHandled = $derived(new TZDate(parseISO(typeof value === 'string' ? value : value.toISOString()), zone));
 	const datePart = $derived.by(() => {
 		if (value) {
-			const result = new TZDate(parseISO(typeof value === 'string' ? value : value.toISOString()), zone)
-			return [parseDate(new Date(result.toISOString()))];
+			return [parseDate(valueTypeHandled)];
 		}
 	});
 	const timePart = $derived.by(() => {
 		if (value) {
-			const result = new TZDate(parseISO(typeof value === 'string' ? value : value.toISOString()), zone)
-			return new Time(result.getHours(), result.getMinutes(), 0);
+			return new Time(valueTypeHandled.getHours(), valueTypeHandled.getMinutes(), 0);
 		}
 	});
 </script>
 
 <DatePicker timeZone={zone} inline value={datePart} onValueChange={(e) => {
-  const current = new TZDate(parseISO((typeof value === 'string' ? value : value ? value.toISOString() : new Date().toISOString())), zone);
+  const current = new TZDate(valueTypeHandled, zone);
   current.setFullYear(e.value[0]!.year);
   current.setMonth(e.value[0]!.month - 1);
   current.setDate(e.value[0]!.day);
@@ -33,7 +32,7 @@
 	<DatePicker.Label>Choose Date</DatePicker.Label>
 	<DatePicker.Control>
 		<TimeField.Root value={timePart} onValueChange={(e) => {
-			const current = new TZDate(parseISO((typeof value === 'string' ? value : value ? value.toISOString() : new Date().toISOString())), zone);
+			const current = new TZDate(valueTypeHandled, zone);
 			if (e) {
 				current.setHours(e.hour);
 				current.setMinutes(e.minute);
