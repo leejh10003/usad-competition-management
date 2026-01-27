@@ -14,14 +14,13 @@
 	import { resolve } from '$app/paths';
 	import { workerRequest } from '$lib/api';
 	import { states } from 'usad-enums';
-	import SveltyPicker, { formatDate, parseDate } from 'svelty-picker';
-	import { en } from 'svelty-picker/i18n';
 	import {timezoneFormatted, timezone} from '$lib/utils/time';
 	import { dialogAppearAnimation } from '$lib/utils/animation';
 	import PaginateTable from '$lib/components/paginate-table.svelte';
 	import DisplayTable from '$lib/components/display-table.svelte';
 	import { nonRelativeEventsEnums, relativeEventEnums } from 'usad-scheme/src/constants';
 	import type { CompetitionListItem, CompetitionResponseItem } from '$lib/data/types';
+	import DateTimePicker from '$lib/components/date-time-picker.svelte';
 	const nonRelativeEvents = Object.entries(nonRelativeEventsEnums.def.entries).map(([key, value]) => ({
 		shorthand: key,
 		original: value
@@ -131,26 +130,11 @@
 			<span class="label-text">Competition Name</span>
 			<input type="text" class="input w-full" bind:value={currentEdit!.name} />
 		</label>
-		<label class="label">
-			<span class="label-text">Competition Date</span>
-			<p class="grid">
-				<SveltyPicker
-					mode="datetime"
-					isRange={true}
-					format="mm/dd/yyyy hh:ii:ss"
-					inputClasses="input w-full"
-					bind:value={
-						() => {
-							return [formatDate(currentEdit!.startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard'), formatDate(currentEdit!.endsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard')];
-						},
-						([startsAt, endsAt]) => {
-							currentEdit!.startsAt = parseDate(startsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
-							currentEdit!.endsAt = parseDate(endsAt, 'mm/dd/yyyy hh:ii:ss', en, 'standard');
-						}
-					}
-				/>
-			</p>
-		</label>
+		<span class="label-text">Competition Date</span>
+		<div class="flex flex-row">
+			<DateTimePicker />
+			<DateTimePicker />
+		</div>
 		<span class="label-text">Competition Available States</span>
 		<div class="grid grid-flow-row grid-cols-12">
 			{#each states as state (state.shorthand)}
