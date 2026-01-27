@@ -1,14 +1,71 @@
 <script lang="ts">
-	import { DatePicker, parseDate, Portal } from '@skeletonlabs/skeleton-svelte';
+	import { DatePicker, Portal, parseDate } from '@skeletonlabs/skeleton-svelte';
+	import { ZonedDateTime } from '@internationalized/date';
+	import { parseISO, format } from 'date-fns';
+	import { imask, IMask } from '@imask/svelte';
+	import { TZDate } from '@date-fns/tz';
 
-	let value = $state([parseDate('2025-10-15')]);
+	let { value = $bindable(), zone }: {value: Date, zone: string} = $props();
+	const datePart = $derived.by(() => {
+		if (value) {
+			const result = new TZDate(parseISO(value.toISOString()), zone)
+			return [parseDate(new Date(result.toISOString()))];
+		}
+	});
+	const timePart = $derived.by(() => {
+		if (value) {
+			const result = new TZDate(parseISO(value.toISOString()), zone)
+			return format(result, 'HH:mm');
+		}
+	});
 </script>
 
-<DatePicker inline value={value} onValueChange={(e) => {
-  console.log('selected');
-  value = e.value
+<DatePicker timeZone={zone} inline value={datePart} onValueChange={(e) => {
+  const current = new TZDate(parseISO((value ?? new Date()).toISOString()), zone);
+  current.setFullYear(e.value[0]!.year);
+  current.setMonth(e.value[0]!.month - 1);
+  current.setDate(e.value[0]!.day);
+  value = new Date(current.toISOString());
 }}>
 	<DatePicker.Label>Choose Date</DatePicker.Label>
+	<DatePicker.Control>
+		<input
+			onaccept={({detail: maskRef}) => {
+				const timeParts = maskRef.value.split(':');
+				if (timeParts.length === 2) {
+					const hours = parseInt(timeParts[0], 10);
+					const minutes = parseInt(timeParts[1], 10);
+					const current = new TZDate(parseISO((value ?? new Date()).toISOString()), zone);
+					current.setHours(hours);
+					current.setMinutes(minutes);
+					value = new Date(current.toISOString());
+				}
+			}}
+			class="input flex-3"
+			value={timePart}
+			placeholder="Time..." use:imask={{
+			overwrite: true,
+			autofix: true,
+			mask: 'HH:MM',
+			blocks: {
+				HH: {
+					mask: IMask.MaskedRange,
+					placeholderChar: 'HH',
+					from: 0,
+					to: 23,
+					maxLength: 2
+				},
+				MM: {
+					mask: IMask.MaskedRange,
+					placeholderChar: 'MM',
+					from: 0,
+					to: 59,
+					maxLength: 2
+				}
+			}
+		}}/>
+		<DatePicker.Input placeholder="mm/dd/yyyy" />
+	</DatePicker.Control>
 	<DatePicker.Content>
 		<DatePicker.View view="day">
 			<DatePicker.Context>
