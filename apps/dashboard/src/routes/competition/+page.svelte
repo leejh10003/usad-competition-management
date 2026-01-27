@@ -1,16 +1,13 @@
 <script lang="ts">
-	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { goto } from '$app/navigation';
-	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { page } from '$app/state';
 	import { Collapsible, Dialog, Portal } from '@skeletonlabs/skeleton-svelte';
 	import { cloneDeep, startCase } from 'es-toolkit';
 	import { parseInt } from 'es-toolkit/compat';
-	import { competitionQuerySchema, competitionResponseItemSchema, eventResponseItemSchema, stateEnums } from 'usad-scheme';
-	import { ArrowLeftIcon, ArrowRightIcon, MailIcon, XIcon, Pencil, Trash, ArrowUpDownIcon, CalendarPlus2, FileSpreadsheetIcon } from '@lucide/svelte';
+	import { competitionQuerySchema, stateEnums } from 'usad-scheme';
+	import { XIcon, Pencil, Trash, ArrowUpDownIcon, CalendarPlus2, FileSpreadsheetIcon } from '@lucide/svelte';
 	import moment from 'moment-timezone';
 	import z from 'zod';
-    import Editor from '$lib/components/editor.svelte';
 	import { resolve } from '$app/paths';
 	import { workerRequest } from '$lib/api';
 	import { states } from 'usad-enums';
@@ -21,8 +18,6 @@
 	import { nonRelativeEventsEnums, relativeEventEnums } from 'usad-scheme/src/constants';
 	import type { CompetitionListItem, CompetitionResponseItem } from '$lib/data/types';
 	import DateTimePicker from '$lib/components/date-time-picker.svelte';
-	import { toDate } from 'date-fns';
-	import { map } from 'lodash';
 	const nonRelativeEvents = Object.entries(nonRelativeEventsEnums.def.entries).map(([key, value]) => ({
 		shorthand: key,
 		original: value
