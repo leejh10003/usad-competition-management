@@ -315,11 +315,12 @@
 					try {
 						currentState = fileState;
 						fileState = 'uploading';
-						const response = await workerRequest.uploadFile({
+						const response = await workerRequest.file.upload({
 							index: 0,
 							kind: 'registering-additional',
 							file: details.files[0],
-							fileKey: details.files[0].name
+							fileKey: details.files[0].name,
+							targetEntityType: 'student',
 						});
 						console.log(response);
 						fileKey = response.fileKey;
