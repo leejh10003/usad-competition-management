@@ -1,19 +1,15 @@
 <script lang="ts">
-	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { goto } from '$app/navigation';
-	//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { page } from '$app/state';
-	import { Collapsible, Dialog, Listbox, Portal, useListCollection } from '@skeletonlabs/skeleton-svelte';
+	import { Collapsible, Dialog, Portal, useListCollection } from '@skeletonlabs/skeleton-svelte';
 	import { cloneDeep, debounce, startCase } from 'es-toolkit';
 	import { parseInt } from 'es-toolkit/compat';
-	import { eventQuerySchema, eventResponseItemSchema, competitionResponseItemSchema } from 'usad-scheme';
-	import { ArrowLeftIcon, ArrowRightIcon, ArrowUpDownIcon, CalendarPlus2, Pencil, Trash, XIcon } from '@lucide/svelte';
+	import { eventQuerySchema } from 'usad-scheme';
+	import { ArrowUpDownIcon, CalendarPlus2, Pencil, Trash, XIcon } from '@lucide/svelte';
 	import moment from 'moment-timezone';
-	import z from 'zod';
 	import { resolve } from '$app/paths';
 	import { workerRequest } from '$lib/api/test';
 	import { dialogAppearAnimation } from '$lib/utils/animation';
-	import { timezoneFormatted } from '$lib/utils/time';
 	import SearchSelect from '$lib/components/search-select.svelte';
 	import TextInput from '$lib/components/text-input.svelte';
 	import PaginateTable from '$lib/components/paginate-table.svelte';
