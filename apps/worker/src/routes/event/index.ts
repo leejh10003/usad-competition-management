@@ -13,7 +13,7 @@ import { eventsItem } from "./:id";
 export function updateEvent(event: z.infer<typeof eventUpdateItemSchema>) {
   return {
     name: !_.isUndefined(event.name) ? event.name : undefined,
-    startsAt: !_.isUndefined(event.startsAt) ? event.startsAt : undefined,
+    type: !_.isUndefined(event.type) ? event.type : undefined,
   };
 }
 

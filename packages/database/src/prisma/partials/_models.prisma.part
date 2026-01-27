@@ -300,8 +300,6 @@ model CompetitionAvailableState {
 model Event {
   id       String   @id @default(uuid()) @db.Uuid
   name     String
-  startsAt DateTime @map("starts_at") @db.Timestamptz(3)
-  endsAt   DateTime @map("ends_at") @db.Timestamptz(3)
   competitionId String @map("competition_id") @db.Uuid
   mutationIndex Int @map("mutation_index")
   competition Competition @relation("CompetitionOfEvent", fields: [competitionId], references: [id])
@@ -309,7 +307,6 @@ model Event {
   eventCheckIn EventCheckIn[] @relation("EventOfEventCheckIn")
 
   // --- Indexes ---
-  @@index([startsAt])
   @@index([competitionId])
   @@index([type])
 

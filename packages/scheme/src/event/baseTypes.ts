@@ -2,8 +2,6 @@ import { z } from "@hono/zod-openapi";
 import { relativeEventEnums } from "../constants";
 export const requiredInfos = z.object({
   name: z.string(),
-  startsAt: z.date(),
-  endsAt: z.date(),
   competitionId: z.uuid(),
   mutationIndex: z.int(),
   type: relativeEventEnums

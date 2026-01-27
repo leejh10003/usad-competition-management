@@ -3,8 +3,6 @@ import { relativeEventEnums } from "../constants";
 
 export const eventUpdateItemSchema = z.object({
   name: z.string().optional(),
-  startsAt: z.date().optional(),
-  endsAt: z.date().optional(),
   competitionId: z.uuid().optional(),
   type: relativeEventEnums.optional(),
 });
