@@ -63,6 +63,7 @@
 		return params;
 	}
 	let currentEdit = $state<CompetitionResponseItem | null>(null);
+	let currentEditOriginal = $state<CompetitionResponseItem | null>(null);
 	const query = $derived.by(() => page.url.searchParams);
 	const getLimit = $derived.by(() => {
 		const limit = query.get('limit');
@@ -231,7 +232,10 @@
 {#snippet actions(competition: CompetitionResponseItem)}
 <Dialog>
 	<Dialog.Trigger
-		onclick={() => (currentEdit = cloneDeep(competition))}
+		onclick={() => {
+			currentEdit = cloneDeep(competition);
+			currentEditOriginal = cloneDeep(competition);
+		}}
 		class="btn preset-filled"
 		disabled={isActionBlocked}><Pencil />Edit</Dialog.Trigger
 	>
@@ -263,8 +267,8 @@
 										{ id: currentEdit!.id, competition: {
 											...currentEdit!,
 											competitionAvailableStates: {
-												delete: [],
-												create: [], //TODO: handle delete and create properly
+												delete: currentEditOriginal!.competitionAvailableStates.filter((originalState) => !currentEdit!.competitionAvailableStates.find((s) => s.state === originalState.state)).map(({state}) => state),
+												create: currentEdit!.competitionAvailableStates.filter((state) => !currentEditOriginal!.competitionAvailableStates.find((originalState) => originalState.state === state.state)).map(({state}) => state),
 											}
 										} }
 									]
@@ -344,6 +348,7 @@
 							round: 0,
 							endsAt: new Date()
 						}
+						currentEditOriginal = null;
 					}}
 					class="btn preset-filled w-min"
 					disabled={isActionBlocked}><CalendarPlus2 /> Create Competition</Dialog.Trigger
@@ -364,7 +369,6 @@
 									<Dialog.CloseTrigger
 										class="btn preset-filled-primary-50-950"
 										onclick={async () => {
-											console.log($state.snapshot(currentEdit));
 											isActionBlocked = true;
 											await workerRequest.competition.create({
 												competitions: [{
