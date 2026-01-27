@@ -5,10 +5,7 @@ let storage = $state<{state: z.infer<typeof stateEnums> | null, competition: z.Z
     competition: null,
 });
 let cached = $state<{competitions: {id: z.ZodUUID, name: string}[]}>({
-    competitions: [{
-        id: "aea66d9b-cc3e-42e2-87c6-2f527bf789de" as unknown as z.ZodUUID,
-        name: "Regional Science Competition"
-    }],
+    competitions: [],
 })
 function selectState(input: z.infer<typeof stateEnums>){
     storage.state = input;
