@@ -132,8 +132,8 @@
 		</label>
 		<span class="label-text">Competition Date</span>
 		<div class="flex flex-row">
-			<DateTimePicker />
-			<DateTimePicker />
+			<DateTimePicker value={new Date(currentEdit!.startsAt)} zone={timezone} />
+			<DateTimePicker value={new Date(currentEdit!.endsAt)} zone={timezone} />
 		</div>
 		<span class="label-text">Competition Available States</span>
 		<div class="grid grid-flow-row grid-cols-12">
