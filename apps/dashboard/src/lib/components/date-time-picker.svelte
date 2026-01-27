@@ -7,7 +7,7 @@
 	import { TimeField } from "bits-ui";
 	import { onMount } from 'svelte';
 
-	let { value = $bindable(), zone }: {value: Date, zone: string} = $props();
+	let { value = $bindable(), zone, afterUpdate }: {value: Date, zone: string, afterUpdate?: () => void} = $props();
 	const valueTypeHandled = $derived(new TZDate(parseISO(typeof value === 'string' ? value : value.toISOString()), zone));
 	const datePart = $derived.by(() => {
 		if (value) {
@@ -28,6 +28,7 @@
   current.setDate(e.value[0]!.day);
   current.setSeconds(0);
   value = new Date(current.toISOString());
+  afterUpdate?.();
 }}>
 	<DatePicker.Label>Choose Date</DatePicker.Label>
 	<DatePicker.Control>
@@ -38,6 +39,7 @@
 				current.setMinutes(e.minute);
 				current.setSeconds(0);
 				value = new Date(current.toISOString());
+				afterUpdate?.();
 			}
 		}}>
 		<TimeField.Input
