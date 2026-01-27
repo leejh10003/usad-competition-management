@@ -5,37 +5,39 @@
 	import { imask, IMask } from '@imask/svelte';
 	import { TZDate } from '@date-fns/tz';
 	import { TimeField } from "bits-ui";
+	import { onMount } from 'svelte';
 
 	let { value = $bindable(), zone }: {value: Date, zone: string} = $props();
 	const datePart = $derived.by(() => {
 		if (value) {
-			const result = new TZDate(parseISO(value.toISOString()), zone)
+			const result = new TZDate(parseISO(typeof value === 'string' ? value : value.toISOString()), zone)
 			return [parseDate(new Date(result.toISOString()))];
 		}
 	});
 	const timePart = $derived.by(() => {
 		if (value) {
-			const result = new TZDate(parseISO(value.toISOString()), zone)
-			return new Time(result.getHours(), result.getMinutes(), result.getSeconds());
+			const result = new TZDate(parseISO(typeof value === 'string' ? value : value.toISOString()), zone)
+			return new Time(result.getHours(), result.getMinutes(), 0);
 		}
 	});
 </script>
 
 <DatePicker timeZone={zone} inline value={datePart} onValueChange={(e) => {
-  const current = new TZDate(parseISO((value ?? new Date()).toISOString()), zone);
+  const current = new TZDate(parseISO((typeof value === 'string' ? value : value ? value.toISOString() : new Date().toISOString())), zone);
   current.setFullYear(e.value[0]!.year);
   current.setMonth(e.value[0]!.month - 1);
   current.setDate(e.value[0]!.day);
+  current.setSeconds(0);
   value = new Date(current.toISOString());
 }}>
 	<DatePicker.Label>Choose Date</DatePicker.Label>
 	<DatePicker.Control>
 		<TimeField.Root value={timePart} onValueChange={(e) => {
-			const current = new TZDate(parseISO((value ?? new Date()).toISOString()), zone);
+			const current = new TZDate(parseISO((typeof value === 'string' ? value : value ? value.toISOString() : new Date().toISOString())), zone);
 			if (e) {
 				current.setHours(e.hour);
 				current.setMinutes(e.minute);
-				current.setSeconds(e.second);
+				current.setSeconds(0);
 				value = new Date(current.toISOString());
 			}
 		}}>
