@@ -1,4 +1,4 @@
-import _, { omit } from "lodash";
+import { omit } from "es-toolkit";
 import { insertSchools, TransactionSessionType } from ".";
 import { competitionsInsertSchema, competitionsFieldsSchema } from 'usad-scheme';
 import { z } from "@hono/zod-openapi";
@@ -13,38 +13,38 @@ export async function insertCompetitions(
   const insertCompetitions = competitions.map((competition, i) => omit({
     ...competition,
     mutationIndex: i
-  }, 'events', 'schools'));
+  }, ['events', 'schools']));
   const insertedCompetitions = (await tx.competition.createManyAndReturn({
     data: insertCompetitions,
     select: competitionsFieldsSchema
-  }));
-  const competitionSchoolsIndex: number[] = [0];
-  const schoolsCompetitionIdAdded = competitions.map((competition, i) => {
-    competitionSchoolsIndex.push(competitionSchoolsIndex[i] + competition.schools.length);
-    return competition.schools.map((school) => ({
-      ...school,
-      competitionId: insertedCompetitions[i].id
-    }));
-  }).reduce((prev, current) => [...prev, ...current], []).map((s, i) => ({
-    ...s,
-    mutationIndex: i
-  }));
-  const schoolsCreated = await insertSchools(tx, schoolsCompetitionIdAdded);
-  const competitionEventsIndex: number[] = [0];
-  const eventsCompetitionIdAdded = competitions.map((competition, i) => {
-    competitionEventsIndex.push(competitionEventsIndex[i] + competition.events.length);
-    return competition.events.map((event) => ({
-      ...event,
-      competitionId: insertedCompetitions[i].id
-    }));
-  }).reduce((prev, current) => [...prev, ...current], []).map((e, i) => ({
-    ...e,
-    mutationIndex: i
-  }));
-  const eventsCreated = await insertEvents(tx, eventsCompetitionIdAdded);
+  })).sort((a, b) => a.mutationIndex - b.mutationIndex);
+  const idToCompetitionIndexMap = new Map<string, number>();
+  insertedCompetitions.forEach(c => idToCompetitionIndexMap.set(c.id, c.mutationIndex));
+  const schoolsToInsert = competitions.flatMap((competition, i) => 
+    competition.schools.map((s, si) => ({ ...s, competitionId: insertedCompetitions[i].id, mutationIndex: si }))
+  );
+  const eventsToInsert = competitions.flatMap((competition, i) => 
+    competition.events.map((e, ei) => ({ ...e, competitionId: insertedCompetitions[i].id, mutationIndex: ei }))
+  );
+  const [schoolsCreated, eventsCreated] = await Promise.all([
+    insertSchools(tx, schoolsToInsert),
+    insertEvents(tx, eventsToInsert)
+  ]);
+  const fullSchoolsByCompetitionIndex = new Map<number, typeof schoolsCreated>();
+  const fullEventsByCompetitionIndex = new Map<number, typeof eventsCreated>();
+  schoolsCreated.forEach(s => {
+    const competitionIdx = idToCompetitionIndexMap.get(s.competitionId)!;
+    if (!fullSchoolsByCompetitionIndex.has(competitionIdx)) fullSchoolsByCompetitionIndex.set(competitionIdx, []);
+    fullSchoolsByCompetitionIndex.get(competitionIdx)!.push(s);
+  });
+  eventsCreated.forEach(e => {
+    const competitionIdx = idToCompetitionIndexMap.get(e.competitionId)!;
+    if (!fullEventsByCompetitionIndex.has(competitionIdx)) fullEventsByCompetitionIndex.set(competitionIdx, []);
+    fullEventsByCompetitionIndex.get(competitionIdx)!.push(e);
+  });
   return insertedCompetitions.map((c, i) => {
-    const events = eventsCreated.slice(competitionEventsIndex[i], competitionEventsIndex[i+1]);
-    const schools = schoolsCreated.slice(competitionSchoolsIndex[i], competitionSchoolsIndex[i+1]);
+    const schools = fullSchoolsByCompetitionIndex.get(i) || [];
+    const events = fullEventsByCompetitionIndex.get(i) || [];
     return {
       ...c,
       events,
