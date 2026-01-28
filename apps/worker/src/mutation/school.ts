@@ -70,7 +70,7 @@ export async function insertSchools(tx: TransactionSessionType, schools: SchoolI
 
     // Primary Coach 업데이트 준비
     if (school.primaryCoachIndex !== undefined) {
-      primaryCoachUpdates.push(Prisma.sql`(${schoolId}, ${coachList[school.primaryCoachIndex].id})`);
+      primaryCoachUpdates.push(Prisma.sql`(${schoolId}::UUID, ${coachList[school.primaryCoachIndex].id}::UUID)`);
     }
   });
 

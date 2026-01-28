@@ -9,6 +9,7 @@ import {
   eventQuerySchema,
 } from "usad-scheme";
 import { eventsItem } from "./:id";
+import { Prisma, Event } from "@prisma/client";
 
 export function updateEvent(event: z.infer<typeof eventUpdateItemSchema>) {
   return {
@@ -78,21 +79,26 @@ events.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { events } = c.req.valid("json");
-    const result = await prisma.$transaction((tx) =>
-      Promise.all(
-        events.map(({ id, event }) =>
-          tx.event.update({
-            select: eventSelectFieldsSchema,
-            where: {
-              id,
-            },
-            data: event,
-          })
-        )
-      )
-    );
+    const valueRows = events.map((e, i) => Prisma.sql`(${e.id}::UUID, ${e.event.name}::VARCHAR, ${e.event.competitionId}::UUID, ${e.event.type}::RelativeEvents, ${i}::INTEGER)`); 
+    const result = await prisma.$queryRaw<Event[]>`
+    UPDATE "events" as e
+    SET
+      "name" = COALESCE(v."name", e."name"),
+      "competitionId" = COALESCE(v."competitionId", e."competitionId"),
+      "type" = COALESCE(v."type", e."type"),
+      "mutation_index" = v."mutation_index"
+      FROM (VALUES ${Prisma.join(valueRows)}) AS v(id, "name", "competitionId", "type", "mutation_index")
+      WHERE e.id = v.id
+      RETURNING 
+        e.id,
+        e.name,
+        e.competition_id AS "competitionId",
+        e.type,
+        e.mutation_index AS "mutationIndex"
+      ;
+    `;
     return c.json(
-      { success: true, events: result!, count: result.length },
+      { success: true, events: result!.sort((a, b) => a.mutationIndex - b.mutationIndex), count: result.length },
       200
     );
   }
