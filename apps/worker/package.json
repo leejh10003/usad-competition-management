@@ -31,13 +31,14 @@
     "axios": "^1.12.2",
     "database": "workspace:*",
     "dotenv": "^17.2.3",
+    "es-toolkit": "^1.44.0",
     "hono": "^4.9.9",
     "hono-swagger-ui": "^1.0.5",
     "lodash": "^4.17.21",
     "pg": "^8.16.3",
     "postgres": "^3.4.7",
+    "usad-enums": "workspace:usad-enums",
     "usad-scheme": "workspace:usad-scheme",
-    "zod": "^4.1.12",
-    "usad-enums": "workspace:usad-enums"
+    "zod": "^4.1.12"
   }
 }

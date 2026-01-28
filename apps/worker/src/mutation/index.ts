@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { z } from "@hono/zod-openapi";
-import _ from "lodash";
 export type TransactionSessionType = Parameters<
   Parameters<PrismaClient["$transaction"]>[0]
 >[0];
