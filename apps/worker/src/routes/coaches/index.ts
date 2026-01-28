@@ -8,6 +8,7 @@ import {
   coachesResponseSchema,
 } from "usad-scheme";
 import { id } from "./:id";
+import { Coach, Prisma } from "@prisma/client";
 
 // --- 🧑‍🏫 코치 (Coaches) 관련 엔드포인트 ---
 const coaches = new OpenAPIHono();
@@ -88,20 +89,64 @@ coaches.openapi(
   async (c) => {
     const { coaches } = c.req.valid("json");
     const prisma = c.get("prisma");
-    const result = await prisma.$transaction((tx) =>
-      Promise.all(
-        coaches.map(
-          async ({ coach, id }) =>
-            await tx.coach.update({
-              data: updateCoach(coach),
-              where: {
-                id: id,
-              },
-              select: coachSelectFieldsSchema,
-            })
-        )
+    const valueRows = coaches.map((e, i) => Prisma.sql`(
+      ${e.id}::UUID,
+      ${e.coach.externalCoachId}::TEXT,
+      ${e.coach.firstName}::TEXT,
+      ${e.coach.lastName}::TEXT,
+      ${e.coach.email}::TEXT,
+      ${e.coach.phone}::TEXT,
+      ${e.coach.signature}::TEXT,
+      ${i}::INTEGER,
+      ${e.coach.schoolId}::UUID,
+      ${e.coach.externalCoachId !== undefined}::BOOLEAN,
+      ${e.coach.firstName !== undefined}::BOOLEAN,
+      ${e.coach.lastName !== undefined}::BOOLEAN,
+      ${e.coach.email !== undefined}::BOOLEAN,
+      ${e.coach.phone !== undefined}::BOOLEAN,
+      ${e.coach.signature !== undefined}::BOOLEAN,
+      ${e.coach.schoolId !== undefined}::BOOLEAN
+    )`);
+    const result = await prisma.$queryRaw<Coach[]>`
+    UPDATE "coaches" as c
+    SET
+      "external_coach_id" = CASE WHEN v."update_external_coach_id" THEN v."external_coach_id" ELSE c."external_coach_id" END,
+      "first_name" = CASE WHEN v."update_first_name" THEN v."first_name" ELSE c."first_name" END,
+      "last_name" = CASE WHEN v."update_last_name" THEN v."last_name" ELSE c."last_name" END,
+      "email" = CASE WHEN v."update_email" THEN v."email" ELSE c."email" END,
+      "phone" = CASE WHEN v."update_phone" THEN v."phone" ELSE c."phone" END,
+      "signature" = CASE WHEN v."update_signature" THEN v."signature" ELSE c."signature" END,
+      "school_id" = CASE WHEN v."update_school_id" THEN v."school_id" ELSE c."school_id" END
+      FROM (VALUES ${Prisma.join(valueRows)}) AS v(
+        id,
+        "external_coach_id",
+        "first_name",
+        "last_name",
+        "email",
+        "phone",
+        "signature",
+        "mutation_index",
+        "school_id",
+        "update_external_coach_id",
+        "update_first_name",
+        "update_last_name",
+        "update_email",
+        "update_phone",
+        "update_signature",
+        "update_school_id"
       )
-    );
+      WHERE c.id = v.id
+      RETURNING 
+        c.id,
+        c.external_coach_id AS "externalCoachId",
+        c.first_name AS "firstName",
+        c.last_name AS "lastName",
+        c.email,
+        c.phone,
+        c.signature,
+        c.school_id AS "schoolId"
+      ;
+    `;
     return c.json({ success: true, coaches: result, count: result.length }, 200);
   }
 );

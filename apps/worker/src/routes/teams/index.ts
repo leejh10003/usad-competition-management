@@ -10,6 +10,7 @@ import {
 } from "usad-scheme";
 import { id } from "./:id";
 import {omit} from 'lodash';
+import { Prisma, Team } from "@prisma/client";
 const teams = new OpenAPIHono();
 export function updateTeam(team: z.infer<typeof teamUpdateSchema>["team"]) {
   return {
@@ -129,20 +130,54 @@ teams.openapi(
   async (c) => {
     const { teams } = c.req.valid("json");
     const prisma = c.get("prisma");
-    const result = await prisma.$transaction((tx) =>
-      Promise.all(
-        teams.map(
-          async ({ team, id }) =>
-            await tx.team.update({
-              where: {
-                id: id,
-              },
-              data: updateTeam(team),
-              select: teamSelectFieldsSchema,
-            })  as z.infer<typeof teamsResponseSchema>['teams'][number]
-        )
+    const valueRows = teams.map((e) => Prisma.sql`(
+      ${e.id}::UUID,
+      ${e.team.externalTeamId}::TEXT,
+      ${e.team.schoolId}::UUID,
+      ${e.team.division}::INTEGER,
+      ${e.team.objectiveScore}::FLOAT8,
+      ${e.team.subjectiveScore}::FLOAT8,
+      ${e.team.mutationIndex}::INTEGER,
+      ${e.team.externalTeamId !== undefined}::BOOLEAN,
+      ${e.team.schoolId !== undefined}::BOOLEAN,
+      ${e.team.division !== undefined}::BOOLEAN,
+      ${e.team.objectiveScore !== undefined}::BOOLEAN,
+      ${e.team.subjectiveScore !== undefined}::BOOLEAN
+    )`)
+    const result = await prisma.$queryRaw<Team[]>`
+      UPDATE "team" as t
+      SET
+        "external_team_id" = CASE WHEN v."update_external_team_id" THEN v."external_team_id" ELSE t."external_team_id" END,
+        "school_id" = CASE WHEN v."update_school_id" THEN v."school_id" ELSE t."school_id" END,
+        "division" = CASE WHEN v."update_division" THEN v."division" ELSE t."division" END,
+        "objective_score" = CASE WHEN v."update_objective_score" THEN v."objective_score" ELSE t."objective_score" END,
+        "subjective_score" = CASE WHEN v."update_subjective_score" THEN v."subjective_score" ELSE t."subjective_score" END,
+        "mutation_index" = v."mutation_index"
+      FROM (VALUES ${Prisma.join(valueRows)}) AS v(
+        id,
+        "external_team_id",
+        "school_id",
+        "division",
+        "objective_score",
+        "subjective_score",
+        "mutation_index",
+        "update_external_team_id",
+        "update_school_id",
+        "update_division",
+        "update_objective_score",
+        "update_subjective_score"
       )
-    );
+      WHERE t.id = v.id
+      RETURNING 
+        t.id,
+        t.external_team_id AS "externalTeamId",
+        t.school_id AS "schoolId",
+        t.division,
+        t.objective_score AS "objectiveScore",
+        t.subjective_score AS "subjectiveScore",
+        t.mutation_index AS "mutationIndex"
+      ;
+    ` as z.infer<typeof teamsResponseSchema>['teams'];
     return c.json({ success: true, teams: result, count: result.length }, 200);
   }
 );
