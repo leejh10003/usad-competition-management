@@ -8,13 +8,16 @@
 	import { ArrowUpDownIcon, CalendarPlus2, Pencil, Trash, XIcon } from '@lucide/svelte';
 	import moment from 'moment-timezone';
 	import { resolve } from '$app/paths';
-	import { workerRequest } from '$lib/api/test';
+	import { workerRequest } from '$lib/api';
 	import { dialogAppearAnimation } from '$lib/utils/animation';
 	import SearchSelect from '$lib/components/search-select.svelte';
 	import TextInput from '$lib/components/text-input.svelte';
 	import PaginateTable from '$lib/components/paginate-table.svelte';
 	import DisplayTable from '$lib/components/display-table.svelte';
 	import type { CompetitionResponseItem, EventAggregatedItem, EventResponseItem } from '$lib/data/types';
+	import Select from '$lib/components/select.svelte';
+	import { relativeEventEnums } from 'usad-scheme/src/constants';
+	import { omit } from 'lodash';
 	var isActionBlocked = $state<boolean>(true);
 	var isWholeLoading = $state<boolean>(true);
 	var isFirstLoaded = $state<boolean>(false);
@@ -24,6 +27,9 @@
 	var events = $state<EventAggregatedItem[]>([]);
 	var competitions = $state<CompetitionResponseItem[]>([]);
 	let currentEdit = $state<EventResponseItem | null>(null);
+	const eventTypes = Object.entries(relativeEventEnums.def.entries).map(([_, value]) => ({
+		value
+	}));
 
 	const competitionCollection = $derived(
 		useListCollection({
@@ -34,7 +40,8 @@
 	);
 
 	async function fetchCompetitions(query: string) {
-		const { result } = await workerRequest.getCompetition({
+		console.log(query);
+		const { competitions: result } = await workerRequest.competition.get({
 			where: {
 				name: {
 					contains: query,
@@ -43,6 +50,7 @@
 			},
 			take: 50,
 		});
+		console.log(result);
 		competitions = result;
 	}
 	const fetchCompetitionWithDebounce = debounce(fetchCompetitions, 300);
@@ -86,11 +94,11 @@
 	const offset = $derived.by(() => (getCurrentPage - 1) * getLimit);
 	async function fetch() {
 		isActionBlocked = true;
-		const {result, count} = await workerRequest.getEvents({
+		const {events: result, count} = await workerRequest.event.get({
 			take: getLimit,
 			skip: offset,
 		});
-		const { result: competitionResult } = await workerRequest.getCompetition({
+		const { competitions: competitionResult } = await workerRequest.competition.get({
 			where: {
 				id: {
 					in: result.map((e) => e.competitionId)
@@ -140,6 +148,14 @@
 			propName="Event Name"
 			bind:inputValue={currentEdit!.name}
 		/>
+		<Select
+			propName="Event Type"
+			bind:value={currentEdit!.type}
+			key={({value}) => value}
+			display={({value}) => startCase(value)}
+			mapValue={({value}) => value}
+			options={eventTypes}
+		/>
 	</Dialog.Description>
 </div>
 {/snippet}
@@ -173,10 +189,12 @@
 									class="btn preset-filled-primary-50-950"
 									onclick={async () => {
 										isActionBlocked = true;
-										await workerRequest.updateEvent([{
-											where: { id: currentEdit!.id },
-											data: currentEdit!
-										}]);
+										await workerRequest.event.update({
+											events: [{
+												id: currentEdit!.id,
+												event: omit(currentEdit!, ['id'])
+											}]
+										});
 										await fetch();
 									}}>Save</Dialog.CloseTrigger
 								>
@@ -215,9 +233,9 @@
 							<Dialog.CloseTrigger
 								class="btn preset-filled-danger-50-950"
 								onclick={async () => {
-									isActionBlocked = true;
+									/*isActionBlocked = true;
 									await workerRequest.deleteEvent({ where: {id: {equals: id}} });
-									await fetch();
+									await fetch();*/
 								}}>Delete</Dialog.CloseTrigger
 							>
 							<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
@@ -242,7 +260,7 @@
 				<Dialog.Trigger
 					onclick={() =>
 						(currentEdit = {
-							id: workerRequest.generateNewCompetitionId(), //TODO Change to generateNewEventId
+							id: '',
 							name: '',
 							competitionId: '',
 							type: 'interview',
@@ -267,9 +285,9 @@
 									<Dialog.CloseTrigger
 										class="btn preset-filled-primary-50-950"
 										onclick={async () => {
-											isActionBlocked = true;
+											/*isActionBlocked = true;
 											await workerRequest.insertNewEvent(currentEdit!);
-											await fetch();
+											await fetch();*/
 										}}>Save</Dialog.CloseTrigger
 									>
 									<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
