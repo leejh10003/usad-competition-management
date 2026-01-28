@@ -203,7 +203,7 @@
 							}
 						}}
 					/>
-					<p>{event.original}</p>
+					<p>{startCase(event.original)}</p>
 				</label>
 			{/each}
 			{#each relativeEventsSelected as event (event.type)}
@@ -220,7 +220,7 @@
 							}
 						}}
 					/>
-					<p>{event.type}</p>
+					<p>{startCase(event.type)}</p>
 				</div>
 			{/each}
 			</div>
