@@ -1,5 +1,5 @@
 import { OpenAPIHono, z } from "@hono/zod-openapi";
-import _ from "lodash";
+import _, { startCase } from "lodash";
 import {
   eventsInsertSchema,
   eventUpdateItemSchema,
@@ -79,15 +79,24 @@ events.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { events } = c.req.valid("json");
-    const valueRows = events.map((e, i) => Prisma.sql`(${e.id}::UUID, ${e.event.name}::VARCHAR, ${e.event.competitionId}::UUID, ${e.event.type}::RelativeEvents, ${i}::INTEGER)`); 
+    const valueRows = events.map((e, i) => Prisma.sql`(
+      ${e.id}::UUID,
+      ${e.event.name ?? null}::VARCHAR,
+      ${e.event.competitionId ?? null}::UUID,
+      ${e.event.type ? startCase(e.event.type) : null}::"RelativeEvents",
+      ${i}::INTEGER,
+      ${e.event.name !== undefined}::BOOLEAN,
+      ${e.event.competitionId !== undefined}::BOOLEAN,
+      ${e.event.type !== undefined}::BOOLEAN
+    )`); 
     const result = await prisma.$queryRaw<Event[]>`
     UPDATE "events" as e
     SET
-      "name" = COALESCE(v."name", e."name"),
-      "competitionId" = COALESCE(v."competitionId", e."competitionId"),
-      "type" = COALESCE(v."type", e."type"),
+      "name" = CASE WHEN v."update_name" THEN v."name" ELSE e."name" END,
+      "competition_id" = CASE WHEN v."update_competition_id" THEN v."competition_id" ELSE e."competition_id" END,
+      "type" = CASE WHEN v."update_type" THEN v."type" ELSE e."type" END,
       "mutation_index" = v."mutation_index"
-      FROM (VALUES ${Prisma.join(valueRows)}) AS v(id, "name", "competitionId", "type", "mutation_index")
+      FROM (VALUES ${Prisma.join(valueRows)}) AS v(id, "name", "competition_id", "type", "mutation_index", "update_name", "update_competition_id", "update_type")
       WHERE e.id = v.id
       RETURNING 
         e.id,
