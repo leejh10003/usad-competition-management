@@ -10,6 +10,7 @@ import {
 } from "usad-scheme";
 import { eventsItem } from "./:id";
 import { Prisma, Event } from "@prisma/client";
+import { insertEvents } from "../../mutation/event";
 
 export function updateEvent(event: z.infer<typeof eventUpdateItemSchema>) {
   return {
@@ -139,16 +140,7 @@ events.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { events } = c.req.valid("json");
-    /*const result = await prisma.event.createManyAndReturn({
-      data: events,
-      select: eventSelectFieldsSchema,
-    });*/
-    const result = (
-      await prisma.event.createManyAndReturn({
-        data: events,
-        select: eventSelectFieldsSchema,
-      })
-    ).sort((a, b) => a.mutationIndex - b.mutationIndex);
+    const result = await prisma.$transaction(tx => insertEvents(tx, events));
     return c.json({ success: true, events: result, count: result.length }, 200);
   }
 );

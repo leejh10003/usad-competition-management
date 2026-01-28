@@ -12,6 +12,7 @@ import { id } from "./:id";
 import _ from "lodash";
 import { Prisma, Student } from "@prisma/client";
 import { insertStudentWithIndividualAddress, insertStudentWithSchoolId } from "usad-scheme/src/student";
+import { insertStudents } from "../../mutation";
 const students = new OpenAPIHono();
 type InsertStudentWithIndividualAddress = z.infer<typeof insertStudentWithIndividualAddress>;
 type InsertStudentWithSchoolId = z.infer<typeof insertStudentWithSchoolId>;
@@ -95,10 +96,49 @@ students.openapi(
   async (c) => {
     const prisma = c.get("prisma");
     const { students } = c.req.valid("json");
-    const result = (await prisma.student.createManyAndReturn({
-      data: students,
-      select: studentSelectFieldsSchema,
-    })).sort((a, b) => a.mutationIndex - b.mutationIndex);
+    const teamIds = new Set(students.map((s) => s.teamId));
+    teamIds.delete(undefined);
+    teamIds.delete(null);
+    const schoolInfos = await prisma.team.findMany({
+      where: {
+        id: { in: Array.from(teamIds as Set<string>) },
+      },
+      select: {
+        id: true,
+        school: {
+          select: {
+            id: true,
+            competitionId: true
+          }
+        }
+      }
+    });
+    if (schoolInfos.length !== teamIds.size) {
+      throw new Error(`Some teamIds do not have associated school information`);
+    }
+    const teamIdSchoolInfoMap: Map<string, { id: string; competitionId: string }> = new Map();
+    schoolInfos.forEach((info) => {
+      teamIdSchoolInfoMap.set(info.id, { id: info.school.id, competitionId: info.school.competitionId });
+    });
+    for (const student of students) {
+      if (!student.teamId) {
+        continue; 
+      }
+      const schoolInfo = teamIdSchoolInfoMap.get(student.teamId);
+      if (!schoolInfo) {
+        throw new Error(`[Data Integrity] Team ${student.teamId} has no parent school.`);
+      }
+      const s = (student as Omit<z.infer<typeof insertStudentWithSchoolId>, 'type'> & Omit<z.infer<typeof insertStudentWithIndividualAddress>, 'type'>);
+      if (s.schoolId && s.schoolId !== schoolInfo.id) {
+        throw new Error(`School mismatch: Input(${s.schoolId}) vs DB(${schoolInfo.id})`);
+      }
+      if (s.competitionId && s.competitionId !== schoolInfo.competitionId) {
+        throw new Error(`Competition mismatch: Input(${s.competitionId}) vs DB(${schoolInfo.competitionId})`);
+      }
+      s.schoolId = schoolInfo.id;
+      s.competitionId = schoolInfo.competitionId;
+    }
+    const result = await prisma.$transaction(tx => insertStudents(tx, students));
     return c.json({ success: true, students: result }, 200);
   }
 );

@@ -6,11 +6,10 @@ import {
   teamQuerySchema,
   teamsUpdateSchema,
   teamUpdateSchema,
-  studentSelectFieldsSchema,
 } from "usad-scheme";
 import { id } from "./:id";
-import {omit} from 'lodash';
 import { Prisma, Team } from "@prisma/client";
+import { insertTeams } from "../../mutation";
 const teams = new OpenAPIHono();
 export function updateTeam(team: z.infer<typeof teamUpdateSchema>["team"]) {
   return {
@@ -82,24 +81,33 @@ teams.openapi(
   async (c) => {
     const { teams } = c.req.valid("json");
     const prisma = c.get("prisma");
-    const result = await prisma.$transaction(async (tx) => {
-      const transactionResult = (await tx.team.createManyAndReturn({
-        data: teams.map((team) => omit(team, 'students')),
-        select: teamSelectFieldsSchema
-      })).sort((a, b) => a.mutationIndex - b.mutationIndex) as (z.infer<typeof teamsResponseSchema>['teams'][number])[];
-      const studentsConverted = teams.map((e, i) => e.students.map((s) => ({
-        ...s,
-        teamId: transactionResult[i].id
-      }))).reduce((prev, current) => [...prev, ...current], []).map((e, i) => ({
-        ...e,
-        mutationIndex: i
-      }))
-      await tx.student.createManyAndReturn({
-        data: studentsConverted,
-        select: studentSelectFieldsSchema,
-      });
-      return transactionResult;
+    const schoolIds = new Set<string>();
+    teams.forEach(t => schoolIds.add(t.schoolId));
+    const schoolInfos = await prisma.school.findMany({
+      where: { id: { in: Array.from(schoolIds) } },
+      select: {
+        id: true,
+        competitionId: true
+      }
     });
+    if (schoolInfos.length !== schoolIds.size) {
+      throw new Error('Some schoolIds do not exist.');
+    }
+    const schoolIdCompetitionIdMap = new Map<string, string>();
+    schoolInfos.forEach(schoolInfo => {
+      schoolIdCompetitionIdMap.set(schoolInfo.id, schoolInfo.competitionId);
+    });
+    const teamsWithCompetitionIds = teams.map(t => {
+      const competitionId = schoolIdCompetitionIdMap.get(t.schoolId);
+      if (!competitionId) {
+        throw new Error('School competitionId not found.');
+      }
+      return {
+        ...t,
+        competitionId
+      };
+    })
+    const result = await prisma.$transaction((tx) => insertTeams(tx, teamsWithCompetitionIds));
     return c.json({ success: true, teams: result, count: result.length }, 200);
   }
 );

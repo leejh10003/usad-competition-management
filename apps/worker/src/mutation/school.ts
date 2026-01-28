@@ -24,7 +24,7 @@ export async function insertSchools(tx: TransactionSessionType, schools: SchoolI
 
   // 3. 하위 엔티티 인서트 데이터 준비
   const teamsToInsert = schools.flatMap((school, i) => 
-    school.teams.map((t, ti) => ({ ...t, schoolId: insertedSchools[i].id, mutationIndex: ti }))
+    school.teams.map((t, ti) => ({ ...t, schoolId: insertedSchools[i].id, mutationIndex: ti, competitionId: school.competitionId }))
   );
   const coachesToInsert = schools.flatMap((school, i) => 
     school.coaches.map((c, ci) => ({ ...c, schoolId: insertedSchools[i].id, mutationIndex: ci }))
