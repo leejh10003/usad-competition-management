@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { competitionQuerySchema, competitionsInsertSchema, competitionsResponse, competitionsUpdateSchema, eventQuerySchema, eventsResponseSchema, fileUploadingFormSchema, fileUploadingResponseSchema } from 'usad-scheme';
+import { competitionQuerySchema, competitionsInsertSchema, competitionsResponse, competitionsUpdateSchema, eventQuerySchema, eventsResponseSchema, eventsUpdateSchema, fileUploadingFormSchema, fileUploadingResponseSchema } from 'usad-scheme';
 import z from 'zod';
 
 class WorkerRequest {
@@ -10,6 +10,15 @@ class WorkerRequest {
 		this.axiosClient = axios.create({
 			baseURL: `${this.API_DOMAIN}/api`
 		});
+	}
+	//eslint-disable-next-line @typescript-eslint/no-explicit-any
+	encodeSearchParams({ where, skip, take, orderBy }: { skip?: any; take?: any; where?: any; orderBy?: any; }): Record<string, string>{
+		return {
+			...(where ? { where: JSON.stringify(where)} : {}),
+			...(skip ? { skip: JSON.stringify(skip)} : {}),
+			...(take ? { take: JSON.stringify(take)} : {}),
+			...(orderBy ? { orderBy: JSON.stringify(orderBy)} : {})
+		}
 	}
 	readonly file = {
 		upload: async (input: z.infer<typeof fileUploadingFormSchema>): Promise<z.infer<typeof fileUploadingResponseSchema>> => {
@@ -35,10 +44,19 @@ class WorkerRequest {
                 never,
                 {data: z.infer<typeof eventsResponseSchema>}
             >(`/events`, {
-                params: input
+                params: this.encodeSearchParams(input)
             });
             return result.data;
-        }
+        },
+		update: async (input: z.infer<typeof eventsUpdateSchema>): Promise<z.infer<typeof eventsResponseSchema>> => {
+			console.log(input);
+			const result = await this.axiosClient.put<
+				z.infer<typeof eventsUpdateSchema>,
+				{ data: z.infer<typeof eventsResponseSchema>}
+			>(`/events`, input);
+			console.log(result);
+			return result.data;
+		}
     }
 	readonly competition = {
 		get: async (input: z.infer<typeof competitionQuerySchema>): Promise<z.infer<typeof competitionsResponse>> => {
@@ -46,7 +64,7 @@ class WorkerRequest {
 				never,
 				{ data: z.infer<typeof competitionsResponse>}
 			>(`/competitions`, {
-				params: input
+				params: this.encodeSearchParams(input)
 			});
 			return result.data;
 		},
