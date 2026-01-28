@@ -376,7 +376,7 @@
 														state: s.state,
 													})),
 													events: relativeEvents.map((e, j) => ({
-														name: e.original,
+														name: startCase(e.original),
 														type: e.original,
 														mutationIndex: j,
 													})),
