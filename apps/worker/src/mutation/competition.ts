@@ -1,6 +1,6 @@
 import { omit } from "es-toolkit";
 import { insertSchools, TransactionSessionType } from ".";
-import { competitionsInsertSchema, competitionsFieldsSchema } from 'usad-scheme';
+import { competitionsInsertSchema, competitionsFieldsSchema, competitionResponseItemSchema } from 'usad-scheme';
 import { z } from "@hono/zod-openapi";
 import { insertEvents } from "./event";
 
@@ -49,6 +49,6 @@ export async function insertCompetitions(
       ...c,
       events,
       schools,
-    }
+    } as z.infer<typeof competitionResponseItemSchema>
   })
 }

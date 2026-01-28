@@ -8,10 +8,7 @@ import {
 import { OpenAPIHono, z } from "@hono/zod-openapi";
 import { id } from "./:id";
 import { omit } from "lodash";
-import {EventCreateManyInputObjectSchema} from 'database/src/generated/schemas/objects/EventCreateManyInput.schema';
-import {CompetitionAvailableStateCreateManyInputObjectSchema} from 'database/src/generated/schemas/objects/CompetitionAvailableStateCreateManyInput.schema';
-//import {SchoolCreateManyInputObjectSchema} from 'database/src/generated/schemas/objects/SchoolCreateManyInput.schema';
-//import {SchoolCreateInputObjectSchema} from 'database/src/generated/schemas/objects/SchoolCreateInput.schema';
+import { insertCompetitions } from "../../mutation";
 
 const competitions = new OpenAPIHono();
 
@@ -138,69 +135,13 @@ competitions.openapi(
     const { competitions } = c.req.valid("json");
     
     const result = await prisma.$transaction(async (tx) => {
-      const eventOnly: {[competitionIndex: number]: Omit<z.infer<typeof EventCreateManyInputObjectSchema>, 'competitionId'>[]} = {};
-      const statesOnly: {[competitionIndex: number]: Omit<z.infer<typeof CompetitionAvailableStateCreateManyInputObjectSchema>, 'competitionId'>[]} = {};
-      const schoolsOnly: {[competitionIndex: number]: z.infer<typeof competitionsInsertSchema>['competitions'][number]['schools']} = {};
-      const competitionOnly = competitions.map((competition, i) => {
-        const {events, schools, competitionAvailableStates, ...rest} = competition;
-        competition.mutationIndex = i;
-        eventOnly[competition.mutationIndex] = events;
-        statesOnly[competition.mutationIndex] = competitionAvailableStates;
-        schoolsOnly[competition.mutationIndex] = schools;
-        return rest;
-      });
-      const result = ((await tx.competition.createManyAndReturn({
-        data: competitionOnly,
-        select: omit(competitionsFieldsSchema, ['events', 'schools', 'competitionAvailableStates']),
-      })).sort((a, b) => a.mutationIndex - b.mutationIndex)) as z.infer<typeof competitionsResponse>['competitions'];
-      const events = Object.entries(eventOnly).reduce<z.infer<typeof EventCreateManyInputObjectSchema>[]>((prev, [competitionIndex, event]) => {
-        return [...prev, ...event.map((e) => {
-          const competitionId = result.find((r) => r.mutationIndex === Number(competitionIndex))!.id;
-          return {...e, competitionId};
-        })]
-      }, []).map((e, i) => ({
-        ...e,
-        mutationIndex: i
-      }));
-      const states = Object.entries(statesOnly).reduce<z.infer<typeof CompetitionAvailableStateCreateManyInputObjectSchema>[]>((prev, [competitionIndex, state]) => {
-        return [...prev, ...state.map((s) => {
-          const competitionId = result.find((r) => r.mutationIndex === Number(competitionIndex))!.id;
-          return {...s, competitionId};
-        })]
-      }, []);
-      /*const coachesOnly: {[schoolIndex: number]: }
-      const teamsOnly: {[schoolIndex: number]: }
-      const schools = Object.entries(schoolsOnly).reduce<z.infer<typeof competitionsInsertSchema>['competitions'][number]['schools']>((prev, [competitionIndex, school]) => {
-        return [...prev, ...school.map((s) => {
-          const competitionId = result.find((r) => r.mutationIndex === Number(competitionIndex))!.id;
-          return {
-            ...s,
-            competitionId,
-          } as z.infer<typeof competitionsInsertSchema>['competitions'][number]['schools'][number];
-        })]
-      }, []).map((s, i) => {
-        const {coaches, teams,...schoolOnlyInformation} = s;
-        return {
-          ...schoolOnlyInformation,
-          mutationIndex: i
-        };
-      });*/
-      await Promise.all([(await tx.event.createManyAndReturn(
-        {data: events,
-        skipDuplicates: true,}
-      )).sort((a, b) => a.mutationIndex - b.mutationIndex), await tx.competitionAvailableState.createManyAndReturn(
-        { 
-        data: states,
-        skipDuplicates: true,}
-      )]);
+      const result = await insertCompetitions(tx, competitions);
+      
       return result;
-    })
-    
-    //console.log(result);
+    });
 
     return c.json(
       { success: true, competitions: result, count: result.length },
-      //{success: true, competitions: [], count: 0},
       200
     );
   }
