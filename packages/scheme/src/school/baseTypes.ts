@@ -18,7 +18,7 @@ export const optionalBasicInfos = z.object({
   subjectiveScore: z.float32().nullable().optional(),
 });
 export const optionalInfos = optionalBasicInfos.extend(
-  coachesInsertSchema.def.shape,
+  coachesInsertSchema.partial({coaches: true}).def.shape
 );
 export const basicRequiredInfos = z.object({
   name: z.string(),

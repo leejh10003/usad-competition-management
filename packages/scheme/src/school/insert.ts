@@ -10,12 +10,12 @@ const coachTeamMapping = z.object({
 
 export const schoolInsertItem = basicRequiredInfos
   .extend(optionalInfos.def.shape)
-  .extend(teamsNestedInsertSchema.def.shape)
-  .extend(coachesNestedInsertSchema.def.shape)
-  .extend({
-    coachTeamMappings: z.array(coachTeamMapping),
-    primaryCoachIndex: z.int(),
-  });
+  .extend(teamsNestedInsertSchema.partial({teams: true}).def.shape)
+  .extend(coachesNestedInsertSchema.partial({coaches: true}).def.shape)
+  .extend(z.object({
+    coachTeamMappings: z.array(coachTeamMapping).optional(),
+    primaryCoachIndex: z.int().optional(),
+  }).def.shape);
 export const schoolInsertSchema = z.object({
   school: schoolInsertItem,
 });

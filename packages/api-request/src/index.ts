@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { competitionQuerySchema, competitionsInsertSchema, competitionsResponse, competitionsUpdateSchema, eventQuerySchema, eventsResponseSchema, eventsUpdateSchema, fileUploadingFormSchema, fileUploadingResponseSchema } from 'usad-scheme';
+import { competitionQuerySchema, competitionsInsertSchema, competitionsResponse, competitionsUpdateSchema, eventQuerySchema, eventsResponseSchema, eventsUpdateSchema, fileUploadingFormSchema, fileUploadingResponseSchema, schoolQuerySchema, schoolsInsertSchema, schoolsResponse, schoolsUpdateSchema } from 'usad-scheme';
 import z from 'zod';
 
 class WorkerRequest {
@@ -58,6 +58,31 @@ class WorkerRequest {
 			return result.data;
 		}
     }
+	readonly school = {
+		get: async (input: z.infer<typeof schoolQuerySchema>): Promise<z.infer<typeof schoolsResponse>> => {
+			const result = await this.axiosClient.get<
+				never,
+				{ data: z.infer<typeof schoolsResponse>}
+			>(`/schools`, {
+				params: this.encodeSearchParams(input)
+			});
+			return result.data;
+		},
+		update: async (input: z.infer<typeof schoolsUpdateSchema>): Promise<z.infer<typeof schoolsResponse>> => {
+			const result = await this.axiosClient.put<
+				z.infer<typeof schoolsUpdateSchema>,
+				{ data: z.infer<typeof schoolsResponse>}
+			>(`/schools`, input);
+			return result.data;
+		},
+		create: async (input: z.infer<typeof schoolsInsertSchema>): Promise<z.infer<typeof schoolsResponse>> => {
+			const result = await this.axiosClient.post<
+				z.infer<typeof schoolsInsertSchema>,
+				{ data: z.infer<typeof schoolsResponse>}
+			>(`/schools`, input);
+			return result.data;
+		}
+	}
 	readonly competition = {
 		get: async (input: z.infer<typeof competitionQuerySchema>): Promise<z.infer<typeof competitionsResponse>> => {
 			const result = await this.axiosClient.get<

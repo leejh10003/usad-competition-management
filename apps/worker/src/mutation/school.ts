@@ -24,10 +24,10 @@ export async function insertSchools(tx: TransactionSessionType, schools: SchoolI
 
   // 3. 하위 엔티티 인서트 데이터 준비
   const teamsToInsert = schools.flatMap((school, i) => 
-    school.teams.map((t, ti) => ({ ...t, schoolId: insertedSchools[i].id, mutationIndex: ti, competitionId: school.competitionId }))
+    school.teams?.map((t, ti) => ({ ...t, schoolId: insertedSchools[i].id, mutationIndex: ti, competitionId: school.competitionId })) ?? []
   );
   const coachesToInsert = schools.flatMap((school, i) => 
-    school.coaches.map((c, ci) => ({ ...c, schoolId: insertedSchools[i].id, mutationIndex: ci }))
+    school.coaches?.map((c, ci) => ({ ...c, schoolId: insertedSchools[i].id, mutationIndex: ci })) ?? []
   );
 
   // 4. 하위 엔티티 벌크 인서트 (여기서 전체 오브젝트가 반환된다고 가정)
@@ -61,7 +61,7 @@ export async function insertSchools(tx: TransactionSessionType, schools: SchoolI
     const teamList = fullTeamsBySchoolIndex.get(i) || [];
 
     // Team-Coach Mappings (인덱스 기반 매핑)
-    school.coachTeamMappings.forEach(m => {
+    school.coachTeamMappings?.forEach(m => {
       relationships.push({ 
         coachId: coachList[m.coachIndex].id, 
         teamId: teamList[m.teamIndex].id 

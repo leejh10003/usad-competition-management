@@ -16,7 +16,7 @@
 	import PaginateTable from '$lib/components/paginate-table.svelte';
 	import romans, { romanize } from 'romans';
 	import { resolve } from '$app/paths';
-	import { workerRequest } from '$lib/api/test';
+	import { workerRequest } from '$lib/api';
 	import { states } from 'usad-enums';
 	import { dialogAppearAnimation } from '$lib/utils/animation';
 	import DisplayTable from '$lib/components/display-table.svelte';
@@ -107,7 +107,7 @@
 	var currentCount = $state<number>(0);
 		//eslint-disable-next-line @typescript-eslint/no-unused-vars
 	async function fetchCompetitions(query: string) {
-		const { result } = await workerRequest.getCompetition({
+		const { competitions: result } = await workerRequest.competition.get({
 			where: {
 				name: {
 					contains: query,
@@ -121,7 +121,7 @@
 	async function fetch() {
 		isLoading = true;
 		//TODO: server fetch
-		const {result, count} = await workerRequest.getSchool({
+		const {schools: result, count} = await workerRequest.school.get({
 			take: getLimit,
 			skip: offset,
 			where: getSchoolNameQueryString || getExternalSchoolIdQueryString ? {
@@ -137,7 +137,7 @@
 				} : {})
 			} : undefined
 		});
-		const { result: competitionResult } = await workerRequest.getCompetition({
+		const { competitions: competitionResult } = await workerRequest.competition.get({
 			where: {
 				id: {
 					in: result.map((e) => e.competitionId)
@@ -251,9 +251,12 @@
 							class="btn preset-filled-primary-50-950"
 							onclick={async () => {
 								isActionBlocked = true;
-								await workerRequest.updateSchool([
-									{ where: { id: currentEdit!.id }, data: currentEdit! }
-								]);
+								await workerRequest.school.update({
+									schools: [
+										{ id: currentEdit!.id, school: {
+											...currentEdit!,
+										} }
+								]});
 								await fetch();
 							}}>Save</Dialog.CloseTrigger
 						>
@@ -292,9 +295,9 @@
 					<Dialog.CloseTrigger
 						class="btn preset-filled-danger-50-950"
 						onclick={async () => {
-							isActionBlocked = true;
+							/*isActionBlocked = true;
 							await workerRequest.deleteSchools({ where: {id: {equals: school.id}} });
-							await fetch();
+							await fetch();*/
 						}}>Delete</Dialog.CloseTrigger
 					>
 					<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
@@ -361,7 +364,7 @@
 				<Dialog.Trigger
 					onclick={() =>{
 						currentEdit = {
-							id: workerRequest.generateNewCompetitionId(),
+							id: '',
 							name: '',
 							division: null,
 							isVirtual: false,
@@ -393,7 +396,12 @@
 										class="btn preset-filled-primary-50-950"
 										onclick={async () => {
 											isActionBlocked = true;
-											await workerRequest.insertNewSchool(currentEdit!);
+											await workerRequest.school.create({
+												schools: [{
+													...currentEdit!,
+
+												}]
+											});
 											await fetch();
 										}}>Save</Dialog.CloseTrigger
 									>
