@@ -2,20 +2,20 @@ import { z } from "@hono/zod-openapi";
 import { $Enums } from "@prisma/client";
 const divisionEnums: $Enums.Division[] = ["H", "S", "V"];
 const division = z.enum(divisionEnums);
-const schoolDivisionEnums = z.enum({
-  1: 1,
-  2: 2,
-  3: 3,
-  4: 4,
-  5: 5,
-});
-const teamDivisionEnums = z.enum({
-  1: 1,
-  2: 2,
-  3: 3,
-  4: 4,
-  5: 5,
-});
+const schoolDivisionEnums = z.union([
+  z.literal(1),
+  z.literal(2),
+  z.literal(3),
+  z.literal(4),
+  z.literal(5),
+]);
+const teamDivisionEnums = z.union([
+  z.literal(1),
+  z.literal(2),
+  z.literal(3),
+  z.literal(4),
+  z.literal(5),
+]);
 const stateEnums = z.enum({
   Alabama: "AL",
   Alaska: "AK",
