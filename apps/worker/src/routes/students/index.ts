@@ -151,7 +151,7 @@ students.openapi(
       if (s.competitionId && s.competitionId !== schoolInfo.competitionId) {
         throw new Error(`Competition mismatch: Input(${s.competitionId}) vs DB(${schoolInfo.competitionId})`);
       }
-      if (studentType === 'individual' && schoolInfo.isVirtual === false || studentType === 'team' && schoolInfo.isVirtual === true) {
+      if (studentType === 'individual' && !schoolInfo.isVirtual || studentType === 'team' && schoolInfo.isVirtual) {
         throw new Error(`Student type(${studentType}) does not match school virtual status(${schoolInfo.isVirtual ? 'virtual' : 'physical'})`);
       }
       s.schoolId = schoolInfo.id;
@@ -221,7 +221,7 @@ students.openapi(
           if (s.competitionId && s.competitionId !== schoolInfo.competitionId) {
             throw new Error(`Competition mismatch: Input(${s.competitionId}) vs DB(${schoolInfo.competitionId})`);
           }
-          if (studentType === 'individual' && schoolInfo.isVirtual === false || studentType === 'team' && schoolInfo.isVirtual === true) {
+          if (studentType === 'individual' && !schoolInfo.isVirtual || studentType === 'team' && schoolInfo.isVirtual) {
             throw new Error(`Student type(${studentType}) does not match school virtual status(${schoolInfo.isVirtual ? 'virtual' : 'physical'})`);
           }
           s.schoolId = schoolInfo.id;
