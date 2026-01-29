@@ -138,7 +138,7 @@ competitions.openapi(
             "city" = CASE WHEN v."update_city" THEN v."city" ELSE c."city" END,
             "state" = CASE WHEN v."update_state" THEN v."state" ELSE c."state" END,
             "zip_code" = CASE WHEN v."update_zip_code" THEN v."zip_code" ELSE c."zip_code" END
-          FROM (VALUES ${Prisma.join(updateQueries)}) AS v(
+          FROM (VALUES ${Prisma.join(updateQueries, ',')}) AS v(
             id,
             "name",
             "starts_at",

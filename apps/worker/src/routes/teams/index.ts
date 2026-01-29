@@ -161,7 +161,7 @@ teams.openapi(
         "objective_score" = CASE WHEN v."update_objective_score" THEN v."objective_score" ELSE t."objective_score" END,
         "subjective_score" = CASE WHEN v."update_subjective_score" THEN v."subjective_score" ELSE t."subjective_score" END,
         "mutation_index" = v."mutation_index"
-      FROM (VALUES ${Prisma.join(valueRows)}) AS v(
+      FROM (VALUES ${Prisma.join(valueRows, ',')}) AS v(
         id,
         "external_team_id",
         "school_id",

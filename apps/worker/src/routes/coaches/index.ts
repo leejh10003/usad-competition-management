@@ -118,7 +118,7 @@ coaches.openapi(
       "phone" = CASE WHEN v."update_phone" THEN v."phone" ELSE c."phone" END,
       "signature" = CASE WHEN v."update_signature" THEN v."signature" ELSE c."signature" END,
       "school_id" = CASE WHEN v."update_school_id" THEN v."school_id" ELSE c."school_id" END
-      FROM (VALUES ${Prisma.join(valueRows)}) AS v(
+      FROM (VALUES ${Prisma.join(valueRows, ',')}) AS v(
         id,
         "external_coach_id",
         "first_name",

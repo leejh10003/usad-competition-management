@@ -305,7 +305,7 @@ students.openapi(
         "team_id" = CASE WHEN v."update_team_id" THEN v."team_id" ELSE s."team_id" END,
         "type" = CASE WHEN v."update_type" THEN v."type" ELSE s."type" END,
         "school_id" = CASE WHEN v."update_school_id" THEN v."school_id" ELSE s."school_id" END
-      FROM (VALUES ${Prisma.join(valueRows)}) AS v(
+      FROM (VALUES ${Prisma.join(valueRows, ',')}) AS v(
         id,
         external_student_id,
         division,

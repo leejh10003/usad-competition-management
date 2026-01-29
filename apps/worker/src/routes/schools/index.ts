@@ -171,82 +171,87 @@ schools.openapi(
     ${s.school.subjectiveScore !== undefined}::BOOLEAN,
     ${s.school.primaryCoachId !== undefined}::BOOLEAN,
     ${s.school.emailDomain !== undefined}::BOOLEAN,
-    ${s.school.division !== undefined}::BOOLEAN,
-    )`)
-    const result = await prisma.$queryRaw<School[]>`
-    UPDATE "schools" as s
-    SET
-      "external_school_id" = CASE WHEN v."update_external_school_id" THEN v."external_school_id" ELSE s."external_school_id" END,
-      "name" = CASE WHEN v."update_name" THEN v."name" ELSE s."name" END,
-      "is_virtual" = CASE WHEN v."update_is_virtual" THEN v."is_virtual" ELSE s."is_virtual" END,
-      "street_address" = CASE WHEN v."update_street_address" THEN v."street_address" ELSE s."street_address" END,
-      "city" = CASE WHEN v."update_city" THEN v."city" ELSE s."city" END,
-      "state" = CASE WHEN v."update_state" THEN v."state" ELSE s."state" END,
-      "zip_code" = CASE WHEN v."update_zip_code" THEN v."zip_code" ELSE s."zip_code" END,
-      "phone" = CASE WHEN v."update_phone" THEN v."phone" ELSE s."phone" END,
-      "principal_name" = CASE WHEN v."update_principal_name" THEN v."principal_name" ELSE s."principal_name" END,
-      "principal_email" = CASE WHEN v."update_principal_email" THEN v."principal_email" ELSE s."principal_email" END,
-      "objective_score" = CASE WHEN v."update_objective_score" THEN v."objective_score" ELSE s."objective_score" END,
-      "subjective_score" = CASE WHEN v."update_subjective_score" THEN v."subjective_score" ELSE s."subjective_score" END,
-      "primary_coach_id" = CASE WHEN v."update_primary_coach_id" THEN v."primary_coach_id" ELSE s."primary_coach_id" END,
-      "email_domain" = CASE WHEN v."update_email_domain" THEN v."email_domain" ELSE s."email_domain" END,
-      "division" = CASE WHEN v."update_division" THEN v."division" ELSE s."division" END,
-      "mutation_index" = v."mutation_index"
-    FROM (VALUES ${Prisma.join(queryVariables)}) as v(
-      "id",
-      "external_school_id",
-      "name",
-      "is_virtual",
-      "street_address",
-      "city",
-      "state",
-      "zip_code",
-      "phone",
-      "principal_name",
-      "principal_email",
-      "objective_score",
-      "subjective_score",
-      "primary_coach_id",
-      "email_domain",
-      "division",
-      "mutation_index",
-      "update_external_school_id",
-      "update_name",
-      "update_is_virtual",
-      "update_street_address",
-      "update_city",
-      "update_state",
-      "update_zip_code",
-      "update_phone",
-      "update_principal_name",
-      "update_principal_email",
-      "update_objective_score",
-      "update_subjective_score",
-      "update_primary_coach_id",
-      "update_email_domain",
-      "update_division"
-    )
-    WHERE s.id = v.id
-    RETURNING
-    "id",
-    "external_school_id" AS "externalSchoolId",
-    "name",
-    "is_virtual" AS "isVirtual",
-    "street_address" AS "streetAddress",
-    "city",
-    "state",
-    "zip_code" AS "zipCode",
-    "phone",
-    "principal_name" AS "principalName",
-    "principal_email" AS "principalEmail",
-    "objective_score" AS "objectiveScore",
-    "subjective_score" AS "subjectiveScore",
-    "primary_coach_id" AS "primaryCoachId",
-    "email_domain" AS "emailDomain",
-    "division",
-    "mutation_index" AS "mutationIndex"
-    `;
-    return c.json({ success: true, schools: result as z.infer<typeof schoolsResponse>['schools'], count: result.length }, 200);
+    ${s.school.division !== undefined}::BOOLEAN
+    )`);
+    try {
+      const result = await prisma.$queryRaw<School[]>`
+      UPDATE "schools" as s
+      SET
+        "external_school_id" = CASE WHEN v."update_external_school_id" THEN v."external_school_id" ELSE s."external_school_id" END,
+        "name" = CASE WHEN v."update_name" THEN v."name" ELSE s."name" END,
+        "is_virtual" = CASE WHEN v."update_is_virtual" THEN v."is_virtual" ELSE s."is_virtual" END,
+        "street_address" = CASE WHEN v."update_street_address" THEN v."street_address" ELSE s."street_address" END,
+        "city" = CASE WHEN v."update_city" THEN v."city" ELSE s."city" END,
+        "state" = CASE WHEN v."update_state" THEN v."state" ELSE s."state" END,
+        "zip_code" = CASE WHEN v."update_zip_code" THEN v."zip_code" ELSE s."zip_code" END,
+        "phone" = CASE WHEN v."update_phone" THEN v."phone" ELSE s."phone" END,
+        "principal_name" = CASE WHEN v."update_principal_name" THEN v."principal_name" ELSE s."principal_name" END,
+        "principal_email" = CASE WHEN v."update_principal_email" THEN v."principal_email" ELSE s."principal_email" END,
+        "objective_score" = CASE WHEN v."update_objective_score" THEN v."objective_score" ELSE s."objective_score" END,
+        "subjective_score" = CASE WHEN v."update_subjective_score" THEN v."subjective_score" ELSE s."subjective_score" END,
+        "primary_coach_id" = CASE WHEN v."update_primary_coach_id" THEN v."primary_coach_id" ELSE s."primary_coach_id" END,
+        "email_domain" = CASE WHEN v."update_email_domain" THEN v."email_domain" ELSE s."email_domain" END,
+        "division" = CASE WHEN v."update_division" THEN v."division" ELSE s."division" END,
+        "mutation_index" = v."mutation_index"
+      FROM (VALUES ${Prisma.join(queryVariables, ',')}) as v(
+        "id",
+        "external_school_id",
+        "name",
+        "is_virtual",
+        "street_address",
+        "city",
+        "state",
+        "zip_code",
+        "phone",
+        "principal_name",
+        "principal_email",
+        "objective_score",
+        "subjective_score",
+        "primary_coach_id",
+        "email_domain",
+        "division",
+        "mutation_index",
+        "update_external_school_id",
+        "update_name",
+        "update_is_virtual",
+        "update_street_address",
+        "update_city",
+        "update_state",
+        "update_zip_code",
+        "update_phone",
+        "update_principal_name",
+        "update_principal_email",
+        "update_objective_score",
+        "update_subjective_score",
+        "update_primary_coach_id",
+        "update_email_domain",
+        "update_division"
+      )
+      WHERE s.id = v.id
+      RETURNING
+      s."id",
+      s."external_school_id" AS "externalSchoolId",
+      s."name",
+      s."is_virtual" AS "isVirtual",
+      s."street_address" AS "streetAddress",
+      s."city",
+      s."state",
+      s."zip_code" AS "zipCode",
+      s."phone",
+      s."principal_name" AS "principalName",
+      s."principal_email" AS "principalEmail",
+      s."objective_score" AS "objectiveScore",
+      s."subjective_score" AS "subjectiveScore",
+      s."primary_coach_id" AS "primaryCoachId",
+      s."email_domain" AS "emailDomain",
+      s."division",
+      s."mutation_index" AS "mutationIndex"
+      `;
+      return c.json({ success: true, schools: result as z.infer<typeof schoolsResponse>['schools'], count: result.length }, 200);
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
   }
 );
 export { schools };

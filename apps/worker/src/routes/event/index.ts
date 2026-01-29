@@ -97,7 +97,7 @@ events.openapi(
       "competition_id" = CASE WHEN v."update_competition_id" THEN v."competition_id" ELSE e."competition_id" END,
       "type" = CASE WHEN v."update_type" THEN v."type" ELSE e."type" END,
       "mutation_index" = v."mutation_index"
-      FROM (VALUES ${Prisma.join(valueRows)}) AS v(id, "name", "competition_id", "type", "mutation_index", "update_name", "update_competition_id", "update_type")
+      FROM (VALUES ${Prisma.join(valueRows, ',')}) AS v(id, "name", "competition_id", "type", "mutation_index", "update_name", "update_competition_id", "update_type")
       WHERE e.id = v.id
       RETURNING 
         e.id,

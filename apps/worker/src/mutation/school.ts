@@ -80,7 +80,7 @@ export async function insertSchools(tx: TransactionSessionType, schools: SchoolI
     primaryCoachUpdates.length > 0 ? tx.$executeRaw`
       UPDATE "schools" as s
       SET "primary_coach_id" = v.p_id
-      FROM (VALUES ${Prisma.join(primaryCoachUpdates)}) AS v(s_id, p_id)
+      FROM (VALUES ${Prisma.join(primaryCoachUpdates, ',')}) AS v(s_id, p_id)
       WHERE s.id = v.s_id
     ` : Promise.resolve()
   ]);
