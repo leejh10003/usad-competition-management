@@ -5,10 +5,9 @@ import { SortOrderSchema } from '../enums/SortOrder.schema'
 const makeSchema = () => z.object({
   id: SortOrderSchema.optional(),
   name: SortOrderSchema.optional(),
-  startsAt: SortOrderSchema.optional(),
-  endsAt: SortOrderSchema.optional(),
   competitionId: SortOrderSchema.optional(),
-  mutationIndex: SortOrderSchema.optional()
+  mutationIndex: SortOrderSchema.optional(),
+  type: SortOrderSchema.optional()
 }).strict();
 export const EventMaxOrderByAggregateInputObjectSchema: z.ZodType<Prisma.EventMaxOrderByAggregateInput> = makeSchema() as unknown as z.ZodType<Prisma.EventMaxOrderByAggregateInput>;
 export const EventMaxOrderByAggregateInputObjectZodSchema = makeSchema();

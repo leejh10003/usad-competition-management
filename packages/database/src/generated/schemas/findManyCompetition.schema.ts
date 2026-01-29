@@ -19,6 +19,12 @@ export const CompetitionFindManySelectSchema: z.ZodType<Prisma.CompetitionSelect
     schools: z.boolean().optional(),
     students: z.boolean().optional(),
     mutationIndex: z.boolean().optional(),
+    round: z.boolean().optional(),
+    nonRelativeEvents: z.boolean().optional(),
+    streetAddress: z.boolean().optional(),
+    city: z.boolean().optional(),
+    state: z.boolean().optional(),
+    zipCode: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.CompetitionSelect>;
 
@@ -32,6 +38,12 @@ export const CompetitionFindManySelectZodSchema = z.object({
     schools: z.boolean().optional(),
     students: z.boolean().optional(),
     mutationIndex: z.boolean().optional(),
+    round: z.boolean().optional(),
+    nonRelativeEvents: z.boolean().optional(),
+    streetAddress: z.boolean().optional(),
+    city: z.boolean().optional(),
+    state: z.boolean().optional(),
+    zipCode: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();
 

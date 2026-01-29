@@ -7,11 +7,10 @@ import { EventCountOutputTypeArgsObjectSchema as EventCountOutputTypeArgsObjectS
 const makeSchema = () => z.object({
   id: z.boolean().optional(),
   name: z.boolean().optional(),
-  startsAt: z.boolean().optional(),
-  endsAt: z.boolean().optional(),
   competitionId: z.boolean().optional(),
   mutationIndex: z.boolean().optional(),
   competition: z.union([z.boolean(), z.lazy(() => CompetitionArgsObjectSchema)]).optional(),
+  type: z.boolean().optional(),
   eventCheckIn: z.union([z.boolean(), z.lazy(() => EventCheckInFindManySchema)]).optional(),
   _count: z.union([z.boolean(), z.lazy(() => EventCountOutputTypeArgsObjectSchema)]).optional()
 }).strict();

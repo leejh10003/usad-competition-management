@@ -43,6 +43,7 @@ export const StudentGroupByResultSchema = z.array(z.object({
     objectiveScore: z.number(),
     subjectiveScore: z.number(),
     teamId: z.number(),
+    type: z.number(),
     team: z.number(),
     schoolId: z.number(),
     school: z.number(),

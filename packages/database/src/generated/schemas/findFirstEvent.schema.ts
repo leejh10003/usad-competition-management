@@ -12,11 +12,10 @@ import { EventScalarFieldEnumSchema } from './enums/EventScalarFieldEnum.schema'
 export const EventFindFirstSelectSchema: z.ZodType<Prisma.EventSelect> = z.object({
     id: z.boolean().optional(),
     name: z.boolean().optional(),
-    startsAt: z.boolean().optional(),
-    endsAt: z.boolean().optional(),
     competitionId: z.boolean().optional(),
     mutationIndex: z.boolean().optional(),
     competition: z.boolean().optional(),
+    type: z.boolean().optional(),
     eventCheckIn: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict() as unknown as z.ZodType<Prisma.EventSelect>;
@@ -24,11 +23,10 @@ export const EventFindFirstSelectSchema: z.ZodType<Prisma.EventSelect> = z.objec
 export const EventFindFirstSelectZodSchema = z.object({
     id: z.boolean().optional(),
     name: z.boolean().optional(),
-    startsAt: z.boolean().optional(),
-    endsAt: z.boolean().optional(),
     competitionId: z.boolean().optional(),
     mutationIndex: z.boolean().optional(),
     competition: z.boolean().optional(),
+    type: z.boolean().optional(),
     eventCheckIn: z.boolean().optional(),
     _count: z.boolean().optional()
   }).strict();

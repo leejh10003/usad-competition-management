@@ -7,7 +7,12 @@ const makeSchema = () => z.object({
   name: z.literal(true).optional(),
   startsAt: z.literal(true).optional(),
   endsAt: z.literal(true).optional(),
-  mutationIndex: z.literal(true).optional()
+  mutationIndex: z.literal(true).optional(),
+  round: z.literal(true).optional(),
+  streetAddress: z.literal(true).optional(),
+  city: z.literal(true).optional(),
+  state: z.literal(true).optional(),
+  zipCode: z.literal(true).optional()
 }).strict();
 export const CompetitionMaxAggregateInputObjectSchema: z.ZodType<Prisma.CompetitionMaxAggregateInputType> = makeSchema() as unknown as z.ZodType<Prisma.CompetitionMaxAggregateInputType>;
 export const CompetitionMaxAggregateInputObjectZodSchema = makeSchema();

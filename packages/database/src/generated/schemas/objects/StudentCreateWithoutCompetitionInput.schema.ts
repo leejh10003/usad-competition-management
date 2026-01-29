@@ -2,6 +2,7 @@ import * as z from 'zod';
 import type { Prisma } from '@prisma/client';
 import { DivisionSchema } from '../enums/Division.schema';
 import { StateSchema } from '../enums/State.schema';
+import { StudentTypeSchema } from '../enums/StudentType.schema';
 import { TeamCreateNestedOneWithoutStudentsInputObjectSchema as TeamCreateNestedOneWithoutStudentsInputObjectSchema } from './TeamCreateNestedOneWithoutStudentsInput.schema';
 import { SchoolCreateNestedOneWithoutStudentsInputObjectSchema as SchoolCreateNestedOneWithoutStudentsInputObjectSchema } from './SchoolCreateNestedOneWithoutStudentsInput.schema';
 import { EventCheckInCreateNestedManyWithoutStudentInputObjectSchema as EventCheckInCreateNestedManyWithoutStudentInputObjectSchema } from './EventCheckInCreateNestedManyWithoutStudentInput.schema'
@@ -27,6 +28,7 @@ const makeSchema = () => z.object({
   mutationIndex: z.number().int(),
   objectiveScore: z.number().optional().nullable(),
   subjectiveScore: z.number().optional().nullable(),
+  type: StudentTypeSchema,
   team: z.lazy(() => TeamCreateNestedOneWithoutStudentsInputObjectSchema).optional(),
   school: z.lazy(() => SchoolCreateNestedOneWithoutStudentsInputObjectSchema).optional(),
   eventCheckIns: z.lazy(() => EventCheckInCreateNestedManyWithoutStudentInputObjectSchema).optional()

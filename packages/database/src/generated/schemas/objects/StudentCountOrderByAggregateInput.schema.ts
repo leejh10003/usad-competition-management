@@ -24,6 +24,7 @@ const makeSchema = () => z.object({
   objectiveScore: SortOrderSchema.optional(),
   subjectiveScore: SortOrderSchema.optional(),
   teamId: SortOrderSchema.optional(),
+  type: SortOrderSchema.optional(),
   schoolId: SortOrderSchema.optional(),
   competitionId: SortOrderSchema.optional()
 }).strict();

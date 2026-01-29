@@ -1,6 +1,7 @@
 import * as z from 'zod';
 import type { Prisma } from '@prisma/client';
 import { SortOrderSchema } from '../enums/SortOrder.schema';
+import { SortOrderInputObjectSchema as SortOrderInputObjectSchema } from './SortOrderInput.schema';
 import { EventOrderByRelationAggregateInputObjectSchema as EventOrderByRelationAggregateInputObjectSchema } from './EventOrderByRelationAggregateInput.schema';
 import { CompetitionAvailableStateOrderByRelationAggregateInputObjectSchema as CompetitionAvailableStateOrderByRelationAggregateInputObjectSchema } from './CompetitionAvailableStateOrderByRelationAggregateInput.schema';
 import { SchoolOrderByRelationAggregateInputObjectSchema as SchoolOrderByRelationAggregateInputObjectSchema } from './SchoolOrderByRelationAggregateInput.schema';
@@ -12,6 +13,12 @@ const makeSchema = () => z.object({
   startsAt: SortOrderSchema.optional(),
   endsAt: SortOrderSchema.optional(),
   mutationIndex: SortOrderSchema.optional(),
+  round: SortOrderSchema.optional(),
+  nonRelativeEvents: SortOrderSchema.optional(),
+  streetAddress: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  city: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  state: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+  zipCode: z.union([SortOrderSchema, z.lazy(() => SortOrderInputObjectSchema)]).optional(),
   events: z.lazy(() => EventOrderByRelationAggregateInputObjectSchema).optional(),
   competitionAvailableStates: z.lazy(() => CompetitionAvailableStateOrderByRelationAggregateInputObjectSchema).optional(),
   schools: z.lazy(() => SchoolOrderByRelationAggregateInputObjectSchema).optional(),

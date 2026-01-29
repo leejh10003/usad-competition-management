@@ -9,7 +9,9 @@ import { StringWithAggregatesFilterObjectSchema as StringWithAggregatesFilterObj
 import { EnumStateNullableWithAggregatesFilterObjectSchema as EnumStateNullableWithAggregatesFilterObjectSchema } from './EnumStateNullableWithAggregatesFilter.schema';
 import { StateSchema } from '../enums/State.schema';
 import { IntWithAggregatesFilterObjectSchema as IntWithAggregatesFilterObjectSchema } from './IntWithAggregatesFilter.schema';
-import { UuidNullableWithAggregatesFilterObjectSchema as UuidNullableWithAggregatesFilterObjectSchema } from './UuidNullableWithAggregatesFilter.schema'
+import { UuidNullableWithAggregatesFilterObjectSchema as UuidNullableWithAggregatesFilterObjectSchema } from './UuidNullableWithAggregatesFilter.schema';
+import { EnumStudentTypeWithAggregatesFilterObjectSchema as EnumStudentTypeWithAggregatesFilterObjectSchema } from './EnumStudentTypeWithAggregatesFilter.schema';
+import { StudentTypeSchema } from '../enums/StudentType.schema'
 
 const studentscalarwherewithaggregatesinputSchema = z.object({
   AND: z.union([z.lazy(() => StudentScalarWhereWithAggregatesInputObjectSchema), z.lazy(() => StudentScalarWhereWithAggregatesInputObjectSchema).array()]).optional(),
@@ -36,6 +38,7 @@ const studentscalarwherewithaggregatesinputSchema = z.object({
   objectiveScore: z.union([z.lazy(() => FloatNullableWithAggregatesFilterObjectSchema), z.number()]).optional().nullable(),
   subjectiveScore: z.union([z.lazy(() => FloatNullableWithAggregatesFilterObjectSchema), z.number()]).optional().nullable(),
   teamId: z.union([z.lazy(() => UuidNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
+  type: z.union([z.lazy(() => EnumStudentTypeWithAggregatesFilterObjectSchema), StudentTypeSchema]).optional(),
   schoolId: z.union([z.lazy(() => UuidNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable(),
   competitionId: z.union([z.lazy(() => UuidNullableWithAggregatesFilterObjectSchema), z.string()]).optional().nullable()
 }).strict();

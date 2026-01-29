@@ -2,6 +2,7 @@ import * as z from 'zod';
 import type { Prisma } from '@prisma/client';
 import { DivisionSchema } from '../enums/Division.schema';
 import { StateSchema } from '../enums/State.schema';
+import { StudentTypeSchema } from '../enums/StudentType.schema';
 import { EventCheckInUncheckedCreateNestedManyWithoutStudentInputObjectSchema as EventCheckInUncheckedCreateNestedManyWithoutStudentInputObjectSchema } from './EventCheckInUncheckedCreateNestedManyWithoutStudentInput.schema'
 
 const makeSchema = () => z.object({
@@ -25,6 +26,7 @@ const makeSchema = () => z.object({
   mutationIndex: z.number().int(),
   objectiveScore: z.number().optional().nullable(),
   subjectiveScore: z.number().optional().nullable(),
+  type: StudentTypeSchema,
   schoolId: z.string().optional().nullable(),
   competitionId: z.string().optional().nullable(),
   eventCheckIns: z.lazy(() => EventCheckInUncheckedCreateNestedManyWithoutStudentInputObjectSchema).optional()

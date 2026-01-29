@@ -21,6 +21,7 @@ export const StudentAggregateResultSchema = z.object({  _count: z.object({
     objectiveScore: z.number(),
     subjectiveScore: z.number(),
     teamId: z.number(),
+    type: z.number(),
     team: z.number(),
     schoolId: z.number(),
     school: z.number(),

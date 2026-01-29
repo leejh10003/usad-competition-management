@@ -24,6 +24,7 @@ const makeSchema = () => z.object({
   objectiveScore: z.literal(true).optional(),
   subjectiveScore: z.literal(true).optional(),
   teamId: z.literal(true).optional(),
+  type: z.literal(true).optional(),
   schoolId: z.literal(true).optional(),
   competitionId: z.literal(true).optional()
 }).strict();

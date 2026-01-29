@@ -8,25 +8,41 @@ export const CompetitionAggregateResultSchema = z.object({  _count: z.object({
     competitionAvailableStates: z.number(),
     schools: z.number(),
     students: z.number(),
-    mutationIndex: z.number()
+    mutationIndex: z.number(),
+    round: z.number(),
+    nonRelativeEvents: z.number(),
+    streetAddress: z.number(),
+    city: z.number(),
+    state: z.number(),
+    zipCode: z.number()
   }).optional(),
   _sum: z.object({
-    mutationIndex: z.number().nullable()
+    mutationIndex: z.number().nullable(),
+    round: z.number().nullable()
   }).nullable().optional(),
   _avg: z.object({
-    mutationIndex: z.number().nullable()
+    mutationIndex: z.number().nullable(),
+    round: z.number().nullable()
   }).nullable().optional(),
   _min: z.object({
     id: z.string().nullable(),
     name: z.string().nullable(),
     startsAt: z.date().nullable(),
     endsAt: z.date().nullable(),
-    mutationIndex: z.number().int().nullable()
+    mutationIndex: z.number().int().nullable(),
+    round: z.number().int().nullable(),
+    streetAddress: z.string().nullable(),
+    city: z.string().nullable(),
+    zipCode: z.string().nullable()
   }).nullable().optional(),
   _max: z.object({
     id: z.string().nullable(),
     name: z.string().nullable(),
     startsAt: z.date().nullable(),
     endsAt: z.date().nullable(),
-    mutationIndex: z.number().int().nullable()
+    mutationIndex: z.number().int().nullable(),
+    round: z.number().int().nullable(),
+    streetAddress: z.string().nullable(),
+    city: z.string().nullable(),
+    zipCode: z.string().nullable()
   }).nullable().optional()});

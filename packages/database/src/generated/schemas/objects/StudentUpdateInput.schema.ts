@@ -8,6 +8,8 @@ import { NullableFloatFieldUpdateOperationsInputObjectSchema as NullableFloatFie
 import { StateSchema } from '../enums/State.schema';
 import { NullableEnumStateFieldUpdateOperationsInputObjectSchema as NullableEnumStateFieldUpdateOperationsInputObjectSchema } from './NullableEnumStateFieldUpdateOperationsInput.schema';
 import { IntFieldUpdateOperationsInputObjectSchema as IntFieldUpdateOperationsInputObjectSchema } from './IntFieldUpdateOperationsInput.schema';
+import { StudentTypeSchema } from '../enums/StudentType.schema';
+import { EnumStudentTypeFieldUpdateOperationsInputObjectSchema as EnumStudentTypeFieldUpdateOperationsInputObjectSchema } from './EnumStudentTypeFieldUpdateOperationsInput.schema';
 import { TeamUpdateOneWithoutStudentsNestedInputObjectSchema as TeamUpdateOneWithoutStudentsNestedInputObjectSchema } from './TeamUpdateOneWithoutStudentsNestedInput.schema';
 import { SchoolUpdateOneWithoutStudentsNestedInputObjectSchema as SchoolUpdateOneWithoutStudentsNestedInputObjectSchema } from './SchoolUpdateOneWithoutStudentsNestedInput.schema';
 import { CompetitionUpdateOneWithoutStudentsNestedInputObjectSchema as CompetitionUpdateOneWithoutStudentsNestedInputObjectSchema } from './CompetitionUpdateOneWithoutStudentsNestedInput.schema';
@@ -34,6 +36,7 @@ const makeSchema = () => z.object({
   mutationIndex: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional(),
   objectiveScore: z.union([z.number(), z.lazy(() => NullableFloatFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   subjectiveScore: z.union([z.number(), z.lazy(() => NullableFloatFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  type: z.union([StudentTypeSchema, z.lazy(() => EnumStudentTypeFieldUpdateOperationsInputObjectSchema)]).optional(),
   team: z.lazy(() => TeamUpdateOneWithoutStudentsNestedInputObjectSchema).optional(),
   school: z.lazy(() => SchoolUpdateOneWithoutStudentsNestedInputObjectSchema).optional(),
   competition: z.lazy(() => CompetitionUpdateOneWithoutStudentsNestedInputObjectSchema).optional(),

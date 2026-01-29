@@ -1,6 +1,7 @@
 import * as z from 'zod';
 import { DivisionSchema } from '../../enums/Division.schema';
 import { StateSchema } from '../../enums/State.schema';
+import { StudentTypeSchema } from '../../enums/StudentType.schema';
 // prettier-ignore
 export const StudentInputSchema = z.object({
     id: z.string(),
@@ -24,6 +25,7 @@ export const StudentInputSchema = z.object({
     objectiveScore: z.number().optional().nullable(),
     subjectiveScore: z.number().optional().nullable(),
     teamId: z.string().optional().nullable(),
+    type: StudentTypeSchema,
     team: z.unknown().optional().nullable(),
     schoolId: z.string().optional().nullable(),
     school: z.unknown().optional().nullable(),

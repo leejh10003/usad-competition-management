@@ -16,6 +16,12 @@ const makeSchema = () => z.object({
   schools: z.union([z.boolean(), z.lazy(() => SchoolFindManySchema)]).optional(),
   students: z.union([z.boolean(), z.lazy(() => StudentFindManySchema)]).optional(),
   mutationIndex: z.boolean().optional(),
+  round: z.boolean().optional(),
+  nonRelativeEvents: z.boolean().optional(),
+  streetAddress: z.boolean().optional(),
+  city: z.boolean().optional(),
+  state: z.boolean().optional(),
+  zipCode: z.boolean().optional(),
   _count: z.union([z.boolean(), z.lazy(() => CompetitionCountOutputTypeArgsObjectSchema)]).optional()
 }).strict();
 export const CompetitionSelectObjectSchema: z.ZodType<Prisma.CompetitionSelect> = makeSchema() as unknown as z.ZodType<Prisma.CompetitionSelect>;

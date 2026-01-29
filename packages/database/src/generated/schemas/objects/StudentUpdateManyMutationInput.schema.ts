@@ -7,7 +7,9 @@ import { EnumDivisionFieldUpdateOperationsInputObjectSchema as EnumDivisionField
 import { NullableFloatFieldUpdateOperationsInputObjectSchema as NullableFloatFieldUpdateOperationsInputObjectSchema } from './NullableFloatFieldUpdateOperationsInput.schema';
 import { StateSchema } from '../enums/State.schema';
 import { NullableEnumStateFieldUpdateOperationsInputObjectSchema as NullableEnumStateFieldUpdateOperationsInputObjectSchema } from './NullableEnumStateFieldUpdateOperationsInput.schema';
-import { IntFieldUpdateOperationsInputObjectSchema as IntFieldUpdateOperationsInputObjectSchema } from './IntFieldUpdateOperationsInput.schema'
+import { IntFieldUpdateOperationsInputObjectSchema as IntFieldUpdateOperationsInputObjectSchema } from './IntFieldUpdateOperationsInput.schema';
+import { StudentTypeSchema } from '../enums/StudentType.schema';
+import { EnumStudentTypeFieldUpdateOperationsInputObjectSchema as EnumStudentTypeFieldUpdateOperationsInputObjectSchema } from './EnumStudentTypeFieldUpdateOperationsInput.schema'
 
 const makeSchema = () => z.object({
   id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
@@ -29,7 +31,8 @@ const makeSchema = () => z.object({
   guardianEmail: z.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
   mutationIndex: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputObjectSchema)]).optional(),
   objectiveScore: z.union([z.number(), z.lazy(() => NullableFloatFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
-  subjectiveScore: z.union([z.number(), z.lazy(() => NullableFloatFieldUpdateOperationsInputObjectSchema)]).optional().nullable()
+  subjectiveScore: z.union([z.number(), z.lazy(() => NullableFloatFieldUpdateOperationsInputObjectSchema)]).optional().nullable(),
+  type: z.union([StudentTypeSchema, z.lazy(() => EnumStudentTypeFieldUpdateOperationsInputObjectSchema)]).optional()
 }).strict();
 export const StudentUpdateManyMutationInputObjectSchema: z.ZodType<Prisma.StudentUpdateManyMutationInput> = makeSchema() as unknown as z.ZodType<Prisma.StudentUpdateManyMutationInput>;
 export const StudentUpdateManyMutationInputObjectZodSchema = makeSchema();

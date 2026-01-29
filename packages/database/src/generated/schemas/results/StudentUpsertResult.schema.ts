@@ -21,6 +21,7 @@ export const StudentUpsertResultSchema = z.object({
   objectiveScore: z.number().optional(),
   subjectiveScore: z.number().optional(),
   teamId: z.string().optional(),
+  type: z.unknown(),
   team: z.unknown().optional(),
   schoolId: z.string().optional(),
   school: z.unknown().optional(),

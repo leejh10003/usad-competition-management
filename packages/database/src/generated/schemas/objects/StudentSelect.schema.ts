@@ -28,6 +28,7 @@ const makeSchema = () => z.object({
   objectiveScore: z.boolean().optional(),
   subjectiveScore: z.boolean().optional(),
   teamId: z.boolean().optional(),
+  type: z.boolean().optional(),
   team: z.union([z.boolean(), z.lazy(() => TeamArgsObjectSchema)]).optional(),
   schoolId: z.boolean().optional(),
   school: z.union([z.boolean(), z.lazy(() => SchoolArgsObjectSchema)]).optional(),

@@ -10,10 +10,9 @@ import { EventSumOrderByAggregateInputObjectSchema as EventSumOrderByAggregateIn
 const makeSchema = () => z.object({
   id: SortOrderSchema.optional(),
   name: SortOrderSchema.optional(),
-  startsAt: SortOrderSchema.optional(),
-  endsAt: SortOrderSchema.optional(),
   competitionId: SortOrderSchema.optional(),
   mutationIndex: SortOrderSchema.optional(),
+  type: SortOrderSchema.optional(),
   _count: z.lazy(() => EventCountOrderByAggregateInputObjectSchema).optional(),
   _avg: z.lazy(() => EventAvgOrderByAggregateInputObjectSchema).optional(),
   _max: z.lazy(() => EventMaxOrderByAggregateInputObjectSchema).optional(),

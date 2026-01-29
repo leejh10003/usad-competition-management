@@ -7,10 +7,9 @@ import { EventCheckInOrderByRelationAggregateInputObjectSchema as EventCheckInOr
 const makeSchema = () => z.object({
   id: SortOrderSchema.optional(),
   name: SortOrderSchema.optional(),
-  startsAt: SortOrderSchema.optional(),
-  endsAt: SortOrderSchema.optional(),
   competitionId: SortOrderSchema.optional(),
   mutationIndex: SortOrderSchema.optional(),
+  type: SortOrderSchema.optional(),
   competition: z.lazy(() => CompetitionOrderByWithRelationInputObjectSchema).optional(),
   eventCheckIn: z.lazy(() => EventCheckInOrderByRelationAggregateInputObjectSchema).optional()
 }).strict();

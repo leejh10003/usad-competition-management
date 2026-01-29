@@ -1,7 +1,8 @@
 import * as z from 'zod';
 import type { Prisma } from '@prisma/client';
 import { DivisionSchema } from '../enums/Division.schema';
-import { StateSchema } from '../enums/State.schema'
+import { StateSchema } from '../enums/State.schema';
+import { StudentTypeSchema } from '../enums/StudentType.schema'
 
 const makeSchema = () => z.object({
   id: z.string().optional(),
@@ -25,6 +26,7 @@ const makeSchema = () => z.object({
   objectiveScore: z.number().optional().nullable(),
   subjectiveScore: z.number().optional().nullable(),
   teamId: z.string().optional().nullable(),
+  type: StudentTypeSchema,
   schoolId: z.string().optional().nullable()
 }).strict();
 export const StudentCreateManyCompetitionInputObjectSchema: z.ZodType<Prisma.StudentCreateManyCompetitionInput> = makeSchema() as unknown as z.ZodType<Prisma.StudentCreateManyCompetitionInput>;
