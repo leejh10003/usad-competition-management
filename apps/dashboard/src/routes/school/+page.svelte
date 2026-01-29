@@ -152,6 +152,7 @@
 		total = count;
 		currentCount = result.length;
 		isLoading = false;
+		isActionBlocked = false;
 	}
 	$effect(() => {
 		let searchParams = schoolQuerySchema.safeParse(
