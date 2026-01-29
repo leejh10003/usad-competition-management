@@ -13,6 +13,9 @@ import _ from "lodash";
 import { Prisma, Student } from "@prisma/client";
 import { insertStudentWithIndividualAddress, insertStudentWithSchoolId } from "usad-scheme/src/student";
 import { insertStudents } from "../../mutation";
+import { StudentUpdateManySchema } from 'database/src/generated/schemas/updateManyStudent.schema';
+import { StudentType } from 'database/src/generated/schemas/enums/StudentType.schema'
+import { StudentCreateManyInputObjectSchema } from 'database/src/generated/schemas/objects/StudentCreateManyInput.schema'
 const students = new OpenAPIHono();
 type InsertStudentWithIndividualAddress = z.infer<typeof insertStudentWithIndividualAddress>;
 type InsertStudentWithSchoolId = z.infer<typeof insertStudentWithSchoolId>;
@@ -67,7 +70,39 @@ students.openapi(
     }
   }
 );
-
+async function retrieveSchoolInfoCardinality(prisma: Prisma.DefaultPrismaClient, teamIds: Set<string>) {
+  const schoolInfos = await prisma.team.findMany({
+    where: {
+      id: { in: Array.from(teamIds) },
+    },
+    select: {
+      id: true,
+      school: {
+        select: {
+          id: true,
+          competitionId: true,
+          isVirtual: true,
+        }
+      }
+    }
+  });
+  return schoolInfos;
+}
+async function checkSchoolInfoCardinality(prisma: Prisma.DefaultPrismaClient, teamIds: Set<string>) {
+  const schoolInfos = await retrieveSchoolInfoCardinality(prisma, teamIds);
+  if (schoolInfos.length !== teamIds.size) {
+    throw new Error(`Some teamIds do not have associated school information`);
+  }
+  return schoolInfos;
+}
+async function getTeamIdSchoolInfoMap(prisma: Prisma.DefaultPrismaClient, teamIds: Set<string>) {
+  const schoolInfos = await checkSchoolInfoCardinality(prisma, teamIds);
+  const teamIdSchoolInfoMap: Map<string, { id: string; competitionId: string; isVirtual: boolean }> = new Map();
+  schoolInfos.forEach((info) => {
+    teamIdSchoolInfoMap.set(info.id, { id: info.school.id, competitionId: info.school.competitionId, isVirtual: info.school.isVirtual });
+  });
+  return teamIdSchoolInfoMap;
+}
 // [생성] 새로운 학생 생성
 students.openapi(
   {
@@ -99,27 +134,7 @@ students.openapi(
     const teamIds = new Set(students.map((s) => s.teamId));
     teamIds.delete(undefined);
     teamIds.delete(null);
-    const schoolInfos = await prisma.team.findMany({
-      where: {
-        id: { in: Array.from(teamIds as Set<string>) },
-      },
-      select: {
-        id: true,
-        school: {
-          select: {
-            id: true,
-            competitionId: true
-          }
-        }
-      }
-    });
-    if (schoolInfos.length !== teamIds.size) {
-      throw new Error(`Some teamIds do not have associated school information`);
-    }
-    const teamIdSchoolInfoMap: Map<string, { id: string; competitionId: string }> = new Map();
-    schoolInfos.forEach((info) => {
-      teamIdSchoolInfoMap.set(info.id, { id: info.school.id, competitionId: info.school.competitionId });
-    });
+    const teamIdSchoolInfoMap = await getTeamIdSchoolInfoMap(prisma, teamIds as Set<string>);
     for (const student of students) {
       if (!student.teamId) {
         continue; 
@@ -128,12 +143,16 @@ students.openapi(
       if (!schoolInfo) {
         throw new Error(`[Data Integrity] Team ${student.teamId} has no parent school.`);
       }
-      const s = (student as Omit<z.infer<typeof insertStudentWithSchoolId>, 'type'> & Omit<z.infer<typeof insertStudentWithIndividualAddress>, 'type'>);
+      const s = student as z.infer<typeof StudentCreateManyInputObjectSchema>;
+      const studentType = s.type;
       if (s.schoolId && s.schoolId !== schoolInfo.id) {
         throw new Error(`School mismatch: Input(${s.schoolId}) vs DB(${schoolInfo.id})`);
       }
       if (s.competitionId && s.competitionId !== schoolInfo.competitionId) {
         throw new Error(`Competition mismatch: Input(${s.competitionId}) vs DB(${schoolInfo.competitionId})`);
+      }
+      if (studentType === 'individual' && schoolInfo.isVirtual === false || studentType === 'team' && schoolInfo.isVirtual === true) {
+        throw new Error(`Student type(${studentType}) does not match school virtual status(${schoolInfo.isVirtual ? 'virtual' : 'physical'})`);
       }
       s.schoolId = schoolInfo.id;
       s.competitionId = schoolInfo.competitionId;
@@ -172,6 +191,49 @@ students.openapi(
   async (c) => {
     const { students } = c.req.valid("json");
     const prisma = c.get("prisma");
+    const [teamIdSchoolInfoMap, studentCurrentInfos] = await Promise.all([
+      getTeamIdSchoolInfoMap(prisma, new Set(students.map(s => s.student.teamId).filter((id): id is string => id !== undefined && id !== null))),
+      prisma.student.findMany({
+        where: {
+          id: { in: students.map(({id}) => id)},
+        },
+        select: {
+          id: true,
+          type: true,
+          schoolId: true,
+        }
+      }),
+    ]);
+    const studentCurrentInfoMap: Map<string, {type: StudentType, schoolId: string | null}> = new Map();
+    studentCurrentInfos.forEach(s => {
+      studentCurrentInfoMap.set(s.id, { type: s.type, schoolId: s.schoolId });
+    });
+    students.forEach(student => {
+      const s = student.student as z.infer<typeof StudentUpdateManySchema>['data'];
+      const studentCurrentInfo = studentCurrentInfoMap.get(student.id);
+      const studentType = s.type as StudentType ?? studentCurrentInfo?.type;
+      if (typeof s.teamId === "string") {
+        const schoolInfo = teamIdSchoolInfoMap.get(s.teamId);
+        if (schoolInfo) {
+          if (s.schoolId && s.schoolId !== schoolInfo.id) {
+            throw new Error(`School mismatch: Input(${s.schoolId}) vs DB(${schoolInfo.id})`);
+          }
+          if (s.competitionId && s.competitionId !== schoolInfo.competitionId) {
+            throw new Error(`Competition mismatch: Input(${s.competitionId}) vs DB(${schoolInfo.competitionId})`);
+          }
+          if (studentType === 'individual' && schoolInfo.isVirtual === false || studentType === 'team' && schoolInfo.isVirtual === true) {
+            throw new Error(`Student type(${studentType}) does not match school virtual status(${schoolInfo.isVirtual ? 'virtual' : 'physical'})`);
+          }
+          s.schoolId = schoolInfo.id;
+          s.competitionId = schoolInfo.competitionId;
+        }
+      } else if (s.teamId === null && s.schoolId) {
+        throw new Error(`Cannot set schoolId when teamId is null`);
+      } else if (s.teamId === undefined && s.schoolId !== undefined && s.schoolId !== studentCurrentInfo?.schoolId) {
+        throw new Error(`Cannot update schoolId without changing teamId`);
+      }
+    });
+
     const valueRows = students.map((e, i) => Prisma.sql`(
       ${e.id}::UUID,
       ${e.student.externalStudentId}::TEXT,
