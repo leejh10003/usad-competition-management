@@ -10,7 +10,7 @@
 	import z from 'zod';
 	import { splitStringForQueryHighlight } from '$lib/utils/string';
 	import { resolve } from '$app/paths';
-	import { workerRequest } from '$lib/api/test';
+	import { workerRequest } from '$lib/api';
 	import { dialogAppearAnimation } from '$lib/utils/animation';
 	import TextInput from '$lib/components/text-input.svelte';
 	import PaginateTable from '$lib/components/paginate-table.svelte';
@@ -26,7 +26,7 @@
 	var isActionBlocked = $state<boolean>(false);
 	var searchedSchools = $state<SchoolsAgregatedItem[]>([]);
 	async function fetchSchools(query: string) {
-		const { result } = await workerRequest.getSchool({
+		const { schools: result } = await workerRequest.school.get({
 			where: {
 				name: {
 					contains: query,
@@ -35,7 +35,7 @@
 			},
 			take: 50,
 		});
-		const {result: competitions} = await workerRequest.getCompetition({
+		const { competitions } = await workerRequest.competition.get({
 			where: {
 				id: {
 					in: result.map((school) => school.competitionId)
@@ -139,7 +139,7 @@
 	async function fetch() {
 		isLoading = true;
 		//TODO: server fetch
-		const {result, count} = await workerRequest.getCoach({
+		const {coaches: result, count} = await workerRequest.coach.get({
 			take: getLimit,
 			skip: offset,
 			where: getCoachFirstNameQueryString || getCoachLastNameQueryString || getExternalCoachIdQueryString ? {
@@ -160,14 +160,14 @@
 				} : {})
 			} : undefined
 		});
-		const {result: schools} = await workerRequest.getSchool({
+		const {schools} = await workerRequest.school.get({
 			where: {
 				id: {
-					in: result.map((team) => team.schoolId)
+					in: result.map((coach) => coach.schoolId)
 				}
 			}
 		});
-		const {result: competitions} = await workerRequest.getCompetition({
+		const {competitions} = await workerRequest.competition.get({
 			where: {
 				id: {
 					in: schools.map((school) => school.competitionId)
@@ -185,6 +185,7 @@
 		total = count;
 		currentCount = result.length;
 		isLoading = false;
+		isActionBlocked = false;
 	}
 	$effect(() => {
 		let searchParams = coachQuerySchema.safeParse(
@@ -275,9 +276,12 @@
 							class="btn preset-filled-primary-50-950"
 							onclick={async () => {
 								isActionBlocked = true;
-								await workerRequest.updateCoach([
-									{ where: { id: currentEdit!.id }, data: currentEdit! }
-								]);
+								await workerRequest.coach.update({
+									coaches: [{
+										id: currentEdit!.id,
+										coach: currentEdit!
+									}]
+								});
 								await fetch();
 							}}>Save</Dialog.CloseTrigger
 						>
@@ -316,9 +320,9 @@
 					<Dialog.CloseTrigger
 						class="btn preset-filled-danger-50-950"
 						onclick={async () => {
-							isActionBlocked = true;
-							await workerRequest.deleteCoaches({ where: {id: {equals: coach.id}} });
-							await fetch();
+							// isActionBlocked = true;
+							// await workerRequest.deleteCoaches({ where: {id: {equals: coach.id}} });
+							// await fetch();
 						}}>Delete</Dialog.CloseTrigger
 					>
 					<Dialog.CloseTrigger class="btn preset-tonal">Close</Dialog.CloseTrigger>
@@ -396,7 +400,7 @@
 					<Dialog.Trigger
 						onclick={() => {
 							currentEdit = {
-								id: workerRequest.generateNewCompetitionId(),
+								id: "",
 								mutationIndex: 0,
 								externalCoachId: '',
 								firstName: '',
@@ -427,7 +431,9 @@
 											class="btn preset-filled-primary-50-950"
 											onclick={async () => {
 												isActionBlocked = true;
-												await workerRequest.insertNewCoach(currentEdit!);
+												await workerRequest.coach.create({
+													coaches: [currentEdit!]
+												});
 												await fetch();
 											}}>Save</Dialog.CloseTrigger
 										>
